@@ -404,13 +404,13 @@ f(x) = \mathrm{sign}(w^{*}.x+b^{*}) \ (8.2)</script><p>称为线性可分支持�
 <ol>
 <li><p><strong>最大间隔分离超平面</strong></p>
 <p>求最大间隔分离超平面问题可以表示为下面的约束最优化问题:</p>
-<script type="math/tex; mode=display">\max_{w,b}$$     $$\gamma$$     (8.9)
+<script type="math/tex; mode=display">\max_{w,b}     \gamma$$     (8.9)
 
 s.t.           $$y_i\left(\frac{w}{\|w\|}.x_i+\frac{b}{\|w\|}\right) \ge \gamma$$，i=1,2,...,N   (8.10)
 
 根据几何间隔与函数间隔的关系，上面的约束最优化问题可以改写成一下形式:
 
-$$\max_{w,b}$$     $$\frac{\hat{\gamma}}{\|w\|}$$     (8.11)
+$$\max_{w,b}     \frac{\hat{\gamma}}{\|w\|}$$     (8.11)
 
 s.t.            $$y_i(w.x_i+b)\ge \hat{\gamma}$$，i=1,2,...,N    (8.12)
 
@@ -418,7 +418,7 @@ s.t.            $$y_i(w.x_i+b)\ge \hat{\gamma}$$，i=1,2,...,N    (8.12)
 
 综上所述，可将上面的最优化问题进一步的调整成如下形式:
 
-$$\min_{w,b}$$     $$\frac{1}{2}\|w\|^2$$         (8.13)
+$$\min_{w,b}     \frac{1}{2}\|w\|^2$$         (8.13)
 
 s.t.           $$y_i(w.x_i+b)-1\ge 0$$，i=1,2,...,N    (8.14)
 
@@ -426,7 +426,7 @@ s.t.           $$y_i(w.x_i+b)-1\ge 0$$，i=1,2,...,N    (8.14)
 
 > 凸优化问题是指约束最优化问题:
 >
-> $$\min_w$$     $$f(w)$$     (8.15)
+> $$\min_w     f(w)$$     (8.15)
 >
 > s.t.         $$g_i(w) \le 0$$，i=1,2,...,K     (8.16)
 >
@@ -446,7 +446,7 @@ s.t.           $$y_i(w.x_i+b)-1\ge 0$$，i=1,2,...,N    (8.14)
 
 (1)构造并求解约束最优化问题:
 
-$$\min_{w,b}$$     $$\frac{1}{2}\|w\|^2</script><p>s.t.            <script type="math/tex">y_i(w.x_i+b)-1\ge 0</script>，i=1,2,…,N</p>
+$$\min_{w,b}     \frac{1}{2}\|w\|^2</script><p>s.t.            <script type="math/tex">y_i(w.x_i+b)-1\ge 0</script>，i=1,2,…,N</p>
 <p>求得最优解<script type="math/tex">w^*,b^*</script>。</p>
 <p>(2)由此得到分离超平面:</p>
 <script type="math/tex; mode=display">w^*.x+b^*=0</script><p>分类决策函数:</p>
