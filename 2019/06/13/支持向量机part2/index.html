@@ -89,7 +89,7 @@
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="http://yoursite.com/2019/06/13/支持向量机part2/image/ch08-4.png">
 <meta property="og:image" content="http://yoursite.com/2019/06/13/支持向量机part2/image/ch08-5.png">
-<meta property="og:updated_time" content="2019-06-13T11:35:11.228Z">
+<meta property="og:updated_time" content="2019-06-13T11:44:34.978Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="支持向量机part2">
 <meta name="twitter:description" content="8.3 非线性支持向量机与核函数非线性数据集则使用非线性支持向量机，其主要特点是利用核技巧(kernel trick)。为此，先要介绍核技巧。 8.3.1 核技巧 非线性分类问题 非线性分类问题是指通过利用非线性模型才能很好地进行分类的问题。 如下图所示：  一般来说，对给定的一个训练数据集T = \{(x_1,y_1),(x_2,y_2),...,(x_N,y_N)\}，其中，实例x_i属于输入">
@@ -556,86 +556,64 @@ E_i = g(x_i)-y_i = \left(\sum_{j=1}^N \alpha_j y_j K(x_j,x_i)+b\right) - y_i \ ,
 <script type="math/tex; mode=display">
 \alpha_2^{new,unc} = \alpha_2^{old} + \frac{y_2(E_1-E_2)}{\eta} \ (8.106)</script><p>其中，</p>
 <script type="math/tex; mode=display">
-\eta = K_{11}+K_{22}-2K_{12} = \|\Phi(x_1) -\Phi(x_2)\|^2 \ (8.107)</script><script type="math/tex; mode=display">\Phi(x)$$是输入空间到特征空间的映射，$$E_i$$，i=1,2，由式(8.105)给出。
-
-经剪辑后$$\alpha_2$$的解是</script><p>\alpha_2^{new} = \left{\begin{aligned}&amp;H, &amp; \alpha_2^{new,unc} &gt; H \ &amp;\alpha_2^{new,unc},&amp;L\le \alpha_2^{new,unc} \le H \ &amp;L,&amp;\alpha_2^{new,unc}&lt;L\end{aligned} \right . \ (8.108)</p>
+\eta = K_{11}+K_{22}-2K_{12} = \|\Phi(x_1) -\Phi(x_2)\|^2 \ (8.107)</script><p>关于<script type="math/tex">\Phi(x)</script>是输入空间到特征空间的映射，<script type="math/tex">E_i</script>，i=1,2，由式(8.105)给出。</p>
+<p>经剪辑后<script type="math/tex">\alpha_2</script>的解是</p>
 <script type="math/tex; mode=display">
-
-
-由$$\alpha_2^{new}$$求得$$\alpha_1^{new}$$是</script><p>\alpha_1^{new} = \alpha_1^{old} + y_1y_2(\alpha_2^{old}-\alpha_2^{new}) \ (8.109)</p>
+\alpha_2^{new} = \left\{\begin{aligned}&H, & \alpha_2^{new,unc} > H \\ &\alpha_2^{new,unc},&L\le \alpha_2^{new,unc} \le H \\ &L,&\alpha_2^{new,unc}<L\end{aligned} \right . \ (8.108)</script><p>由<script type="math/tex">\alpha_2^{new}</script>求得<script type="math/tex">\alpha_1^{new}</script>是</p>
 <script type="math/tex; mode=display">
-**证明:**
-
-引进记号：</script><p>v<em>i = \sum</em>{j=3}^{N}\alpha<em>jy_jK</em>{ij}=g(x<em>i)-\sum</em>{j=1}^{2}\alpha<em>jy_jK</em>{ij}-b \ , i=1,2</p>
+\alpha_1^{new} = \alpha_1^{old} + y_1y_2(\alpha_2^{old}-\alpha_2^{new}) \ (8.109)</script><p><strong>证明:</strong></p>
+<p>引进记号：</p>
 <script type="math/tex; mode=display">
-目标函数可写成</script><p>W(\alpha<em>1,\alpha_2) = \frac{1}{2}K</em>{11}\alpha<em>1^2+\frac{1}{2}K</em>{22}\alpha<em>2^2+y_1y_2K</em>{12}\alpha_1\alpha_2-(\alpha_1+\alpha_2)+y_1v_1\alpha_1+y_2v_2\alpha_2 \ (8.110)</p>
+v_i = \sum_{j=3}^{N}\alpha_jy_jK_{ij}=g(x_i)-\sum_{j=1}^{2}\alpha_jy_jK_{ij}-b \ , i=1,2</script><p>目标函数可写成</p>
 <script type="math/tex; mode=display">
-由$$\alpha_1y_1 = \zeta -\alpha_2y_2$$及$$y_i^2=1$$，可将$$\alpha_1$$表示为：</script><p>\alpha_1 = (\zeta-\alpha_2y_2)y_1</p>
+W(\alpha_1,\alpha_2) = \frac{1}{2}K_{11}\alpha_1^2+\frac{1}{2}K_{22}\alpha_2^2+y_1y_2K_{12}\alpha_1\alpha_2-(\alpha_1+\alpha_2)+y_1v_1\alpha_1+y_2v_2\alpha_2 \ (8.110)</script><p>由<script type="math/tex">\alpha_1y_1 = \zeta -\alpha_2y_2</script>及<script type="math/tex">y_i^2=1</script>，可将<script type="math/tex">\alpha_1</script>表示为：</p>
 <script type="math/tex; mode=display">
-代入式(8.110)，得到只是$$\alpha_2$$的函数的目标函数:</script><p>W(\alpha<em>2)=\frac{1}{2}K</em>{11}( \zeta-\alpha<em>2y_2)^2+\frac{1}{2}K</em>{22}\alpha<em>2^2+y_2K</em>{12}(\zeta-\alpha_2y_2)\alpha_2- (\zeta-\alpha_2y_2)y_1-\alpha_2+v_1 (\zeta-\alpha_2y_2)+y_2v_2\alpha_2</p>
+\alpha_1 = (\zeta-\alpha_2y_2)y_1</script><p>代入式(8.110)，得到只是<script type="math/tex">\alpha_2</script>的函数的目标函数:</p>
 <script type="math/tex; mode=display">
-对$$\alpha_2$$求导数</script><p>\frac{\partial W}{\partial \alpha<em>2} = K</em>{11}\alpha<em>2 + K</em>{22}\alpha<em>2-2K</em>{12}\alpha<em>2-K</em>{11}\zeta y<em>2+K</em>{12}\zeta y_2+y_1y_2-1-v_1y_2+y_2v_2 </p>
+W(\alpha_2)=\frac{1}{2}K_{11}( \zeta-\alpha_2y_2)^2+\frac{1}{2}K_{22}\alpha_2^2+y_2K_{12}(\zeta-\alpha_2y_2)\alpha_2- (\zeta-\alpha_2y_2)y_1-\alpha_2+v_1 (\zeta-\alpha_2y_2)+y_2v_2\alpha_2</script><p>对<script type="math/tex">\alpha_2</script>求导数</p>
 <script type="math/tex; mode=display">
-令其为0，得到</script><p>\begin{aligned}(K<em>{11}+K</em>{22}-2K<em>{12})\alpha_2 = &amp;y_2(y_2-y_1+\zeta K</em>{11}-\zeta K<em>{12}+v_1-v_2) \ = &amp;y_2 \left[y_2-y_1+\zeta K</em>{11}-\zeta K<em>{12}+\left(g(x_1)-\sum</em>{j=1}^2 y<em>j\alpha_j K</em>{1j}-b\right)\right] \ &amp;-\left(g(x<em>2)-\sum</em>{j=1}^2 y<em>2 \alpha_j K</em>{2j}-b\right)\end{aligned}</p>
+\frac{\partial W}{\partial \alpha_2} = K_{11}\alpha_2 + K_{22}\alpha_2-2K_{12}\alpha_2-K_{11}\zeta y_2+K_{12}\zeta y_2+y_1y_2-1-v_1y_2+y_2v_2</script><p>令其为0，得到</p>
 <script type="math/tex; mode=display">
-将$$\zeta = \alpha_1^{old}y_1+\alpha_2^{old}y_2$$代入，得到:</script><p>\begin{aligned}(K<em>{11}+K</em>{22}-2K<em>{12})\alpha_2^{new,unc} &amp;= y_2((K</em>{11}+K<em>{22}-2K</em>{12})\alpha<em>2^{old}y_2+y_2-y_1+g(x_1)-g(x_2)) \ &amp;= (K</em>{11}+K<em>{22}-2K</em>{12})\alpha_2^{old}+y_2(E_1-E_2) \end{aligned}</p>
+\begin{aligned}(K_{11}+K_{22}-2K_{12})\alpha_2 = &y_2(y_2-y_1+\zeta K_{11}-\zeta K_{12}+v_1-v_2) \\ = &y_2 \left[y_2-y_1+\zeta K_{11}-\zeta K_{12}+\left(g(x_1)-\sum_{j=1}^2 y_j\alpha_j K_{1j}-b\right)\right] \\ &-\left(g(x_2)-\sum_{j=1}^2 y_2 \alpha_j K_{2j}-b\right)\end{aligned}</script><p>将<script type="math/tex">\zeta = \alpha_1^{old}y_1+\alpha_2^{old}y_2</script>代入，得到:</p>
 <script type="math/tex; mode=display">
-将$$\eta = K_{11}+K_{22}-2K_{12}$$代入，于是得到：</script><p>\alpha_2^{new,unc} = \alpha_2^{old} + \frac{y_2(E_1-E_2)}{\eta}</p>
+\begin{aligned}(K_{11}+K_{22}-2K_{12})\alpha_2^{new,unc} &= y_2((K_{11}+K_{22}-2K_{12})\alpha_2^{old}y_2+y_2-y_1+g(x_1)-g(x_2)) \\ &= (K_{11}+K_{22}-2K_{12})\alpha_2^{old}+y_2(E_1-E_2) \end{aligned}</script><p>将<script type="math/tex">\eta = K_{11}+K_{22}-2K_{12}</script>代入，于是得到：</p>
 <script type="math/tex; mode=display">
-要使其满足不等式约束必须将其限制在区间[L,H]内，从而得到$$\alpha_2^{new}$$的表达式(8.108)。由等式约束(8.102)得到$$\alpha_1^{new}$$的表达式(8.109)。于是得到最优化问题(8.101)~(8.103)的解($$\alpha_1^{new}$$，$$\alpha_2^{new}$$)。
-
-### 8.4.3 变量的选择方法
-
-SMO算法在每个子问题中选择两个变量优化，其中至少一个变量是违反KKT条件的。
-
-**1.第 1个变量的选择**
-
-**SMO称选择第1个变量的过程为外层循环**。外层循环在训练样本中选取违反KKT条件最严重的样本点，并将其对应的变量作为第1个变量。具体地，检验训练样本点$$(x_i,y_i)$$是否满足KKT条件，即</script><p>\alpha_i = 0 \Leftrightarrow y_ig(x_i) \ge 1 \ (8.111)</p>
+\alpha_2^{new,unc} = \alpha_2^{old} + \frac{y_2(E_1-E_2)}{\eta}</script><p>要使其满足不等式约束必须将其限制在区间[L,H]内，从而得到<script type="math/tex">\alpha_2^{new}</script>的表达式(8.108)。由等式约束(8.102)得到<script type="math/tex">\alpha_1^{new}</script>的表达式(8.109)。于是得到最优化问题(8.101)~(8.103)的解(<script type="math/tex">\alpha_1^{new}</script>，<script type="math/tex">\alpha_2^{new}</script>)。</p>
+<h3 id="8-4-3-变量的选择方法"><a href="#8-4-3-变量的选择方法" class="headerlink" title="8.4.3 变量的选择方法"></a>8.4.3 变量的选择方法</h3><p>SMO算法在每个子问题中选择两个变量优化，其中至少一个变量是违反KKT条件的。</p>
+<p><strong>1.第 1个变量的选择</strong></p>
+<p><strong>SMO称选择第1个变量的过程为外层循环</strong>。外层循环在训练样本中选取违反KKT条件最严重的样本点，并将其对应的变量作为第1个变量。具体地，检验训练样本点<script type="math/tex">(x_i,y_i)</script>是否满足KKT条件，即</p>
 <script type="math/tex; mode=display">
-</script><p>0 &lt; \alpha_i &lt; C \Leftrightarrow y_ig(x_i) = 1 \ (8.112)</p>
+\alpha_i = 0 \Leftrightarrow y_ig(x_i) \ge 1 \ (8.111)</script><script type="math/tex; mode=display">
+0 < \alpha_i < C \Leftrightarrow y_ig(x_i) = 1 \ (8.112)</script><script type="math/tex; mode=display">
+\alpha_i = C \Leftrightarrow y_ig(x_i) \le 1 \ (8.113)</script><p>其中，<script type="math/tex">g(x_i)=\sum_{j=1}^N \alpha_jy_jK(x_i,x_j)+b</script>。</p>
+<p><strong>该检验是在<script type="math/tex">\varepsilon</script>指定阈值范围内进行的</strong>。在检验过程中，外层循环首先遍历所有满足条件<script type="math/tex">0<\alpha_i<C</script>的样本点，<strong>即在间隔边界上的支持向量点</strong>，检验它们是否满足KKT条件。如果这些样本点都满足KKT条件，那么遍历整个训练集，检验它们是否满足KKT条件。</p>
+<p><strong>2.第2个变量的选择</strong></p>
+<p><strong>SMO称选择第2个变量的过程为内层循环</strong>。假设在外层循环中已经找到第1个变量<script type="math/tex">\alpha_1</script>，现在要在内层循环中找第2个变量<script type="math/tex">\alpha_2</script>。<strong>第2个变量选择的标准是希望能使<script type="math/tex">\alpha_2</script>有足够大的变化</strong>。</p>
+<p>由式(8.106)和式(8.108)可知，<script type="math/tex">\alpha_2^{new}</script>是依赖于<script type="math/tex">|E_1-E_2|</script>的。<strong>一种简单做法是选择<script type="math/tex">\alpha_2</script>，使其对应的<script type="math/tex">|E_1-E_2|</script>最大</strong>。(因为<script type="math/tex">\alpha_1</script>已定，<script type="math/tex">E_1</script>也确定了。如果<script type="math/tex">E_1</script>是正的，那么选择最小的<script type="math/tex">E_i</script>作为<script type="math/tex">E_2</script>;如果<script type="math/tex">E_1</script>是负的，那么选择最大的<script type="math/tex">E_i</script>作为<script type="math/tex">E_2</script>)。<strong>为节省时间，把所有<script type="math/tex">E_i</script>保存到一个列表中</strong>。</p>
+<p>在特殊情况下，<strong>如果内层循环通过以上方法选择的<script type="math/tex">\alpha_2</script>不能使目标函数有足够的下降，那么<u>采用以下启发式规则</u>继续选择<script type="math/tex">\alpha_2</script></strong>。</p>
+<p>启发式规则如下所示：</p>
+<ol>
+<li>遍历在间隔边界上的支持向量点，依次将其对应的变量作为<script type="math/tex">\alpha_2</script>使用，直到目标函数有足够的下降(使用指定阈值<script type="math/tex">\varepsilon</script>来标识)。</li>
+<li>若找不到合适的<script type="math/tex">\alpha_2</script>，那么遍历训练数据集</li>
+<li>若仍找不到合适的<script type="math/tex">\alpha_2</script>，则放弃第1个<script type="math/tex">\alpha_1</script>，再通过外层循环寻求另外的<script type="math/tex">\alpha_1</script>。</li>
+</ol>
+<p><strong>3.计算阈值b和差值<script type="math/tex">E_i</script></strong></p>
+<p><strong>在每次完成两个变量的优化后，都要重新计算阈值b</strong>。当<script type="math/tex">0 < \alpha_1^{new} <C</script>时，由KKT条件(8.112)可知：</p>
 <script type="math/tex; mode=display">
-</script><p>\alpha_i = C \Leftrightarrow y_ig(x_i) \le 1 \ (8.113)</p>
+\sum_{i=1}^N \alpha_i y_i K_{i1}+b = y_1</script><p>于是，</p>
 <script type="math/tex; mode=display">
-
-其中，$$g(x_i)=\sum_{j=1}^N \alpha_jy_jK(x_i,x_j)+b$$。
-
-**该检验是在$$\varepsilon$$指定阈值范围内进行的**。在检验过程中，外层循环首先遍历所有满足条件$$0<\alpha_i<C$$的样本点，**即在间隔边界上的支持向量点**，检验它们是否满足KKT条件。如果这些样本点都满足KKT条件，那么遍历整个训练集，检验它们是否满足KKT条件。
-
-**2.第2个变量的选择**
-
-**SMO称选择第2个变量的过程为内层循环**。假设在外层循环中已经找到第1个变量$$\alpha_1$$，现在要在内层循环中找第2个变量$$\alpha_2$$。**第2个变量选择的标准是希望能使$$\alpha_2$$有足够大的变化**。
-
-由式(8.106)和式(8.108)可知，$$\alpha_2^{new}$$是依赖于$$|E_1-E_2|$$的。**一种简单做法是选择$$\alpha_2$$，使其对应的$$|E_1-E_2|$$最大**。(因为$$\alpha_1$$已定，$$E_1$$也确定了。如果$$E_1$$是正的，那么选择最小的$$E_i$$作为$$E_2$$;如果$$E_1$$是负的，那么选择最大的$$E_i$$作为$$E_2$$)。**为节省时间，把所有$$E_i$$保存到一个列表中**。
-
-在特殊情况下，**如果内层循环通过以上方法选择的$$\alpha_2$$不能使目标函数有足够的下降，那么<u>采用以下启发式规则</u>继续选择$$\alpha_2$$**。
-
-启发式规则如下所示：
-
-1. 遍历在间隔边界上的支持向量点，依次将其对应的变量作为$$\alpha_2$$使用，直到目标函数有足够的下降(使用指定阈值$$\varepsilon$$来标识)。
-2. 若找不到合适的$$\alpha_2$$，那么遍历训练数据集
-3. 若仍找不到合适的$$\alpha_2$$，则放弃第1个$$\alpha_1$$，再通过外层循环寻求另外的$$\alpha_1$$。
-
-**3.计算阈值b和差值$$E_i$$**
-
-**在每次完成两个变量的优化后，都要重新计算阈值b**。当$$0 < \alpha_1^{new} <C$$时，由KKT条件(8.112)可知：</script><p>\sum<em>{i=1}^N \alpha_i y_i K</em>{i1}+b = y_1</p>
+b_1^{new} = y_1 - \sum_{i=3}^N \alpha_i y_i K_{i1}-\alpha_1^{new}y_1K_{11}-\alpha_2^{new}y_2 K_{21} \ (8.114)</script><p>由<script type="math/tex">E_1</script>的定义式(8.105)有</p>
 <script type="math/tex; mode=display">
-于是，</script><p>b<em>1^{new} = y_1 - \sum</em>{i=3}^N \alpha<em>i y_i K</em>{i1}-\alpha<em>1^{new}y_1K</em>{11}-\alpha<em>2^{new}y_2 K</em>{21} \ (8.114)</p>
+E_1 = \sum_{i=3}^N \alpha_i y_i K_{i1} + \alpha_1^{old}y_1K_{11}+\alpha_2^{old}y_2K_{21}+b^{old}-y_1</script><p>式(8.114)的前两项可写成：</p>
 <script type="math/tex; mode=display">
-由$$E_1$$的定义式(8.105)有</script><p>E<em>1 = \sum</em>{i=3}^N \alpha<em>i y_i K</em>{i1} + \alpha<em>1^{old}y_1K</em>{11}+\alpha<em>2^{old}y_2K</em>{21}+b^{old}-y_1</p>
+y_1 - \sum_{i=3}^N \alpha_i y_i K_{i1} = -E_1+\alpha_1^{old}y_1K_{11}+\alpha_2^{old}y_2K_{21}+b^{old}</script><p>代入式(8.114)，可得：</p>
 <script type="math/tex; mode=display">
-式(8.114)的前两项可写成：</script><p>y<em>1 - \sum</em>{i=3}^N \alpha<em>i y_i K</em>{i1} = -E<em>1+\alpha_1^{old}y_1K</em>{11}+\alpha<em>2^{old}y_2K</em>{21}+b^{old}</p>
+b_1^{new} = -E_1-y_1K_{11}(\alpha_1^{new}-\alpha_1^{old})-y_2K_{21}(\alpha_2^{new}-\alpha_2^{old})+b^{old} \ (8.115)</script><p>同样，如果<script type="math/tex">0 < \alpha_2^{new}<C</script>，那么，</p>
 <script type="math/tex; mode=display">
-代入式(8.114)，可得：</script><p>b<em>1^{new} = -E_1-y_1K</em>{11}(\alpha<em>1^{new}-\alpha_1^{old})-y_2K</em>{21}(\alpha_2^{new}-\alpha_2^{old})+b^{old} \ (8.115)</p>
-<script type="math/tex; mode=display">
-同样，如果$$0 < \alpha_2^{new}<C$$，那么，</script><p>b<em>2^{new} = -E_2-y_1K</em>{12}(\alpha<em>1^{new}-\alpha_1^{old})-y_2K</em>{22}(\alpha_2^{new}-\alpha_2^{old})+b^{old} \ (8.116) </p>
-<script type="math/tex; mode=display">
-如果$$\alpha_1^{new}$$，$$\alpha_2^{new}$$同时满足条件$$0<\alpha_i^{new}<C$$，i=1,2，那么$$b_1^{new}=b_2^{new}$$。
-
-如果$$\alpha_1^{new}$$，$$\alpha_2^{new}$$是0或者C，那么$$b_1^{new}$$和$$b_2^{new}$$以及它们之间的数都是符合KKT条件的阈值，这时选择他们的中点作为$$b^{new}$$。
-
-**在每次完成两个变量的优化之后，还必须更新对应的$$E_i$$值，并将它们保存在列表中**。
-
-$$E_i$$值的更新要用到$$b^{new}$$值，以及所有支持向量对应的$$\alpha_j$$：</script><p>E<em>i^{new} = \sum</em>{S} y_j \alpha_j K(x_i,x_j)+b^{new} - y_i \ (8.117)</p>
+b_2^{new} = -E_2-y_1K_{12}(\alpha_1^{new}-\alpha_1^{old})-y_2K_{22}(\alpha_2^{new}-\alpha_2^{old})+b^{old} \ (8.116)</script><p>如果<script type="math/tex">\alpha_1^{new}</script>，<script type="math/tex">\alpha_2^{new}</script>同时满足条件<script type="math/tex">0<\alpha_i^{new}<C</script>，i=1,2，那么<script type="math/tex">b_1^{new}=b_2^{new}</script>。</p>
+<p>如果<script type="math/tex">\alpha_1^{new}</script>，<script type="math/tex">\alpha_2^{new}</script>是0或者C，那么<script type="math/tex">b_1^{new}</script>和<script type="math/tex">b_2^{new}</script>以及它们之间的数都是符合KKT条件的阈值，这时选择他们的中点作为<script type="math/tex">b^{new}</script>。</p>
+<p><strong>在每次完成两个变量的优化之后，还必须更新对应的<script type="math/tex">E_i</script>值，并将它们保存在列表中</strong>。</p>
+<script type="math/tex; mode=display">E_i$$值的更新要用到$$b^{new}$$值，以及所有支持向量对应的$$\alpha_j$$：</script><p>E<em>i^{new} = \sum</em>{S} y_j \alpha_j K(x_i,x_j)+b^{new} - y_i \ (8.117)</p>
 <script type="math/tex; mode=display">
 其中,S是所有支持向量$$x_j$$的集合。
 
@@ -833,7 +811,7 @@ g(x_i) \sum_{j=1}^N \alpha_j y_j K(x_j,x_i)+b</script><p>则转步骤4；否则�
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#8-3-非线性支持向量机与核函数"><span class="nav-number">1.</span> <span class="nav-text">8.3 非线性支持向量机与核函数</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#8-3-1-核技巧"><span class="nav-number">1.1.</span> <span class="nav-text">8.3.1 核技巧</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#8-3-2-正定核"><span class="nav-number">1.2.</span> <span class="nav-text">8.3.2 正定核</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#8-3-3-常用核函数"><span class="nav-number">1.3.</span> <span class="nav-text">8.3.3 常用核函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#8-3-4-非线性支持向量分类机"><span class="nav-number">1.4.</span> <span class="nav-text">8.3.4 非线性支持向量分类机</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#8-4-序列最小最优化算法"><span class="nav-number">2.</span> <span class="nav-text">8.4 序列最小最优化算法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#8-4-1两个变量二次规划的求解方法"><span class="nav-number">2.1.</span> <span class="nav-text">8.4.1两个变量二次规划的求解方法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#8-4-2-分析约束条件"><span class="nav-number">2.2.</span> <span class="nav-text">8.4.2 分析约束条件</span></a></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#8-3-非线性支持向量机与核函数"><span class="nav-number">1.</span> <span class="nav-text">8.3 非线性支持向量机与核函数</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#8-3-1-核技巧"><span class="nav-number">1.1.</span> <span class="nav-text">8.3.1 核技巧</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#8-3-2-正定核"><span class="nav-number">1.2.</span> <span class="nav-text">8.3.2 正定核</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#8-3-3-常用核函数"><span class="nav-number">1.3.</span> <span class="nav-text">8.3.3 常用核函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#8-3-4-非线性支持向量分类机"><span class="nav-number">1.4.</span> <span class="nav-text">8.3.4 非线性支持向量分类机</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#8-4-序列最小最优化算法"><span class="nav-number">2.</span> <span class="nav-text">8.4 序列最小最优化算法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#8-4-1两个变量二次规划的求解方法"><span class="nav-number">2.1.</span> <span class="nav-text">8.4.1两个变量二次规划的求解方法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#8-4-2-分析约束条件"><span class="nav-number">2.2.</span> <span class="nav-text">8.4.2 分析约束条件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#8-4-3-变量的选择方法"><span class="nav-number">2.3.</span> <span class="nav-text">8.4.3 变量的选择方法</span></a></li></ol></li></ol></div>
             
 
           </div>
