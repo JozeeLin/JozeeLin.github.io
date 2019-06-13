@@ -89,7 +89,7 @@
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="http://yoursite.com/2019/06/13/支持向量机part2/image/ch08-4.png">
 <meta property="og:image" content="http://yoursite.com/2019/06/13/支持向量机part2/image/ch08-5.png">
-<meta property="og:updated_time" content="2019-06-13T11:49:51.738Z">
+<meta property="og:updated_time" content="2019-06-13T11:52:13.504Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="支持向量机part2">
 <meta name="twitter:description" content="8.3 非线性支持向量机与核函数非线性数据集则使用非线性支持向量机，其主要特点是利用核技巧(kernel trick)。为此，先要介绍核技巧。 8.3.1 核技巧 非线性分类问题 非线性分类问题是指通过利用非线性模型才能很好地进行分类的问题。 如下图所示：  一般来说，对给定的一个训练数据集T = \{(x_1,y_1),(x_2,y_2),...,(x_N,y_N)\}，其中，实例x_i属于输入">
@@ -602,18 +602,18 @@ W(\alpha_2)=\frac{1}{2}K_{11}( \zeta-\alpha_2y_2)^2+\frac{1}{2}K_{22}\alpha_2^2+
 <script type="math/tex; mode=display">
 \sum_{i=1}^N \alpha_i y_i K_{i1}+b = y_1</script><p>于是，</p>
 <script type="math/tex; mode=display">
-b_1^{new} = y_1 - \sum_{i=3}^N \alpha_i y_i K_{i1}-\alpha_1^{new}y_1K_{11}-\alpha_2^{new}y_2 K_{21} \ (8.114)</script><p>由<script type="math/tex">E_1</script>的定义式(8.105)有</p>
+b_1^{new} = y_1 - \sum_{i=3}^N \alpha_i y_i K_{i1}-\alpha_1^{new}y_1K_{11}-\alpha_2^{new}y_2 K_{21} \tag{8.114}</script><p>由<script type="math/tex">E_1</script>的定义式(8.105)有</p>
 <script type="math/tex; mode=display">
 E_1 = \sum_{i=3}^N \alpha_i y_i K_{i1} + \alpha_1^{old}y_1K_{11}+\alpha_2^{old}y_2K_{21}+b^{old}-y_1</script><p>式(8.114)的前两项可写成：</p>
 <script type="math/tex; mode=display">
 y_1 - \sum_{i=3}^N \alpha_i y_i K_{i1} = -E_1+\alpha_1^{old}y_1K_{11}+\alpha_2^{old}y_2K_{21}+b^{old}</script><p>代入式(8.114)，可得：</p>
 <script type="math/tex; mode=display">
-b_1^{new} = -E_1-y_1K_{11}(\alpha_1^{new}-\alpha_1^{old})-y_2K_{21}(\alpha_2^{new}-\alpha_2^{old})+b^{old} \ (8.115)</script><p>同样，如果<script type="math/tex">0 < \alpha_2^{new}<C</script>，那么，</p>
+b_1^{new} = -E_1-y_1K_{11}(\alpha_1^{new}-\alpha_1^{old})-y_2K_{21}(\alpha_2^{new}-\alpha_2^{old})+b^{old} \tag{8.115}</script><p>同样，如果<script type="math/tex">0 < \alpha_2^{new}<C</script>，那么，</p>
 <script type="math/tex; mode=display">
-b_2^{new} = -E_2-y_1K_{12}(\alpha_1^{new}-\alpha_1^{old})-y_2K_{22}(\alpha_2^{new}-\alpha_2^{old})+b^{old} \ (8.116)</script><p>如果<script type="math/tex">\alpha_1^{new}</script>，<script type="math/tex">\alpha_2^{new}</script>同时满足条件<script type="math/tex">0<\alpha_i^{new}<C</script>，i=1,2，那么<script type="math/tex">b_1^{new}=b_2^{new}</script>。</p>
+b_2^{new} = -E_2-y_1K_{12}(\alpha_1^{new}-\alpha_1^{old})-y_2K_{22}(\alpha_2^{new}-\alpha_2^{old})+b^{old} \tag{8.116}</script><p>如果<script type="math/tex">\alpha_1^{new}</script>，<script type="math/tex">\alpha_2^{new}</script>同时满足条件<script type="math/tex">0<\alpha_i^{new}<C</script>，i=1,2，那么<script type="math/tex">b_1^{new}=b_2^{new}</script>。</p>
 <p>如果<script type="math/tex">\alpha_1^{new}</script>，<script type="math/tex">\alpha_2^{new}</script>是0或者C，那么<script type="math/tex">b_1^{new}</script>和<script type="math/tex">b_2^{new}</script>以及它们之间的数都是符合KKT条件的阈值，这时选择他们的中点作为<script type="math/tex">b^{new}</script>。</p>
 <p><strong>在每次完成两个变量的优化之后，还必须更新对应的<script type="math/tex">E_i</script>值，并将它们保存在列表中</strong>。</p>
-<script type="math/tex; mode=display">E_i$$值的更新要用到$$b^{new}$$值，以及所有支持向量对应的$$\alpha_j$$：</script><p>E<em>i^{new} = \sum</em>{S} y_j \alpha_j K(x_i,x_j)+b^{new} - y_i \ (8.117)</p>
+<script type="math/tex; mode=display">E_i$$值的更新要用到$$b^{new}$$值，以及所有支持向量对应的$$\alpha_j$$：</script><p>E<em>i^{new} = \sum</em>{S} y_j \alpha_j K(x_i,x_j)+b^{new} - y_i \tag{8.117}</p>
 <script type="math/tex; mode=display">
 
 
