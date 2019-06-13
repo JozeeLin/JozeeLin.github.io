@@ -68,7 +68,7 @@
 
 
 
-  <meta name="keywords" content="判别模型,分类模型,">
+  <meta name="keywords" content="分类模型,判别模型,">
 
 
 
@@ -80,7 +80,7 @@
 
 
 <meta name="description" content="支持向量机(support vector machines,SVM)是一种二类分类模型。它的基本模型是定义在特征空间上的间隔最大的线性分类器(间隔最大使它有别于感知机)。 核技巧使得SVM称为一个非线性分类器。 学习策略是间隔最大化。通过形式化为一个求解凸二次规划的问题。等价于正则化的合页损失函数的最小化问题。 总而言之，支持向量机的学习算法是求解凸二次规划的最优化算法。 支持向量机学习算法包含构">
-<meta name="keywords" content="判别模型,分类模型">
+<meta name="keywords" content="分类模型,判别模型">
 <meta property="og:type" content="article">
 <meta property="og:title" content="支持向量机part1">
 <meta property="og:url" content="http://yoursite.com/2019/06/13/支持向量机part1/index.html">
@@ -90,7 +90,7 @@
 <meta property="og:image" content="http://yoursite.com/2019/06/13/支持向量机part1/image/ch08-1.png">
 <meta property="og:image" content="http://yoursite.com/2019/06/13/支持向量机part1/image/ch08-2.png">
 <meta property="og:image" content="http://yoursite.com/2019/06/13/支持向量机part1/image/ch08-3.png">
-<meta property="og:updated_time" content="2019-06-13T11:52:29.295Z">
+<meta property="og:updated_time" content="2019-06-13T11:59:41.765Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="支持向量机part1">
 <meta name="twitter:description" content="支持向量机(support vector machines,SVM)是一种二类分类模型。它的基本模型是定义在特征空间上的间隔最大的线性分类器(间隔最大使它有别于感知机)。 核技巧使得SVM称为一个非线性分类器。 学习策略是间隔最大化。通过形式化为一个求解凸二次规划的问题。等价于正则化的合页损失函数的最小化问题。 总而言之，支持向量机的学习算法是求解凸二次规划的最优化算法。 支持向量机学习算法包含构">
@@ -454,29 +454,29 @@ c \le \|w\| \le \frac{1}{2}\|w_1^*\|+\frac{1}{2}\|w_2^*\|=c</script><blockquote>
 <p>分解：</p>
 <script type="math/tex; mode=display">c\le \|w\|$$ 是因为目标函数求得得解为$$\min \|w\|$$，所以对于其他非最优解，其二范数必然大于c。
 
-
-
 根据w的定义，可以得到$$\|w\| \le \frac{1}{2}\|w_1^*\|+\frac{1}{2}\|w_2^*\|</script></blockquote>
-<p>上式表明，式中的不等号可变为等号，即<script type="math/tex">\|w\| = \frac{1}{2}\|w_1^*\|+\frac{1}{2}\|w_2^*\| \ (0)</script>，由式(0)以及w取值表达式，可以得到<script type="math/tex">w_1^*.w_2^*=\|w_1^*\|\|w_2^*\|</script>，从而有<script type="math/tex">w_1^* = \lambda w_2^*</script>(两个向量共线,模相等，因此<script type="math/tex">\lambda=\pm 1</script>)，则有以下两种情况:</p>
+</li>
+</ol>
+<p>   上式表明，式中的不等号可变为等号，即<script type="math/tex">\|w\| = \frac{1}{2}\|w_1^*\|+\frac{1}{2}\|w_2^*\| \ (0)</script>，由式(0)以及w取值表达式，可以得到<script type="math/tex">w_1^*.w_2^*=\|w_1^*\|\|w_2^*\|</script>，从而有<script type="math/tex">w_1^* = \lambda w_2^*</script>(两个向量共线,模相等，因此<script type="math/tex">\lambda=\pm 1</script>)，则有以下两种情况:</p>
 <ol>
 <li><p><script type="math/tex">\lambda=-1</script>,则w=0，而(0,b)不是问题(8.13)(8.14)的可行解。</p>
 </li>
-<li><script type="math/tex; mode=display">\lambda=1$$,则$$w_1^*=w_2^*</script><p>w的唯一性得证。</p>
-</li>
+<li><script type="math/tex; mode=display">\lambda=1$$,则$$w_1^*=w_2^*</script></li>
 </ol>
-<p>接下来，证明b的唯一性:</p>
-<p>设<script type="math/tex">x_1^{'}</script>和<script type="math/tex">x_2^{'}</script>是集合<script type="math/tex">\{x_i|y_i=+1\}</script>中分别对应于<script type="math/tex">(w^*,b_1^*)</script>和<script type="math/tex">(w^*,b_2^*)</script>使得问题的<strong>不等式等号成立的点</strong>。<script type="math/tex">x^{''}_1</script>和<script type="math/tex">x_2^{''}</script>是集合<script type="math/tex">\{x_i|y_i=-1\}</script>中分别对应于<script type="math/tex">(w^*,b_1^*)</script>和<script type="math/tex">(w^*,b_2^*)</script>使得问题的<strong>不等式等号成立的点</strong>。</p>
-<p>由<script type="math/tex">b_1^*=-\frac{1}{2}(w^*.x_1^{'}+w^*.x_1^{''})</script>，<script type="math/tex">b_2^*=-\frac{1}{2}(w^*.x_2^{'}+w^*.x_2^{''})</script>，得</p>
+<p>   w的唯一性得证。</p>
+<p>   接下来，证明b的唯一性:</p>
+<p>   设<script type="math/tex">x_1^{'}</script>和<script type="math/tex">x_2^{'}</script>是集合<script type="math/tex">\{x_i|y_i=+1\}</script>中分别对应于<script type="math/tex">(w^*,b_1^*)</script>和<script type="math/tex">(w^*,b_2^*)</script>使得问题的<strong>不等式等号成立的点</strong>。<script type="math/tex">x^{''}_1</script>和<script type="math/tex">x_2^{''}</script>是集合<script type="math/tex">\{x_i|y_i=-1\}</script>中分别对应于<script type="math/tex">(w^*,b_1^*)</script>和<script type="math/tex">(w^*,b_2^*)</script>使得问题的<strong>不等式等号成立的点</strong>。</p>
+<p>   由<script type="math/tex">b_1^*=-\frac{1}{2}(w^*.x_1^{'}+w^*.x_1^{''})</script>，<script type="math/tex">b_2^*=-\frac{1}{2}(w^*.x_2^{'}+w^*.x_2^{''})</script>，得</p>
 <script type="math/tex; mode=display">
-b_1^*-b_2^* = -\frac{1}{2}[w^*.(x_1^{'}-x_2^{'})+w^*.(x_1^{''}-x_2^{''})]</script><p>又因为:</p>
+   b_1^*-b_2^* = -\frac{1}{2}[w^*.(x_1^{'}-x_2^{'})+w^*.(x_1^{''}-x_2^{''})]</script><p>   又因为:</p>
 <script type="math/tex; mode=display">
-w^*.x_2^{'}+b_1^* \ge 1=w^*.x_1^{'}+b_1^*</script><script type="math/tex; mode=display">
-w^*.x_1^{'}+b_2^* \ge 1 = w^*.x_2^{'}+b_2^*</script><p>所以，<script type="math/tex">w^*.(x_1^{'}-x_2^{'})=0</script>。同理有<script type="math/tex">w^{*}.(x_1^{''}-x_2^{''})=0</script>。因此，</p>
+   w^*.x_2^{'}+b_1^* \ge 1=w^*.x_1^{'}+b_1^*</script><script type="math/tex; mode=display">
+   w^*.x_1^{'}+b_2^* \ge 1 = w^*.x_2^{'}+b_2^*</script><p>   所以，<script type="math/tex">w^*.(x_1^{'}-x_2^{'})=0</script>。同理有<script type="math/tex">w^{*}.(x_1^{''}-x_2^{''})=0</script>。因此，</p>
 <script type="math/tex; mode=display">
-b_1^*-b_2^* = 0</script><p>由<script type="math/tex">w_1^*=w_2^*</script>和<script type="math/tex">b_1^*=b_2^*</script>可知，两个最优解<script type="math/tex">(w_1^*,b_1^*)</script>和<script type="math/tex">(w_2^*,b_2^*)</script>是相同的，解的唯一性得证。</p>
-<p><strong>(3)分离超平面能将训练数据集集中的两类点完全正确地分开</strong></p>
-<p>由解满足问题的约束条件即可得知。</p>
-</li>
+   b_1^*-b_2^* = 0</script><p>   由<script type="math/tex">w_1^*=w_2^*</script>和<script type="math/tex">b_1^*=b_2^*</script>可知，两个最优解<script type="math/tex">(w_1^*,b_1^*)</script>和<script type="math/tex">(w_2^*,b_2^*)</script>是相同的，解的唯一性得证。</p>
+<p>   <strong>(3)分离超平面能将训练数据集集中的两类点完全正确地分开</strong></p>
+<p>   由解满足问题的约束条件即可得知。</p>
+<ol>
 <li><p><strong>支持向量和间隔边界</strong></p>
 <p><strong>定义(支持向量)</strong>支持向量是使约束条件式(8.14)等号成立的点，即</p>
 <script type="math/tex; mode=display">
@@ -733,9 +733,9 @@ L(y(w.x+b)) = [1-y(w.x+b)]_{+} \ (8.58)</script><p>称为合页损失函数。�
       
         <div class="post-tags">
           
-            <a href="/tags/判别模型/" rel="tag"># 判别模型</a>
-          
             <a href="/tags/分类模型/" rel="tag"># 分类模型</a>
+          
+            <a href="/tags/判别模型/" rel="tag"># 判别模型</a>
           
         </div>
       
