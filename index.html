@@ -404,53 +404,57 @@ f(x) = \mathrm{sign}(w^{*}.x+b^{*}) \ (8.2)</script><p>称为线性可分支持�
 <ol>
 <li><p><strong>最大间隔分离超平面</strong></p>
 <p>求最大间隔分离超平面问题可以表示为下面的约束最优化问题:</p>
-<script type="math/tex; mode=display">\max_{w,b}     \gamma$$     (8.9)
+<p><script type="math/tex">\max_{w,b}     \gamma</script>     (8.9)</p>
+<p><script type="math/tex">\mathrm{s.t.}           y_i\left(\frac{w}{\|w\|}.x_i+\frac{b}{\|w\|}\right) \ge \gamma</script>，i=1,2,…,N   (8.10)</p>
+</li>
+</ol>
+<p>   根据几何间隔与函数间隔的关系，上面的约束最优化问题可以改写成一下形式:</p>
+<script type="math/tex; mode=display">\max_{w,b}     \frac{\hat{\gamma}}{\|w\|}$$     (8.11)
 
-s.t.           $$y_i\left(\frac{w}{\|w\|}.x_i+\frac{b}{\|w\|}\right) \ge \gamma$$，i=1,2,...,N   (8.10)
+   $$\mathrm{s.t.}           y_i(w.x_i+b)\ge \hat{\gamma}$$，i=1,2,...,N    (8.12)
 
-根据几何间隔与函数间隔的关系，上面的约束最优化问题可以改写成一下形式:
 
-$$\max_{w,b}     \frac{\hat{\gamma}}{\|w\|}$$     (8.11)
 
-s.t.            $$y_i(w.x_i+b)\ge \hat{\gamma}$$，i=1,2,...,N    (8.12)
+   事实上，假设将w和b按比例改变为$$\lambda w$$和$$\lambda b$$，这时函数间隔成为$$\lambda \hat{\gamma}$$，由此可以看出函数间隔的这一改变对上面最优化问题的不等式约束没有影响，对目标函数的优化也没有影响。**也就是说，$$\hat{\gamma}$$=1，也对不等式约束没有影响。同时，最大化$$\frac{1}{\|w\|}$$和最小化$$\frac{1}{2}\|w\|^2$$是等价的**。
 
-事实上，假设将w和b按比例改变为$$\lambda w$$和$$\lambda b$$，这时函数间隔成为$$\lambda \hat{\gamma}$$，由此可以看出函数间隔的这一改变对上面最优化问题的不等式约束没有影响，对目标函数的优化也没有影响。**也就是说，$$\hat{\gamma}$$=1，也对不等式约束没有影响。同时，最大化$$\frac{1}{\|w\|}$$和最小化$$\frac{1}{2}\|w\|^2$$是等价的**。
+   综上所述，可将上面的最优化问题进一步的调整成如下形式:
 
-综上所述，可将上面的最优化问题进一步的调整成如下形式:
+   $$\min_{w,b}     \frac{1}{2}\|w\|^2$$         (8.13)
 
-$$\min_{w,b}     \frac{1}{2}\|w\|^2$$         (8.13)
+   $$\mathrm{s.t.}           y_i(w.x_i+b)-1\ge 0$$，i=1,2,...,N    (8.14)
 
-s.t.           $$y_i(w.x_i+b)-1\ge 0$$，i=1,2,...,N    (8.14)
+   **这是一个凸二次规划问题**。
 
-**这是一个凸二次规划问题**。
+   > 凸优化问题是指约束最优化问题:
+   >
+   > $$\min_w     f(w)$$     (8.15)
+   >
+   > $$\mathrm{s.t.}         g_i(w) \le 0$$，i=1,2,...,K     (8.16)
+   >
+   > $$h_i(w)=0$$，i=1,2,...l       (8.17)
+   >
+   > 
+   >
+   > 其中，目标函数$$f(w)$$和约束函数$$g_i(w)$$都是$$R^n$$上的连续可微的凸函数，约束函数$$h_i(w)$$是$$R^n$$上的仿射函数。
+   >
+   > 当目标函数$$f(w)$$是二次函数且约束函数$$g_i(w)$$是仿射函数时，上述凸最优化问题成为凸二次规划问题。
 
-> 凸优化问题是指约束最优化问题:
->
-> $$\min_w     f(w)$$     (8.15)
->
-> s.t.         $$g_i(w) \le 0$$，i=1,2,...,K     (8.16)
->
-> $$h_i(w)=0$$，i=1,2,...l       (8.17)
->
-> 
->
-> 其中，目标函数$$f(w)$$和约束函数$$g_i(w)$$都是$$R^n$$上的连续可微的凸函数，约束函数$$h_i(w)$$是$$R^n$$上的仿射函数。
->
-> 当目标函数$$f(w)$$是二次函数且约束函数$$g_i(w)$$是仿射函数时，上述凸最优化问题成为凸二次规划问题。
+   **算法8.1(线性可分支持向量机学习算法——最大间隔法)**
 
-**算法8.1(线性可分支持向量机学习算法——最大间隔法)**
+   输入:线性可分训练数据集$$T=\{(x_1,y_1),(x_2,y_2),...,(x_N,y_N)\}$$，其中，$$x_i \in \mathcal{X}=R^n,y_i \in \mathcal{Y}=\{-1,+1\},i=1,2,...,N$$；
 
-输入:线性可分训练数据集$$T=\{(x_1,y_1),(x_2,y_2),...,(x_N,y_N)\}$$，其中，$$x_i \in \mathcal{X}=R^n,y_i \in \mathcal{Y}=\{-1,+1\},i=1,2,...,N$$；
+   输出:最大间隔分离超平面和分类决策函数。
 
-输出:最大间隔分离超平面和分类决策函数。
+   (1)构造并求解约束最优化问题:
 
-(1)构造并求解约束最优化问题:
+   $$\min_{w,b}     \frac{1}{2}\|w\|^2</script><script type="math/tex; mode=display">\mathrm{s.t.}            y_i(w.x_i+b)-1\ge 0$$，i=1,2,...,N
 
-$$\min_{w,b}     \frac{1}{2}\|w\|^2</script><p>s.t.            <script type="math/tex">y_i(w.x_i+b)-1\ge 0</script>，i=1,2,…,N</p>
-<p>求得最优解<script type="math/tex">w^*,b^*</script>。</p>
-<p>(2)由此得到分离超平面:</p>
-<script type="math/tex; mode=display">w^*.x+b^*=0</script><p>分类决策函数:</p>
-<script type="math/tex; mode=display">f(x) = \mathrm{sign}(w^*.x+b^*)</script></li>
+   求得最优解$$w^*,b^*$$。
+
+   (2)由此得到分离超平面:
+
+   $$w^*.x+b^*=0</script><p>   分类决策函数:</p>
+<script type="math/tex; mode=display">f(x) = \mathrm{sign}(w^*.x+b^*)</script><ol>
 <li><p><strong>最大间隔分离超平面的存在唯一性</strong></p>
 <p><strong>定理8.1(最大间隔分离超平面的存在唯一性)</strong>若训练数据集T线性可分，则可将训练数据集中的样本点完全正确分开的最大间隔分离超平面存在且唯一。</p>
 <p><strong>证明:</strong></p>
