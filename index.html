@@ -557,6 +557,8 @@ E_i = g(x_i)-y_i = \left(\sum_{j=1}^N \alpha_j y_j K(x_j,x_i)+b\right) - y_i \ ,
 
 经剪辑后$$\alpha_2$$的解是</script><p>\alpha_2^{new} = \left{\begin{aligned}&amp;H, &amp; \alpha_2^{new,unc} &gt; H \ &amp;\alpha_2^{new,unc},&amp;L\le \alpha_2^{new,unc} \le H \ &amp;L,&amp;\alpha_2^{new,unc}&lt;L\end{aligned} \right . \ (8.108)</p>
 <script type="math/tex; mode=display">
+
+
 由$$\alpha_2^{new}$$求得$$\alpha_1^{new}$$是</script><p>\alpha_1^{new} = \alpha_1^{old} + y_1y_2(\alpha_2^{old}-\alpha_2^{new}) \ (8.109)</p>
 <script type="math/tex; mode=display">
 **证明:**
@@ -630,7 +632,7 @@ SMO算法在每个子问题中选择两个变量优化，其中至少一个变�
 
 **在每次完成两个变量的优化之后，还必须更新对应的$$E_i$$值，并将它们保存在列表中**。
 
-$$E_i$$值的更新要用到$$b^{new}$$值，以及所有支持向量对应的$$\alpha_j$$：</script><p>E<em>i^{new} = \sum</em>{S} y_j \alpha_j K(x_i,x_j)+b^{new} - y_i \ (7117)</p>
+$$E_i$$值的更新要用到$$b^{new}$$值，以及所有支持向量对应的$$\alpha_j$$：</script><p>E<em>i^{new} = \sum</em>{S} y_j \alpha_j K(x_i,x_j)+b^{new} - y_i \ (8.117)</p>
 <script type="math/tex; mode=display">
 其中,S是所有支持向量$$x_j$$的集合。
 
