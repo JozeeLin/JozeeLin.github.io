@@ -89,7 +89,7 @@
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="http://yoursite.com/2019/06/13/支持向量机part2/image/ch08-4.png">
 <meta property="og:image" content="http://yoursite.com/2019/06/13/支持向量机part2/image/ch08-5.png">
-<meta property="og:updated_time" content="2019-06-13T11:47:42.638Z">
+<meta property="og:updated_time" content="2019-06-13T11:49:51.738Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="支持向量机part2">
 <meta name="twitter:description" content="8.3 非线性支持向量机与核函数非线性数据集则使用非线性支持向量机，其主要特点是利用核技巧(kernel trick)。为此，先要介绍核技巧。 8.3.1 核技巧 非线性分类问题 非线性分类问题是指通过利用非线性模型才能很好地进行分类的问题。 如下图所示：  一般来说，对给定的一个训练数据集T = \{(x_1,y_1),(x_2,y_2),...,(x_N,y_N)\}，其中，实例x_i属于输入">
@@ -615,6 +615,8 @@ b_2^{new} = -E_2-y_1K_{12}(\alpha_1^{new}-\alpha_1^{old})-y_2K_{22}(\alpha_2^{ne
 <p><strong>在每次完成两个变量的优化之后，还必须更新对应的<script type="math/tex">E_i</script>值，并将它们保存在列表中</strong>。</p>
 <script type="math/tex; mode=display">E_i$$值的更新要用到$$b^{new}$$值，以及所有支持向量对应的$$\alpha_j$$：</script><p>E<em>i^{new} = \sum</em>{S} y_j \alpha_j K(x_i,x_j)+b^{new} - y_i \ (8.117)</p>
 <script type="math/tex; mode=display">
+
+
 其中,S是所有支持向量$$x_j$$的集合。
 
 ### 8.4.4 SMO算法
@@ -632,12 +634,13 @@ b_2^{new} = -E_2-y_1K_{12}(\alpha_1^{new}-\alpha_1^{old})-y_2K_{22}(\alpha_2^{ne
 <script type="math/tex; mode=display">
 \sum_{i=1}^N \alpha_i y_i = 0</script><script type="math/tex; mode=display">
 0 \le \alpha_i \le C \ , i=1,2,...,N</script><script type="math/tex; mode=display">
-y_i \bullet g(x_i) = \left\{ \begin{aligned}&\ge1 , &\{x_i|\alpha_i=0\}\\&=1, &\{x_i|0<\alpha_i<C\}\\ &\le 1, &\{x_i|\alpha_i=C\}\end{aligned} \right.</script><p>其中，</p>
+y_i \bullet g(x_i) = \left\{ \begin{aligned}&\ge1 , &\{x_i|\alpha_i=0\}\\&=1, &\{x_i|0<\alpha_i<C\}\\ &\le 1, &\{x_i|\alpha_i=C\}\end{aligned} \right.</script></li>
+</ol>
+<p>   其中，</p>
 <script type="math/tex; mode=display">
-g(x_i) \sum_{j=1}^N \alpha_j y_j K(x_j,x_i)+b</script><p>则转步骤4；否则令k=k+1,转步骤2</p>
-</li>
-<li><p>取<script type="math/tex">\hat{\alpha}=\alpha^{k+1}</script>。</p>
-</li>
+   g(x_i) \sum_{j=1}^N \alpha_j y_j K(x_j,x_i)+b</script><p>   则转步骤4；否则令k=k+1,转步骤2</p>
+<ol>
+<li>取<script type="math/tex">\hat{\alpha}=\alpha^{k+1}</script>。</li>
 </ol>
 
       
