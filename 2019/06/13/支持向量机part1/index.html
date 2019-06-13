@@ -68,7 +68,7 @@
 
 
 
-  <meta name="keywords" content="Hexo, NexT">
+  <meta name="keywords" content="判别模型,分类模型,">
 
 
 
@@ -79,13 +79,22 @@
 
 
 
-<meta property="og:type" content="website">
-<meta property="og:title" content="Jozee&#39;s技术博客">
-<meta property="og:url" content="http://yoursite.com/index.html">
+<meta name="description" content="支持向量机(support vector machines,SVM)是一种二类分类模型。它的基本模型是定义在特征空间上的间隔最大的线性分类器(间隔最大使它有别于感知机)。 核技巧使得SVM称为一个非线性分类器。 学习策略是间隔最大化。通过形式化为一个求解凸二次规划的问题。等价于正则化的合页损失函数的最小化问题。 总而言之，支持向量机的学习算法是求解凸二次规划的最优化算法。 支持向量机学习算法包含构">
+<meta name="keywords" content="判别模型,分类模型">
+<meta property="og:type" content="article">
+<meta property="og:title" content="支持向量机part1">
+<meta property="og:url" content="http://yoursite.com/2019/06/13/支持向量机part1/index.html">
 <meta property="og:site_name" content="Jozee&#39;s技术博客">
+<meta property="og:description" content="支持向量机(support vector machines,SVM)是一种二类分类模型。它的基本模型是定义在特征空间上的间隔最大的线性分类器(间隔最大使它有别于感知机)。 核技巧使得SVM称为一个非线性分类器。 学习策略是间隔最大化。通过形式化为一个求解凸二次规划的问题。等价于正则化的合页损失函数的最小化问题。 总而言之，支持向量机的学习算法是求解凸二次规划的最优化算法。 支持向量机学习算法包含构">
 <meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://yoursite.com/Users/jozee/sideproject/ML/%E7%BB%9F%E8%AE%A1%E5%AD%A6%E4%B9%A0%E6%96%B9%E6%B3%95/image/ch08-1.png">
+<meta property="og:image" content="http://yoursite.com/Users/jozee/sideproject/ML/%E7%BB%9F%E8%AE%A1%E5%AD%A6%E4%B9%A0%E6%96%B9%E6%B3%95/image/ch08-2.png">
+<meta property="og:image" content="http://yoursite.com/Users/jozee/sideproject/ML/%E7%BB%9F%E8%AE%A1%E5%AD%A6%E4%B9%A0%E6%96%B9%E6%B3%95/image/ch08-3.png">
+<meta property="og:updated_time" content="2019-06-13T08:28:14.523Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Jozee&#39;s技术博客">
+<meta name="twitter:title" content="支持向量机part1">
+<meta name="twitter:description" content="支持向量机(support vector machines,SVM)是一种二类分类模型。它的基本模型是定义在特征空间上的间隔最大的线性分类器(间隔最大使它有别于感知机)。 核技巧使得SVM称为一个非线性分类器。 学习策略是间隔最大化。通过形式化为一个求解凸二次规划的问题。等价于正则化的合页损失函数的最小化问题。 总而言之，支持向量机的学习算法是求解凸二次规划的最优化算法。 支持向量机学习算法包含构">
+<meta name="twitter:image" content="http://yoursite.com/Users/jozee/sideproject/ML/%E7%BB%9F%E8%AE%A1%E5%AD%A6%E4%B9%A0%E6%96%B9%E6%B3%95/image/ch08-1.png">
 
 
 
@@ -115,13 +124,13 @@
 
 
 
-  <link rel="canonical" href="http://yoursite.com/">
+  <link rel="canonical" href="http://yoursite.com/2019/06/13/支持向量机part1/">
 
 
 
 
 
-  <title>Jozee's技术博客</title>
+  <title>支持向量机part1 | Jozee's技术博客</title>
   
 
 
@@ -140,8 +149,7 @@
     
   
 
-  <div class="container sidebar-position-left 
-  page-home">
+  <div class="container sidebar-position-left page-post-detail">
     <div class="headband"></div>
 
     <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
@@ -244,9 +252,9 @@
         <div class="content-wrap">
           <div id="content" class="content">
             
-  <section id="posts" class="posts-expand">
+
+  <div id="posts" class="posts-expand">
     
-      
 
   
 
@@ -276,9 +284,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2019/06/13/支持向量机part1/" itemprop="url">支持向量机part1</a></h1>
+          <h1 class="post-title" itemprop="name headline">支持向量机part1</h1>
         
 
         <div class="post-meta">
@@ -350,9 +356,7 @@
       
 
       
-        
-          
-            <p>支持向量机(support vector machines,SVM)是一种二类分类模型。它的基本模型是<strong>定义在特征空间上的间隔最大的线性分类器(间隔最大使它有别于感知机)</strong>。</p>
+        <p>支持向量机(support vector machines,SVM)是一种二类分类模型。它的基本模型是<strong>定义在特征空间上的间隔最大的线性分类器(间隔最大使它有别于感知机)</strong>。</p>
 <p>核技巧使得SVM称为一个非线性分类器。</p>
 <p><strong>学习策略是间隔最大化。</strong>通过形式化为一个<strong>求解凸二次规划的问题</strong>。<strong>等价于正则化的合页损失函数的最小化问题</strong>。</p>
 <p>总而言之，<strong>支持向量机的学习算法是求解凸二次规划的最优化算法</strong>。</p>
@@ -825,8 +829,6 @@ $$\min_{w,b} \sum_{i=1}^N [1-y_i(w.x_i+b)]_+ + \lambda \|w\|^2$$    (8.63)
 <li>C值小时，对误分类的惩罚减小</li>
 </ul>
 
-          
-        
       
     </div>
     
@@ -841,327 +843,38 @@ $$\min_{w,b} \sum_{i=1}^N [1-y_i(w.x_i+b)]_+ + \lambda \|w\|^2$$    (8.63)
 
     <footer class="post-footer">
       
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/06/13/感知机/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="jozee">
-      <meta itemprop="description" content>
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Jozee's技术博客">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2019/06/13/感知机/" itemprop="url">感知机</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-06-13T13:08:51+08:00">
-                2019-06-13
-              </time>
-            
-
-            
-
-            
-          </span>
-
+        <div class="post-tags">
           
-            <span class="post-category">
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/机器学习/" itemprop="url" rel="index">
-                    <span itemprop="name">机器学习</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
+            <a href="/tags/判别模型/" rel="tag"># 判别模型</a>
           
-
+            <a href="/tags/分类模型/" rel="tag"># 分类模型</a>
           
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
         </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p>感知机是<strong>二分类</strong>的<strong>线性分类模型</strong>。</p>
-<ul>
-<li><p>模型：<strong>感知机对应于</strong>将输入空间(特征空间)中的实例划分为正负两类的<strong>分离超平面</strong>，属于<strong>判别模型</strong>。</p>
-</li>
-<li><p>策略：基于误分类的损失函数</p>
-</li>
-<li>算法：利用梯度下降法对损失函数进行极小化。</li>
-</ul>
-<p>感知机学习算法分为<strong>原始形式</strong>和<strong>对偶形式</strong>。</p>
-<blockquote>
-<p>感知机于1957年Rosenblatt提出，<strong>是神经网络与支持向量机的基础</strong>。</p>
-</blockquote>
-<p>本章首先介绍<strong>感知机模型</strong>；然后叙述<strong>感知机的学习策略</strong>，特别是损失函数；最后介绍<strong>感知机学习算法</strong>，包括原始形式和对偶形式，并证明算法的收敛性。</p>
-<h2 id="2-1感知机模型"><a href="#2-1感知机模型" class="headerlink" title="2.1感知机模型"></a>2.1感知机模型</h2><p><strong>定义2.1(感知机)：</strong>假设输入空间(特征空间)是<script type="math/tex">\mathcal{X} \subseteq R^n</script>，输出空间是<script type="math/tex">\mathcal{Y} = \{-1,+1\}</script>。输入<script type="math/tex">x \in \mathcal{X}</script>表示实例的特征向量，对应于输入空间(特征空间)的点；输出<script type="math/tex">y \in \mathcal{Y}</script>表示实例的类别。由输入空间到输出空间的如下函数：</p>
-<script type="math/tex; mode=display">
-f(x) = \mathrm{sign}(w.x+b) \ (2.1)</script><p>称为感知机。其中，w和b为感知机模型参数，<script type="math/tex">w \in R^n</script>叫做权值(weight)或权值向量(weight vector)，<script type="math/tex">b\in R</script>叫做偏置(bias),w.x表示w和x的内积，sign是符号函数，即：</p>
-<script type="math/tex; mode=display">
-\mathrm{sign}(x) = \left\{\begin{aligned}&+1, x\ge 0\\ &-1, x<0 \end{aligned}\right. \ (2.2)</script><p>感知机模型的假设空间是定义在特征空间中的所有线性分类模型或线性分类器，即函数集合{f|f(x)=w.x+b}。</p>
-<h3 id="2-1-1感知机的几何意义"><a href="#2-1-1感知机的几何意义" class="headerlink" title="2.1.1感知机的几何意义"></a>2.1.1感知机的几何意义</h3><p>线性方程</p>
-<script type="math/tex; mode=display">
-w.x+b=0 \ (2.3)</script><p>对应于特征空间<script type="math/tex">R^n</script>中的一个超平面S，其中w是超平面的<strong>法向量</strong>，b是超平面的<strong>截距</strong>。这个超平面将特征空间划分为两个部分。位于两个部分的点(特征向量)分别被分为正、负两类。因此，超平面S称为分离超平面。</p>
-<p><img src="image/ch02-1.png" alt="ch02-1"></p>
-<h2 id="2-2感知机学习策略"><a href="#2-2感知机学习策略" class="headerlink" title="2.2感知机学习策略"></a>2.2感知机学习策略</h2><h3 id="2-2-1数据集的线性可分性"><a href="#2-2-1数据集的线性可分性" class="headerlink" title="2.2.1数据集的线性可分性"></a>2.2.1数据集的线性可分性</h3><p><strong>定义2.2(数据集的线性可分性)：</strong>给定一个数据集</p>
-<script type="math/tex; mode=display">
-T = \{(x_1,y_1),(x_2,y_2),...,(x_N,y_N)\}</script><p>其中，<script type="math/tex">x_i \in \mathcal{X}=R^n</script>,<script type="math/tex">y_i\in \mathcal{Y}=\{-1,+1\}</script>，i=1,2,…,N，如果存在某个超平面S：</p>
-<script type="math/tex; mode=display">
-w.x+b=0</script><p>能够将数据集的正实例点和负实例点完全正确的划分到超平面的两侧，即对所有<script type="math/tex">y_i=+1</script>的实例i，有<script type="math/tex">w.x_i+b>0</script>，对所有<script type="math/tex">y_i=-1</script>的实例i，有<script type="math/tex">w.x_i+b<0</script>。则称数据集T为线性可分数据集；否则，称数据集T线性不可分。</p>
-<h3 id="2-2-2感知机学习策略"><a href="#2-2-2感知机学习策略" class="headerlink" title="2.2.2感知机学习策略"></a>2.2.2感知机学习策略</h3><p>为了找出感知机模型对应的超平面，需要确定一个学习策略，即定义(经验)损失函数并将损失函数极小化。</p>
-<p>损失函数的一个自然选择是<strong>误分类点的总数</strong>。<strong>但是，这样的损失函数不是参数w，b的连续可导函数</strong>，不易优化。损失函数的另一个选择是<strong>误分类点到超平面S的总距离</strong>，<u>这是感知机所采用的</u>。</p>
-<p>首先，写出输入空间<script type="math/tex">R^n</script>中任一点<script type="math/tex">x_0</script>到超平面S的距离：</p>
-<script type="math/tex; mode=display">
-\frac{1}{\|w\|} |w.x_0+b|</script><p>这里，<script type="math/tex">\|w\|</script>是w的L2范数。</p>
-<p>其次，对于误分类的数据<script type="math/tex">(x_i,y_i)</script>来说，</p>
-<script type="math/tex; mode=display">
--y_i(w.x_i+b) > 0</script><p>成立。因为当<script type="math/tex">w.x_i+b>0</script>时，<script type="math/tex">y_i=-1</script>，而当<script type="math/tex">w.x_i+b<0</script>时，<script type="math/tex">y_i=+1</script>。因此，误分类点<script type="math/tex">x_i</script>到超平面S的距离是:</p>
-<script type="math/tex; mode=display">
--\frac{1}{\|w\|}y_i(w.x_i+b)</script><p>这样，假设超平面S的误分类点集合为M，那么所有误分类点到超平面S的总距离为:</p>
-<script type="math/tex; mode=display">
--\frac{1}{\|w\|}\sum_{x_i\in M}y_i(w.x_i+b)</script><p>不考虑$\frac{1}{|w|}$，那就得到感知机学习的损失函数。</p>
-<p>给定训练数据集</p>
-<script type="math/tex; mode=display">
-T = \{(x_1,y_1),(x_2,y_2),...,(x_N,y_N)\}</script><p>其中，<script type="math/tex">x_i \in \mathcal{X}=R^n</script>，<script type="math/tex">y_i \in \mathcal{Y}=\{-1,+1\}</script>，i=1,2,…,N。感知机sign(w.x+b)学习的损失函数定义为:</p>
-<script type="math/tex; mode=display">
-L(w,b) = -\sum_{x_i \in M}y_i(w.x_i+b) \ (2.4)</script><p>其中<strong>M为误分类的集合</strong>。这个损失函数就是感知机学习的<strong>经验风险系数</strong>。</p>
-<p>显然，损失函数L(w,b)是<strong>非负的</strong>。<strong>如果没有误分类点，损失函数值是0</strong>。而且，<strong>误分类点越少，误分类点离超平面越近，损失函数值就越小</strong>。</p>
-<blockquote>
-<p>一个特定的样本点的损失函数：在误分类时时参数w，b的线性函数，在正确分类时时0。因此，给定训练数据集T，损失函数L(w,b)是w，b的连续可导函数。</p>
-</blockquote>
-<p><strong>感知机学习的策略是在假设空间中选取使损失函数式(2.4)最小的模型参数w,b,即感知机模型</strong>。</p>
-<h2 id="2-3感知机学习算法"><a href="#2-3感知机学习算法" class="headerlink" title="2.3感知机学习算法"></a>2.3感知机学习算法</h2><p>最优化的方法是<strong>随机梯度下降法</strong>。本节叙述感知机学习的具体算法，包括原始形式和对偶形式，并证明在训练数据线性可分条件下感知机学习算法的<strong>收敛性</strong>。</p>
-<h3 id="2-3-1感知机学习算法的原始形式"><a href="#2-3-1感知机学习算法的原始形式" class="headerlink" title="2.3.1感知机学习算法的原始形式"></a>2.3.1感知机学习算法的原始形式</h3><p>给定一个训练数据集</p>
-<script type="math/tex; mode=display">
-T = \{(x_1,y_1),(x_2,y_2),...,(x_N,y_N)\}</script><p>其中，<script type="math/tex">x_i \in \mathcal{X}=R^n</script>，<script type="math/tex">y_i \in \mathcal{Y}=\{-1,+1\}</script>，i=1,2,…,N。求参数w，b，使其为一下损失函数极小化问题的解：</p>
-<script type="math/tex; mode=display">
-\min_{w,b} L(w,b) = -\sum_{x_i\in M}y_i(w.x_i+b) \ (2.5)</script><p>其中M为误分类点的集合。</p>
-<p>感知机学习算法是<strong>误分类驱动的</strong>。具体采用随机梯度下降法：</p>
-<p>首先，任意选取一个超平面<script type="math/tex">w_0,b_0</script>，然后用梯度下降法不断极小化目标函数(2.5)。极小化过程中不是一次使M中所有误分类点的梯度下降，而是一次随机选取一个误分类点使其梯度下降。</p>
-<p>假设误分类点集合M是固定的，那么损失函数L(w,b)的梯度由：</p>
-<script type="math/tex; mode=display">
-\nabla_wL(w,b)=-\sum_{x_i \in M}y_ix_i</script><script type="math/tex; mode=display">
-\nabla_b L(w,b) = -\sum_{x_i \in M}y_i</script><p>给出。</p>
-<p>随机选取一个误分类点<script type="math/tex">(x_i,y_i)</script>，对w，b进行更新:</p>
-<script type="math/tex; mode=display">
-w \leftarrow w+\eta y_ix_i \ (2.6)</script><script type="math/tex; mode=display">
-b \leftarrow b+\eta y_i \ (2.7)</script><p>式中<script type="math/tex">\eta(0<\eta \le 1)</script>是步长，也称为学习率(learning rate)。通过迭代可以<strong>期待</strong>损失函数L(w,b)不断减小，直到为0.</p>
-<p>综上所述，得到如下算法：</p>
-<p><strong>算法2.1(感知机学习算法的原始形式)</strong></p>
-<p>输入:训练数据集<script type="math/tex">T = \{(x_1,y_1),(x_2,y_2),...,(x_N,y_N)\}</script>，其中<script type="math/tex">x_i \in \mathcal{X}=R^n</script>，<script type="math/tex">y_i \in \mathcal{Y}=\{-1,+1\}</script>，i=1,2,…,N。学习率<script type="math/tex">\eta(0<\eta \le 1)</script>;</p>
-<p>输出:w,b;感知机模型sign(w.x+b)</p>
-<ol>
-<li><p>选取初值w0，b0</p>
-</li>
-<li><p>在训练集中随机选取选取数据<script type="math/tex">(x_i,y_i)</script></p>
-</li>
-<li><p>如果<script type="math/tex">y_i(w.x_i+b) \le 0</script>,<strong>注意：这里条件包含了等于0的情况</strong></p>
-<script type="math/tex; mode=display">
-w \leftarrow w+\eta y_ix_i \ (2.6)</script><script type="math/tex; mode=display">
-b \leftarrow b+\eta y_i \ (2.7)</script></li>
-<li><p>转置2，直至训练集中没有误分类点。</p>
-</li>
-</ol>
-<blockquote>
-<p><strong>以上学习算法直观上有如下解释：</strong></p>
-<p>当一个实例点被误分类，即位于分离超平面的错误一面时，则调整w，b的值，<strong>使分离超平面向该误分类点的一侧移动，以减少该误分类点与超平面间的距离，直至超平面越过该误分类点使其被正确分类</strong>。</p>
-<p>如下图所示:xi为误分类点，S为原分离超平面，w为S的法向量，S’为使用xi更新后的分离超平面，w’=w+<script type="math/tex">\eta</script>yixi为S‘的法向量。从图中可以很直观的看到xi离S’的距离更近了。</p>
-<p><img src="image/ch02-2.png" alt="ch02-2"></p>
-</blockquote>
-<p><strong>注意：感知机学习算法由于采用不同的初值或选取不同的误分类点，解可以不同。</strong>（解不唯一）</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">perceptron</span><span class="params">(object)</span>:</span></span><br><span class="line">    <span class="string">'''实现感知机的原始形式,使用随机梯度下降算法进行求解.'''</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self,eta=<span class="number">0.001</span>,n_iter=<span class="number">5000</span>)</span>:</span></span><br><span class="line">        self.eta = eta <span class="comment">#学习速率</span></span><br><span class="line">        self.n_iter=n_iter <span class="comment">#最大迭代次数</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">fit</span><span class="params">(self, X,y)</span>:</span></span><br><span class="line">        <span class="string">'''输入特征以及标签向量'''</span></span><br><span class="line">        self.errors_ = []</span><br><span class="line">        m,n = X.shape</span><br><span class="line">        self._W = np.zeros(n+<span class="number">1</span>) <span class="comment">#初始化为0</span></span><br><span class="line">        dataset_size = m</span><br><span class="line">        <span class="comment">#随机选取一个被错误分类的样本点</span></span><br><span class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> range(self.n_iter):</span><br><span class="line">            errors = <span class="number">0</span></span><br><span class="line">            <span class="keyword">for</span> xi,label <span class="keyword">in</span> zip(X,y):</span><br><span class="line">                self._error = label*(np.dot(xi,self._W[<span class="number">1</span>:])+self._W[<span class="number">0</span>]) <span class="comment">#距离</span></span><br><span class="line">                <span class="keyword">if</span> self._error &lt;= <span class="number">0</span>:</span><br><span class="line">                    <span class="comment">#误分类样本的距离</span></span><br><span class="line">                    update = self.eta*label <span class="comment">#b的更新量</span></span><br><span class="line">                    self._W[<span class="number">1</span>:] += update*xi <span class="comment">#w的更新量</span></span><br><span class="line">                    self._W[<span class="number">0</span>] += update</span><br><span class="line">                    <span class="keyword">print</span> self._W</span><br><span class="line">                    errors += <span class="number">1</span></span><br><span class="line">            self.errors_.append(errors)</span><br><span class="line">            print(<span class="string">"误分类的样本数为:%d"</span> % (errors))  </span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">predict</span><span class="params">(self,x)</span>:</span></span><br><span class="line">        <span class="keyword">return</span> np.where((np.dot(x,self._W[<span class="number">1</span>:])+self._W[<span class="number">0</span>])&gt;=<span class="number">0.0</span>,<span class="number">1</span>,<span class="number">-1</span>)</span><br></pre></td></tr></table></figure>
-<h3 id="2-3-2算法的收敛性"><a href="#2-3-2算法的收敛性" class="headerlink" title="2.3.2算法的收敛性"></a>2.3.2算法的收敛性</h3><p>令<script type="math/tex">\hat{w}=(w^{\top},b)^{\top}</script>,<script type="math/tex">\hat{x}=(x^{\top},1)^{\top}</script>。这样，<script type="math/tex">\hat{x} \in R^{n+1},\hat{w}\in R^{n+1}</script>。显然，<script type="math/tex">\hat{w}.\hat{x}=w.x+b</script>。</p>
-<p><strong>定理2.1(Novikoff)</strong> 假设训练数据集<script type="math/tex">T = \{(x_1,y_1),(x_2,y_2),...,(x_N,y_N)\}</script>是线性可分的，其中<script type="math/tex">x_i \in \mathcal{X}=R^n</script>，<script type="math/tex">y_i \in \mathcal{Y}=\{-1,+1\}</script>，i=1,2,…,N。则</p>
-<ol>
-<li><p>存在满足条件<script type="math/tex">\|\hat{w}_{opt}\|</script>=1的超平面使得<script type="math/tex">\hat{w}_{opt}.\hat{x}=w_{opt}.x+b_{opt}=0</script>将训练数据集完全正确分开；且存在$\gamma&gt;0$,对所有i=1,2,…,N(<strong>被正确分类的样本点</strong>)：</p>
-<script type="math/tex; mode=display">
-y_i(\hat{w}_{opt}.\hat{x_i})=y_i(w_{opt}.x_i+b_{opt}) \ge \gamma \ (2.8)</script></li>
-<li><p>令<script type="math/tex">R=\max_{1\le i \le N}\|\hat{x_i}\|</script>，则感知机算法2.1在训练数据集上的误分类次数k满足不等式：</p>
-<script type="math/tex; mode=display">
-k \le \left(\frac{R}{\gamma}\right)^2 \ (2.9)</script></li>
-</ol>
-<p><strong>证明：</strong></p>
-<ol>
-<li><p>由于训练数据集是线性可分的，按照定义2.2，存在超平面可将训练数据集完全正确分开，取此超平面为<script type="math/tex">\hat{w}_{opt}.\hat{x}=w_{opt}.x+b_{opt}=0</script>，使<script type="math/tex">\|\hat{w}_{opt}\|</script>=1。由于对有限的i=1,2,…,N，均有</p>
-<script type="math/tex; mode=display">
-y_i(\hat{w}_{opt}.\hat{x_i})=y_i(w_{opt}.x_i+b_{opt}) > 0</script><p>所以存在：</p>
-<script type="math/tex; mode=display">
-\gamma = \min_i \{y_i(w_{opt}.x_i+b_{opt})\}</script><p>使<script type="math/tex">y_i(\hat{w}_{opt}.\hat{x_i})=y_i(w_{opt}.x_i+b_{opt}) \ge \gamma</script>。</p>
-</li>
-<li><p>感知机算法从<script type="math/tex">\hat{w}_0=0</script>开始，如果实例被误分类，则更新权重。令<script type="math/tex">\hat{w}_{k-1}</script>是第k个误分类实例之前的扩充权重向量，即<script type="math/tex">\hat{w}_{k-1}=(w^{\top}_{k-1},b_{k-1})^{\top}</script>。</p>
-<p>则第k个误分类实例的条件是:</p>
-<script type="math/tex; mode=display">
-y_i(\hat{w}_{k-1}.\hat{x_i})=y_i(w_{k-1}.x_i+b_{k-1}) \le 0 \ (2.10)</script><p>若<script type="math/tex">(x_i,y_i)</script>是被<script type="math/tex">\hat{w}_{k-1}=(w^{\top}_{k-1},b_{k-1})^{\top}</script>误分类的数据，则w和b的更新是:</p>
-<script type="math/tex; mode=display">
-w_k \leftarrow w_{k-1}+\eta y_ix_i</script><script type="math/tex; mode=display">
-b_k \leftarrow b_{k-1}+\eta y_i</script></li>
-</ol>
-<p>   即：</p>
-<script type="math/tex; mode=display">
-\hat{w}_k \leftarrow \hat{w}_{k-1}+\eta y_i\hat{x_i} \ (2.11)</script><p>   下面推导两个不等式：</p>
-<p>   1.</p>
-<script type="math/tex; mode=display">
-   \hat{w}_k \hat{w}_{opt} \ge k\eta\gamma \ (2.12)</script><p>   ​    由式(2.11)及式(2.8)得：</p>
-<script type="math/tex; mode=display">
-   \begin{aligned}\hat{w}_k.\hat{w}_{opt} &= \hat{w}_{k-1}.\hat{w}_{opt}+\eta y_i \hat{w}_{opt}.\hat{x}_i \\ &\ge \hat{w}_{k-1}.\hat{w}_{opt}+\eta\gamma \end{aligned}</script><p>   ​    由此递推即得不等式(2.12)：</p>
-<script type="math/tex; mode=display">
-   \hat{w}_k.\hat{w}_{opt} \ge \hat{w}_{k-1}.\hat{w}_{opt}+\eta\gamma \ge \hat{w}_{k-2}.\hat{w}_{opt}+2\eta\gamma\ge ... \ge k\eta\gamma</script><p>   2.</p>
-<script type="math/tex; mode=display">
-   \|\hat{w}_k\|^2 \le k\eta^2R^2 \ (2.13)</script><p>   ​    由式(2.11)及式(2.10)得</p>
-<script type="math/tex; mode=display">
-   \begin{aligned} \|\hat{w}_k\|^2 &= \|\hat{w}_{k-1}\|^2+2\eta y_i \hat{w}_{k-1}.\hat{x}_i+\eta^2\|\hat{x}_i\|^2 \\ &\le \|\hat{w}_{k-1}\|^2+\eta^2\|\hat{x}_i\|^2\\ &\le \|\hat{w}_{k-1}\|^2+\eta^2R^2 \\ &\le \|\hat{w}_{k-2}\|^2+2\eta^2R^2 \\
-   &\le...\\ &\le k\eta^2R^2 \end{aligned}</script><p>   ​    结合不等式(2.12)及式(2.13)即得:</p>
-<script type="math/tex; mode=display">
-   k\eta\gamma \le \hat{w}_k.\hat{w}_{opt} \le \|\hat{w}_k\|\|\hat{w}_{opt}\| \le \sqrt{k}\eta R</script><script type="math/tex; mode=display">
-   k^2\gamma^2 \le kR^2</script><p>   ​    于是：<script type="math/tex">k\le \left(\frac{R}{\gamma}\right)^2</script></p>
-<p>定理证明，误分类的次数k是有上界的。经过有限次搜索(搜索次数由误分类次数决定)可以找到将训练数据完全正确分开的分离超平面。<strong>也就是说，当训练数据集线性可分时，感知机学习算法原始形式迭代是收敛的</strong>。</p>
-<blockquote>
-<p>当训练集线性不可分时，感知机学习算法不收敛，迭代结果会发生震荡。</p>
-</blockquote>
-<h3 id="2-3-3感知机学习算法的对偶形式"><a href="#2-3-3感知机学习算法的对偶形式" class="headerlink" title="2.3.3感知机学习算法的对偶形式"></a>2.3.3感知机学习算法的对偶形式</h3><p><strong>对偶形式的基本想法是：</strong>将w和b表示为实例$x_i$和标记$y_i$的线性组合的形式，通过求解其系数而求得w和b。</p>
-<p>不失一般性，在算法2.1中，令w0,b0初始化为0。对误分类点<script type="math/tex">(x_i,y_i)</script>通过：</p>
-<script type="math/tex; mode=display">
-w \leftarrow w+\eta y_ix_i</script><script type="math/tex; mode=display">
-b \leftarrow b+\eta y_i</script><p>逐步修改w，b，设修改n次，则w，b关于<script type="math/tex">(x_i,y_i)</script>的增量分别是<script type="math/tex">\alpha_iy_ix_i</script>和<script type="math/tex">\alpha_iy_i</script>，这里<script type="math/tex">\alpha_i=n_i\eta</script>。这样，从学习过程不难看出，最后学习到的w,b可以分别表示为:</p>
-<script type="math/tex; mode=display">
-w = \sum_{i=1}^N \alpha_i y_i x_i \ (2.14)</script><script type="math/tex; mode=display">
-b=\sum_{i=1}^N \alpha_iy_i \ (2.15)</script><p>这里<script type="math/tex">\alpha_i\ge 0</script>,i=1,2,…,N，当<script type="math/tex">\eta=1</script>时，表示第i个实例点由于误分而进行更新的次数。<strong>实例点更新次数越多，意味着它距离分离超平面越近，也就越难正确分类，换句话来说，<u>这样的实例对学习结果影响最大</u></strong>。</p>
-<p><strong>算法2.2(感知机学习算法的对偶形式)</strong></p>
-<p>输入：线性可分的数据集<script type="math/tex">T = \{(x_1,y_1),(x_2,y_2),...,(x_N,y_N)\}</script>，其中<script type="math/tex">x_i \in \mathcal{X}=R^n</script>，<script type="math/tex">y_i \in \mathcal{Y}=\{-1,+1\}</script>，i=1,2,…,N，学习率<script type="math/tex">\eta(0<\eta \le1)</script>；</p>
-<p>输出：<script type="math/tex">\alpha</script>,b;感知机模型<script type="math/tex">f(x)=\mathrm{sign}\left(\sum_{j=1}^N \alpha_jy_jx_j.x+b \right)</script>.其中<script type="math/tex">\alpha=(\alpha_1,\alpha_2,...,\alpha_N)^{\top}</script>。</p>
-<ol>
-<li><script type="math/tex; mode=display">\alpha \leftarrow 0$$,$$b \leftarrow 0</script></li>
-<li><p>在训练集中选取数据<script type="math/tex">(x_i,y_i)</script></p>
-</li>
-<li><p>如果<script type="math/tex">y_i \left( \sum_{j=1}^N \alpha_jy_jx_j.x_i+b \right) \le 0</script></p>
-<script type="math/tex; mode=display">
-\alpha_i \leftarrow \alpha_i+\eta</script><script type="math/tex; mode=display">
-b \leftarrow b+ \eta y_i</script></li>
-<li><p>转至2直到没有误分类数据。</p>
-</li>
-</ol>
-<p>对偶形式中训练实例仅以内积的形式出现。</p>
-<p>为了方便，预先将训练集中实例间的内积计算出来并以矩阵的形式存储，这个矩阵就是所谓的Gram矩阵：</p>
-<script type="math/tex; mode=display">
-G = [x_i.x_j]_{N\times N}</script><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">myperceptron</span><span class="params">()</span>:</span></span><br><span class="line">     <span class="string">"""Perceptron Classifie 应用在二分类上.此代码实现了感知器算法的对偶形式"""</span></span><br><span class="line">     <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, eta=<span class="number">0.01</span>, n_iter=<span class="number">10</span>)</span>:</span></span><br><span class="line">         <span class="string">'''</span></span><br><span class="line"><span class="string">         eta:学习速率</span></span><br><span class="line"><span class="string">         n_iter:最大迭代次数</span></span><br><span class="line"><span class="string">         '''</span></span><br><span class="line">         self.eta = eta</span><br><span class="line">         self.n_iter = n_iter</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">     <span class="function"><span class="keyword">def</span> <span class="title">fit</span><span class="params">(self, X, y)</span>:</span></span><br><span class="line">         self.alpha = np.zeros(X.shape[<span class="number">0</span>]) <span class="comment">#将权重初始化为0或一个极小的随机数</span></span><br><span class="line">         self.b = <span class="number">0</span></span><br><span class="line">         self.errors_ = []</span><br><span class="line">         self.train_X = X</span><br><span class="line">         self.train_y = y</span><br><span class="line">         <span class="comment">#迭代所有的训练样本</span></span><br><span class="line">         <span class="keyword">for</span> _ <span class="keyword">in</span> range(self.n_iter):</span><br><span class="line">             errors = <span class="number">0</span></span><br><span class="line">             <span class="keyword">for</span> i, (xi,target) <span class="keyword">in</span> enumerate(zip(X,y)):</span><br><span class="line">                 flag = ((self.alpha*y).T.dot(X).dot(xi)+self.b)*target</span><br><span class="line">                 <span class="keyword">if</span> flag &gt; <span class="number">0</span>:</span><br><span class="line">                    <span class="keyword">continue</span></span><br><span class="line">                 self.alpha[i] += self.eta <span class="comment">#更新所有的alpha向量</span></span><br><span class="line">                 self.b += self.eta*target</span><br><span class="line">                 <span class="comment">#print self.alpha,self.b #输出信息，对照书中的例子来验证算法</span></span><br><span class="line">                 errors += <span class="number">1</span> <span class="comment">#表示xi样本被错误分类了</span></span><br><span class="line">             self.errors_.append(errors)</span><br><span class="line">         <span class="keyword">return</span> self</span><br><span class="line"></span><br><span class="line">     <span class="function"><span class="keyword">def</span> <span class="title">net_input</span><span class="params">(self, X)</span>:</span></span><br><span class="line">         <span class="string">'''Calculate net input'''</span></span><br><span class="line">         <span class="comment">#return np.dot(X, self.w_[1:]) + self.w_[0]</span></span><br><span class="line">         <span class="keyword">return</span> X.dot((self.alpha*self.train_y).T.dot(self.train_X))+self.b</span><br><span class="line"></span><br><span class="line">     <span class="function"><span class="keyword">def</span> <span class="title">predict</span><span class="params">(self, X)</span>:</span></span><br><span class="line">         <span class="keyword">return</span> np.where(self.net_input(X)&gt;=<span class="number">0.0</span>, <span class="number">1</span>, <span class="number">-1</span>)</span><br></pre></td></tr></table></figure>
-<h2 id="2-4-扩展-核感知器"><a href="#2-4-扩展-核感知器" class="headerlink" title="2.4 扩展(核感知器)"></a>2.4 扩展(核感知器)</h2><p>核感知器可用于求解数据集为非线性可分的情况。核感知器由感知器的对偶形式延伸而来，决策函数表示为:</p>
-<script type="math/tex; mode=display">
-y = \mathrm{sign} \sum_{i=0}^N \alpha_i y_i K(X_i,X')</script><p>其中，X’为新实例(向量)，K为核函数<script type="math/tex">K(X,X')=\Phi(X).\Phi(X')</script>,<script type="math/tex">\Phi</script>函数相当于输入空间到特征空间的映射，此处的特征空间与输入空间是不等价的，它通常比输入空间具有更高的维度。</p>
-<p>上述决策函数的形式演变推导:</p>
-<script type="math/tex; mode=display">
-\begin{aligned}y&=\mathrm{sign}(W^{\top}X) \\ &=\mathrm{sign}\left(\sum_{i=1}^N \alpha_i y_i X_i\right)^{\top} X \\ &= \mathrm{sign}\sum_{i=0}^N \alpha_i y_i (X_i.X) \\ &= \mathrm{sign} \sum_{i=0}^N \alpha_i y_i K(X_i,X')\end{aligned}</script><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">from</span> numpy <span class="keyword">import</span> linalg</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">linear_kernel</span><span class="params">(x1,x2)</span>:</span></span><br><span class="line">    <span class="comment">#相当于没有核函数(李航书中的普通对偶形式)</span></span><br><span class="line">    <span class="keyword">return</span> np.dot(x1,x2)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">polynomial_kernel</span><span class="params">(x1,x2,p=<span class="number">3</span>)</span>:</span></span><br><span class="line">    <span class="comment">#多项式核</span></span><br><span class="line">    <span class="keyword">return</span> (<span class="number">1</span>+np.dot(x1,x2))**p</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">gaussian_kernel</span><span class="params">(x1,x2,sigma=<span class="number">5.0</span>)</span>:</span></span><br><span class="line">    <span class="comment">#高斯核</span></span><br><span class="line">    <span class="keyword">return</span> np.exp(-linalg.norm(x1-x2)**<span class="number">2</span>/(<span class="number">2</span>*(sigma**<span class="number">2</span>)))</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">KernelPerceptron</span><span class="params">(object)</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, eta=<span class="number">1.0</span>, n_iter=<span class="number">1</span>, kernel=linear_kernel)</span>:</span></span><br><span class="line">        self.kernel = kernel</span><br><span class="line">        self.eta = eta</span><br><span class="line">        self.n_iter = n_iter</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">fit</span><span class="params">(self, X, y)</span>:</span></span><br><span class="line">        n_samples, n_features = X.shape</span><br><span class="line">        self.alpha = np.zeros(n_samples, dtype=np.float64)</span><br><span class="line">        self.b = <span class="number">0</span></span><br><span class="line">        <span class="comment">#Gram Matrix</span></span><br><span class="line">        K = np.zeros((n_samples, n_samples))</span><br><span class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> range(n_samples):</span><br><span class="line">            <span class="keyword">for</span> j <span class="keyword">in</span> range(n_samples):</span><br><span class="line">                K[i,j] = self.kernel(X[i],X[j])</span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span> t <span class="keyword">in</span> range(self.n_iter):</span><br><span class="line">            <span class="keyword">for</span> i <span class="keyword">in</span> range(n_samples):</span><br><span class="line">                <span class="keyword">if</span> np.sign(np.sum(K[:,i]*self.alpha*y)+self.b)!=y[i]: <span class="comment">#这里的判断条件跟前面的对偶形式的判断条件不一样</span></span><br><span class="line">                    self.alpha[i] += self.eta</span><br><span class="line">                    self.b += self.eta*y[i]</span><br><span class="line">                    print(self.alpha,self.b)</span><br><span class="line"></span><br><span class="line">        <span class="comment">#support vectors</span></span><br><span class="line">        sv = self.alpha&gt;<span class="number">1e-5</span></span><br><span class="line">        ind = np.arange(len(self.alpha))[sv]</span><br><span class="line">        self.alpha = self.alpha[ind]</span><br><span class="line">        self.sv = X[ind]</span><br><span class="line">        self.sv_y = y[ind]</span><br><span class="line">        print(<span class="string">"%d support vectors out of %d points"</span> % (len(self.alpha),n_samples))</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">project</span><span class="params">(self, X)</span>:</span></span><br><span class="line">        y_predict = np.zeros(len(X))</span><br><span class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> range(len(X)):</span><br><span class="line">            s = <span class="number">0</span></span><br><span class="line">            <span class="keyword">for</span> a, sv_y, sv <span class="keyword">in</span> zip(self.alpha, self.sv_y, self.sv):</span><br><span class="line">                s+= a*sv_y*self.kernel(X[i],sv)</span><br><span class="line">            y_predict[i] = s</span><br><span class="line">        <span class="keyword">return</span> y_predict</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">predict</span><span class="params">(self, X)</span>:</span></span><br><span class="line">        X = np.atleast_2d(X)</span><br><span class="line">        n_samples,n_features = X.shape</span><br><span class="line">        <span class="keyword">return</span> np.sign(self.project(X))</span><br></pre></td></tr></table></figure>
-<blockquote>
-<p>更多关于核函数的知识在SVM算法中会涉及</p>
-</blockquote>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
       
 
       
       
-        <div class="post-eof"></div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/06/13/感知机/" rel="next" title="感知机">
+                <i class="fa fa-chevron-left"></i> 感知机
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
       
     </footer>
   </div>
@@ -1171,10 +884,11 @@ y = \mathrm{sign} \sum_{i=0}^N \alpha_i y_i K(X_i,X')</script><p>其中，X’�
   </article>
 
 
-    
-  </section>
 
-  
+    <div class="post-spread">
+      
+    </div>
+  </div>
 
 
           </div>
@@ -1182,6 +896,10 @@ y = \mathrm{sign} \sum_{i=0}^N \alpha_i y_i K(X_i,X')</script><p>其中，X’�
 
 
           
+
+  
+
+
 
         </div>
         
@@ -1202,8 +920,17 @@ y = \mathrm{sign} \sum_{i=0}^N \alpha_i y_i K(X_i,X')</script><p>其中，X’�
       
 
       
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
 
-      <section class="site-overview-wrap sidebar-panel sidebar-panel-active">
+      <section class="site-overview-wrap sidebar-panel">
         <div class="site-overview">
           <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
             
@@ -1263,6 +990,22 @@ y = \mathrm{sign} \sum_{i=0}^N \alpha_i y_i K(X_i,X')</script><p>其中，X’�
         </div>
       </section>
 
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#8-1线性可分支持向量机与硬间隔最大化"><span class="nav-number">1.</span> <span class="nav-text">8.1线性可分支持向量机与硬间隔最大化</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#8-1-1-线性可分支持向量机"><span class="nav-number">1.1.</span> <span class="nav-text">8.1.1 线性可分支持向量机</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#8-1-2-函数间隔和几何间隔"><span class="nav-number">1.2.</span> <span class="nav-text">8.1.2 函数间隔和几何间隔</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#8-1-3硬间隔最大化"><span class="nav-number">1.3.</span> <span class="nav-text">8.1.3硬间隔最大化</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#8-1-4-学习的对偶算法"><span class="nav-number">1.4.</span> <span class="nav-text">8.1.4 学习的对偶算法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#8-2-3-支持向量"><span class="nav-number">1.5.</span> <span class="nav-text">8.2.3 支持向量</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#8-2-4-合页损失函数"><span class="nav-number">1.6.</span> <span class="nav-text">8.2.4 合页损失函数</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#总结"><span class="nav-number">2.</span> <span class="nav-text">总结</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
       
 
       
@@ -1401,6 +1144,10 @@ y = \mathrm{sign} \sum_{i=0}^N \alpha_i y_i K(X_i,X')</script><p>其中，X’�
 
 
   
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
 
   
 
