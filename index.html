@@ -446,7 +446,12 @@ h_i(w)=0 i=1,2,...,l\tag{8.17}</script><p>其中，目标函数<script type="mat
 <p>假设问题(8.13)(8.14)存在两个最优解<script type="math/tex">(w_1^*,b_1^*)</script>和<script type="math/tex">(w_2^*,b_2^*)</script>。显然<script type="math/tex">\|w_1^*\|=\|w_2^*\|=c</script>，其中c是一个常数。</p>
 <p>令<script type="math/tex">w = \frac{w_1^*+w_2^*}{2}</script>，<script type="math/tex">b=\frac{b_1^*+b_2^*}{2}</script>，易知(w,b)是问题(8.13)(8.14)的可行解(<strong>满足约束条件</strong>)。从而有:</p>
 <script type="math/tex; mode=display">
-c \le \|w\| \le \frac{1}{2}\|w_1^*\|+\frac{1}{2}\|w_2^*\|=c</script><p>上式表明，式中的不等号可变为等号，即<script type="math/tex">\|w\| = \frac{1}{2}\|w_1^*\|+\frac{1}{2}\|w_2^*\| \ (0)</script>，由式(0)以及w取值表达式，可以得到<script type="math/tex">w_1^*.w_2^*=\|w_1^*\|\|w_2^*\|</script>，从而有<script type="math/tex">w_1^* = \lambda w_2^*</script>(两个向量共线)，则有以下两种情况:</p>
+c \le \|w\| \le \frac{1}{2}\|w_1^*\|+\frac{1}{2}\|w_2^*\|=c</script><blockquote>
+<p>分解：</p>
+<script type="math/tex; mode=display">c\le \|w\|$$ 是因为目标函数求得得解为$$\min \|w\|$$，所以对于其他非最优解，其二范数必然大于c。
+
+根据w的定义，可以得到$$\|w\| \le \frac{1}{2}\|w_1^*\|+\frac{1}{2}\|w_2^*\|</script></blockquote>
+<p>上式表明，式中的不等号可变为等号，即<script type="math/tex">\|w\| = \frac{1}{2}\|w_1^*\|+\frac{1}{2}\|w_2^*\| \ (0)</script>，由式(0)以及w取值表达式，可以得到<script type="math/tex">w_1^*.w_2^*=\|w_1^*\|\|w_2^*\|</script>，从而有<script type="math/tex">w_1^* = \lambda w_2^*</script>(两个向量共线,模相等，因此<script type="math/tex">\lambda=\pm 1</script>)，则有以下两种情况:</p>
 <ol>
 <li><p><script type="math/tex">\lambda=-1</script>,则w=0，而(0,b)不是问题(8.13)(8.14)的可行解。</p>
 </li>
@@ -486,7 +491,7 @@ y_i(w.x_i+b)-1=0</script><p><img src="image/ch08-1.png" alt="ch08-1"></p>
 </blockquote>
 <p>首先构建拉格朗日函数，为此，对每个不等式约束(8.14)引进拉格朗日乘子<script type="math/tex">\alpha_i \ge 0</script>，i=1,2,…,N，定义拉格朗日函数:</p>
 <script type="math/tex; mode=display">
-\begin{aligned}L(w,b,\alpha) &=\frac{1}{2}\|w\|^2 - \sum_{i=1}^N \alpha_i y_i(w.x_i+b-1)\\&= \frac{1}{2}\|w\|^2 - \sum_{i=1}^N \alpha_i y_i(w.x_i+b)+\sum_{i=1}^N \alpha_i\end{aligned} \ (8.18)</script><p>原始问题定义为:</p>
+\begin{aligned}L(w,b,\alpha) &=\frac{1}{2}\|w\|^2 - \sum_{i=1}^N \alpha_i (y_i(w.x_i+b)-1)\\&= \frac{1}{2}\|w\|^2 - \sum_{i=1}^N \alpha_i y_i(w.x_i+b)+\sum_{i=1}^N \alpha_i\end{aligned} \ (8.18)</script><p>原始问题定义为:</p>
 <script type="math/tex; mode=display">
 \min_{w,b} \max_{\alpha} L(w,b,\alpha)</script><p>根据拉格朗日对偶性，原始问题的对偶问题是极大极小问题:</p>
 <script type="math/tex; mode=display">
@@ -534,185 +539,115 @@ f(x) = \mathrm{sign} \left(\sum_{i=1}^N \alpha_i^* y_i (x.x_i)+b^* \right) \ (8.
 <p>输入:线性可分训练集<script type="math/tex">T = \{(x_1,y_1),(x_2,y_2),...,(x_N,y_N)\}</script>，其中<script type="math/tex">x_i \in \mathcal{X}=R^n,y_i \in \mathcal{Y}=\{-1,+1\}</script>，i=1,2,…,N；</p>
 <p>输出:分离超平面和分类决策函数。</p>
 <p>(1)构造并求解约束最优化问题</p>
-<script type="math/tex; mode=display">\min_{\alpha}  \frac{1}{2} \sum_{i=1}^N \sum_{j=1}^N \alpha_i \alpha_j y_i y_j (x_i.x_j) - \sum_{i=1}^N \alpha_i</script><p>s.t.     <script type="math/tex">\sum_{i=1}^N \alpha_i y_i =0</script></p>
-<script type="math/tex; mode=display">\alpha_i \ge 0$$，i=1,2,...,N
-
-求得最优解$$\alpha^* = (\alpha_1^*,\alpha_2^*,...,\alpha_N^*)^{\top}$$。
-
-(2)计算</script><p>w^<em> = \sum_{i=1}^N \alpha_i^</em> y_i x_i</p>
 <script type="math/tex; mode=display">
-并选择$$\alpha^*$$的一个正分量$$\alpha_j^* > 0$$，计算：</script><p>b^<em> = y<em>j - \sum</em>{i=1}^N \alpha_i^</em> y_i (x_i.x_j)</p>
+\min_{\alpha}  \frac{1}{2} \sum_{i=1}^N \sum_{j=1}^N \alpha_i \alpha_j y_i y_j (x_i.x_j) - \sum_{i=1}^N \alpha_i</script><script type="math/tex; mode=display">
+\mathrm{s.t.} \sum_{i=1}^N \alpha_i y_i =0</script><script type="math/tex; mode=display">
+\alpha_i \ge 0，i=1,2,...,N</script><p>求得最优解<script type="math/tex">\alpha^* = (\alpha_1^*,\alpha_2^*,...,\alpha_N^*)^{\top}</script>。</p>
+<p>(2)计算</p>
 <script type="math/tex; mode=display">
-(3)求得分离超平面</script><p>w^<em>.x+b^</em> = 0</p>
+w^* = \sum_{i=1}^N \alpha_i^* y_i x_i</script><p>并选择<script type="math/tex">\alpha^*</script>的一个正分量<script type="math/tex">\alpha_j^* > 0</script>，计算：</p>
 <script type="math/tex; mode=display">
-分类决策函数:</script><p>f(x) = \mathrm{sign}(w^<em>.x+b^</em>)</p>
+b^* = y_j - \sum_{i=1}^N \alpha_i^* y_i (x_i.x_j)</script><p>(3)求得分离超平面</p>
 <script type="math/tex; mode=display">
-在线性可分支持向量机中，由式(8.25)、式(8.26)可知，$$w^*$$和$$b^*$$只依赖于训练数据中对应于$$\alpha_i^* > 0$$的样本点$$(x_i,y_i)$$，而其他样本点对$$w^*$$和$$b^*$$没有影响。
-
-**我们将训练数据中对应于**$$\alpha_i^{*}>0$$**的实例点**$$x_i \in R^n$$**称为支持向量**。
-
-**定义8.4(支持向量)**考虑原始最优化问题(8.13)\~(8.14)及对偶最优化问题(8.22)\~(8.24)，将训练数据集中对应于$$\alpha_i^{*} > 0$$的样本点$$(x_i,y_i)$$的实例$$x_i \in R^n$$称为支持向量。
-
-根据这一定义，支持向量一定在间隔边界上，由KKT互补条件可知，</script><p>\alpha_i^<em>(y_i(w^</em>.x_i+b^*)-1)=0 \ , i=1,2,…,N</p>
+w^*.x+b^* = 0</script><p>分类决策函数:</p>
 <script type="math/tex; mode=display">
-对应于$$\alpha_j^* > 0$$的实例$$x_i$$，有：</script><p>y_i(w^<em>.x_i+b^</em>)-1 = 0</p>
+f(x) = \mathrm{sign}(w^*.x+b^*)</script><p>在线性可分支持向量机中，由式(8.25)、式(8.26)可知，<script type="math/tex">w^*</script>和<script type="math/tex">b^*</script>只依赖于训练数据中对应于<script type="math/tex">\alpha_i^* > 0</script>的样本点<script type="math/tex">(x_i,y_i)</script>，而其他样本点对<script type="math/tex">w^*</script>和<script type="math/tex">b^*</script>没有影响。</p>
+<p><strong>我们将训练数据中对应于</strong><script type="math/tex">\alpha_i^{*}>0</script><strong>的实例点</strong><script type="math/tex">x_i \in R^n</script><strong>称为支持向量</strong>。</p>
+<p><strong>定义8.4(支持向量)</strong>考虑原始最优化问题(8.13)~(8.14)及对偶最优化问题(8.22)~(8.24)，将训练数据集中对应于<script type="math/tex">\alpha_i^{*} > 0</script>的样本点<script type="math/tex">(x_i,y_i)</script>的实例<script type="math/tex">x_i \in R^n</script>称为支持向量。</p>
+<p>根据这一定义，支持向量一定在间隔边界上，由KKT互补条件可知，</p>
 <script type="math/tex; mode=display">
-或</script><p>w^<em>.x_i + b^</em> = \pm 1</p>
+\alpha_i^*(y_i(w^*.x_i+b^*)-1)=0 \ , i=1,2,...,N</script><p>对应于<script type="math/tex">\alpha_j^* > 0</script>的实例<script type="math/tex">x_i</script>，有：</p>
 <script type="math/tex; mode=display">
-即$$x_i$$一定在间隔边界上。这里的支持向量的定义与前面给出的支持向量的定义是一致的。
-
-> 对于线性可分问题，上述线性可分支持向量机的学习(**硬间隔最大化**)算法是完美的。
->
-> 但是，在现实问题中，训练数据集往往是线性不可分的，**即在样本中出现噪声或离群点**，此时，<u>有更一般的学习算法</u>。
-
-## 8.2 线性支持向量机与软间隔最大化
-
-### 8.2.1 线性支持向量机
-
-**线性可分支持向量机学习算法的局限性：**对线性不可分训练数据是不适用的，因为这时上述方法中的不等式约束并不能都成立。
-
-假设给定一个特征空间上的训练数据集</script><p>T = {(x_1,y_1),(x_2,y_2),…,(x_N,y_N)}</p>
+y_i(w^*.x_i+b^*)-1 = 0</script><p>或</p>
 <script type="math/tex; mode=display">
-其中，$$x_i \in \mathcal{X} = R^n$$，$$y_i \in \mathcal{Y} = \{-1,+1\}$$，i=1,2,...,N，$$x_i$$为第i个特征向量，$$y_i$$为$$x_i$$的类标记。
-
-**再假设训练数据集不是线性可分的**。通常情况是训练数据中有一些特异点(outlier)，将这些特异点除去后剩下大部分的样本点组成的集合是线性可分的。
-
-**线性不可分意味着某些样本点$$(x_i,y_i)$$不能满足函数间隔大于等于1的约束条件(8.14)**。
-
-**解决方案:**为了解决这个问题，可以对每个样本点$$(x_i,y_i)$$引进一个松弛变量$$\xi \ge 0$$，使得函数间隔加上松弛变量大于等于1(满足不等式约束条件)。这样，约束条件变为:</script><p>y_i(w.x_i+b) \ge 1-\xi_i</p>
+w^*.x_i + b^* = \pm 1</script><p>即<script type="math/tex">x_i</script>一定在间隔边界上。这里的支持向量的定义与前面给出的支持向量的定义是一致的。</p>
+<blockquote>
+<p>对于线性可分问题，上述线性可分支持向量机的学习(<strong>硬间隔最大化</strong>)算法是完美的。</p>
+<p>但是，在现实问题中，训练数据集往往是线性不可分的，<strong>即在样本中出现噪声或离群点</strong>，此时，<u>有更一般的学习算法</u>。</p>
+</blockquote>
+<h2 id="8-2-线性支持向量机与软间隔最大化"><a href="#8-2-线性支持向量机与软间隔最大化" class="headerlink" title="8.2 线性支持向量机与软间隔最大化"></a>8.2 线性支持向量机与软间隔最大化</h2><h3 id="8-2-1-线性支持向量机"><a href="#8-2-1-线性支持向量机" class="headerlink" title="8.2.1 线性支持向量机"></a>8.2.1 线性支持向量机</h3><p><strong>线性可分支持向量机学习算法的局限性：</strong>对线性不可分训练数据是不适用的，因为这时上述方法中的不等式约束并不能都成立。</p>
+<p>假设给定一个特征空间上的训练数据集</p>
 <script type="math/tex; mode=display">
-同时，对每个松弛变量$$\xi_i$$，支付一个代价$$\xi_i$$。目标函数由原来的$$\frac{1}{2}\|w\|^2$$变成:</script><p>\frac{1}{2} |w|^2 + C \sum_{i=1}^N \xi_i   \ (8.31)</p>
+T = \{(x_1,y_1),(x_2,y_2),...,(x_N,y_N)\}</script><p>其中，<script type="math/tex">x_i \in \mathcal{X} = R^n</script>，<script type="math/tex">y_i \in \mathcal{Y} = \{-1,+1\}</script>，i=1,2,…,N，<script type="math/tex">x_i</script>为第i个特征向量，<script type="math/tex">y_i</script>为<script type="math/tex">x_i</script>的类标记。</p>
+<p><strong>再假设训练数据集不是线性可分的</strong>。通常情况是训练数据中有一些特异点(outlier)，将这些特异点除去后剩下大部分的样本点组成的集合是线性可分的。</p>
+<p><strong>线性不可分意味着某些样本点<script type="math/tex">(x_i,y_i)</script>不能满足函数间隔大于等于1的约束条件(8.14)</strong>。</p>
+<p><strong>解决方案:</strong>为了解决这个问题，可以对每个样本点<script type="math/tex">(x_i,y_i)</script>引进一个松弛变量<script type="math/tex">\xi \ge 0</script>，使得函数间隔加上松弛变量大于等于1(满足不等式约束条件)。这样，约束条件变为:</p>
 <script type="math/tex; mode=display">
-这里，$$C>0$$称为惩罚参数，一般由应用问题决定，C值大时对误分类的惩罚增大，C值小时对误分类的惩罚减小。最小化目标函数(8.31)包含两层含义:使$$\frac{1}{2}\|w\|^2$$尽量小即间隔尽量大，同时使误分类点的个数尽量小，C是调和二者的系数。
-
-**相应于硬间隔最大化，它称为软间隔最大化**。
-
-线性不可分的线性支持向量机的学习问题变成如下**凸二次规划问题(原始问题)：**
-
-$$\min_{w,b,\xi} \frac{1}{2} \|w\|^2 + C \sum_{i=1}^N \xi_i$$     (8.32)
-
-s.t.          $$y_i(w.x_i+b) \ge 1-\xi_i$$，i=1,2,...,N      (8.33)
-
-$$\xi_i \ge 0$$，i=1,2,...,N        (8.34)
-
-
-
-原始问题(8.32)\~(8.34)是一个凸二次规划问题，因而关于$$(w,b,\xi)$$的解是存在的。**可以证明w的解是唯一的，但b的解可能不唯一，而是存在于一个区间**(参考《邓乃扬，田英杰。数据挖掘中的新方法——支持向量机。北京:科学出版社，2004》)。
-
-**定义8.5(线性支持向量机)**对于给定的线性不可分的训练数据集，通过求解凸二次规划问题，即软间隔最大化问题(8.32)\~(8.34)，得到的分离超平面为:</script><p>w^<em>.x + b^</em> = 0 \ (8.35)</p>
+y_i(w.x_i+b) \ge 1-\xi_i</script><p>同时，对每个松弛变量<script type="math/tex">\xi_i</script>，支付一个代价<script type="math/tex">\xi_i</script>。目标函数由原来的<script type="math/tex">\frac{1}{2}\|w\|^2</script>变成:</p>
 <script type="math/tex; mode=display">
-以及相应的分类决策函数:</script><p>f(x) = \mathrm{sign}(w^<em>.x + b^</em>)   (8.36)</p>
+\frac{1}{2} \|w\|^2 + C \sum_{i=1}^N \xi_i   \ (8.31)</script><p>这里，<script type="math/tex">C>0</script>称为惩罚参数，一般由应用问题决定，C值大时对误分类的惩罚增大，C值小时对误分类的惩罚减小。最小化目标函数(8.31)包含两层含义:使<script type="math/tex">\frac{1}{2}\|w\|^2</script>尽量小即间隔尽量大，同时使误分类点的个数尽量小，C是调和二者的系数。</p>
+<p><strong>相应于硬间隔最大化，它称为软间隔最大化</strong>。</p>
+<p>线性不可分的线性支持向量机的学习问题变成如下<strong>凸二次规划问题(原始问题)：</strong></p>
 <script type="math/tex; mode=display">
-称为**线性支持向量机**。
-
-### 8.2.2 学习的对偶算法
-
-> 此章节主要是演算如何通过原始问题推出对偶问题，从而证明原始问题与对偶问题是等价的。
->
-> **在对偶问题中，原始问题中引入的辅助变量$$\xi$$，已经消去**。
-
-原始问题(8.32)\~(8.34)的对偶问题是:
-
-$$\min_{\alpha} \frac{1}{2}\sum_{i=1}^N \sum_{j=1}^N \alpha_i \alpha_j y_i y_j(x_i.x_j)-\sum_{i=1}^N \alpha_i$$      (8.37)
-
-s.t.     $$\sum_{i=1}^N \alpha_i y_i = 0$$          (8.38)
-
-$$0 \le \alpha_i \le C$$，i=1,2,...,N        (8.39)
-
-
-
-由此，可得对应的拉格朗日函数为:</script><p>L(w,b,\xi,\alpha,\mu) = \frac{1}{2} |w|^2 + C \sum<em>{i=1}^N \xi_i-\sum</em>{i=1}^N \alpha<em>i(y_i(w.x_i+b)-1+\xi_i) - \sum</em>{i=1}^N \mu_i \xi_i  \ (8.40)</p>
+\min_{w,b,\xi} \frac{1}{2} \|w\|^2 + C \sum_{i=1}^N \xi_i \tag{8.32}</script><script type="math/tex; mode=display">
+\mathrm{s.t.} y_i(w.x_i+b) \ge 1-\xi_i，i=1,2,...,N \tag{8.33}</script><script type="math/tex; mode=display">
+\xi_i \ge 0，i=1,2,...,N  \tag{8.34}</script><p>原始问题(8.32)~(8.34)是一个凸二次规划问题，因而关于<script type="math/tex">(w,b,\xi)</script>的解是存在的。<strong>可以证明w的解是唯一的，但b的解可能不唯一，而是存在于一个区间</strong>(参考《邓乃扬，田英杰。数据挖掘中的新方法——支持向量机。北京:科学出版社，2004》)。</p>
+<p><strong>定义8.5(线性支持向量机)</strong>对于给定的线性不可分的训练数据集，通过求解凸二次规划问题，即软间隔最大化问题(8.32)~(8.34)，得到的分离超平面为:</p>
 <script type="math/tex; mode=display">
-其中，$$\alpha_i \ge 0,\mu_i \ge 0$$。
-
-对对偶问题进行求解:
-
-(1)首先求$$L(w,b,\xi,\alpha,\mu)$$对w,b,$$\xi$$的极小，由:</script><p>\nabla<em>w L(w,b,\xi,\alpha,\mu) = w-\sum</em>{i=1}^N \alpha_i y_i x_i = 0</p>
+w^*.x + b^* = 0 \ (8.35)</script><p>以及相应的分类决策函数:</p>
 <script type="math/tex; mode=display">
-</script><p>\nabla<em>b L(w,b,\xi,\alpha,\mu) = -\sum</em>{i=1}^N \alpha_i y_i = 0</p>
+f(x) = \mathrm{sign}(w^*.x + b^*)   (8.36)</script><p>称为<strong>线性支持向量机</strong>。</p>
+<h3 id="8-2-2-学习的对偶算法"><a href="#8-2-2-学习的对偶算法" class="headerlink" title="8.2.2 学习的对偶算法"></a>8.2.2 学习的对偶算法</h3><blockquote>
+<p>此章节主要是演算如何通过原始问题推出对偶问题，从而证明原始问题与对偶问题是等价的。</p>
+<p><strong>在对偶问题中，原始问题中引入的辅助变量<script type="math/tex">\xi</script>，已经消去</strong>。</p>
+</blockquote>
+<p>原始问题(8.32)~(8.34)的对偶问题是:</p>
 <script type="math/tex; mode=display">
-</script><p>\nabla_{\xi_i} L(w,b,\xi,\alpha,\mu) = C-\alpha_i-\mu_i = 0</p>
+\min_{\alpha} \frac{1}{2}\sum_{i=1}^N \sum_{j=1}^N \alpha_i \alpha_j y_i y_j(x_i.x_j)-\sum_{i=1}^N \alpha_i \tag{8.37}</script><script type="math/tex; mode=display">
+\mathrm{s.t.}  \sum_{i=1}^N \alpha_i y_i = 0 \tag{8.38}</script><script type="math/tex; mode=display">
+0 \le \alpha_i \le C，i=1,2,...,N  \tag{8.39}</script><p>由此，可得对应的拉格朗日函数为:</p>
 <script type="math/tex; mode=display">
-
-得</script><p>w = \sum_{i=1}^N \alpha_i y_i x_i \ (8.41)</p>
+L(w,b,\xi,\alpha,\mu) = \frac{1}{2} \|w\|^2 + C \sum_{i=1}^N \xi_i-\sum_{i=1}^N \alpha_i(y_i(w.x_i+b)-1+\xi_i) - \sum_{i=1}^N \mu_i \xi_i  \ (8.40)</script><p>其中，<script type="math/tex">\alpha_i \ge 0,\mu_i \ge 0</script>。</p>
+<p>对对偶问题进行求解:</p>
+<p>(1)首先求<script type="math/tex">L(w,b,\xi,\alpha,\mu)</script>对w,b,<script type="math/tex">\xi</script>的极小，由:</p>
 <script type="math/tex; mode=display">
-</script><p>\sum_{i=1}^N \alpha_i y_i = 0 \ (8.42)</p>
+\nabla_w L(w,b,\xi,\alpha,\mu) = w-\sum_{i=1}^N \alpha_i y_i x_i = 0</script><script type="math/tex; mode=display">
+\nabla_b L(w,b,\xi,\alpha,\mu) = -\sum_{i=1}^N \alpha_i y_i = 0</script><script type="math/tex; mode=display">
+\nabla_{\xi_i} L(w,b,\xi,\alpha,\mu) = C-\alpha_i-\mu_i = 0</script><p>得</p>
 <script type="math/tex; mode=display">
-</script><p>C-\alpha_i - \mu_i = 0 \ (8.43)</p>
+w = \sum_{i=1}^N \alpha_i y_i x_i \ (8.41)</script><script type="math/tex; mode=display">
+\sum_{i=1}^N \alpha_i y_i = 0 \ (8.42)</script><script type="math/tex; mode=display">
+C-\alpha_i - \mu_i = 0 \ (8.43)</script><p>将式(8.41)~(8.43)代入式(8.40)，得:</p>
 <script type="math/tex; mode=display">
-
-将式(8.41)\~(8.43)代入式(8.40)，得:</script><p>\min<em>{w,b,\xi} L(w,b,\xi,\alpha,\mu) = -\frac{1}{2} \sum</em>{i=1}^N \sum<em>{j=1}^N \alpha_i \alpha_j y_i y_j (x_i.x_j)+\sum</em>{i=1}^N \alpha_i</p>
+\min_{w,b,\xi} L(w,b,\xi,\alpha,\mu) = -\frac{1}{2} \sum_{i=1}^N \sum_{j=1}^N \alpha_i \alpha_j y_i y_j (x_i.x_j)+\sum_{i=1}^N \alpha_i</script><p>(2)再对<script type="math/tex">\min_{w,b,\xi} L(w,b,\xi,\alpha,\mu)</script>求<script type="math/tex">\alpha</script>的极大，即得对偶问题:</p>
 <script type="math/tex; mode=display">
-(2)再对$$\min_{w,b,\xi} L(w,b,\xi,\alpha,\mu)$$求$$\alpha$$的极大，即得对偶问题:
-
-$$\max_{\alpha} - \frac{1}{2}\sum_{i=1}^N \sum_{j=1}^N \alpha_i \alpha_j y_i y_j(x_i.x_j)+\sum_{i=1}^N \alpha_i  $$     (8.44)
-
-s.t.      $$\sum_{i=1}^N \alpha_i y_i = 0$$      (8.45)
-
-$$C - \alpha_i -\mu_i =0$$     (8.46)
-
-$$\alpha_i \ge 0$$      (8.47)
-
-$$\mu_i \ge 0$$，i=1,2,...,N      (8.48)
-
-
-
-将对偶最优化问题(8.44)\~(8.48)进行变换:利用等式约束(8.46)消去$$\mu_i$$，从而只留下变量$$\alpha_i$$，并将约束(8.46)\~(8.48)写成：</script><p>0 \le \alpha_i \le C \ (8.49)</p>
+\max_{\alpha} - \frac{1}{2}\sum_{i=1}^N \sum_{j=1}^N \alpha_i \alpha_j y_i y_j(x_i.x_j)+\sum_{i=1}^N \alpha_i  \tag{8.44}</script><script type="math/tex; mode=display">
+\mathrm{s.t.} \sum_{i=1}^N \alpha_i y_i = 0 \tag{8.45}</script><script type="math/tex; mode=display">
+C - \alpha_i -\mu_i =0 \tag{8.46}</script><script type="math/tex; mode=display">
+\alpha_i \ge 0 \tag{8.47}</script><script type="math/tex; mode=display">
+\mu_i \ge 0，i=1,2,...,N  \tag{8.48}</script><p>将对偶最优化问题(8.44)~(8.48)进行变换:利用等式约束(8.46)消去<script type="math/tex">\mu_i</script>，从而只留下变量<script type="math/tex">\alpha_i</script>，并将约束(8.46)~(8.48)写成：</p>
 <script type="math/tex; mode=display">
-将对目标函数求极大转换为求极小，于是得到对偶问题(8.37)\~(8.39)。
-
-**定理8.3**设$$\alpha^{*}=(\alpha_1^*,\alpha_2^*,...,\alpha_N^*)^{\top}$$是对偶问题(8.37)\~(8.39)的一个解，若存在$$\alpha^*$$的一个分量$$\alpha_j^*$$，$$0<\alpha_j^*<C$$，则原始问题(8.32)\~(8.34)的解$$w^{*}$$，$$b^*$$可按下式求得:</script><p>w^{<em>} = \sum_{i=1}^N \alpha_i^</em> y_i x_i  \ (8.50)</p>
+0 \le \alpha_i \le C \ (8.49)</script><p>将对目标函数求极大转换为求极小，于是得到对偶问题(8.37)~(8.39)。</p>
+<p><strong>定理8.3</strong>设<script type="math/tex">\alpha^{*}=(\alpha_1^*,\alpha_2^*,...,\alpha_N^*)^{\top}</script>是对偶问题(8.37)~(8.39)的一个解，若存在<script type="math/tex">\alpha^*</script>的一个分量<script type="math/tex">\alpha_j^*</script>，<script type="math/tex">0<\alpha_j^*<C</script>，则原始问题(8.32)~(8.34)的解<script type="math/tex">w^{*}</script>，<script type="math/tex">b^*</script>可按下式求得:</p>
 <script type="math/tex; mode=display">
-</script><p>b^<em> = y<em>j - \sum</em>{i=1}^N y_i \alpha_i^</em>(x_i.x_j)   \ (8.51)</p>
+w^{*} = \sum_{i=1}^N \alpha_i^* y_i x_i  \ (8.50)</script><script type="math/tex; mode=display">
+b^* = y_j - \sum_{i=1}^N y_i \alpha_i^*(x_i.x_j)   \ (8.51)</script><p><strong>证明:</strong>原始问题是凸二次规划问题，解满足KKT条件。即得：</p>
 <script type="math/tex; mode=display">
-
-**证明:**原始问题是凸二次规划问题，解满足KKT条件。即得：</script><p>\nabla<em>wL(w^{<em>},b^{</em>},\xi^<em>,\alpha^</em>,\mu^<em>) = w^</em>-\sum</em>{i=1}^N \alpha_i^* y_i x_i = 0  \ (8.52)</p>
+\nabla_wL(w^{*},b^{*},\xi^*,\alpha^*,\mu^*) = w^*-\sum_{i=1}^N \alpha_i^* y_i x_i = 0  \ (8.52)</script><script type="math/tex; mode=display">
+\nabla_b L(w^*,b^*,\xi^*,\alpha^*,\mu^*) = -\sum_{i=1}^N \alpha_i^* y_i = 0</script><script type="math/tex; mode=display">
+\nabla_{\xi} L(w^*,b^*,\xi^*,\alpha^*,\mu^*) = C-\alpha^*-\mu^* = 0</script><script type="math/tex; mode=display">
+\alpha_i^* (y_i(w^*.x_i + b^*)-1+\xi^*_i) = 0 \ (8.53)</script><script type="math/tex; mode=display">
+\mu_i^* \xi^*_i = 0 \ (8.54)</script><script type="math/tex; mode=display">
+y_i(w^*.x_i+b^*)-1+\xi^*_i \ge 0</script><script type="math/tex; mode=display">
+\xi_i^* \ge 0</script><script type="math/tex; mode=display">
+\alpha_i^* \ge 0</script><script type="math/tex; mode=display">
+\mu_i^* \ge 0 , i=1,2,...,N</script><p>由式(8.52)易知式(8.50)成立。</p>
+<p>由式(8.53)~(8.54)可知，若存在<script type="math/tex">\alpha_j^*</script>，<script type="math/tex">0 < \alpha_j^*  < C</script>，则<script type="math/tex">y_i(w^*.x_i+b^*)-1=0</script>。由此即得式(8.51)。</p>
+<p>由此定理可知，分离超平面可以写成:</p>
 <script type="math/tex; mode=display">
-</script><p>\nabla<em>b L(w^<em>,b^</em>,\xi^<em>,\alpha^</em>,\mu^*) = -\sum</em>{i=1}^N \alpha_i^* y_i = 0</p>
+\sum_{i=1}^N \alpha_i^* y_i (x.x_i)+b^* = 0 \ (8.55)</script><p>分类决策函数可以写成:</p>
 <script type="math/tex; mode=display">
-</script><p>\nabla_{\xi} L(w^<em>,b^</em>,\xi^<em>,\alpha^</em>,\mu^<em>) = C-\alpha^</em>-\mu^* = 0</p>
+f(x) = \mathrm{sign} \left(\sum_{i=1}^N \alpha_i^* y_i(x.x_i)+b^* \right) \ (8.56)</script><p>式(8.56)为线性支持向量机的对偶形式。</p>
+<p><strong>算法8.3 (线性支持向量机学习算法)</strong></p>
+<p>输入：训练数据集<script type="math/tex">T = \{(x_1,y_1),(x_2,y_2),...,(x_N,y_N)\}</script>，其中，<script type="math/tex">x_i \in \mathcal{X} = R^n</script>，<script type="math/tex">y_i \in \mathcal{Y}=\{-1,+1\}</script>，i=1,2,…,N；</p>
+<p>输出:分离超平面和分类决策函数。</p>
+<p>(1)选择惩罚参数C &gt; 0，构造并求解凸二次规划问题</p>
 <script type="math/tex; mode=display">
-</script><p>\alpha_i^<em> (y_i(w^</em>.x_i + b^<em>)-1+\xi^</em>_i) = 0 \ (8.53)</p>
-<script type="math/tex; mode=display">
-</script><p>\mu_i^<em> \xi^</em>_i = 0 \ (8.54)</p>
-<script type="math/tex; mode=display">
-</script><p>y_i(w^<em>.x_i+b^</em>)-1+\xi^*_i \ge 0</p>
-<script type="math/tex; mode=display">
-</script><p>\xi_i^* \ge 0</p>
-<script type="math/tex; mode=display">
-</script><p>\alpha_i^* \ge 0</p>
-<script type="math/tex; mode=display">
-</script><p>\mu_i^* \ge 0 , i=1,2,…,N</p>
-<script type="math/tex; mode=display">
-
-由式(8.52)易知式(8.50)成立。
-
-由式(8.53)\~(8.54)可知，若存在$$\alpha_j^*$$，$$0 < \alpha_j^*  < C$$，则$$y_i(w^*.x_i+b^*)-1=0$$。由此即得式(8.51)。
-
-
-
-由此定理可知，分离超平面可以写成:</script><p>\sum_{i=1}^N \alpha_i^<em> y_i (x.x_i)+b^</em> = 0 \ (8.55)</p>
-<script type="math/tex; mode=display">
-分类决策函数可以写成:</script><p>f(x) = \mathrm{sign} \left(\sum_{i=1}^N \alpha_i^<em> y_i(x.x_i)+b^</em> \right) \ (8.56)</p>
-<script type="math/tex; mode=display">
-式(8.56)为线性支持向量机的对偶形式。
-
-**算法8.3 (线性支持向量机学习算法)**
-
-输入：训练数据集$$T = \{(x_1,y_1),(x_2,y_2),...,(x_N,y_N)\}$$，其中，$$x_i \in \mathcal{X} = R^n$$，$$y_i \in \mathcal{Y}=\{-1,+1\}$$，i=1,2,...,N；
-
-输出:分离超平面和分类决策函数。
-
-(1)选择惩罚参数C > 0，构造并求解凸二次规划问题
-
-$$\min_{\alpha} \frac{1}{2} \sum_{i=1}^N \sum_{j=1}^N \alpha_i \alpha_j y_i y_j (x_i.x_j) - \sum_{i=1}^N \alpha_i</script><p>s.t.     <script type="math/tex">\sum_{i=1}^N \alpha_i y_i = 0</script></p>
-<script type="math/tex; mode=display">0 \le \alpha_i \le C$$，i=1,2,...,N
-
-
-
-求得最优解$$\alpha^* = (\alpha_1^*,\alpha_2^*,...,\alpha_N^*)^{\top}$$。
-
-(2)计算$$w^* = \sum_{i=1}^N \alpha_i^* y_i x_i</script><p>选择<script type="math/tex">\alpha^*</script>的一个分量<script type="math/tex">\alpha_j^*</script>适合条件<script type="math/tex">0<\alpha_j^*<C</script>，计算:</p>
+\min_{\alpha} \frac{1}{2} \sum_{i=1}^N \sum_{j=1}^N \alpha_i \alpha_j y_i y_j (x_i.x_j) - \sum_{i=1}^N \alpha_i</script><script type="math/tex; mode=display">
+\mathrm{s.t.} \sum_{i=1}^N \alpha_i y_i = 0</script><script type="math/tex; mode=display">
+0 \le \alpha_i \le C , i=1,2,...,N</script><p>求得最优解<script type="math/tex">\alpha^* = (\alpha_1^*,\alpha_2^*,...,\alpha_N^*)^{\top}</script>。</p>
+<p>(2)计算<script type="math/tex">w^* = \sum_{i=1}^N \alpha_i^* y_i x_i</script></p>
+<p>选择<script type="math/tex">\alpha^*</script>的一个分量<script type="math/tex">\alpha_j^*</script>适合条件<script type="math/tex">0<\alpha_j^*<C</script>，计算:</p>
 <script type="math/tex; mode=display">
 b^* = y_j - \sum_{i=1}^N y_i \alpha_i^*(x_i.x_j)</script><p>(3)求得分离超平面</p>
 <script type="math/tex; mode=display">
@@ -739,27 +674,17 @@ L(y(w.x+b)) = [1-y(w.x+b)]_{+} \ (8.58)</script><p>称为合页损失函数。�
 [z]_+ = \left\{\begin{aligned}z, &z>0 \\ 0, &z\le 0\end{aligned} \right . \ (8.59)</script><p>也就是说，当样本点<script type="math/tex">(x_i,y_i)</script>被正确分类且函数间隔(确信度)<script type="math/tex">y_i(w.x_i+b)</script>大于1时，损失是0；否则损失是<script type="math/tex">1-y_i(w.x_i+b)</script>。</p>
 <p>目标函数的第二项是系数为<script type="math/tex">\lambda</script>的w的<script type="math/tex">L_2</script>范数，是正则化项。</p>
 <p><strong>定理8.4</strong>  线性支持向量机原始最优化问题:</p>
-<script type="math/tex; mode=display">\min_{w,b,\xi} \frac{1}{2}\|w\|^2 + C \sum_{i=1}^N \xi_i$$                (8.60)
-
-s.t.          $$y_i(w.x_i+b) \ge 1-\xi_i$$ ，i=1,2,...,N    (8.61)
-
-$$\xi_i \ge 0$$，i=1,2,...,N                    (8.62)
-
-
-
-等价于最优化问题:
-
-$$\min_{w,b} \sum_{i=1}^N [1-y_i(w.x_i+b)]_+ + \lambda \|w\|^2$$    (8.63)
-
-
-
-**证明：**可将最优化问题(8.63)写成问题(8.60)\~(8.62)。令</script><p>[1-y<em>i(w.x_i+b)]</em>+ = \xi_i    \     (8.64)</p>
 <script type="math/tex; mode=display">
-则$$\xi_i \ge 0$$，式(8.62)成立。
-
-由式(8.64)可得：
-
-1. 当$$1-y_i(w.x_i+b) > 0$$时，有$$y_i(w.x_i+b)=1-\xi_i</script><ol>
+\min_{w,b,\xi} \frac{1}{2}\|w\|^2 + C \sum_{i=1}^N \xi_i \tag{8.60}</script><script type="math/tex; mode=display">
+\mathrm{s.t.}  y_i(w.x_i+b) \ge 1-\xi_i ，i=1,2,...,N    \tag{8.61}</script><script type="math/tex; mode=display">
+\xi_i \ge 0，i=1,2,...,N    \tag{8.62}</script><p>等价于最优化问题:</p>
+<script type="math/tex; mode=display">
+\min_{w,b} \sum_{i=1}^N [1-y_i(w.x_i+b)]_+ + \lambda \|w\|^2 \tag{8.63}</script><p><strong>证明：</strong>可将最优化问题(8.63)写成问题(8.60)~(8.62)。令</p>
+<script type="math/tex; mode=display">
+[1-y_i(w.x_i+b)]_+ = \xi_i    \     (8.64)</script><p>则<script type="math/tex">\xi_i \ge 0</script>，式(8.62)成立。</p>
+<p>由式(8.64)可得：</p>
+<ol>
+<li>当<script type="math/tex">1-y_i(w.x_i+b) > 0</script>时，有<script type="math/tex">y_i(w.x_i+b)=1-\xi_i</script></li>
 <li>当<script type="math/tex">1-y_i(w.x_i+b) \le 0</script>时，<script type="math/tex">\xi_i = 0</script>，有<script type="math/tex">y_i(w.x_i+b) \ge 1-\xi_i</script>。</li>
 </ol>
 <p>综上所述，式(8.61)成立。</p>
