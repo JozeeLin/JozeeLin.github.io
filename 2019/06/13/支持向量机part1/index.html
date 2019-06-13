@@ -90,7 +90,7 @@
 <meta property="og:image" content="http://yoursite.com/2019/06/13/支持向量机part1/image/ch08-1.png">
 <meta property="og:image" content="http://yoursite.com/2019/06/13/支持向量机part1/image/ch08-2.png">
 <meta property="og:image" content="http://yoursite.com/2019/06/13/支持向量机part1/image/ch08-3.png">
-<meta property="og:updated_time" content="2019-06-13T09:28:48.033Z">
+<meta property="og:updated_time" content="2019-06-13T09:42:52.867Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="支持向量机part1">
 <meta name="twitter:description" content="支持向量机(support vector machines,SVM)是一种二类分类模型。它的基本模型是定义在特征空间上的间隔最大的线性分类器(间隔最大使它有别于感知机)。 核技巧使得SVM称为一个非线性分类器。 学习策略是间隔最大化。通过形式化为一个求解凸二次规划的问题。等价于正则化的合页损失函数的最小化问题。 总而言之，支持向量机的学习算法是求解凸二次规划的最优化算法。 支持向量机学习算法包含构">
@@ -408,60 +408,35 @@ f(x) = \mathrm{sign}(w^{*}.x+b^{*}) \ (8.2)</script><p>称为线性可分支持�
 <ol>
 <li><p><strong>最大间隔分离超平面</strong></p>
 <p>求最大间隔分离超平面问题可以表示为下面的约束最优化问题:</p>
-<p><script type="math/tex">\max_{w,b}     \gamma</script>     (8.9)</p>
-<p><script type="math/tex">\mathrm{s.t.}           y_i\left(\frac{w}{\|w\|}.x_i+\frac{b}{\|w\|}\right) \ge \gamma</script>，i=1,2,…,N   (8.10)</p>
-</li>
+<script type="math/tex; mode=display">
+\max_{w,b}     \gamma \tag{8.9}</script><script type="math/tex; mode=display">
+\mathrm{s.t.}           y_i\left(\frac{w}{\|w\|}.x_i+\frac{b}{\|w\|}\right) \ge \gamma , i=1,2,...,N \tag{8.10}</script></li>
 </ol>
 <p>   根据几何间隔与函数间隔的关系，上面的约束最优化问题可以改写成一下形式:</p>
-<script type="math/tex; mode=display">\max_{w,b}     \frac{\hat{\gamma}}{\|w\|}$$     (8.11)
-
-   $$\mathrm{s.t.}           y_i(w.x_i+b)\ge \hat{\gamma}$$，i=1,2,...,N    (8.12)
-
-
-
-   事实上，假设将w和b按比例改变为$$\lambda w$$和$$\lambda b$$，这时函数间隔成为$$\lambda \hat{\gamma}$$，由此可以看出函数间隔的这一改变对上面最优化问题的不等式约束没有影响，对目标函数的优化也没有影响。**也就是说，$$\hat{\gamma}$$=1，也对不等式约束没有影响。同时，最大化$$\frac{1}{\|w\|}$$和最小化$$\frac{1}{2}\|w\|^2$$是等价的**。
-
-   综上所述，可将上面的最优化问题进一步的调整成如下形式:
-
-   $$\min_{w,b}     \frac{1}{2}\|w\|^2$$         (8.13)
-
-   $$\mathrm{s.t.}           y_i(w.x_i+b)-1\ge 0$$，i=1,2,...,N    (8.14)
-
-
-
-   **这是一个凸二次规划问题**。
-
-   > 凸优化问题是指约束最优化问题:
-   >
-   > $$\min_w     f(w)$$     (8.15)
-   >
-   > $$\mathrm{s.t.}         g_i(w) \le 0$$，i=1,2,...,K     (8.16)
-   >
-   > $$h_i(w)=0$$，i=1,2,...l       (8.17)
-   >
-   > 
-   >
-   > 其中，目标函数$$f(w)$$和约束函数$$g_i(w)$$都是$$R^n$$上的连续可微的凸函数，约束函数$$h_i(w)$$是$$R^n$$上的仿射函数。
-   >
-   > 当目标函数$$f(w)$$是二次函数且约束函数$$g_i(w)$$是仿射函数时，上述凸最优化问题成为凸二次规划问题。
-
-   **算法8.1(线性可分支持向量机学习算法——最大间隔法)**
-
-   输入:线性可分训练数据集$$T=\{(x_1,y_1),(x_2,y_2),...,(x_N,y_N)\}$$，其中，$$x_i \in \mathcal{X}=R^n,y_i \in \mathcal{Y}=\{-1,+1\},i=1,2,...,N$$；
-
-   输出:最大间隔分离超平面和分类决策函数。
-
-   (1)构造并求解约束最优化问题:
-
-   $$\min_{w,b}     \frac{1}{2}\|w\|^2</script><script type="math/tex; mode=display">\mathrm{s.t.}            y_i(w.x_i+b)-1\ge 0$$，i=1,2,...,N
-
-
-
-   求得最优解$$w^*,b^*$$。
-
-   (2)由此得到分离超平面:
-
-   $$w^*.x+b^*=0</script><p>   分类决策函数:</p>
+<script type="math/tex; mode=display">
+   \max_{w,b}     \frac{\hat{\gamma}}{\|w\|} \tag{8.11}</script><script type="math/tex; mode=display">
+   \mathrm{s.t.}           y_i(w.x_i+b)\ge \hat{\gamma} ,i=1,2,...,N \tag{8.12}</script><p>   事实上，假设将w和b按比例改变为<script type="math/tex">\lambda w</script>和<script type="math/tex">\lambda b</script>，这时函数间隔成为<script type="math/tex">\lambda \hat{\gamma}</script>，由此可以看出函数间隔的这一改变对上面最优化问题的不等式约束没有影响，对目标函数的优化也没有影响。<strong>也就是说，<script type="math/tex">\hat{\gamma}</script>=1，也对不等式约束没有影响。同时，最大化<script type="math/tex">\frac{1}{\|w\|}</script>和最小化<script type="math/tex">\frac{1}{2}\|w\|^2</script>是等价的</strong>。</p>
+<p>   综上所述，可将上面的最优化问题进一步的调整成如下形式:</p>
+<script type="math/tex; mode=display">
+   \min_{w,b}     \frac{1}{2}\|w\|^2 \tag{8.13}</script><script type="math/tex; mode=display">
+   \mathrm{s.t.}           y_i(w.x_i+b)-1\ge 0 , i=1,2,...,N \tag{8.14}</script><p>   <strong>这是一个凸二次规划问题</strong>。</p>
+<blockquote>
+<p>凸优化问题是指约束最优化问题:</p>
+<script type="math/tex; mode=display">
+\min_w     f(w) \tag{8.15}</script><script type="math/tex; mode=display">
+\mathrm{s.t.}         g_i(w) \le 0 i=1,2,...,K \tag{8.16}</script><script type="math/tex; mode=display">
+h_i(w)=0 i=1,2,...,l\tag{8.17}</script><p>其中，目标函数<script type="math/tex">f(w)</script>和约束函数<script type="math/tex">g_i(w)</script>都是<script type="math/tex">R^n</script>上的连续可微的凸函数，约束函数<script type="math/tex">h_i(w)</script>是<script type="math/tex">R^n</script>上的仿射函数。</p>
+<p>当目标函数<script type="math/tex">f(w)</script>是二次函数且约束函数<script type="math/tex">g_i(w)</script>是仿射函数时，上述凸最优化问题成为凸二次规划问题。</p>
+</blockquote>
+<p>   <strong>算法8.1(线性可分支持向量机学习算法——最大间隔法)</strong></p>
+<p>   输入:线性可分训练数据集<script type="math/tex">T=\{(x_1,y_1),(x_2,y_2),...,(x_N,y_N)\}</script>，其中，<script type="math/tex">x_i \in \mathcal{X}=R^n,y_i \in \mathcal{Y}=\{-1,+1\},i=1,2,...,N</script>；</p>
+<p>   输出:最大间隔分离超平面和分类决策函数。</p>
+<p>   (1)构造并求解约束最优化问题:</p>
+<script type="math/tex; mode=display">
+   \min_{w,b}     \frac{1}{2}\|w\|^2</script><script type="math/tex; mode=display">
+   \mathrm{s.t.}            y_i(w.x_i+b)-1\ge 0 , i=1,2,...,N</script><p>   求得最优解<script type="math/tex">w^*,b^*</script>。</p>
+<p>   (2)由此得到分离超平面:</p>
+<script type="math/tex; mode=display">w^*.x+b^*=0</script><p>   分类决策函数:</p>
 <script type="math/tex; mode=display">f(x) = \mathrm{sign}(w^*.x+b^*)</script><ol>
 <li><p><strong>最大间隔分离超平面的存在唯一性</strong></p>
 <p><strong>定理8.1(最大间隔分离超平面的存在唯一性)</strong>若训练数据集T线性可分，则可将训练数据集中的样本点完全正确分开的最大间隔分离超平面存在且唯一。</p>
@@ -531,61 +506,39 @@ w = \sum_{i=1}^N \alpha_i y_i x_i \ (8.19)</script><script type="math/tex; mode=
 \begin{aligned}L(w,b,\alpha) &= \frac{1}{2}\sum_{i=1}^N \sum_{j=1}^N \alpha_i \alpha_j y_iy_j(x_i.x_j)-\sum_{i=1}^N \alpha_iy_i \left(\left(\sum_{j=1}^N \alpha_jy_jx_j\right).x_i+b\right)+\sum_{i=1}^N \alpha_i \\ &= -\frac{1}{2} \sum_{i=1}^N \sum_{j=1}^N \alpha_i \alpha_j y_iy_j(x_i.x_j)+\sum_{i=1}^N \alpha_i \end{aligned}</script><p>即</p>
 <script type="math/tex; mode=display">
 \min_{w,b} L(w,b,\alpha) = -\frac{1}{2} \sum_{i=1}^N \sum_{j=1}^N \alpha_i \alpha_j y_i y_j (x_i.x_j)+\sum_{i=1}^N \alpha_i</script><p>(2)求<script type="math/tex">\min_{w,b}L(w,b,\alpha)</script>对<script type="math/tex">\alpha</script>的极大，即是对偶问题:</p>
-<script type="math/tex; mode=display">\max_{\alpha} -\frac{1}{2} \sum_{i=1}^N \sum_{j=1}^N \alpha_i \alpha_j y_iy_j(x_i.x_j)+\sum_{i=1}^N \alpha_i$$          (8.21)
-
-s.t.      $$\sum_{i=1}^N \alpha_i y_i = 0</script><script type="math/tex; mode=display">\alpha_i \ge 0$$，i=1,2,...,N
-
-
-
-将式(8.21)的目标函数由求极大转成求极小，就得到下面与之等价的对偶最优化问题:
-
-$$\min_{\alpha} \frac{1}{2} \sum_{i=1}^N \sum_{j=1}^N \alpha_i \alpha_j y_i y_j(x_i.x_j) - \sum_{i=1}^N \alpha_i$$     (8.22)
-
-s.t.      $$\sum_{i=1}^N \alpha_i y_i = 0$$                                                   (8.23)
-
-$$\alpha_i \ge 0$$，i=1,2,...,N                                                        (8.24)
-
-
-
-原始问题满足KKT条件，所以存在$$w^*$$，$$\alpha^*$$，使$$w^*$$是原始问题的解，$$\alpha^*$$是对偶问题的解。这意味着求解原始问题(8.13)\~(8.14)可以转换为求解对偶问题(8.22)\~(8.24)。
-
-**定理8.2** 设$$\alpha^{*} = (\alpha_1^*,\alpha_2^{*},...,\alpha_l^{*})^{\top}$$是对偶最优化问题(8.22)\~(8.24)的解，则存在下标j，使得$$\alpha_j^{*} > 0$$，并可按下式求得原始最优化问题(8.13)\~(8.14)的解$$w^{*}$$,$$b^{*}$$:</script><p>w^{<em>} = \sum_{i=1}^N \alpha_i^</em> y_i x_i \ (8.25)</p>
 <script type="math/tex; mode=display">
-</script><p>b^{<em>} = y<em>j - \sum</em>{i=1}^N \alpha_i^{</em>}y_i(x_i.x_j) \ (8.26)</p>
+\max_{\alpha} -\frac{1}{2} \sum_{i=1}^N \sum_{j=1}^N \alpha_i \alpha_j y_iy_j(x_i.x_j)+\sum_{i=1}^N \alpha_i \tag{8.21} \\</script><script type="math/tex; mode=display">
+\mathrm{s.t.} \sum_{i=1}^N \alpha_i y_i = 0</script><script type="math/tex; mode=display">
+\alpha_i \ge 0，i=1,2,...,N</script><p>将式(8.21)的目标函数由求极大转成求极小，就得到下面与之等价的对偶最优化问题:</p>
 <script type="math/tex; mode=display">
-
-**证明：**按照KKT条件成立，即得：</script><p>\nabla<em>w L(w^<em>,b^</em>,\alpha^<em>) = w^</em> - \sum</em>{i=1}^N \alpha_i^* y_i x_i = 0  \ (8.27)</p>
+\min_{\alpha} \frac{1}{2} \sum_{i=1}^N \sum_{j=1}^N \alpha_i \alpha_j y_i y_j(x_i.x_j) - \sum_{i=1}^N \alpha_i \tag{8.22}</script><script type="math/tex; mode=display">
+\mathrm{s.t.} \sum_{i=1}^N \alpha_i y_i = 0 \tag{8.23}</script><script type="math/tex; mode=display">
+\alpha_i \ge 0 , i=1,2,...,N \tag{8.24}</script><p>原始问题满足KKT条件，所以存在<script type="math/tex">w^*</script>，<script type="math/tex">\alpha^*</script>，使<script type="math/tex">w^*</script>是原始问题的解，<script type="math/tex">\alpha^*</script>是对偶问题的解。这意味着求解原始问题(8.13)~(8.14)可以转换为求解对偶问题(8.22)~(8.24)。</p>
+<p><strong>定理8.2</strong> 设<script type="math/tex">\alpha^{*} = (\alpha_1^*,\alpha_2^{*},...,\alpha_l^{*})^{\top}</script>是对偶最优化问题(8.22)~(8.24)的解，则存在下标j，使得<script type="math/tex">\alpha_j^{*} > 0</script>，并可按下式求得原始最优化问题(8.13)~(8.14)的解<script type="math/tex">w^{*}</script>,<script type="math/tex">b^{*}</script>:</p>
 <script type="math/tex; mode=display">
-</script><p>\nabla<em>b L(w^<em>,b^</em>,\alpha^*) = -\sum</em>{i=1}^N \alpha_i^* y_i = 0</p>
+w^{*} = \sum_{i=1}^N \alpha_i^* y_i x_i \ (8.25)</script><script type="math/tex; mode=display">
+b^{*} = y_j - \sum_{i=1}^N \alpha_i^{*}y_i(x_i.x_j) \ (8.26)</script><p><strong>证明：</strong>按照KKT条件成立，即得：</p>
 <script type="math/tex; mode=display">
-</script><p>\alpha_i^<em> (y_i(w^</em>.x_i+b^*)-1) = 0 , i=1,2,…,N</p>
+\nabla_w L(w^*,b^*,\alpha^*) = w^* - \sum_{i=1}^N \alpha_i^* y_i x_i = 0  \ (8.27)</script><script type="math/tex; mode=display">
+\nabla_b L(w^*,b^*,\alpha^*) = -\sum_{i=1}^N \alpha_i^* y_i = 0</script><script type="math/tex; mode=display">
+\alpha_i^* (y_i(w^*.x_i+b^*)-1) = 0 , i=1,2,...,N</script><script type="math/tex; mode=display">
+y_i(w^*.x_i+b^*)-1 \ge 0 , i=1,2,...,N</script><script type="math/tex; mode=display">
+\alpha_i^* \ge 0 , i=1,2,...,N</script><p>由此得:</p>
 <script type="math/tex; mode=display">
-</script><p>y_i(w^<em>.x_i+b^</em>)-1 \ge 0 , i=1,2,…,N</p>
+w^* = \sum_{i} \alpha_i^* y_i x_i</script><p>其中至少有一个<script type="math/tex">\alpha_j^* > 0</script>(用反证法，假设<script type="math/tex">\alpha^*=0</script>，由式(8.27)可知<script type="math/tex">w^*=0</script>，而<script type="math/tex">w^*=0</script>不是原始最优化问题(8.13)~(8.14)的解，产生矛盾)，对此j有:</p>
 <script type="math/tex; mode=display">
-</script><p>\alpha_i^* \ge 0 , i=1,2,…,N</p>
+y_j (w^*.x_j + b^*)-1 = 0 \ (8.28)</script><p>将式(8.25)代入式(8.28)并注意到<script type="math/tex">y_j^2 = 1</script>，即得：</p>
 <script type="math/tex; mode=display">
-
-由此得:</script><p>w^<em> = \sum_{i} \alpha_i^</em> y_i x_i</p>
+b^* = y_j - \sum_{i=1}^N \alpha_i^* y_i(x_i.x_j)</script><p>由此定理可知，分离超平面可以写成:</p>
 <script type="math/tex; mode=display">
-其中至少有一个$$\alpha_j^* > 0$$(用反证法，假设$$\alpha^*=0$$，由式(8.27)可知$$w^*=0$$，而$$w^*=0$$不是原始最优化问题(8.13)~(8.14)的解，产生矛盾)，对此j有:</script><p>y_j (w^<em>.x_j + b^</em>)-1 = 0 \ (8.28)</p>
+\sum_{i=1}^N \alpha_i^* y_i (x.x_i)+b^* = 0  \ (8.29)</script><p>分类决策函数可以写成：</p>
 <script type="math/tex; mode=display">
-将式(8.25)代入式(8.28)并注意到$$y_j^2 = 1$$，即得：</script><p>b^<em> = y<em>j - \sum</em>{i=1}^N \alpha_i^</em> y_i(x_i.x_j) </p>
-<script type="math/tex; mode=display">
-由此定理可知，分离超平面可以写成:</script><p>\sum_{i=1}^N \alpha_i^<em> y_i (x.x_i)+b^</em> = 0  \ (8.29)</p>
-<script type="math/tex; mode=display">
-分类决策函数可以写成：</script><p>f(x) = \mathrm{sign} \left(\sum_{i=1}^N \alpha_i^<em> y_i (x.x_i)+b^</em> \right) \ (8.30)</p>
-<script type="math/tex; mode=display">
-这就是说，**分类决策函数只依赖于输入x和训练样本输入内积**。式(8.30)称为<u>**线性可分支持向量机的对偶形式**</u>。
-
-**算法8.2(线性可分支持向量机学习算法):**
-
-输入:线性可分训练集$$T = \{(x_1,y_1),(x_2,y_2),...,(x_N,y_N)\}$$，其中$$x_i \in \mathcal{X}=R^n,y_i \in \mathcal{Y}=\{-1,+1\}$$，i=1,2,...,N；
-
-输出:分离超平面和分类决策函数。
-
-(1)构造并求解约束最优化问题
-
-$$\min_{\alpha}  \frac{1}{2} \sum_{i=1}^N \sum_{j=1}^N \alpha_i \alpha_j y_i y_j (x_i.x_j) - \sum_{i=1}^N \alpha_i</script><p>s.t.     <script type="math/tex">\sum_{i=1}^N \alpha_i y_i =0</script></p>
+f(x) = \mathrm{sign} \left(\sum_{i=1}^N \alpha_i^* y_i (x.x_i)+b^* \right) \ (8.30)</script><p>这就是说，<strong>分类决策函数只依赖于输入x和训练样本输入内积</strong>。式(8.30)称为<u><strong>线性可分支持向量机的对偶形式</strong></u>。</p>
+<p><strong>算法8.2(线性可分支持向量机学习算法):</strong></p>
+<p>输入:线性可分训练集<script type="math/tex">T = \{(x_1,y_1),(x_2,y_2),...,(x_N,y_N)\}</script>，其中<script type="math/tex">x_i \in \mathcal{X}=R^n,y_i \in \mathcal{Y}=\{-1,+1\}</script>，i=1,2,…,N；</p>
+<p>输出:分离超平面和分类决策函数。</p>
+<p>(1)构造并求解约束最优化问题</p>
+<script type="math/tex; mode=display">\min_{\alpha}  \frac{1}{2} \sum_{i=1}^N \sum_{j=1}^N \alpha_i \alpha_j y_i y_j (x_i.x_j) - \sum_{i=1}^N \alpha_i</script><p>s.t.     <script type="math/tex">\sum_{i=1}^N \alpha_i y_i =0</script></p>
 <script type="math/tex; mode=display">\alpha_i \ge 0$$，i=1,2,...,N
 
 求得最优解$$\alpha^* = (\alpha_1^*,\alpha_2^*,...,\alpha_N^*)^{\top}$$。
