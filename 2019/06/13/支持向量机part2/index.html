@@ -87,13 +87,13 @@
 <meta property="og:site_name" content="Jozee&#39;s技术博客">
 <meta property="og:description" content="8.3 非线性支持向量机与核函数非线性数据集则使用非线性支持向量机，其主要特点是利用核技巧(kernel trick)。为此，先要介绍核技巧。 8.3.1 核技巧 非线性分类问题 非线性分类问题是指通过利用非线性模型才能很好地进行分类的问题。 如下图所示：  一般来说，对给定的一个训练数据集T = \{(x_1,y_1),(x_2,y_2),...,(x_N,y_N)\}，其中，实例x_i属于输入">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:image" content="http://yoursite.com/.com//ch08-4.png">
-<meta property="og:image" content="http://yoursite.com/.com//ch08-5.png">
+<meta property="og:image" content="http://yoursite.com/2019/06/13/支持向量机part2/image/ch08-4.png">
+<meta property="og:image" content="http://yoursite.com/2019/06/13/支持向量机part2/image/ch08-5.png">
 <meta property="og:updated_time" content="2019-06-13T12:08:35.952Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="支持向量机part2">
 <meta name="twitter:description" content="8.3 非线性支持向量机与核函数非线性数据集则使用非线性支持向量机，其主要特点是利用核技巧(kernel trick)。为此，先要介绍核技巧。 8.3.1 核技巧 非线性分类问题 非线性分类问题是指通过利用非线性模型才能很好地进行分类的问题。 如下图所示：  一般来说，对给定的一个训练数据集T = \{(x_1,y_1),(x_2,y_2),...,(x_N,y_N)\}，其中，实例x_i属于输入">
-<meta name="twitter:image" content="http://yoursite.com/.com//ch08-4.png">
+<meta name="twitter:image" content="http://yoursite.com/2019/06/13/支持向量机part2/image/ch08-4.png">
 
 
 
@@ -360,7 +360,7 @@
 <li><p><strong>非线性分类问题</strong></p>
 <p>非线性分类问题是指通过利用非线性模型才能很好地进行分类的问题。</p>
 <p>如下图所示：</p>
-<p><img src="/.com//ch08-4.png" alt="ch08-4"></p>
+<p><img src="image/ch08-4.png" alt="ch08-4"></p>
 <p>一般来说，对给定的一个训练数据集<script type="math/tex">T = \{(x_1,y_1),(x_2,y_2),...,(x_N,y_N)\}</script>，其中，实例<script type="math/tex">x_i</script>属于输入空间，<script type="math/tex">x_i \in \mathcal{X} = R^n</script>，对应的标记有两类<script type="math/tex">y_i \in \mathcal{Y} = \{-1,+1\}</script>，i=1,2,…,N。<strong>如果能用<script type="math/tex">R^n</script>中的一个超曲面将正负例正确分开，则称这个问题为非线性可分问题</strong>。</p>
 <blockquote>
 <p>非线性问题的解决思路:对非线性数据集进行非线性变换，将非线性问题变换为线性问题，通过解变换后的线性问题的方法求解原来的非线性问题。</p>
@@ -530,7 +530,7 @@ f(x) = \mathrm{sign} \left(\sum_{i=1}^N \alpha_i^* y_i K(x\bullet x_i)+b^*\right
 <li>然后在此约束条件下求极小。</li>
 </ol>
 <h3 id="8-4-2-分析约束条件"><a href="#8-4-2-分析约束条件" class="headerlink" title="8.4.2 分析约束条件"></a>8.4.2 分析约束条件</h3><p>由于只有两个变量<script type="math/tex">(\alpha_1,\alpha_2)</script>，约束可以用二维空间中的图形表示，如下图所示:</p>
-<p><img src="/.com//ch08-5.png" alt="ch08-5"></p>
+<p><img src="image/ch08-5.png" alt="ch08-5"></p>
 <p>不等式约束(8.103)使得<script type="math/tex">(\alpha_1,\alpha_2)</script>在盒子<script type="math/tex">[0,C]\times [0,C]</script>内，等式约束(8.102)使<script type="math/tex">(\alpha_1,\alpha_2)</script>在平行于盒子<script type="math/tex">[0,C]\times [0,C]</script>的对角线的直线上。因此要求的是目标函数在一条平行于对角线的线段上的最优值。</p>
 <p>假设问题(8.101)~(8.103)的初始可行解为<script type="math/tex">\alpha_1^{old}</script>，<script type="math/tex">\alpha_2^{old}</script>，最优解为<script type="math/tex">\alpha_1^{new}</script>，<script type="math/tex">\alpha_2^{new}</script>，并且假设在沿着约束方向未经剪辑时<script type="math/tex">\alpha_2</script>的最优解为<script type="math/tex">\alpha_2^{new,unc}</script>。</p>
 <p>由于<script type="math/tex">\alpha_2^{new}</script>满足不等式约束条件(8.103)，所以最优值<script type="math/tex">\alpha_2^{new}</script>的取值范围必须满足条件:</p>
