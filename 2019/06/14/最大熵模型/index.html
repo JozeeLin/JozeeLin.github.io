@@ -1,0 +1,1080 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="判别模型,分类模型,">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="7.1 最大熵模型最大熵模型(maximum entropy model)由最大熵原理推导实现。 7.1.1 最大熵原理最大熵原理：学习概率模型时，在所有可能的概率模型(分布)中，熵最大的模型是最好的模型。 通常用约束条件来确定概率模型的集合，所以，最大熵原理也可表述为在满足约束条件的模型集合中选取熵最大的模型。 假设离散随机变量X的概率分布是P(X)，则其熵是:  H(P) = -\sum_x">
+<meta name="keywords" content="判别模型,分类模型">
+<meta property="og:type" content="article">
+<meta property="og:title" content="最大熵模型">
+<meta property="og:url" content="http://yoursite.com/2019/06/14/最大熵模型/index.html">
+<meta property="og:site_name" content="Jozee&#39;s技术博客">
+<meta property="og:description" content="7.1 最大熵模型最大熵模型(maximum entropy model)由最大熵原理推导实现。 7.1.1 最大熵原理最大熵原理：学习概率模型时，在所有可能的概率模型(分布)中，熵最大的模型是最好的模型。 通常用约束条件来确定概率模型的集合，所以，最大熵原理也可表述为在满足约束条件的模型集合中选取熵最大的模型。 假设离散随机变量X的概率分布是P(X)，则其熵是:  H(P) = -\sum_x">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2019-06-14T09:03:44.138Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="最大熵模型">
+<meta name="twitter:description" content="7.1 最大熵模型最大熵模型(maximum entropy model)由最大熵原理推导实现。 7.1.1 最大熵原理最大熵原理：学习概率模型时，在所有可能的概率模型(分布)中，熵最大的模型是最好的模型。 通常用约束条件来确定概率模型的集合，所以，最大熵原理也可表述为在满足约束条件的模型集合中选取熵最大的模型。 假设离散随机变量X的概率分布是P(X)，则其熵是:  H(P) = -\sum_x">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2019/06/14/最大熵模型/">
+
+
+
+
+
+  <title>最大熵模型 | Jozee's技术博客</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Jozee's技术博客</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/06/14/最大熵模型/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="jozee">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Jozee's技术博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">最大熵模型</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-06-14T16:42:44+08:00">
+                2019-06-14
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/机器学习/" itemprop="url" rel="index">
+                    <span itemprop="name">机器学习</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2019/06/14/最大熵模型/" class="leancloud_visitors" data-flag-title="最大熵模型">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数&#58;</span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="7-1-最大熵模型"><a href="#7-1-最大熵模型" class="headerlink" title="7.1 最大熵模型"></a>7.1 最大熵模型</h2><p>最大熵模型(maximum entropy model)由最大熵原理推导实现。</p>
+<h3 id="7-1-1-最大熵原理"><a href="#7-1-1-最大熵原理" class="headerlink" title="7.1.1 最大熵原理"></a>7.1.1 最大熵原理</h3><p><strong>最大熵原理：</strong>学习概率模型时，在所有可能的概率模型(分布)中，熵最大的模型是最好的模型。</p>
+<p>通常用约束条件来确定概率模型的集合，所以，<strong>最大熵原理也可表述为在满足约束条件的模型集合中选取熵最大的模型</strong>。</p>
+<p>假设离散随机变量X的概率分布是P(X)，则其熵是:</p>
+<script type="math/tex; mode=display">
+H(P) = -\sum_x P(x)\log P(x) \ (6.9)</script><p>熵满足下列不等式:</p>
+<script type="math/tex; mode=display">
+0 \le H(P) \le \log |X|</script><p>式中，|X|是X的取值个数，当且仅当X的分布是均匀分布时右边的等号成立。这就是说，<strong>当X服从均匀分布时，熵最大</strong>。</p>
+<blockquote>
+<p>直观地，最大熵原理认为要选择的概率模型<strong>首先必须满足已有的事实，即约束条件</strong>。在没有更多信息的情况下，<strong>那些不确定的部分都是”等可能的”</strong>。<strong>最大熵原理通过熵的最大化来表示等可能性</strong>。</p>
+</blockquote>
+<h3 id="7-1-2-最大熵模型的定义"><a href="#7-1-2-最大熵模型的定义" class="headerlink" title="7.1.2 最大熵模型的定义"></a>7.1.2 最大熵模型的定义</h3><p>假设分类模型是一个条件概率分布P(Y|X)，<script type="math/tex">X \in \mathcal{X} \subseteq \mathbb{R}^n</script> 表示输入，<script type="math/tex">Y \in \mathcal{Y}</script>表示输出，<script type="math/tex">\mathcal{X} \ , \mathcal{Y}</script>分别是输入和输出的集合。</p>
+<p>给定一个训练数据集 <script type="math/tex">T = \{(x_1,y_1),(x_2,y_2),...,(x_N,y_N)\}</script>，<strong>学习的目标是用最大熵原理选择最好的分类模型</strong>。</p>
+<blockquote>
+<p><strong>注意：</strong>此处的(x1,y1)中，x1为样本的某个特征，标量。所以<script type="math/tex">\tilde{P}(X,Y)</script>中的X表示某个特征的随机变量(标量)，Y表示标签随机变量(标量)。</p>
+</blockquote>
+<h4 id="定义约束条件"><a href="#定义约束条件" class="headerlink" title="定义约束条件"></a>定义约束条件</h4><p>给定训练数据集，可以确定联合分布P(X,Y)的经验分布和边缘分布P(X)的经验分布，分别以<script type="math/tex">\tilde{P}(X,Y)</script>和<script type="math/tex">\tilde{P}(X)</script>表示。这里，</p>
+<script type="math/tex; mode=display">
+\tilde{P}(X=x,Y=y) = \frac{v(X=x,Y=y)}{N}</script><script type="math/tex; mode=display">
+\tilde{P}(X=x) = \frac{v(X=x)}{N}</script><p>其中，v(X=x,Y=y)表示训练数据中样本(x,y)出现的频数，v(X=x)表示训练数据中输入x出现的频数，N表示训练样本容量。</p>
+<p><strong>定义特征函数：</strong></p>
+<script type="math/tex; mode=display">
+f(x,y) =\left\{\begin{aligned}&1, (x,y)\in T \\ &0, else \end{aligned}\right.</script><p>它是一个二值函数，当x和y满足这个事实时取值为1，否则取值为0。</p>
+<p>特征函数f(x,y)关于经验分布<script type="math/tex">\tilde{P}(X,Y)</script>的期望值，用<script type="math/tex">E_{\tilde{P}}(f)</script>表示：</p>
+<script type="math/tex; mode=display">
+E_{\tilde{P}}(f) = \sum_{x,y} \tilde{P}(x,y)f(x,y)</script><p>特征函数f(x,y)关于模型P(Y|X)与经验分布<script type="math/tex">\tilde{P}(X)</script>的期望值，用<script type="math/tex">E_{P}(f)</script>表示：</p>
+<script type="math/tex; mode=display">
+E_P(f) = \sum_{x,y} \tilde{P}(x)P(y|x)f(x,y)</script><p>如果模型能够获取训练数据中的信息，那么就可以假设这两个期望值相等，即</p>
+<script type="math/tex; mode=display">
+E_P(f) = E_{\tilde{P}}(f) \ (6.10)</script><p><strong>将式(6.10)作为模型学习的约束条件。</strong>假如有n个特征函数<script type="math/tex">f_i(x,y),i=1,2,...,n</script>，那么就有n个约束条件。</p>
+<p><strong>定义6.3(最大熵模型)</strong>假设满足所有约束条件的模型集合为:</p>
+<script type="math/tex; mode=display">
+\mathcal{C} \equiv \{P\in \mathcal{P}|E_P(f_i)=E_{\tilde{P}}(f_i), i=1,2,...,n\} \ (6.12)</script><p>定义在条件概率分布P(Y|X)上的<strong>条件熵</strong>为:</p>
+<script type="math/tex; mode=display">
+H(P(Y|X)) = -\sum_{x,y} \tilde{P}(x)P(y|x)\log P(y|x) \ (6.13)</script><p>则模型集合<script type="math/tex">\mathcal{C}</script>中条件熵H(P)最大的模型称为最大熵模型。式中的对数为自然对数。</p>
+<blockquote>
+<p><strong>注意：</strong>式(6.13)对应于第五章中式(5.5)。</p>
+</blockquote>
+<h3 id="7-1-3-最大熵模型的学习"><a href="#7-1-3-最大熵模型的学习" class="headerlink" title="7.1.3 最大熵模型的学习"></a>7.1.3 最大熵模型的学习</h3><p><strong>最大熵模型的学习可以形式化为约束最优化问题。</strong></p>
+<p>对于给定的训练数据集<script type="math/tex">T = \{(x_1,y_1),(x_2,y_2),...,(x_N,y_N)\}</script>以及特征函数<script type="math/tex">f_i(x,y)</script>，i=1,2,…,n，最大熵模型的学习等价于约束最优化问题:</p>
+<script type="math/tex; mode=display">
+\max_{P \in \mathcal{C}} H(Y|X) = -\sum_{x,y}\tilde{P}(x)P(y|x)\log P(y|x)</script><script type="math/tex; mode=display">
+\begin{aligned}\mathrm{s.t.} \ &E_p(f_i) = E_{\tilde{P}}(f_i),i=1,2,...,n \\ &\sum_{y}P(y|x)=1\end{aligned}</script><p>按照最优化问题的习惯，将求最大值问题改写为等价的求最小值问题:</p>
+<script type="math/tex; mode=display">
+\min_{P \in \mathcal{C}} - H(Y|X) = \sum_{x,y}\tilde{P}(x)P(y|x)\log P(y|x) \ (6.14)</script><script type="math/tex; mode=display">
+\begin{aligned}\mathrm{s.t.} \ &E_p(f_i) - E_{\tilde{P}}(f_i)=0,i=1,2,...,n \ (6.15) \\ &\sum_{y}P(y|x)=1 \ (6.16) \end{aligned}</script><p><strong>求解过程:</strong></p>
+<ol>
+<li><p><strong>定义最优化的原始问题</strong></p>
+<p>首先，引进拉格朗日乘子<script type="math/tex">w_0,w_1,w_2,...,w_n</script>，定义拉格朗日函数L(P,w):</p>
+<script type="math/tex; mode=display">
+\begin{aligned}L(P,w)=&-H(P)+w_0\left(1-\sum_y P(y|x)\right)+\sum_{i=1}^n w_i(E_{\tilde{P}}(f_i)-E_P(f_i)) \\ =& \sum_{x,y}\tilde{P}(x)P(y|x)\log P(y|x)+w_0\left(1-\sum_y P(y|x)\right)\\ &+ \sum_{i=1}^n w_i\left(\sum_{x,y}\tilde{P}(x,y)f_i(x,y)-\sum_{x,y}\tilde{P}(x)P(y|x)f_i(x,y)\right)\end{aligned} \ (6.17)</script></li>
+</ol>
+<p>最优化的原始问题是:</p>
+<script type="math/tex; mode=display">
+\min_{P \in \mathcal{C}} \max_{w} L(P,w) \ (6.18)</script><ol>
+<li><p><strong>对偶问题</strong></p>
+<script type="math/tex; mode=display">
+\max_{w} \min_{P\in \mathcal{C}} L(P,w) \ (6.19)</script><p><strong>在满足KKT条件的情况下，原始问题的解与对偶问题的解等价</strong>。</p>
+</li>
+<li><p><strong>求解对偶问题的极小化问题</strong></p>
+<script type="math/tex; mode=display">
+\Psi(w) = \min_{P\in \mathcal{C}}L(P,w) = L(P_w,w) \ (6.20)</script><script type="math/tex; mode=display">
+P_w = \arg \max_{P \in \mathcal{C}}L(P,w)=P_w(y|x) \ (6.21)</script><p>具体地，求L(P,w)对P(y|x)的偏导数。</p>
+<script type="math/tex; mode=display">
+\begin{aligned}\frac{\partial L(P,w)}{\partial P(y|x)} &= \sum_{x,y}\tilde{P}(x)(\log P(y|x)+1)-\sum_y w_0 - \sum_{x,y}\left(\tilde{P}(x)\sum_{i=1}^n w_i f_i(x,y)\right) \\ &= \sum_{x,y} \tilde{P}(x)\left(\log P(y|x)+1-w_0-\sum_{i=1}^n w_i f_i(x,y)\right)\end{aligned}</script><p>令偏导数为0，在<script type="math/tex">\tilde{P}(x)>0</script>的情况下，解得:</p>
+<script type="math/tex; mode=display">
+P(y|x) = \exp\left(\sum_{i=1}^n w_i f_i(x,y)+w_0-1\right) = \frac{\exp \sum_{i=1}^n w_i f_i(x,y)}{\exp (1-w_0)}</script><p>由于<script type="math/tex">\sum_y P(y|x) = 1</script>，得:</p>
+<script type="math/tex; mode=display">
+P_w(y|x) = \frac{1}{Z_w(x)}\exp \left(\sum_{i=1}^n w_i f_i(x,y) \right) \ (6.22)</script><p>其中，</p>
+<script type="math/tex; mode=display">
+Z_w(x) = \sum_y \exp \left(\sum_{i=1}^n w_i f_i(x,y)\right) \ (6.23)</script><p><script type="math/tex">Z_w(x)</script>为归一化因子；<script type="math/tex">f_i(x,y)</script>是特征函数；<script type="math/tex">w_i</script>是特征权重。由式(6.22)、式(6.23)<strong>表示的模型<script type="math/tex">P_w=P_w(y|x)</script>就是最大熵模型</strong>。w是最大熵模型中的参数向量。</p>
+</li>
+<li><p><strong>求解对偶问题的极大化问题</strong></p>
+<script type="math/tex; mode=display">
+\max_{w} \Psi(w) \ (6.24)</script><p>将其解记为<script type="math/tex">w^*</script>，即:</p>
+<script type="math/tex; mode=display">
+w^* = \arg \max_w \Psi(w) \ (6.25)</script><p>从而使得<script type="math/tex">P^* = P_{w^*}=P_{w^*}(y|x)</script>是学习到的最优模型(最大熵模型)。也就是说，最大熵模型的学习归结为对偶函数<script type="math/tex">\Psi(w)</script>的极大化。</p>
+</li>
+</ol>
+<h3 id="7-1-4-极大似然估计"><a href="#7-1-4-极大似然估计" class="headerlink" title="7.1.4 极大似然估计"></a>7.1.4 极大似然估计</h3><p>证明对偶函数的极大化<strong>等价于</strong>最大熵模型的极大似然估计。</p>
+<p>已知训练数据的经验概率分布<script type="math/tex">\tilde{P}(X,Y)</script>，条件概率分布<script type="math/tex">P(Y|X)</script>的对数似然函数表示为:</p>
+<script type="math/tex; mode=display">
+L_{\tilde{P}}(P_w) = \log \prod_{x,y}P(y|x)^{\tilde{P}(x,y)} = \sum_{x,y}\tilde{P}(x,y)\log P(y|x)</script><p>当条件概率分布P(y|x)是最大熵模型(6.22)和(6.23)时，对数似然函数<script type="math/tex">L_{\tilde{P}}(P_w)</script>为：</p>
+<script type="math/tex; mode=display">
+\begin{aligned}L_{\tilde{P}}(P_w) &= \sum_{x,y} \tilde{P}(x,y)\log P(y|x)\\ &= \sum_{x,y}\left(\tilde{P}(x,y) \sum_{i=1}^n w_if_i(x,y)\right)-\sum_{x,y}\tilde{P}(x,y) \log Z_w(x) \\ &=  \sum_{x,y}\left(\tilde{P}(x,y) \sum_{i=1}^n w_if_i(x,y)\right)-\sum_{x}\tilde{P}(x) \log Z_w(x) \end{aligned} \ (6.26)</script><p><strong>再看对偶函数</strong><script type="math/tex">\Psi(w)</script>。由式(6.17)和式(6.20)可得(<strong>注意：这里没有<script type="math/tex">w_0</script>，可以参考(6.22),(6.23)发现该参数对求解对偶函数没有影响，只起到简化函数的作用，如下式的最后一步演化。</strong>)：</p>
+<script type="math/tex; mode=display">
+\begin{aligned}\Psi(w) = &\sum_{x,y} \tilde{P}(x)P_w(y|x)\log P_w(y|x) \\ &+\sum_{i=1}^n w_i\left(\sum_{x,y}\tilde{P}(x,y)f_i(x,y)-\sum_{x,y}\tilde{P}(x)P_w(y|x)f_i(x,y)\right)\\ = &\sum_{x,y}\tilde{P}(x,y)\sum_{i=1}^n w_if_i(x,y) +\sum_{x,y} \tilde{P}(x)P_w(y|x) \left(\log P_w(y|x)-\sum_{i=1}^n w_if_i(x,y)\right) \\ =&\sum_{x,y}\tilde{P}(x,y)\sum_{i=1}^n w_if_i(x,y) -\sum_{x,y} \tilde{P}(x)P_w(y|x) \log Z_w(x) \\ = &\sum_{x,y}\tilde{P}(x,y)\sum_{i=1}^n w_if_i(x,y) - \sum_{x} \tilde{P}(x)\log Z_w(x) \end{aligned} \ (6.27)</script><p>最后一步用到<script type="math/tex">\sum_y P(y|x) =1</script>。</p>
+<p><strong>结论：</strong>比较式(6.26)和式(6.27)，可得：</p>
+<script type="math/tex; mode=display">
+\Psi(w) = L_{\tilde{P}}(P_w)</script><p><strong>也就是说，最大熵模型的学习问题就可以转化为具体求解对数似然函数极大化或对偶函数极大化的问题。</strong></p>
+<p>最大熵模型的一般形式如式(6.22)及式(6.23)所示。</p>
+<h2 id="7-2-最大熵模型学习算法"><a href="#7-2-最大熵模型学习算法" class="headerlink" title="7.2 最大熵模型学习算法"></a>7.2 最大熵模型学习算法</h2><p>逻辑斯蒂回归模型、最大熵模型学习归结为<strong>以似然函数为目标函数的最优化问题</strong>，通常通过迭代算法求解。</p>
+<p>常用的求解方法有<strong>改进的迭代尺度法、梯度下降法、牛顿法或拟牛顿法</strong>。牛顿法或拟牛顿法一般收敛速度更快。</p>
+<h3 id="7-2-1-改进的迭代尺度法"><a href="#7-2-1-改进的迭代尺度法" class="headerlink" title="7.2.1 改进的迭代尺度法"></a>7.2.1 改进的迭代尺度法</h3><p>改进的迭代尺度法是一种最大熵模型学习的最优化算法。</p>
+<p>已知最大熵模型为：</p>
+<script type="math/tex; mode=display">
+P_w(y|x) = \frac{1}{Z_w(x)} \exp\left(\sum_{i=1}^{n}w_i f_i(x,y)\right)</script><p>其中，</p>
+<script type="math/tex; mode=display">
+Z_w(x) = \sum_y \exp \left(\sum_{i=1}^n w_i f_i(x,y)\right)</script><p>对数似然函数为:</p>
+<script type="math/tex; mode=display">
+L(w) = \sum_{x,y}\left(\tilde{P}(x,y) \sum_{i=1}^n w_if_i(x,y)\right)-\sum_{x}\tilde{P}(x) \log Z_w(x)</script><p>目标是通过极大似然估计学习模型参数，即求对数似然函数的极大值<script type="math/tex">\hat{w}</script>。</p>
+<blockquote>
+<p><strong>改进的迭代尺度法的思路是：</strong>假设最大熵模型当前的参数向量是<script type="math/tex">w=(w_1,w_2,...,w_n)^{\top}</script>，我们希望找到一个新的参数向量<script type="math/tex">w+\delta = (w_1+\delta_1,w_2+\delta_2,...,w_n+\delta_n)^{\top}</script>，使得模型的对数似然函数值增大，如果能有这样一种参数向量更新的方法<script type="math/tex">\tau:w\rightarrow w+\delta</script>，那么就可以重复使用这一方法，直到找到对数似然函数的最大值。</p>
+</blockquote>
+<p>对于给定的经验分布<script type="math/tex">\tilde{P}(x,y)</script>，模型参数从w到<script type="math/tex">w+\delta</script>，对数似然函数的改变量是:</p>
+<script type="math/tex; mode=display">
+\begin{aligned} L(w+\delta)-L(w) &= \sum_{x,y}\tilde{P}(x,y)\log P_{w+\delta}(y|x) - \sum_{x,y}\tilde{P}(x,y)\log P_w(y|x) \\ &=\sum_{x,y}\tilde{P}(x,y)\sum_{i=1}^n\delta_i f_i(x,y)-\sum_x \tilde{P}(x)\log \frac{Z_{w+\delta}(x)}{Z_w(x)} \end{aligned}</script><p>利用不等式</p>
+<script type="math/tex; mode=display">
+-\log \alpha \ge 1-\alpha \ , \alpha > 0</script><p>建立对数似然函数改变量的下界:</p>
+<script type="math/tex; mode=display">
+\begin{aligned}L(w+\delta)-L(w) &\ge \sum_{x,y}\tilde{P}(x,y)\sum_{i=1}^n \delta_i f_i(x,y)+\sum_x \tilde{P}(x)\left(1-\frac{Z_{w+\delta}(x)}{Z_w(x)}\right) \\ &= \sum_{x,y}\tilde{P}(x,y)\sum_{i=1}^n \delta_i f_i(x,y)+1-\sum_x \tilde{P}(x)\frac{Z_{w+\delta}(x)}{Z_w(x)} \\ &= \sum_{x,y}\tilde{P}(x,y)\sum_{i=1}^n \delta_i f_i(x,y)+1-\sum_x\tilde{P}(x)\sum_yP_w(y|x)\exp \sum_{i=1}^n \delta_i f_i(x,y)\end{aligned}</script><p>上式，第一步应用了不等式，第二步应用了<script type="math/tex">\sum_x \tilde{P}(x)=1</script>，第三步应用了</p>
+<script type="math/tex; mode=display">\sum_y \exp \left( \sum_{i=1}^n w_if_i(x,y)+\sum_{i=1}^n\delta_if_i(x,y)\right)$$以及式(6.22)。
+
+将右端记为:</script><p>A(\delta|w) = \sum<em>{x,y}\tilde{P}(x,y)\sum</em>{i=1}^n \delta<em>i f_i(x,y)+1-\sum_x\tilde{P}(x)\sum_yP_w(y|x)\exp \sum</em>{i=1}^n \delta_i f_i(x,y)</p>
+<script type="math/tex; mode=display">
+于是有:</script><p>L(w+\delta)-L(w) \ge A(\delta|w)</p>
+<script type="math/tex; mode=display">
+即$$A(\delta|w)$$是对数似然函数改变量的一个下界。
+
+**如果能找到适当的$$\delta$$使下界$$A(\delta|w)$$提高，那么对数似然函数也会提高**。
+
+引入一个量$$f^{*}(x,y)$$，</script><p>f^{*}(x,y) = \sum_i f_i(x,y)</p>
+<script type="math/tex; mode=display">
+因为特征函数$$f_i$$是一个二值函数，故$$f^{*}(x,y)$$表示所有特征在(x,y)出现的次数。这样，$$A(\delta,w)$$，改写为:</script><p>A(\delta|w) = \sum<em>{x,y}\tilde{P}(x,y)\sum</em>{i=1}^n \delta<em>i f_i(x,y)+1-\sum_x\tilde{P}(x)\sum_yP_w(y|x)\exp f^{*}(x,y) \sum</em>{i=1}^n \frac{\delta_i f_i(x,y)}{f^{*}(x,y)} \ (6.30)</p>
+<script type="math/tex; mode=display">
+利用指数函数的凸性以及对任意i，有$$\frac{f_i(x,y)}{f^{*}(x,y)} \ge 0$$且$$\sum_{i=1}^n \frac{f_i(x,y)}{f^{*}(x,y)} = 1$$这一事实。
+
+根据Jensen不等式，得到：</script><p>\exp \left(\sum<em>{i=1}^n \frac{f_i(x,y)}{f^{<em>}(x,y)}\delta_i f^{</em>}(x,y)\right) \le \sum</em>{i=1}^n \frac{f_i(x,y)}{f^{<em>}(x,y)} \exp \left(\delta_i f^{</em>}(x,y)\right)</p>
+<script type="math/tex; mode=display">
+于是式(6.30)可改写为:</script><p>A(\delta|w) \ge \sum<em>{x,y}\tilde{P}(x,y)\sum</em>{i=1}^n \delta<em>i f_i(x,y)+1-\sum_x\tilde{P}(x)\sum_yP_w(y|x)\sum</em>{i=1}^n \left(\frac{f_i(x,y)}{f^{<em>}(x,y)}\right) \exp \left(\delta_i f^{</em>}(x,y)\right) \ (6.31)</p>
+<script type="math/tex; mode=display">
+记不等式(6.31)右端为：</script><p>B(\delta|w) = \sum<em>{x,y}\tilde{P}(x,y)\sum</em>{i=1}^n \delta<em>i f_i(x,y)+1-\sum_x\tilde{P}(x)\sum_yP_w(y|x)\sum</em>{i=1}^n \left(\frac{f_i(x,y)}{f^{<em>}(x,y)}\right) \exp \left(\delta_i f^{</em>}(x,y)\right)</p>
+<script type="math/tex; mode=display">
+于是得到了：</script><p>L(w+\delta)-L(w) \ge B(\delta|w)</p>
+<script type="math/tex; mode=display">
+这里，$$B(\delta|w)$$是对数似然函数改变量的**一个新的(相对不紧的)下界**。
+
+求$$B(\delta|w)$$对$$\delta_i$$的偏导数:</script><p>\frac{\partial B(\delta|w)}{\partial \delta<em>i} = \sum</em>{x,y} \tilde{P}(x,y)f_i(x,y) - \sum_x \tilde{P}(x) \sum_y P_w(y|x)f_i(x,y)\exp (\delta_i f^{*}(x,y)) \ (6.32)</p>
+<script type="math/tex; mode=display">
+在式(6.32)中，除$$\delta_i$$外，不含任何其他变量。令偏导数为0可得：</script><p>\sum<em>x \tilde{P}(x) \sum_y P_w(y|x)f_i(x,y)\exp (\delta_i f^{*}(x,y)) = E</em>{\tilde{P}}(f_i) \ (6.33)</p>
+<script type="math/tex; mode=display">
+于是，**依次对$$\delta_i$$求解方程(6.33)可以求出$$\delta$$。**
+
+
+
+**算法6.1(改进的迭代尺度算法IIS)**
+
+输入：特征函数$$f_1,f_2,...,f_n$$；经验分布$$\tilde{P}(X,Y)$$，模型$$P_w(y|x)</script><p>输出：最优参数值<script type="math/tex">w^*_i</script>；最优模型<script type="math/tex">P_{w^*}</script>。</p>
+<ol>
+<li><p>对所有<script type="math/tex">i \in \{1,2,...,n\}</script>，取初值<script type="math/tex">w_i=0</script></p>
+</li>
+<li><p>对每一<script type="math/tex">i\in \{1,2,...,n\}</script>：</p>
+<p>(a) 令<script type="math/tex">\delta_i</script>是方程<script type="math/tex">\sum_x \tilde{P}(x) \sum_y P_w(y|x)f_i(x,y)\exp (\delta_i f^{*}(x,y)) = E_{\tilde{P}}(f_i)</script>的解，这里，</p>
+<script type="math/tex; mode=display">
+f^{*}(x,y) = \sum_{i=1}^n f_i(x,y)</script><p>(b) 更新<script type="math/tex">w_i</script>的值:<script type="math/tex">w_i \leftarrow w_i+\delta_i</script></p>
+</li>
+<li><p>如果不是所有<script type="math/tex">w_i</script>都收敛，重复步(2)。</p>
+</li>
+</ol>
+<p>此算法的关键步骤为(a)，即求解式(6.33)中的<script type="math/tex">\delta_i</script>。</p>
+<ul>
+<li>如果<script type="math/tex">f^{*}(x,y)</script>是常数，即对任何x,y，有<script type="math/tex">f^{*}(x,y)=M</script>，那么<script type="math/tex">\delta_i</script>可以显式表示为(<strong>注意：此处的M相当于学习率，为超参数</strong>)：</li>
+</ul>
+<script type="math/tex; mode=display">
+\delta_i = \frac{1}{M} \log \frac{E_{\tilde{P}}(f_i)}{E_P(f_i)} \ (6.34)</script><ul>
+<li>如果<script type="math/tex">f^{*}(x,y)</script>不是常数，那么必须<strong>通过数值计算求</strong><script type="math/tex">\delta_i</script>。简单有效的方法为<strong>牛顿法</strong>。把式(6.33)表示成<script type="math/tex">g(\delta_i)=0</script>，<strong>牛顿法通过迭代</strong>求得<script type="math/tex">\delta^{*}_i</script>，使得<script type="math/tex">g(\delta_i^{*})=0</script>。迭代公式:<script type="math/tex; mode=display">
+\delta_i^{(k+1)} = \delta_i^{(k)} - \frac{g(\delta_i^{(k)})}{g^{'}(\delta_i^{(k)})} \ (6.35)</script>只要适当选取初始值<script type="math/tex">\delta_i^{(0)}</script>，由于<script type="math/tex">\delta_i</script>的<strong>方程(6.33)有单根，因此牛顿法恒收敛，而且收敛速度更快。</strong></li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">MaxEnt</span><span class="params">(object)</span>:</span></span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, X, Y, n_iter=<span class="number">500</span>, M=<span class="number">10000.0</span>)</span>:</span></span><br><span class="line">        </span><br><span class="line">        self.n_iter = n_iter</span><br><span class="line">        self.M = M<span class="comment">#P91中的M，相当于学习速率</span></span><br><span class="line">        </span><br><span class="line">        self.X_ = np.array(X)</span><br><span class="line">        self.Y_ = np.unique(Y)</span><br><span class="line">        self.Y = np.array(Y)</span><br><span class="line">        self.N,self.n_feature = self.X_.shape <span class="comment">#训练数据集大小   </span></span><br><span class="line">        </span><br><span class="line">        self.cal_Vxy()</span><br><span class="line">        self.n = len(self.Vxy) <span class="comment">#数据集中所有特征的取值情况与标签之间的组合对数，如P59例子中的6+3+3+5=17对</span></span><br><span class="line">        </span><br><span class="line">        self.build_dict()</span><br><span class="line">        self.cal_Pxy()</span><br><span class="line">        </span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">cal_Vxy</span><span class="params">(self)</span>:</span></span><br><span class="line">        <span class="string">'''</span></span><br><span class="line"><span class="string">        计算v(X=x,Y=y),P82</span></span><br><span class="line"><span class="string">        '''</span></span><br><span class="line">        self.Vxy = defaultdict(int)</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> range(self.N):</span><br><span class="line">            x_, y = self.X_[i,:], self.Y[i]</span><br><span class="line">            </span><br><span class="line">            <span class="keyword">for</span> x <span class="keyword">in</span> x_:</span><br><span class="line">                self.Vxy[(x,y)] += <span class="number">1</span></span><br><span class="line">                </span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">build_dict</span><span class="params">(self)</span>:</span></span><br><span class="line">        self.id2xy = &#123;&#125;</span><br><span class="line">        self.xy2id = &#123;&#125;</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">for</span> i, (x,y) <span class="keyword">in</span> enumerate(self.Vxy):</span><br><span class="line">            self.id2xy[i] = (x,y)</span><br><span class="line">            self.xy2id[(x,y)] = i</span><br><span class="line">            </span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">cal_Pxy</span><span class="params">(self)</span>:</span></span><br><span class="line">        <span class="string">'''</span></span><br><span class="line"><span class="string">        计算P(X=x,Y=y),P82</span></span><br><span class="line"><span class="string">        '''</span></span><br><span class="line">        self.Pxy = defaultdict(float)</span><br><span class="line">        <span class="keyword">for</span> n_id <span class="keyword">in</span> range(self.n):</span><br><span class="line">            (x,y) = self.id2xy[n_id]</span><br><span class="line">            self.Pxy[n_id] = float(self.Vxy[(x,y)])/float(self.N)</span><br><span class="line">            </span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">cal_Zxy</span><span class="params">(self, X,y)</span>:</span></span><br><span class="line">        <span class="string">'''</span></span><br><span class="line"><span class="string">        计算给定y的Zw(x|yi),P85 式6.23</span></span><br><span class="line"><span class="string">        X：一个样本</span></span><br><span class="line"><span class="string">        y：该样本对应的标签</span></span><br><span class="line"><span class="string">        '''</span></span><br><span class="line">        result = <span class="number">0.0</span></span><br><span class="line">        <span class="keyword">for</span> x <span class="keyword">in</span> X:</span><br><span class="line">            <span class="keyword">if</span> (x,y) <span class="keyword">in</span> self.xy2id:</span><br><span class="line">                id = self.xy2id[(x,y)]</span><br><span class="line">                result += self.w[id]</span><br><span class="line">        <span class="keyword">return</span> (math.exp(result),y)</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">cal_Pyx</span><span class="params">(self, X)</span>:</span></span><br><span class="line">        <span class="string">'''</span></span><br><span class="line"><span class="string">        X:指具体一个样本</span></span><br><span class="line"><span class="string">        </span></span><br><span class="line"><span class="string">        计算P(y|x)，P85的式(6.22)</span></span><br><span class="line"><span class="string">        返回所有y对应的条件概率</span></span><br><span class="line"><span class="string">        '''</span></span><br><span class="line">        Pyxs = [(self.cal_Zxy(X,y)) <span class="keyword">for</span> y <span class="keyword">in</span> self.Y_]</span><br><span class="line">        Zwx = sum([prob <span class="keyword">for</span> prob,y <span class="keyword">in</span> Pyxs])</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">return</span> [(prob/Zwx, y) <span class="keyword">for</span> prob,y <span class="keyword">in</span> Pyxs]</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">cal_Epfi</span><span class="params">(self)</span>:</span></span><br><span class="line">        <span class="string">'''</span></span><br><span class="line"><span class="string">        计算特征函数关于模型P(Y|X)与经验分布P(X)的期望值</span></span><br><span class="line"><span class="string">        '''</span></span><br><span class="line">        self.Epfi = [<span class="number">0.0</span> <span class="keyword">for</span> i <span class="keyword">in</span> range(self.n)]</span><br><span class="line">        <span class="keyword">for</span> i, X <span class="keyword">in</span> enumerate(self.X_):</span><br><span class="line">            Pyxs = self.cal_Pyx(X)</span><br><span class="line">            </span><br><span class="line">            <span class="keyword">for</span> x <span class="keyword">in</span> X: <span class="comment">#遍历指定样本X的每一个特征</span></span><br><span class="line">                <span class="keyword">for</span> Pyx,y <span class="keyword">in</span> Pyxs:</span><br><span class="line">                    <span class="keyword">if</span> (x,y) <span class="keyword">in</span> self.xy2id:</span><br><span class="line">                        n_id = self.xy2id[(x,y)]</span><br><span class="line">                        self.Epfi[n_id] += Pyx*(<span class="number">1.0</span>/self.N) <span class="comment">#(1.0/self.N)表示经验分布P(X)，服从均匀分布</span></span><br><span class="line">                        </span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">train</span><span class="params">(self, X, Y)</span>:</span></span><br><span class="line">        <span class="string">'''</span></span><br><span class="line"><span class="string">        IIS学习算法</span></span><br><span class="line"><span class="string">        '''</span></span><br><span class="line"></span><br><span class="line">        <span class="comment">#第一步：初始化参数值wi为0</span></span><br><span class="line">        self.w = [<span class="number">0.0</span>]*self.n</span><br><span class="line">        </span><br><span class="line">        max_iteration = self.n_iter <span class="comment">#最大迭代次数</span></span><br><span class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> range(self.n_iter):</span><br><span class="line">            <span class="comment">#求delta_i</span></span><br><span class="line">            deltas = []</span><br><span class="line">            self.cal_Epfi()</span><br><span class="line">            <span class="keyword">for</span> i <span class="keyword">in</span> range(self.n):</span><br><span class="line">                delta = <span class="number">1</span>/self.M*math.log(self.Pxy[i]/self.Epfi[i])</span><br><span class="line">                deltas.append(delta)</span><br><span class="line">            <span class="comment">#更新Wi</span></span><br><span class="line">            self.w = [self.w[i]+deltas[i] <span class="keyword">for</span> i <span class="keyword">in</span> range(self.n)]</span><br><span class="line">            </span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">predict</span><span class="params">(self, testset)</span>:</span></span><br><span class="line">        results = []</span><br><span class="line">        <span class="keyword">for</span> test <span class="keyword">in</span> testset:</span><br><span class="line">            result = self.cal_Pyx(test)</span><br><span class="line">            results.append(max(result, key=<span class="keyword">lambda</span> x: x[<span class="number">0</span>])[<span class="number">1</span>])</span><br><span class="line">        <span class="keyword">return</span> results</span><br></pre></td></tr></table></figure>
+<h3 id="7-2-2拟牛顿法"><a href="#7-2-2拟牛顿法" class="headerlink" title="7.2.2拟牛顿法"></a>7.2.2拟牛顿法</h3><p>对于最大熵模型而言，</p>
+<script type="math/tex; mode=display">
+P_w(y|x) = \frac{\exp \left(\sum_{i=1}^n w_i f_i(x,y) \right)}{\sum_y \exp \left(\sum_{i=1}^n w_i f_i(x,y)\right)}</script><p>目标函数:</p>
+<script type="math/tex; mode=display">
+\min_{w \in \mathbb{R}^n} f(w) = \sum_x \tilde{P}(x)\log \sum_y \exp \left(\sum_{i=1}^n w_i f_i(x,y)\right) - \sum_{x,y}\tilde{P}(x,y)\sum_{i=1}^n w_i f_i(x,y)</script><p>梯度:</p>
+<script type="math/tex; mode=display">
+g(w) = \left(\frac{\partial f(w)}{\partial w_1},\frac{\partial f(w)}{\partial w_2},...,\frac{\partial f(w)}{\partial w_n}\right)^{\top}</script><p>其中，</p>
+<script type="math/tex; mode=display">
+\frac{\partial f(w)}{\partial w_i} = \sum_{x,y} \tilde{P}(x)P_w(y|x)f_i(x,y)-E_{\tilde{P}}(f_i) \ , i=1,2,...,n</script><p>相应的拟牛顿法BFGS算法如下 。</p>
+<p><strong>算法6.2(最大熵模型学习的BFGS算法)</strong></p>
+<p>输入:特征函数<script type="math/tex">f_1,f_2,...,f_n</script>;经验分布<script type="math/tex">\tilde{P}(x,y)</script>，目标函数 f(w)，梯度<script type="math/tex">g(w) = \nabla f(w)</script>，精度要求<script type="math/tex">\epsilon</script>；</p>
+<p>输出:最优参数值<script type="math/tex">w^{*}</script>；最优模型<script type="math/tex">P_{w^{*}}(y|x)</script></p>
+<ol>
+<li><p>选定初始点<script type="math/tex">w^{(0)}</script>，取<script type="math/tex">B_0</script>为正定对称矩阵，置k=0</p>
+</li>
+<li><p>计算<script type="math/tex">g_k = g(w^{(k)})</script>。若<script type="math/tex">\|g_k\|<\epsilon</script>，则停止计算，得<script type="math/tex">w^{*} = w^{(k)}</script>；否则转(3)</p>
+</li>
+<li><p>由<script type="math/tex">B_kp_k = -g_k</script>，求出<script type="math/tex">p_k</script></p>
+</li>
+<li><p>一维搜索:求<script type="math/tex">\lambda_k</script>使得</p>
+<script type="math/tex; mode=display">
+f(w^{(k)}+\lambda_k p_k) = \min_{\lambda \ge 0} f(w^{(k)}+\lambda p_k)</script></li>
+<li><p>置<script type="math/tex">w^{(k+1)} = w^{(k)}+\lambda_k p_k</script></p>
+</li>
+<li><p>计算<script type="math/tex">g_{k+1} = g(w^{(k+1)})</script>，若<script type="math/tex">\|g_{k+1}\| < \epsilon</script>，则停止计算，得<script type="math/tex">w^{*} = w^{(k+1)}</script>；否则，按下式求出<script type="math/tex">B_{k+1}</script>:</p>
+<script type="math/tex; mode=display">
+B_{k+1} = B_k + \frac{y_k y_k^{\top}}{y_k^{\top}\delta_k} - \frac{B_k \delta_k \delta_k^{\top}B_k}{\delta_k^{\top}B_k\delta_k}</script><p>其中，</p>
+<script type="math/tex; mode=display">
+y_k = g_{k+1} - g_k \ , \delta_k = w^{(k+1)}-w^{(k)}</script></li>
+<li><p>置k=k+1,转(3) </p>
+</li>
+</ol>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/判别模型/" rel="tag"># 判别模型</a>
+          
+            <a href="/tags/分类模型/" rel="tag"># 分类模型</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/06/14/逻辑斯蒂回归模型与最大熵模型/" rel="next" title="逻辑斯蒂回归模型与最大熵模型">
+                <i class="fa fa-chevron-left"></i> 逻辑斯蒂回归模型与最大熵模型
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">jozee</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">8</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">1</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">4</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#7-1-最大熵模型"><span class="nav-number">1.</span> <span class="nav-text">7.1 最大熵模型</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#7-1-1-最大熵原理"><span class="nav-number">1.1.</span> <span class="nav-text">7.1.1 最大熵原理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#7-1-2-最大熵模型的定义"><span class="nav-number">1.2.</span> <span class="nav-text">7.1.2 最大熵模型的定义</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#定义约束条件"><span class="nav-number">1.2.1.</span> <span class="nav-text">定义约束条件</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#7-1-3-最大熵模型的学习"><span class="nav-number">1.3.</span> <span class="nav-text">7.1.3 最大熵模型的学习</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#7-1-4-极大似然估计"><span class="nav-number">1.4.</span> <span class="nav-text">7.1.4 极大似然估计</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#7-2-最大熵模型学习算法"><span class="nav-number">2.</span> <span class="nav-text">7.2 最大熵模型学习算法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#7-2-1-改进的迭代尺度法"><span class="nav-number">2.1.</span> <span class="nav-text">7.2.1 改进的迭代尺度法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#7-2-2拟牛顿法"><span class="nav-number">2.2.</span> <span class="nav-text">7.2.2拟牛顿法</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">jozee</span>
+
+  
+</div>
+
+
+
+
+
+
+
+
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<span id="busuanzi_container_site_pv">
+    本站总访问量<span id="busuanzi_value_site_pv"></span>次
+</span>
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.4.js"></script>
+  <script>AV.initialize("", "");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+
+  
+
+  
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+  
+
+  
+
+</body>
+</html>
