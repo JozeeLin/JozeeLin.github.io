@@ -1,0 +1,846 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="分类模型,生成模型,">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="朴素贝叶斯法是基于贝叶斯定理与特征条件独立假设的分类方法。 对于给定的训练数据集，首先，基于特征条件独立假设学习输入/输出的联合概率分布；然后，基于此模型，对给定的输入x，利用贝叶斯定理求出后验概率最大的输出y。 本文叙述朴素贝叶斯法，包括朴素贝叶斯法的学习与分类、朴素贝叶斯法的参数估计算法。 4.1 朴素贝叶斯法的学习与分类4.1.1 基本方法设输入空间\mathcal{X} \subseteq">
+<meta name="keywords" content="分类模型,生成模型">
+<meta property="og:type" content="article">
+<meta property="og:title" content="朴素贝叶斯法">
+<meta property="og:url" content="http://yoursite.com/2019/06/14/朴素贝叶斯法/index.html">
+<meta property="og:site_name" content="Jozee&#39;s技术博客">
+<meta property="og:description" content="朴素贝叶斯法是基于贝叶斯定理与特征条件独立假设的分类方法。 对于给定的训练数据集，首先，基于特征条件独立假设学习输入/输出的联合概率分布；然后，基于此模型，对给定的输入x，利用贝叶斯定理求出后验概率最大的输出y。 本文叙述朴素贝叶斯法，包括朴素贝叶斯法的学习与分类、朴素贝叶斯法的参数估计算法。 4.1 朴素贝叶斯法的学习与分类4.1.1 基本方法设输入空间\mathcal{X} \subseteq">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2019-06-14T07:59:07.675Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="朴素贝叶斯法">
+<meta name="twitter:description" content="朴素贝叶斯法是基于贝叶斯定理与特征条件独立假设的分类方法。 对于给定的训练数据集，首先，基于特征条件独立假设学习输入/输出的联合概率分布；然后，基于此模型，对给定的输入x，利用贝叶斯定理求出后验概率最大的输出y。 本文叙述朴素贝叶斯法，包括朴素贝叶斯法的学习与分类、朴素贝叶斯法的参数估计算法。 4.1 朴素贝叶斯法的学习与分类4.1.1 基本方法设输入空间\mathcal{X} \subseteq">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2019/06/14/朴素贝叶斯法/">
+
+
+
+
+
+  <title>朴素贝叶斯法 | Jozee's技术博客</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Jozee's技术博客</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/06/14/朴素贝叶斯法/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="jozee">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Jozee's技术博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">朴素贝叶斯法</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-06-14T15:56:45+08:00">
+                2019-06-14
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/机器学习/" itemprop="url" rel="index">
+                    <span itemprop="name">机器学习</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>朴素贝叶斯法是<strong>基于贝叶斯定理与特征条件独立假设的分类方法</strong>。</p>
+<p>对于给定的训练数据集，首先，基于特征条件独立假设学习输入/输出的联合概率分布；然后，基于此模型，对给定的输入x，利用贝叶斯定理求出后验概率最大的输出y。</p>
+<p>本文叙述朴素贝叶斯法，包括朴素贝叶斯法的学习与分类、朴素贝叶斯法的参数估计算法。</p>
+<h2 id="4-1-朴素贝叶斯法的学习与分类"><a href="#4-1-朴素贝叶斯法的学习与分类" class="headerlink" title="4.1 朴素贝叶斯法的学习与分类"></a>4.1 朴素贝叶斯法的学习与分类</h2><h3 id="4-1-1-基本方法"><a href="#4-1-1-基本方法" class="headerlink" title="4.1.1 基本方法"></a>4.1.1 基本方法</h3><p>设输入空间<script type="math/tex">\mathcal{X} \subseteq R^n</script>为n维向量的集合，输出空间为类标记集合<script type="math/tex">\mathcal{Y}=\{c_1,c_2,...,c_K\}</script>。输入为特征向量<script type="math/tex">x\in \mathcal{X}</script>，输出为类标记<script type="math/tex">y \in \mathcal{Y}</script>。X是定义在输入空间<script type="math/tex">\mathcal{X}</script>上的随机向量，Y是定义在输出空间<script type="math/tex">\mathcal{Y}</script>上的随机向量。P(X,Y)是X和Y的联合概率分布。训练数据集:</p>
+<script type="math/tex; mode=display">
+T = \{(x_1,y_1),(x_2,y_2),...,(x_N,y_N)\}</script><p>由P(X,Y)独立同分布产生。</p>
+<p>朴素贝叶斯法通过训练数据集学习联合概率分布P(X,Y)。具体地，学习一下先验概率分布及条件概率分布。</p>
+<p>先验概率分布:</p>
+<script type="math/tex; mode=display">
+P(Y=c_k) \ , k=1,2,...,K \ (4.1)</script><p>条件概率分布:</p>
+<script type="math/tex; mode=display">
+P(X=x|Y=c_k)=P(X^{(1)},X^{(2)},...,X^{(n)}|Y=c_k) \ , k=1,2,...,K \ (4.2)</script><p>于是学习到联合概率分布P(X,Y)。</p>
+<blockquote>
+<p><strong>局限性：</strong></p>
+<p>条件概率分布<script type="math/tex">P(X=x|Y=c_k)</script>有指数级数量的参数，其估计实际上是不可行的。假设<script type="math/tex">x^{(j)}</script>可取值有<script type="math/tex">S_j</script>个，j=1,2,…,n，Y可取值有K个，那么参数个数为<script type="math/tex">K \prod_{j=1}^n S_j</script>。</p>
+<p><strong>解决方案：</strong></p>
+<p>设置假设条件:<strong>特征独立同分布</strong></p>
+</blockquote>
+<p>朴素贝叶斯法对条件概率分布做了条件独立性的假设。由于这是比较强的假设，<strong>朴素贝叶斯法因此得名</strong>。具体地，条件独立性假设是:</p>
+<script type="math/tex; mode=display">
+\begin{aligned}P(X=x|Y=c_k)=P(X^{(1)} &= x^{(1)},...,X^{(n)}=x^{(n)}|Y=c_k) \\ &= \prod_{j=1}^n P(X^{(j)}=x^{(j)}|Y=c_k) \ (4.3) \end{aligned}</script><p>这里的<script type="math/tex">X^{(1)}</script>表示第1个特征；朴素贝叶斯法实际上学习到生成数据的机制，所以<strong>属于生成模型</strong>。</p>
+<p><strong>条件独立假设等于是说用于分类的特征在类确定的条件下都是条件独立的</strong>。这一假设使得条件概率分布的学习难度降低了，但会牺牲一定的分类准确率。</p>
+<p><strong>朴素贝叶斯法分类时，</strong>对给定的输入x，通过学习到的模型计算后验概率分布<script type="math/tex">P(Y=c_k|X=x)</script>，将后验概率最大的类作为x的类输出。</p>
+<p><strong>后验概率计算根据贝叶斯定理进行</strong>:</p>
+<script type="math/tex; mode=display">
+P(Y=c_k|X=x) = \frac{P(X=x|Y=c_k)P(Y=c_k)}{\sum_k P(X=x|Y=c_k)P(Y=c_k)} \ (4.4)</script><p>将式(4.3)代入式(4.4)，得：</p>
+<script type="math/tex; mode=display">
+P(Y=c_k|X=x) = \frac{P(Y=c_k)\prod_{j=1}^n P(X^{(j)}=x^{(j)}|Y=c_k)}{\sum_k P(Y=c_k)\prod_{j=1}^n P(X^{(j)}=x^{(j)}|Y=c_k)} \ ,k=1,2,...,K \ (4.5)</script><p>这是朴素贝叶斯法的基本公式。于是，<strong>朴素贝叶斯分类器</strong>可表示为：</p>
+<script type="math/tex; mode=display">
+y = f(x) = \arg \max_{c_k} \frac{P(Y=c_k)\prod_{j=1}^n P(X^{(j)}=x^{(j)}|Y=c_k)}{\sum_k P(Y=c_k)\prod_{j=1}^n P(X^{(j)}=x^{(j)}|Y=c_k)} \ (4.6)</script><p>注意到，在式(4.6)中分母为归一化因子，无须理会，所以：</p>
+<script type="math/tex; mode=display">
+y = f(x) = \arg \max_{c_k} P(Y=c_k)\prod_{j=1}^n P(X^{(j)}=x^{(j)}|Y=c_k) \ (4.7)</script><blockquote>
+<p><strong>为什么将后验概率最大的类作为x的输出？因为后验概率最大化等效于期望风险最小化。</strong></p>
+</blockquote>
+<h3 id="4-1-2-后验概率最大化的含义"><a href="#4-1-2-后验概率最大化的含义" class="headerlink" title="4.1.2 后验概率最大化的含义"></a>4.1.2 后验概率最大化的含义</h3><p><strong>后验概率最大化等效于期望风险最小化</strong>。</p>
+<p>设选择0-1损失函数：</p>
+<script type="math/tex; mode=display">
+L(Y,f(X)) = \left\{ \begin{aligned} &1,Y\ne f(X) \\ &0, Y=f(x) \end{aligned} \right .</script><p>式中f(X)是分类决策函数。这时，期望风险函数为:</p>
+<script type="math/tex; mode=display">
+R_{\mathrm{exp}}(f) = E[L(Y,f(X))]</script><p>期望是对联合分布P(X,Y)取的。由此可得<strong>关于条件概率P(Y|X)的期望(损失函数关于条件概率的期望)</strong>:</p>
+<script type="math/tex; mode=display">
+R_{\mathrm{exp}}(f) = E_X \sum_{k=1}^K [L(c_k,f(X))]P(c_k|X)</script><p>为了是期望风险最小化，只需对X=x逐个极小化(遍历所有的样本)，由此得到:</p>
+<script type="math/tex; mode=display">
+\begin{aligned} f(x) &= \arg \min_{y \in \mathcal{Y}} \sum_{k=1}^K L(c_k, y)P(c_k|X=x) \\ &= \arg\min_{y \in \mathcal{Y}} \sum_{k=1}^K P(y \ne c_k|X=x) \\ &=\arg\min_{y \in \mathcal{Y}}(1-P(y=c_k|X=x)) \\&= \arg\max_{y \in \mathcal{Y}}P(y=c_k|X=x)\end{aligned}</script><p>这样一来，<strong>根据期望风险最小准则就得到了后验概率最大化准则</strong>:</p>
+<script type="math/tex; mode=display">
+f(x) = \arg \max_{c_k} P(y=c_k|X=x) \ (4.8)</script><p>即朴素贝叶斯所采用的原理。</p>
+<blockquote>
+<p>求得的f(x)是一个概率函数。</p>
+</blockquote>
+<h2 id="4-2朴素贝叶斯法的参数估计"><a href="#4-2朴素贝叶斯法的参数估计" class="headerlink" title="4.2朴素贝叶斯法的参数估计"></a>4.2朴素贝叶斯法的参数估计</h2><p><strong>这里使用了两种方法进行参数估计：一种是极大似然估计，另一种是贝叶斯估计。最大的区别在于贝叶斯估计加入了先验知识。使得估计更加准确。</strong></p>
+<h3 id="4-2-1-极大似然估计"><a href="#4-2-1-极大似然估计" class="headerlink" title="4.2.1 极大似然估计"></a>4.2.1 极大似然估计</h3><p>在朴素贝叶斯法中，学习意味着估计<script type="math/tex">P(Y=c_k)</script>和<script type="math/tex">P(X^{(J)}=x^{(j)}|Y=c_k)</script>。可以应用极大似然估计法估计相应的概率。</p>
+<p>先验概率<script type="math/tex">P(Y=c_k)</script>的极大似然估计是:</p>
+<script type="math/tex; mode=display">
+P(Y=c_k) = \frac{\sum_{i=1}^N I(y_i=c_k)}{N} \ , k=1,2,...,K \ (4.9)</script><p>设第j个特征<script type="math/tex">x^{(j)}</script>可能取值的集合为<script type="math/tex">\{a_{j1},a_{j2},...,a_{jS_j}\}</script>，条件概率<script type="math/tex">P(X^{(j)}=a_{jl}|Y=c_k)</script>的极大似然估计是:</p>
+<script type="math/tex; mode=display">
+P(X^{(j)}=a_{jl}|Y=c_k) = \frac{\sum_{i=1}^N I(x_i^{(j)}=a_{jl},y_i=c_k)}{\sum_{i=1}^N I(y_i=c_k)} \ j=1,2,...,n;l=1,2,...,S_j;k=1,2,...,K \ (4.10)</script><p>式中，<script type="math/tex">x_i^{(j)}</script>是第i个样本的第j个特征；<script type="math/tex">a_{jl}</script>是第j个特征可能取的第l个值；I为指示函数。</p>
+<h3 id="4-2-2-学习与分类算法"><a href="#4-2-2-学习与分类算法" class="headerlink" title="4.2.2 学习与分类算法"></a>4.2.2 学习与分类算法</h3><p>下面给出朴素贝叶斯法的学习与分类算法:</p>
+<p><strong>算法4.1(朴素贝叶斯算法)</strong></p>
+<p>输入：训练数据<script type="math/tex">T = \{(x_1,y_1),(x_2,y_2),...,(x_N,y_N)\}</script>，其中<script type="math/tex">x_i = (x_i^{(1)},x_i^{(2)},...,x_i^{(n)})^{\top}</script>，<script type="math/tex">x_i^{(j)}</script>是第i个样本的第j个特征，<script type="math/tex">x_i^{(j)} \in \{a_{j1},a_{j2},...,a_{jS_j}\}</script>，<script type="math/tex">a_{jl}</script>是第j个特征可能取的第l个值，<script type="math/tex">j=1,2,...,n,l=1,2,...,S_j,y_i\in \{c_1,c_2,...,K\}</script>；</p>
+<p>输出：实例x的分类</p>
+<ol>
+<li><p>计算先验概率及条件概率</p>
+<script type="math/tex; mode=display">
+P(Y=c_k) = \frac{\sum_{i=1}^N I(y_i=c_k)}{N} \ , k=1,2,...,K</script><script type="math/tex; mode=display">
+P(X^{(j)}=a_{jl}|Y=c_k) = \frac{\sum_{i=1}^N I(x_i^{(j)}=a_{jl},y_i=c_k)}{\sum_{i=1}^N I(y_i=c_k)}</script><script type="math/tex; mode=display">
+j=1,2,...,n;l=1,2,...,S_j;k=1,2,...,K</script></li>
+</ol>
+<ol>
+<li><p>对于给定的实例<script type="math/tex">x= (x^{(1)},x^{(2)},...,x^{(n)})^{\top}</script>，计算：</p>
+<script type="math/tex; mode=display">
+P(Y=c_k)\prod_{j=1}^n P(X^{(j)}=x^{(j)}|Y=c_k) \ , k=1,2,...,K</script></li>
+<li><p>确定实例x的类</p>
+<script type="math/tex; mode=display">
+y = \arg \max_{c_k} P(Y=c_k)\prod_{j=1}^n P(X^{(j)}=x^{(j)}|Y=c_k)</script></li>
+</ol>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">_MLE_fit</span><span class="params">(self, X, y)</span>:</span></span><br><span class="line">    X = np.array(X)</span><br><span class="line">    y = np.array(y)</span><br><span class="line">    <span class="comment">#1.先求出先验概率</span></span><br><span class="line">    y_unique = np.unique(y)</span><br><span class="line"> </span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> y_unique:</span><br><span class="line">        self.prior_logit[<span class="string">'y='</span>+str(i)] = np.sum(y==i)</span><br><span class="line">        self.prior_prob[<span class="string">'y='</span>+str(i)] = np.sum(y==i)/float(len(y))</span><br><span class="line">    <span class="comment">#2.求出条件概率</span></span><br><span class="line">    m,n = X.shape</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> y_unique:</span><br><span class="line">        <span class="keyword">for</span> j <span class="keyword">in</span> range(n):</span><br><span class="line">            xj_unique = np.unique(X[:,j])</span><br><span class="line">            <span class="keyword">for</span> k <span class="keyword">in</span> xj_unique:</span><br><span class="line">                self.condition_logit[<span class="string">'y='</span>+str(i)+<span class="string">',x='</span>+str(k)] = np.sum(X[np.where(y==i),j]==k)</span><br><span class="line">                self.condition_prob[<span class="string">'y='</span>+str(i)+<span class="string">',x='</span>+str(k)] = np.sum(X[np.where(y==i),j]==k)/float(np.sum(y==i))</span><br><span class="line">    print(self.prior_prob)</span><br><span class="line">    print(self.condition_prob)</span><br></pre></td></tr></table></figure>
+<h3 id="4-2-3-贝叶斯估计"><a href="#4-2-3-贝叶斯估计" class="headerlink" title="4.2.3 贝叶斯估计"></a>4.2.3 贝叶斯估计</h3><p><strong>用极大似然估计可能会出现所要估计的概率值为0的情况</strong>。这会影响到后验概率的计算结果，使分类产生偏差。</p>
+<p><strong>解决这里问题的方法是贝叶斯估计法</strong>。具体地，<strong>条件概率</strong>的贝叶斯估计是：</p>
+<script type="math/tex; mode=display">
+P_{\lambda}(X^{(j)}=a_{jl}|Y=c_k) = \frac{\sum_{i=1}^N I(x_i^{(j)}=a_{jl},y_i=c_k)+\lambda}{\sum_{i=1}^N I(y_i=c_k)+S_j\lambda} \ (4.11)</script><p>式中<script type="math/tex">\lambda \ge 0</script>。<strong>等价于在随机变量各个取值的频数上赋予一个正数<script type="math/tex">\lambda>0</script></strong>。当<script type="math/tex">\lambda=0</script>时，<strong>就是极大似然估计</strong>。常取1，这是称为<strong>拉普拉斯平滑</strong>。</p>
+<p>显然，对任何<script type="math/tex">l=1,2,...,S_j\ , k=1,2,...,K</script>，有</p>
+<script type="math/tex; mode=display">
+P_{\lambda}(X^{(j)}=a_{jl}|Y=c_k) > 0</script><script type="math/tex; mode=display">
+\sum_{l=1}^{S_j} P_{\lambda}(X^{(j)}=a_{jl}|Y=c_k) = 1</script><p>表明式(4.11)确为一种概率分布。同样的，先验概率贝叶斯估计是:</p>
+<script type="math/tex; mode=display">
+P_{\lambda}(Y=c_k) = \frac{\sum_{i=1}^N I(y_1=c_k)+\lambda}{N+K\lambda} \ (4.12)</script><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">_BE_fit</span><span class="params">(self, X, y, alpha)</span>:</span></span><br><span class="line">    X = np.array(X)</span><br><span class="line">    y = np.array(y)</span><br><span class="line">    <span class="comment">#1.先求出先验概率</span></span><br><span class="line">    y_unique = np.unique(y)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> y_unique:</span><br><span class="line">        self.prior_logit[<span class="string">'y='</span>+str(i)] = np.sum(y==i)</span><br><span class="line">        self.prior_prob[<span class="string">'y='</span>+str(i)] = (np.sum(y==i)+alpha)/(float(len(y))+len(y_unique)*alpha)</span><br><span class="line">    <span class="comment">#2.求出条件概率</span></span><br><span class="line">    m,n = X.shape</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> y_unique:</span><br><span class="line">        <span class="keyword">for</span> j <span class="keyword">in</span> range(n):</span><br><span class="line">            xj_unique = np.unique(X[:,j])</span><br><span class="line">            <span class="keyword">for</span> k <span class="keyword">in</span> xj_unique:</span><br><span class="line">                self.condition_logit[<span class="string">'y='</span>+str(i)+<span class="string">',x='</span>+str(k)] = np.sum(X[np.where(y==i),j]==k)</span><br><span class="line">                self.condition_prob[<span class="string">'y='</span>+str(i)+<span class="string">',x='</span>+str(k)] = \</span><br><span class="line">                (np.sum(X[np.where(y==i),j]==k)+alpha)/(float(np.sum(y==i))+len(xj_unique)*alpha)</span><br><span class="line">    print(self.prior_prob)</span><br><span class="line">    print(self.condition_prob)</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/分类模型/" rel="tag"># 分类模型</a>
+          
+            <a href="/tags/生成模型/" rel="tag"># 生成模型</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/06/14/k近邻法/" rel="next" title="k近邻法">
+                <i class="fa fa-chevron-left"></i> k近邻法
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">jozee</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">5</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">1</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">4</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#4-1-朴素贝叶斯法的学习与分类"><span class="nav-number">1.</span> <span class="nav-text">4.1 朴素贝叶斯法的学习与分类</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#4-1-1-基本方法"><span class="nav-number">1.1.</span> <span class="nav-text">4.1.1 基本方法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-1-2-后验概率最大化的含义"><span class="nav-number">1.2.</span> <span class="nav-text">4.1.2 后验概率最大化的含义</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-2朴素贝叶斯法的参数估计"><span class="nav-number">2.</span> <span class="nav-text">4.2朴素贝叶斯法的参数估计</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#4-2-1-极大似然估计"><span class="nav-number">2.1.</span> <span class="nav-text">4.2.1 极大似然估计</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-2-2-学习与分类算法"><span class="nav-number">2.2.</span> <span class="nav-text">4.2.2 学习与分类算法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-2-3-贝叶斯估计"><span class="nav-number">2.3.</span> <span class="nav-text">4.2.3 贝叶斯估计</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">jozee</span>
+
+  
+</div>
+
+
+
+
+
+
+
+
+
+<script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+本站总访问量 <span id="busuanzi_value_site_pv"></span> &nbsp&nbsp&nbsp
+您是第<span id="busuanzi_value_site_uv"></span>个来到的小伙伴
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+  
+
+  
+
+</body>
+</html>
