@@ -87,14 +87,14 @@
 <meta property="og:site_name" content="Jozee&#39;s技术博客">
 <meta property="og:description" content="隐马尔科夫模型(HMM)是可用于标注问题的统计学习模型，描述由隐藏的马尔科夫链随机生成观测序列的过程，属于生成模型。 本章首先介绍隐马尔可夫模型的基本概念，然后分别叙述隐马尔可夫模型的概率计算算法、学习算法及其预测算法。 隐马尔可夫模型在语音识别、自然语言处理、生物信息、模式识别等领域有着广泛的应用。 13.1 隐马尔科夫模型的基本概念13.1.1隐马尔科夫模型的定义定义13.1(隐马尔科夫模型)">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:image" content="http://yoursite.com/Users/jozee/sideproject/ML/%E7%BB%9F%E8%AE%A1%E5%AD%A6%E4%B9%A0%E6%96%B9%E6%B3%95/image/ch13-1.png">
-<meta property="og:image" content="http://yoursite.com/Users/jozee/sideproject/ML/%E7%BB%9F%E8%AE%A1%E5%AD%A6%E4%B9%A0%E6%96%B9%E6%B3%95/image/ch13-2.png">
-<meta property="og:image" content="http://yoursite.com/Users/jozee/sideproject/ML/%E7%BB%9F%E8%AE%A1%E5%AD%A6%E4%B9%A0%E6%96%B9%E6%B3%95/image/ch13-3.png">
-<meta property="og:updated_time" content="2019-06-14T09:46:01.874Z">
+<meta property="og:image" content="http://yoursite.com/2019/06/14/隐马尔科夫模型/image/ch13-1.png">
+<meta property="og:image" content="http://yoursite.com/2019/06/14/隐马尔科夫模型/image/ch13-2.png">
+<meta property="og:image" content="http://yoursite.com/2019/06/14/隐马尔科夫模型/image/ch13-3.png">
+<meta property="og:updated_time" content="2019-06-14T09:47:47.859Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="隐马尔科夫模型">
 <meta name="twitter:description" content="隐马尔科夫模型(HMM)是可用于标注问题的统计学习模型，描述由隐藏的马尔科夫链随机生成观测序列的过程，属于生成模型。 本章首先介绍隐马尔可夫模型的基本概念，然后分别叙述隐马尔可夫模型的概率计算算法、学习算法及其预测算法。 隐马尔可夫模型在语音识别、自然语言处理、生物信息、模式识别等领域有着广泛的应用。 13.1 隐马尔科夫模型的基本概念13.1.1隐马尔科夫模型的定义定义13.1(隐马尔科夫模型)">
-<meta name="twitter:image" content="http://yoursite.com/Users/jozee/sideproject/ML/%E7%BB%9F%E8%AE%A1%E5%AD%A6%E4%B9%A0%E6%96%B9%E6%B3%95/image/ch13-1.png">
+<meta name="twitter:image" content="http://yoursite.com/2019/06/14/隐马尔科夫模型/image/ch13-1.png">
 
 
 
@@ -448,14 +448,14 @@ P(O|\lambda) = \sum_{i=1}^N \alpha_T(i) \ (13.17)</script><p>前向算法解释�
 <p>如下图所示。在式(13.16)的方括弧里，既然<script type="math/tex">\alpha_t(j)</script>是到时刻t观测到<script type="math/tex">o_1,o_2,\cdots,o_t</script>并在时刻t处于状态<script type="math/tex">q_j</script>的前向概率，那么乘积<script type="math/tex">\alpha_t(j)a_{ji}</script>就是时刻t观测到<script type="math/tex">o_1,o_2,\cdots,o_t</script>并在时刻t处于状态<script type="math/tex">q_j</script>而在时刻t-1到达状态<script type="math/tex">q_i</script>的联合概率。</p>
 <p>对这个乘积在时刻t的所有可能的N个状态<script type="math/tex">q_j</script>求和，其结果就是到时刻t观测为<script type="math/tex">o_1,o_2,\cdots,o_t</script>并在时刻t+1处于状态<script type="math/tex">q_i</script>的联合概率。</p>
 <p>方括号里的值与观测概率<script type="math/tex">b_i(o_{t+1})</script>的乘积恰好是到时刻t+1观测到<script type="math/tex">o_1,o_2,\cdots,o_t,o_{t+1}</script>并在时刻t+1处于状态<script type="math/tex">q_i</script>的前向概率<script type="math/tex">\alpha_{t+1}(i)</script>。</p>
-<p><img src="/Users/jozee/sideproject/ML/%E7%BB%9F%E8%AE%A1%E5%AD%A6%E4%B9%A0%E6%96%B9%E6%B3%95/image/ch13-1.png" alt="ch13-1"></p>
+<p><img src="image/ch13-1.png" alt="ch13-1"></p>
 <p>步骤(3)给出<script type="math/tex">P(O|\lambda)</script>的计算公式。因为</p>
 <script type="math/tex; mode=display">
 \alpha_T(i) = P(o_1,o_2,\cdots,o_T,i_T=q_i|\lambda)</script><p>所以</p>
 <script type="math/tex; mode=display">
 P(O|\lambda) = \sum_{i=1}^N \alpha_T(i)</script><p>如下图所示，<strong>前向算法实际上是基于”状态序列的路径结构”递推计算<script type="math/tex">P(O|\lambda)</script>的算法</strong>。前向算法高效的关键是其<strong>局部计算前向概率</strong>，然后利用路径结构将前向概率”递推”到全局，得到<script type="math/tex">P(O|\lambda)</script>。</p>
 <p>具体地，在时刻t=1，计算<script type="math/tex">\alpha_1(i)</script>的N个值(i=1,2,…,N)；在各个时刻t=1,2,…,T-1，计算<script type="math/tex">\alpha_{t+1}(i)</script>的N个值(i=1,2,…,N)，而且每个<script type="math/tex">\alpha_{t+1}(i)</script>的计算利用前一时刻N个<script type="math/tex">\alpha_t(j)</script>。<strong>减少计算量的原因在于每一次计算直接引用前一个时刻的计算结果，避免重复计算</strong>。这样，利用前向概率计算<script type="math/tex">P(O|\lambda)</script>的计算量是<script type="math/tex">O(N^2T)</script>阶的，而不是直接计算的<script type="math/tex">O(TN^T)</script>阶。</p>
-<p><img src="/Users/jozee/sideproject/ML/%E7%BB%9F%E8%AE%A1%E5%AD%A6%E4%B9%A0%E6%96%B9%E6%B3%95/image/ch13-2.png" alt="ch13-2"></p>
+<p><img src="image/ch13-2.png" alt="ch13-2"></p>
 <h3 id="13-2-3-后向算法"><a href="#13-2-3-后向算法" class="headerlink" title="13.2.3 后向算法"></a>13.2.3 后向算法</h3><p><strong>定义13.3(后向概率)</strong> 给定隐马尔可夫模型<script type="math/tex">\lambda</script>，定义在时刻t状态为<script type="math/tex">q_i</script>的条件下，从t+1到T的部分观测序列为<script type="math/tex">o_{t+1},o_{t+2},\cdots,o_T</script>的概率为后向概率，记作</p>
 <script type="math/tex; mode=display">
 \beta_t(i) = P(o_{t+1},o_{t+2},\cdots,o_T|i_t=q_i,\lambda)\ (13.18)</script><p>可以用递推的方法求得后向概率<script type="math/tex">\beta_t(i)</script>及观测序列概率<script type="math/tex">P(O|\lambda)</script>。</p>
@@ -472,7 +472,7 @@ P(O|\lambda) = \sum_{i=1}^N \pi_i b_i(o_1)\beta_1(i) \ (13.21)</script><p>算法
 <p>步骤(1)初始化后向概率，对最终时刻的所有状态<script type="math/tex">q_i</script>规定<script type="math/tex">\beta_T(i)=1</script>。</p>
 <p>步骤(2)是后向概率的递推公式。</p>
 <p>如下图所示，</p>
-<p><img src="/Users/jozee/sideproject/ML/%E7%BB%9F%E8%AE%A1%E5%AD%A6%E4%B9%A0%E6%96%B9%E6%B3%95/image/ch13-3.png" alt="ch13-3"></p>
+<p><img src="image/ch13-3.png" alt="ch13-3"></p>
 <p>为了计算在时刻t状态为<script type="math/tex">q_i</script>条件下时刻t+1之后的观测序列为<script type="math/tex">o_{t+1},o_{t+2},\cdots,o_T</script>的后向概率<script type="math/tex">\beta_t(i)</script>，只需考虑在时刻t+1所有可能的N个状态<script type="math/tex">q_j</script>的转移概率(即<script type="math/tex">\alpha_{ij}</script>项)，以及在此状态下的观测<script type="math/tex">o_{t+1}</script>的观测概率(即<script type="math/tex">b_j(o_{t+1})</script>项)，然后考虑状态<script type="math/tex">q_j</script>之后的观测序列的后向概率(即<script type="math/tex">\beta_{t+1}(j)</script>项)。</p>
 <p>步骤(3)求<script type="math/tex">P(O|\lambda)</script>的思路与步骤(2)一致，只是初始概率<script type="math/tex">\pi_i</script>代替转移概率。</p>
 <p>利用前向概率和后向概率的定义可以将观测序列概率<script type="math/tex">P(O|\lambda)</script>统一写成</p>
