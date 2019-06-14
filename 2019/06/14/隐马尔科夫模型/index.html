@@ -90,7 +90,7 @@
 <meta property="og:image" content="http://yoursite.com/Users/jozee/sideproject/ML/%E7%BB%9F%E8%AE%A1%E5%AD%A6%E4%B9%A0%E6%96%B9%E6%B3%95/image/ch13-1.png">
 <meta property="og:image" content="http://yoursite.com/Users/jozee/sideproject/ML/%E7%BB%9F%E8%AE%A1%E5%AD%A6%E4%B9%A0%E6%96%B9%E6%B3%95/image/ch13-2.png">
 <meta property="og:image" content="http://yoursite.com/Users/jozee/sideproject/ML/%E7%BB%9F%E8%AE%A1%E5%AD%A6%E4%B9%A0%E6%96%B9%E6%B3%95/image/ch13-3.png">
-<meta property="og:updated_time" content="2019-06-14T09:42:23.530Z">
+<meta property="og:updated_time" content="2019-06-14T09:46:01.874Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="隐马尔科夫模型">
 <meta name="twitter:description" content="隐马尔科夫模型(HMM)是可用于标注问题的统计学习模型，描述由隐藏的马尔科夫链随机生成观测序列的过程，属于生成模型。 本章首先介绍隐马尔可夫模型的基本概念，然后分别叙述隐马尔可夫模型的概率计算算法、学习算法及其预测算法。 隐马尔可夫模型在语音识别、自然语言处理、生物信息、模式识别等领域有着广泛的应用。 13.1 隐马尔科夫模型的基本概念13.1.1隐马尔科夫模型的定义定义13.1(隐马尔科夫模型)">
@@ -388,40 +388,30 @@ a_{ij} = P(i_{t+1}=q_j|i_t=q_i),i=1,2,\cdots,N;j=1,2,\cdots,N \ (13.2)</script><
 B = [b_j(k)]_{N\times N} \ (13.3)</script><p>其中，</p>
 <script type="math/tex; mode=display">
 b_j(k) = P(o_t=v_k|i_t=q_j),k=1,2,\cdots,M;j=1,2,\cdots,N \ (13.4)</script><p>是在时刻t处于状态<script type="math/tex">q_j</script>的条件下生成观测<script type="math/tex">v_k</script>的概率。</p>
-<script type="math/tex; mode=display">\pi$$是初始状态概率向量:</script><p>\pi = (\pi_i) \ (13.5)</p>
+<p>关于<script type="math/tex">\pi</script>是初始状态概率向量:</p>
 <script type="math/tex; mode=display">
-其中，</script><p>\pi_i = P(i_1=q_i),i=1,2,\cdots,N \ (13.6)</p>
+\pi = (\pi_i) \ (13.5)</script><p>其中，</p>
 <script type="math/tex; mode=display">
-是时刻t=1处于状态$$q_i$$的概率。
-
-隐马尔科夫模型是由初始状态概率向量$$\pi$$、状态转移概率矩阵A和观测概率矩阵B决定。$$\pi$$和A决定状态序列，B决定观测序列。因此，隐马尔科夫模型$$\lambda$$可以用三元符号表示，即</script><p>\lambda = (A,B,\pi) \ (13.7)</p>
+\pi_i = P(i_1=q_i),i=1,2,\cdots,N \ (13.6)</script><p>是时刻t=1处于状态<script type="math/tex">q_i</script>的概率。</p>
+<p>隐马尔科夫模型是由初始状态概率向量<script type="math/tex">\pi</script>、状态转移概率矩阵A和观测概率矩阵B决定。<script type="math/tex">\pi</script>和A决定状态序列，B决定观测序列。因此，隐马尔科夫模型<script type="math/tex">\lambda</script>可以用三元符号表示，即</p>
 <script type="math/tex; mode=display">
-A,B,$$\pi$$称为隐马尔可夫模型的三要素。
-
-状态转移概率矩阵矩阵A与初始状态概率向量$$\pi$$确定了隐藏的马尔科夫链，生成不可观测的状态序列。
-
-观测概率矩阵B确定了如何从状态生成观测，与状态序列综合确定了如何产生观测序列。
-
-从定义可知，隐马尔科夫模型作了**两个基本假设**：
-
-**(1)齐次马尔科夫性假设**，即假设隐藏的马尔科夫链在任意时刻t的状态只依赖于其前一时刻的状态，与其他时刻的状态及观测无关，也与时刻t无关。</script><p>P(i<em>t|i</em>{t-1},o<em>{t-1},\cdots,i_1,o_1)=P(i_t|i</em>{t-1}),t=1,2,\cdots,T \ (13.8)</p>
+\lambda = (A,B,\pi) \ (13.7)</script><p>A,B,<script type="math/tex">\pi</script>称为隐马尔可夫模型的三要素。</p>
+<p>状态转移概率矩阵矩阵A与初始状态概率向量<script type="math/tex">\pi</script>确定了隐藏的马尔科夫链，生成不可观测的状态序列。</p>
+<p>观测概率矩阵B确定了如何从状态生成观测，与状态序列综合确定了如何产生观测序列。</p>
+<p>从定义可知，隐马尔科夫模型作了<strong>两个基本假设</strong>：</p>
+<p><strong>(1)齐次马尔科夫性假设</strong>，即假设隐藏的马尔科夫链在任意时刻t的状态只依赖于其前一时刻的状态，与其他时刻的状态及观测无关，也与时刻t无关。</p>
 <script type="math/tex; mode=display">
-**(2)观测独立性假设**，即假设任意时刻的观测只依赖于该时刻的马尔科夫链的状态，与其他观测及状态无关。</script><p>P(o<em>t|i</em>{t-1},o_{t-1},\cdots,i_1,o_1)=P(o_t|i_t),t=1,2,\cdots,T \ (13.9)</p>
+P(i_t|i_{t-1},o_{t-1},\cdots,i_1,o_1)=P(i_t|i_{t-1}),t=1,2,\cdots,T \ (13.8)</script><p><strong>(2)观测独立性假设</strong>，即假设任意时刻的观测只依赖于该时刻的马尔科夫链的状态，与其他观测及状态无关。</p>
 <script type="math/tex; mode=display">
-
-> 隐马尔可夫模型可以用于标注，这时状态对应着标记。标记问题是给定观测的序列，预测其对应的标记序列。
-
-### 13.1.2 观测序列的生成过程
-
-根据隐马尔可夫模型定义，可以将一个长度为T的观测序列$$O=(o_1,o_2,\cdots,o_T)$$的生成过程描述如下:
-
-**算法10.1(观测序列的生成)**
-
-输入:隐马尔可夫模型$$\lambda=(A,B,\pi)$$，观测序列长度T；
-
-输出:观测序列$$O=(o_1,o_2,\cdots,o_T)$$。
-
-(1)按照初始状态分布$$\pi$$产生状态$$i_1</script><p>(2)令t=1</p>
+P(o_t|i_{t-1},o_{t-1},\cdots,i_1,o_1)=P(o_t|i_t),t=1,2,\cdots,T \ (13.9)</script><blockquote>
+<p>隐马尔可夫模型可以用于标注，这时状态对应着标记。标记问题是给定观测的序列，预测其对应的标记序列。</p>
+</blockquote>
+<h3 id="13-1-2-观测序列的生成过程"><a href="#13-1-2-观测序列的生成过程" class="headerlink" title="13.1.2 观测序列的生成过程"></a>13.1.2 观测序列的生成过程</h3><p>根据隐马尔可夫模型定义，可以将一个长度为T的观测序列<script type="math/tex">O=(o_1,o_2,\cdots,o_T)</script>的生成过程描述如下:</p>
+<p><strong>算法10.1(观测序列的生成)</strong></p>
+<p>输入:隐马尔可夫模型<script type="math/tex">\lambda=(A,B,\pi)</script>，观测序列长度T；</p>
+<p>输出:观测序列<script type="math/tex">O=(o_1,o_2,\cdots,o_T)</script>。</p>
+<p>(1)按照初始状态分布<script type="math/tex">\pi</script>产生状态<script type="math/tex">i_1</script></p>
+<p>(2)令t=1</p>
 <p>(3)按照状态<script type="math/tex">i_t</script>的观测概率分布<script type="math/tex">b_{i_t}(k)</script>生成<script type="math/tex">o_t</script></p>
 <p>(4)按照状态<script type="math/tex">i_t</script>的状态转移概率分布<script type="math/tex">\{a_{i_ti_{t+1}}\}</script>产生状态<script type="math/tex">i_{t+1}</script>，<script type="math/tex">i_{t+1}=1,2,\cdots,N</script></p>
 <p>(5)令t=t+1;如果t&lt;T，转步(3)；否则，终止</p>
@@ -795,7 +785,7 @@ i_t^* = \Psi_{t+1}(i_{t+1}^*)</script><p>求得最优路径<script type="math/te
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#13-1-隐马尔科夫模型的基本概念"><span class="nav-number">1.</span> <span class="nav-text">13.1 隐马尔科夫模型的基本概念</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#13-1-1隐马尔科夫模型的定义"><span class="nav-number">1.1.</span> <span class="nav-text">13.1.1隐马尔科夫模型的定义</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#13-1-3-隐马尔科夫模型的3个基本问题"><span class="nav-number">1.2.</span> <span class="nav-text">13.1.3 隐马尔科夫模型的3个基本问题</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#13-2-概率计算算法"><span class="nav-number">2.</span> <span class="nav-text">13.2 概率计算算法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#13-2-1-直接计算法"><span class="nav-number">2.1.</span> <span class="nav-text">13.2.1 直接计算法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#13-2-2-前向算法"><span class="nav-number">2.2.</span> <span class="nav-text">13.2.2 前向算法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#13-2-3-后向算法"><span class="nav-number">2.3.</span> <span class="nav-text">13.2.3 后向算法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#13-2-4-一些概率与期望值的计算"><span class="nav-number">2.4.</span> <span class="nav-text">13.2.4 一些概率与期望值的计算</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#13-3-学习算法"><span class="nav-number">3.</span> <span class="nav-text">13.3 学习算法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#13-3-1-监督学习算法"><span class="nav-number">3.1.</span> <span class="nav-text">13.3.1 监督学习算法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#13-3-2-Baum-Welch算法"><span class="nav-number">3.2.</span> <span class="nav-text">13.3.2 Baum-Welch算法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#13-3-3-Baum-Welch模型参数估计公式"><span class="nav-number">3.3.</span> <span class="nav-text">13.3.3 Baum-Welch模型参数估计公式</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#13-4-预测算法"><span class="nav-number">4.</span> <span class="nav-text">13.4 预测算法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#13-4-1-近似算法"><span class="nav-number">4.1.</span> <span class="nav-text">13.4.1 近似算法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#13-4-2-维特比算法"><span class="nav-number">4.2.</span> <span class="nav-text">13.4.2 维特比算法</span></a></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#13-1-隐马尔科夫模型的基本概念"><span class="nav-number">1.</span> <span class="nav-text">13.1 隐马尔科夫模型的基本概念</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#13-1-1隐马尔科夫模型的定义"><span class="nav-number">1.1.</span> <span class="nav-text">13.1.1隐马尔科夫模型的定义</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#13-1-2-观测序列的生成过程"><span class="nav-number">1.2.</span> <span class="nav-text">13.1.2 观测序列的生成过程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#13-1-3-隐马尔科夫模型的3个基本问题"><span class="nav-number">1.3.</span> <span class="nav-text">13.1.3 隐马尔科夫模型的3个基本问题</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#13-2-概率计算算法"><span class="nav-number">2.</span> <span class="nav-text">13.2 概率计算算法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#13-2-1-直接计算法"><span class="nav-number">2.1.</span> <span class="nav-text">13.2.1 直接计算法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#13-2-2-前向算法"><span class="nav-number">2.2.</span> <span class="nav-text">13.2.2 前向算法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#13-2-3-后向算法"><span class="nav-number">2.3.</span> <span class="nav-text">13.2.3 后向算法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#13-2-4-一些概率与期望值的计算"><span class="nav-number">2.4.</span> <span class="nav-text">13.2.4 一些概率与期望值的计算</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#13-3-学习算法"><span class="nav-number">3.</span> <span class="nav-text">13.3 学习算法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#13-3-1-监督学习算法"><span class="nav-number">3.1.</span> <span class="nav-text">13.3.1 监督学习算法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#13-3-2-Baum-Welch算法"><span class="nav-number">3.2.</span> <span class="nav-text">13.3.2 Baum-Welch算法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#13-3-3-Baum-Welch模型参数估计公式"><span class="nav-number">3.3.</span> <span class="nav-text">13.3.3 Baum-Welch模型参数估计公式</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#13-4-预测算法"><span class="nav-number">4.</span> <span class="nav-text">13.4 预测算法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#13-4-1-近似算法"><span class="nav-number">4.1.</span> <span class="nav-text">13.4.1 近似算法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#13-4-2-维特比算法"><span class="nav-number">4.2.</span> <span class="nav-text">13.4.2 维特比算法</span></a></li></ol></li></ol></div>
             
 
           </div>
