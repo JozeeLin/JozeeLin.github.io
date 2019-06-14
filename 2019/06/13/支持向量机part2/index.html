@@ -89,7 +89,7 @@
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="http://yoursite.com/2019/06/13/支持向量机part2/image/ch08-4.png">
 <meta property="og:image" content="http://yoursite.com/2019/06/13/支持向量机part2/image/ch08-5.png">
-<meta property="og:updated_time" content="2019-06-14T07:20:48.516Z">
+<meta property="og:updated_time" content="2019-06-14T07:28:16.690Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="支持向量机part2">
 <meta name="twitter:description" content="8.3 非线性支持向量机与核函数非线性数据集则使用非线性支持向量机，其主要特点是利用核技巧(kernel trick)。为此，先要介绍核技巧。 8.3.1 核技巧 非线性分类问题 非线性分类问题是指通过利用非线性模型才能很好地进行分类的问题。 如下图所示：  一般来说，对给定的一个训练数据集T = \{(x_1,y_1),(x_2,y_2),...,(x_N,y_N)\}，其中，实例x_i属于输入">
@@ -630,9 +630,9 @@ E_i^{new} = \sum_{S} y_j \alpha_j K(x_i,x_j)+b^{new} - y_i \tag{8.117}</script><
 0 \le \alpha_i \le C \ , i=1,2,...,N</script><script type="math/tex; mode=display">
 y_i \bullet g(x_i) = \left\{ \begin{aligned}&\ge1 , &\{x_i|\alpha_i=0\}\\&=1, &\{x_i|0<\alpha_i<C\}\\ &\le 1, &\{x_i|\alpha_i=C\}\end{aligned} \right.</script></li>
 </ol>
-<p>   其中，</p>
+<p>   ​    其中，</p>
 <script type="math/tex; mode=display">
-   g(x_i) \sum_{j=1}^N \alpha_j y_j K(x_j,x_i)+b</script><p>   则转步骤4；否则令k=k+1,转步骤2</p>
+   g(x_i) \sum_{j=1}^N \alpha_j y_j K(x_j,x_i)+b</script><p>   ​    则转步骤4；否则令k=k+1,转步骤2</p>
 <ol>
 <li>取<script type="math/tex">\hat{\alpha}=\alpha^{k+1}</script>。</li>
 </ol>
