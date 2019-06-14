@@ -88,7 +88,7 @@
 <meta property="og:description" content="EM算法是一种迭代算法。用于含有隐变量(hidden variable)的概率模型参数的极大似然估计，或极大后验概率估计。 EM算法每次迭代由两步组成:  E步，求期望 M步，求极大  因此，EM算法也称为期望极大算法。 本章首先叙述EM算法，然后讨论算法的收敛性，接着介绍EM算法中的高斯混合模型的学习，最后叙述EM算法的推广——GEM算法。 12.1 EM算法的引入概率模型有时既含有观测变量，又">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="http://yoursite.com/2019/06/14/EM算法及其推广/image/ch12-1.png">
-<meta property="og:updated_time" content="2019-06-14T09:35:23.553Z">
+<meta property="og:updated_time" content="2019-06-14T09:38:56.134Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="EM算法及其推广">
 <meta name="twitter:description" content="EM算法是一种迭代算法。用于含有隐变量(hidden variable)的概率模型参数的极大似然估计，或极大后验概率估计。 EM算法每次迭代由两步组成:  E步，求期望 M步，求极大  因此，EM算法也称为期望极大算法。 本章首先叙述EM算法，然后讨论算法的收敛性，接着介绍EM算法中的高斯混合模型的学习，最后叙述EM算法的推广——GEM算法。 12.1 EM算法的引入概率模型有时既含有观测变量，又">
@@ -499,147 +499,95 @@ j=1,2,\cdots,N;k=1,2,\cdots,K</script><p><script type="math/tex">\gamma_{jk}</sc
 \begin{aligned}Q(\theta,\theta^{(i)}) &= E[\log P(y,\gamma|\theta)|y,\theta^{(i)}] \\ &= E \left\{\sum_{k=1}^K \left\{n_k \log \alpha_k + \sum_{j=1}^N \gamma_{jk} \left[\log \left(\frac{1}{\sqrt{2\pi}}\right)-\log \sigma_k-\frac{1}{2\sigma_k^2}(y_j-\mu_k)^2\right]\right\}\right\}\\&=\sum_{k=1}^K\left\{\sum_{j=1}^N(E\gamma_{jk})\log \alpha_k+\sum_{j=1}^N(E\gamma_{jk})\left[\log \left(\frac{1}{\sqrt{2\pi}}\right)-\log \sigma_k-\frac{1}{2\sigma_k^2}(y_j-\mu_k)^2\right]\right\}\end{aligned} \ (12.20)</script><p>这里需要计算<script type="math/tex">E(\gamma_{jk}|y,\theta)</script>，记为<script type="math/tex">\hat{\gamma}_{jk}</script>。</p>
 <script type="math/tex; mode=display">
 \begin{aligned}\hat{\gamma}_{jk} &= E(\gamma_{jk}|y,\theta)=P(\gamma_{jk}=1|y,\theta) \\ &= \frac{P(\gamma_{jk}=1,y_j|\theta)}{\sum_{k=1}^K P(\gamma_{jk}=1,y_j|\theta)}\\&=\frac{P(y_j|\gamma_{jk}=1,\theta)P(\gamma_{jk}=1|\theta)}{\sum_{k=1}^K P(y_j|\gamma_{jk}=1,\theta)P(\gamma_jk=1|\theta)}\\&=\frac{\alpha_k \phi(y_j|\theta_k)}{\sum_{k=1}^K \alpha_k \phi(y_j|\theta_k)}\end{aligned}</script><script type="math/tex; mode=display">
-j=1,2,\cdots,N;k=1,2,\cdots,K</script><script type="math/tex; mode=display">\hat{\gamma}_{jk}$$是在当前模型参数下第j个观测数据来自第k个分模型的概率，称为分模型k对观测数据$$y_j$$的响应度。
-
-将$$\hat{\gamma}_{jk}=E\gamma_{jk}$$及$$n_k = \sum_{j=1}^N E\gamma_{jk}$$代入式（12.20）即得</script><p>Q(\theta,\theta^{(i)}) = \sum<em>{k=1}^K \left{n_k \log \alpha_k + \sum</em>{j=1}^N \hat{\gamma}_{jk} \left[\log \left(\frac{1}{\sqrt{2\pi}}\right)-\log \sigma_k-\frac{1}{2\sigma_k^2}(y_j-\mu_k)^2\right]\right} \ (12.21)</p>
+j=1,2,\cdots,N;k=1,2,\cdots,K</script><p>关于<script type="math/tex">\hat{\gamma}_{jk}</script>是在当前模型参数下第j个观测数据来自第k个分模型的概率，称为分模型k对观测数据<script type="math/tex">y_j</script>的响应度。</p>
+<p>将<script type="math/tex">\hat{\gamma}_{jk}=E\gamma_{jk}</script>及<script type="math/tex">n_k = \sum_{j=1}^N E\gamma_{jk}</script>代入式（12.20）即得</p>
 <script type="math/tex; mode=display">
-**3. 确定EM算法的M步**
-
-迭代的M步是求函数$$Q(\theta,\theta^{(i)})$$对$$\theta$$的极大值，即求新一轮迭代的模型参数:</script><p>\theta^{(i+1)} = \arg \max_{\theta} Q(\theta,\theta^{(i)})</p>
+Q(\theta,\theta^{(i)}) = \sum_{k=1}^K \left\{n_k \log \alpha_k + \sum_{j=1}^N \hat{\gamma}_{jk} \left[\log \left(\frac{1}{\sqrt{2\pi}}\right)-\log \sigma_k-\frac{1}{2\sigma_k^2}(y_j-\mu_k)^2\right]\right\} \ (12.21)</script><p><strong>3. 确定EM算法的M步</strong></p>
+<p>迭代的M步是求函数<script type="math/tex">Q(\theta,\theta^{(i)})</script>对<script type="math/tex">\theta</script>的极大值，即求新一轮迭代的模型参数:</p>
 <script type="math/tex; mode=display">
-用$$\hat{\mu}_k$$，$$\hat{\sigma}_k^2$$及$$\hat{\alpha}_k$$，k=1,2,…,K，表示$$\theta^{(i+1)}$$的各参数。求$$\hat{\mu}_k$$，$$\hat{\sigma}_k^2$$只需将式(12.21)分别对$$\mu_k$$，$$\sigma_k^2$$求偏导数并令其为0，即可得到；求$$\hat{\alpha}_k$$是在$$\sum_{k=1}^K \alpha_k = 1$$条件下求偏导数并令其为0得到的(**此处使用拉格朗日乘子法求解**)。结果如下：</script><p>\hat{\mu}<em>k = \frac{\sum</em>{j=1}^N \hat{\gamma}<em>{jk}y_j}{\sum</em>{j=1}^N \hat{\gamma}_{jk}},k=1,2,\cdots,K \ (12.22)</p>
+\theta^{(i+1)} = \arg \max_{\theta} Q(\theta,\theta^{(i)})</script><p>用<script type="math/tex">\hat{\mu}_k</script>，<script type="math/tex">\hat{\sigma}_k^2</script>及<script type="math/tex">\hat{\alpha}_k</script>，k=1,2,…,K，表示<script type="math/tex">\theta^{(i+1)}</script>的各参数。求<script type="math/tex">\hat{\mu}_k</script>，<script type="math/tex">\hat{\sigma}_k^2</script>只需将式(12.21)分别对<script type="math/tex">\mu_k</script>，<script type="math/tex">\sigma_k^2</script>求偏导数并令其为0，即可得到；求<script type="math/tex">\hat{\alpha}_k</script>是在<script type="math/tex">\sum_{k=1}^K \alpha_k = 1</script>条件下求偏导数并令其为0得到的(<strong>此处使用拉格朗日乘子法求解</strong>)。结果如下：</p>
 <script type="math/tex; mode=display">
-</script><p>\hat{\sigma}<em>k^2 = \frac{\sum</em>{j=1}^N \hat{\gamma}<em>{jk}(y_j-\mu_k)^2}{\sum</em>{j=1}^N \hat{\gamma}_{jk}} , k=1,2,\cdots,K \ (12.23)</p>
+\hat{\mu}_k = \frac{\sum_{j=1}^N \hat{\gamma}_{jk}y_j}{\sum_{j=1}^N \hat{\gamma}_{jk}},k=1,2,\cdots,K \ (12.22)</script><script type="math/tex; mode=display">
+\hat{\sigma}_k^2 = \frac{\sum_{j=1}^N \hat{\gamma}_{jk}(y_j-\mu_k)^2}{\sum_{j=1}^N \hat{\gamma}_{jk}} , k=1,2,\cdots,K \ (12.23)</script><script type="math/tex; mode=display">
+\hat{\alpha}_k = \frac{n_k}{N}=\frac{\sum_{j=1}^N \hat{\gamma}_{jk}}{N} , k=1,2,\cdots,K \ (12.24)</script><p>重复以上计算，直到对数似然函数值不再有明显的变化为止。</p>
+<p><strong>算法12.2(高斯混合模型参数估计的EM算法)</strong></p>
+<p>输入：观测数据<script type="math/tex">y_1,y_2,\cdots,y_N</script>,高斯混合模型</p>
+<p>输出：高斯混合模型参数</p>
+<p>(1)取参数的初始值开始迭代</p>
+<p>(2)E步：依据当前模型参数，计算分模型k对观测数据<script type="math/tex">y_j</script>的响应度</p>
 <script type="math/tex; mode=display">
-</script><p>\hat{\alpha}<em>k = \frac{n_k}{N}=\frac{\sum</em>{j=1}^N \hat{\gamma}_{jk}}{N} , k=1,2,\cdots,K \ (12.24)</p>
+\hat{\gamma}_{jk} = \frac{\alpha_k \phi(y_j|\theta_k)}{\sum_{k=1}^K \alpha_k \phi(y_j|\theta_k)} , j=1,2,\cdots,N;k=1,2,\cdots,K</script><p>(3)M步：计算新一轮迭代的模型参数</p>
 <script type="math/tex; mode=display">
-
-重复以上计算，直到对数似然函数值不再有明显的变化为止。
-
-**算法12.2(高斯混合模型参数估计的EM算法)**
-
-输入：观测数据$$y_1,y_2,\cdots,y_N$$,高斯混合模型
-
-输出：高斯混合模型参数
-
-(1)取参数的初始值开始迭代
-
-(2)E步：依据当前模型参数，计算分模型k对观测数据$$y_j$$的响应度</script><p>\hat{\gamma}<em>{jk} = \frac{\alpha_k \phi(y_j|\theta_k)}{\sum</em>{k=1}^K \alpha_k \phi(y_j|\theta_k)} , j=1,2,\cdots,N;k=1,2,\cdots,K</p>
+\hat{\mu}_k = \frac{\sum_{j=1}^N \hat{\gamma}_{jk}y_j}{\sum_{j=1}^N\hat{\gamma}_{jk}} , k=1,2,\cdots,K</script><script type="math/tex; mode=display">
+\hat{\sigma}_k^2 = \frac{\sum_{j=1}^N \hat{\gamma}_{jk}(y_j-\mu_k)^2}{\sum_{j=1}^N \hat{\gamma}_{jk}} , k=1,2,\cdots,K</script><script type="math/tex; mode=display">
+\hat{\alpha}_k = \frac{\sum_{j=1}^N \hat{\gamma}_{jk}}{N},k=1,2,\cdots,K</script><p>(4)重复第(2)步和第(3)步，直到收敛。</p>
+<h2 id="12-4-EM算法的推广"><a href="#12-4-EM算法的推广" class="headerlink" title="12.4 EM算法的推广"></a>12.4 EM算法的推广</h2><p>EM算法还可以解释为<strong>F函数的极大-极大算法</strong>。</p>
+<h3 id="12-4-1-F函数的极大-极大算法"><a href="#12-4-1-F函数的极大-极大算法" class="headerlink" title="12.4.1 F函数的极大-极大算法"></a>12.4.1 F函数的极大-极大算法</h3><p>首先引进F函数并讨论其性质。</p>
+<p><strong>定义12.3(F函数)</strong> 假设隐变量数据Z的概率分布为<script type="math/tex">\tilde{P}(Z)</script>，定义分布<script type="math/tex">\tilde{P}</script>与参数<script type="math/tex">\theta</script>的函数<script type="math/tex">F(\tilde{P},\theta)</script>如下：</p>
 <script type="math/tex; mode=display">
-(3)M步：计算新一轮迭代的模型参数</script><p>\hat{\mu}<em>k = \frac{\sum</em>{j=1}^N \hat{\gamma}<em>{jk}y_j}{\sum</em>{j=1}^N\hat{\gamma}_{jk}} , k=1,2,\cdots,K</p>
+F(\tilde{P},\theta) = E_{\tilde{P}}[\log P(Y,Z|\theta)]+H(\tilde{P}) \ (12.25)</script><p>称为F函数。式中<script type="math/tex">H(\tilde{P})=-E_{\tilde{P}}\log \tilde{P}(Z)</script>是分布<script type="math/tex">\tilde{P}(Z)</script>的熵。</p>
+<blockquote>
+<p>通常假设<script type="math/tex">P(Y,Z|\theta)</script>是<script type="math/tex">\theta</script>的连续函数，因而<script type="math/tex">F(\tilde{P},\theta)</script>是<script type="math/tex">\tilde{P}</script>和<script type="math/tex">\theta</script>的连续函数。</p>
+</blockquote>
+<p><strong>引理12.1</strong> 对于固定的<script type="math/tex">\theta</script>，存在唯一的分布<script type="math/tex">\tilde{P}_{\theta}</script>极大化<script type="math/tex">F(\tilde{P},\theta)</script>，这时<script type="math/tex">\tilde{P}_{\theta}</script>由下式给出:</p>
 <script type="math/tex; mode=display">
-</script><p>\hat{\sigma}<em>k^2 = \frac{\sum</em>{j=1}^N \hat{\gamma}<em>{jk}(y_j-\mu_k)^2}{\sum</em>{j=1}^N \hat{\gamma}_{jk}} , k=1,2,\cdots,K</p>
+\tilde{P}_{\theta}(Z) = P(Z|Y,\theta) \ (12.26)</script><p>并且<script type="math/tex">\tilde{P}_{\theta}</script>随<script type="math/tex">\theta</script>连续变化。</p>
+<p><strong>证明:</strong> 对于固定的<script type="math/tex">\theta</script>，可以求得使<script type="math/tex">F(\tilde{P},\theta)</script>达到极大的分布<script type="math/tex">\tilde{P}_{\theta}(Z)</script>。为此，引进拉格朗日乘子<script type="math/tex">\lambda</script>，拉格朗日函数为 :</p>
 <script type="math/tex; mode=display">
-</script><p>\hat{\alpha}<em>k = \frac{\sum</em>{j=1}^N \hat{\gamma}_{jk}}{N},k=1,2,\cdots,K</p>
+L = E_{\tilde{P}} \log P(Y,Z|\theta)-E_{\tilde{P}}\log \tilde{P}(Z)+\lambda \left(1-\sum_{Z}\tilde{P}(Z)\right) \ (12.27)</script><p>将其对<script type="math/tex">\tilde{P}</script>求偏导数，并令偏导数等于0:</p>
 <script type="math/tex; mode=display">
-
-(4)重复第(2)步和第(3)步，直到收敛。
-
-## 12.4 EM算法的推广
-
-EM算法还可以解释为**F函数的极大-极大算法**。
-
-### 12.4.1 F函数的极大-极大算法
-
-首先引进F函数并讨论其性质。
-
-**定义12.3(F函数)** 假设隐变量数据Z的概率分布为$$\tilde{P}(Z)$$，定义分布$$\tilde{P}$$与参数$$\theta$$的函数$$F(\tilde{P},\theta)$$如下：</script><p>F(\tilde{P},\theta) = E_{\tilde{P}}[\log P(Y,Z|\theta)]+H(\tilde{P}) \ (12.25)</p>
+\begin{aligned}\frac{\partial L}{\partial \tilde{P}(Z)} &= \sum_Z \left(\log P(Y,Z|\theta)-\log \tilde{P}(Z) -1 -\lambda\right) \\&= \log P(Y,Z|\theta)-\log \tilde{P}(Z) -1 -\lambda \\ &= 0\end{aligned}</script><p>得出</p>
 <script type="math/tex; mode=display">
-称为F函数。式中$$H(\tilde{P})=-E_{\tilde{P}}\log \tilde{P}(Z)$$是分布$$\tilde{P}(Z)$$的熵。
-
-> 通常假设$$P(Y,Z|\theta)$$是$$\theta$$的连续函数，因而$$F(\tilde{P},\theta)$$是$$\tilde{P}$$和$$\theta$$的连续函数。
-
-**引理12.1** 对于固定的$$\theta$$，存在唯一的分布$$\tilde{P}_{\theta}$$极大化$$F(\tilde{P},\theta)$$，这时$$\tilde{P}_{\theta}$$由下式给出:</script><p>\tilde{P}_{\theta}(Z) = P(Z|Y,\theta) \ (12.26)</p>
+\lambda = \log P(Y,Z|\theta)-\log \tilde{P}_{\theta}(Z)-1</script><p>由此推出<script type="math/tex">\tilde{P}_{\theta}(Z)</script>与<script type="math/tex">P(Y,Z|\theta)</script>成比例</p>
 <script type="math/tex; mode=display">
-并且$$\tilde{P}_{\theta}$$随$$\theta$$连续变化。
-
-**证明:** 对于固定的$$\theta$$，可以求得使$$F(\tilde{P},\theta)$$达到极大的分布$$\tilde{P}_{\theta}(Z)$$。为此，引进拉格朗日乘子$$\lambda$$，拉格朗日函数为 :</script><p>L = E<em>{\tilde{P}} \log P(Y,Z|\theta)-E</em>{\tilde{P}}\log \tilde{P}(Z)+\lambda \left(1-\sum_{Z}\tilde{P}(Z)\right) \ (12.27)</p>
+\frac{P(Y,Z|\theta)}{\tilde{P}_{\theta}} = e^{1+\lambda}</script><p>再从约束条件<script type="math/tex">\sum_Z \tilde{P}_{\theta}=1</script>得式(12.26)(<strong>注意：为什么可以得到式(12.26)这个结论</strong>)</p>
+<p>由假设<script type="math/tex">P(Y,Z|\theta)</script>是<script type="math/tex">\theta</script>的连续函数，得到<script type="math/tex">\tilde{P}_{\theta}</script>是<script type="math/tex">\theta</script>的连续函数。</p>
+<p><strong>引理12.2</strong> 若<script type="math/tex">\tilde{P}_{\theta}(Z)=P(Z|Y,\theta)</script>，则</p>
 <script type="math/tex; mode=display">
-将其对$$\tilde{P}$$求偏导数，并令偏导数等于0:</script><p>\begin{aligned}\frac{\partial L}{\partial \tilde{P}(Z)} &amp;= \sum_Z \left(\log P(Y,Z|\theta)-\log \tilde{P}(Z) -1 -\lambda\right) \&amp;= \log P(Y,Z|\theta)-\log \tilde{P}(Z) -1 -\lambda \ &amp;= 0\end{aligned}</p>
+F(\tilde{P},\theta) = \log P(Y|\theta) \ (12.28)</script><p>由以上引理，可以得到关于EM算法用F函数的极大-极大算法的解释。</p>
+<p><strong>定理12.3</strong> 设<script type="math/tex">L(\theta)=\log P(Y|\theta)</script>为观测数据的对数似然函数，<script type="math/tex">\theta^{(i)}</script>，i=1,2,…,为EM算法得到的参数估计序列，函数<script type="math/tex">F(\tilde{P},\theta)</script>由式(12.25)定义。</p>
+<p>如果<script type="math/tex">F(\tilde{P},\theta)</script>在<script type="math/tex">\tilde{P}^*</script>和<script type="math/tex">\theta^{*}</script>有局部极大值，那么<script type="math/tex">L(\theta)</script>也在<script type="math/tex">\theta^{*}</script>有局部极大值。</p>
+<p>如果<script type="math/tex">F(\tilde{P},\theta)</script>在<script type="math/tex">\tilde{P}^*</script>和<script type="math/tex">\theta^{*}</script>达到全局最大值，那么<script type="math/tex">L(\theta)</script>也在<script type="math/tex">\theta^{*}</script>达到全局最大值。</p>
+<p><strong>证明</strong>：由引理12.1和引理12.2可知，<script type="math/tex">L(\theta)=\log P(Y|\theta)=F(\tilde{P}_{\theta},\theta)</script>对任意<script type="math/tex">\theta</script>成立。特别地，对于使<script type="math/tex">F(\tilde{P},\theta)</script>，有</p>
 <script type="math/tex; mode=display">
-得出</script><p>\lambda = \log P(Y,Z|\theta)-\log \tilde{P}_{\theta}(Z)-1</p>
+L(\theta^*) = F(\tilde{P}_{\theta^*},\theta^*)=F(\tilde{P}^*,\theta^*) \ (12.29)</script><p>为了证明<script type="math/tex">\theta^*</script>是<script type="math/tex">L(\theta)</script>的极大点，需要证明不存在接近<script type="math/tex">\theta^*</script>的点<script type="math/tex">\theta^{**}</script>，使<script type="math/tex">L(\theta^{**})>L(\theta^*)</script>。</p>
+<p>假如存在这样的点<script type="math/tex">\theta^{**}</script>，那么应有<script type="math/tex">F(\tilde{P}^{**},\theta^{**})>F(\tilde{P}^*,\theta^*)</script>，这里<script type="math/tex">\tilde{P}^{**}=\tilde{P}_{\theta^{**}}</script>。但因<script type="math/tex">\tilde{P}_{\theta}</script>是随<script type="math/tex">\theta</script>连续变化的，<script type="math/tex">\tilde{P}^{**}</script>应接近<script type="math/tex">\tilde{P}^*</script>，这与<script type="math/tex">\tilde{P}^*</script>和<script type="math/tex">\theta^*</script>是<script type="math/tex">F(\tilde{P},\theta)</script>的局部极大点的假设矛盾。</p>
+<p><strong>定理12.4</strong> EM算法的一次迭代可由F函数的极大-极大算法实现。</p>
+<p>设<script type="math/tex">\theta^{(i)}</script>为第i次迭代参数<script type="math/tex">\theta</script>的估计，<script type="math/tex">\tilde{P}^{(i)}</script>为第i次迭代函数<script type="math/tex">\tilde{P}</script>的估计。在第i+1次迭代的两步为:</p>
+<p>(1)对固定的<script type="math/tex">\theta^{(i)}</script>，求<script type="math/tex">\tilde{P}^{(i+1)}</script>使<script type="math/tex">F(\tilde{P},\theta^{(i)})</script>极大化。</p>
+<p>(2)对固定的<script type="math/tex">\tilde{P}^{(i+1)}</script>，求<script type="math/tex">\theta^{(i+1)}</script>使<script type="math/tex">F(\tilde{P}^{(i+1)},\theta)</script>极大化</p>
+<p><strong>证明</strong></p>
+<p>(1)由引理12.1，对于固定的<script type="math/tex">\theta^{(i)}</script>，</p>
 <script type="math/tex; mode=display">
-由此推出$$\tilde{P}_{\theta}(Z)$$与$$P(Y,Z|\theta)$$成比例</script><p>\frac{P(Y,Z|\theta)}{\tilde{P}_{\theta}} = e^{1+\lambda}</p>
+\tilde{P}^{(i+1)}(Z) = \tilde{P}_{\theta^{(i)}}(Z) = P(Z|Y,\theta^{(i)})</script><p>使<script type="math/tex">F(\tilde{P},\theta^{(i)})</script>极大化。此时，</p>
 <script type="math/tex; mode=display">
-再从约束条件$$\sum_Z \tilde{P}_{\theta}=1$$得式(12.26)(**注意：为什么可以得到式(12.26)这个结论**)
-
-
-
-由假设$$P(Y,Z|\theta)$$是$$\theta$$的连续函数，得到$$\tilde{P}_{\theta}$$是$$\theta$$的连续函数。
-
-**引理12.2** 若$$\tilde{P}_{\theta}(Z)=P(Z|Y,\theta)$$，则</script><p>F(\tilde{P},\theta) = \log P(Y|\theta) \ (12.28)</p>
+\begin{aligned}F(\tilde{P}^{(i+1),\theta}) &= E_{\tilde{P}^{(i+1)}}[\log P(Y,Z|\theta)]+H(\tilde{P}^{(i+1)})\\&=\sum_Z \log P(Y,Z|\theta)P(Z|Y,\theta^{(i)})+H(\tilde{P}^{(i+1)})\end{aligned}</script><p>由<script type="math/tex">Q(\theta,\theta^{(i)})</script>的定义式(12.3)有</p>
 <script type="math/tex; mode=display">
-由以上引理，可以得到关于EM算法用F函数的极大-极大算法的解释。
-
-**定理12.3** 设$$L(\theta)=\log P(Y|\theta)$$为观测数据的对数似然函数，$$\theta^{(i)}$$，i=1,2,…,为EM算法得到的参数估计序列，函数$$F(\tilde{P},\theta)$$由式(12.25)定义。
-
-如果$$F(\tilde{P},\theta)$$在$$\tilde{P}^*$$和$$\theta^{*}$$有局部极大值，那么$$L(\theta)$$也在$$\theta^{*}$$有局部极大值。
-
-如果$$F(\tilde{P},\theta)$$在$$\tilde{P}^*$$和$$\theta^{*}$$达到全局最大值，那么$$L(\theta)$$也在$$\theta^{*}$$达到全局最大值。
-
-**证明**：由引理12.1和引理12.2可知，$$L(\theta)=\log P(Y|\theta)=F(\tilde{P}_{\theta},\theta)$$对任意$$\theta$$成立。特别地，对于使$$F(\tilde{P},\theta)$$，有</script><p>L(\theta^<em>) = F(\tilde{P}_{\theta^</em>},\theta^<em>)=F(\tilde{P}^</em>,\theta^*) \ (12.29)</p>
+F(\tilde{P}^{(i+1)},\theta) = Q(\theta,\theta^{(i)})+H(\tilde{P}^{(i+1)})</script><p>(2)固定<script type="math/tex">\tilde{P}^{(i+1)}</script>，求<script type="math/tex">\theta^{(i+1)}</script>使<script type="math/tex">F(\tilde{P}^{(i+1)},\theta)</script>极大化。得到：</p>
 <script type="math/tex; mode=display">
-为了证明$$\theta^*$$是$$L(\theta)$$的极大点，需要证明不存在接近$$\theta^*$$的点$$\theta^{**}$$，使$$L(\theta^{**})>L(\theta^*)$$。
-
-假如存在这样的点$$\theta^{**}$$，那么应有$$F(\tilde{P}^{**},\theta^{**})>F(\tilde{P}^*,\theta^*)$$，这里$$\tilde{P}^{**}=\tilde{P}_{\theta^{**}}$$。但因$$\tilde{P}_{\theta}$$是随$$\theta$$连续变化的，$$\tilde{P}^{**}$$应接近$$\tilde{P}^*$$，这与$$\tilde{P}^*$$和$$\theta^*$$是$$F(\tilde{P},\theta)$$的局部极大点的假设矛盾。
-
-**定理12.4** EM算法的一次迭代可由F函数的极大-极大算法实现。
-
-设$$\theta^{(i)}$$为第i次迭代参数$$\theta$$的估计，$$\tilde{P}^{(i)}$$为第i次迭代函数$$\tilde{P}$$的估计。在第i+1次迭代的两步为:
-
-(1)对固定的$$\theta^{(i)}$$，求$$\tilde{P}^{(i+1)}$$使$$F(\tilde{P},\theta^{(i)})$$极大化。
-
-(2)对固定的$$\tilde{P}^{(i+1)}$$，求$$\theta^{(i+1)}$$使$$F(\tilde{P}^{(i+1)},\theta)$$极大化
-
-**证明**
-
-(1)由引理12.1，对于固定的$$\theta^{(i)}$$，</script><p>\tilde{P}^{(i+1)}(Z) = \tilde{P}_{\theta^{(i)}}(Z) = P(Z|Y,\theta^{(i)})</p>
+\theta^{(i+1)} = \arg \max_{\theta} F(\tilde{P}^{(i+1)},\theta) = \arg \max_{\theta} Q(\theta,\theta^{(i)})</script><p>通过以上两步完成了EM算法的一次迭代。</p>
+<p>由此可知，由EM算法与F函数的极大-极大算法得到的参数估计序列<script type="math/tex">\theta^{(i)}</script>，i=1,2,…,是一致的。</p>
+<h3 id="12-4-2-GEM算法"><a href="#12-4-2-GEM算法" class="headerlink" title="12.4.2 GEM算法"></a>12.4.2 GEM算法</h3><p><strong>算法12.3(GEM算法1)</strong></p>
+<p>输入：观测数据,F函数</p>
+<p>输出：模型参数</p>
+<p>(1)初始化参数<script type="math/tex">\theta^{(0)}</script>，开始迭代</p>
+<p>(2)第i+1次迭代</p>
+<p>第1步:记<script type="math/tex">\theta^{(i)}</script>为参数<script type="math/tex">\theta</script>的估计值，计算</p>
 <script type="math/tex; mode=display">
-使$$F(\tilde{P},\theta^{(i)})$$极大化。此时，</script><p>\begin{aligned}F(\tilde{P}^{(i+1),\theta}) &amp;= E_{\tilde{P}^{(i+1)}}[\log P(Y,Z|\theta)]+H(\tilde{P}^{(i+1)})\&amp;=\sum_Z \log P(Y,Z|\theta)P(Z|Y,\theta^{(i)})+H(\tilde{P}^{(i+1)})\end{aligned}</p>
+\begin{aligned}Q(\theta,\theta^{(i)})&= E_Z[\log P(Y,Z|\theta)|Y,\theta^{(i)}]\\&= \sum_Z P(Z|Y,\theta^{(i)})\log P(Y,Z|\theta)\end{aligned}</script><p>(3)第2步:求<script type="math/tex">\theta^{(i+1)}</script>使：</p>
 <script type="math/tex; mode=display">
-由$$Q(\theta,\theta^{(i)})$$的定义式(12.3)有</script><p>F(\tilde{P}^{(i+1)},\theta) = Q(\theta,\theta^{(i)})+H(\tilde{P}^{(i+1)})</p>
+Q(\theta^{(i+1)},\theta^{(i)}) > Q(\theta^{(i)},\theta^{(i)})</script><p>(4)重复(2)和(3)，直到收敛。</p>
+<p>当参数<script type="math/tex">\theta</script>的维数为d<script type="math/tex">(d \ge 2)</script>时，可采用一种特殊的GEM算法，它将EM算法的M步分解为d次条件极大化，每次只改变参数向量的一个分量，其余分量不改变。</p>
+<p><strong>算法9.5(GEM算法3)</strong></p>
+<p>输入:观测数据，Q函数</p>
+<p>输出:模型参数</p>
+<p>(1) 初始化参数<script type="math/tex">\theta^{(0)}=(\theta_1^{(0)},\theta_2^{(0)},\cdots,\theta_d^{(0)})</script>，开始迭代</p>
+<p>(2)第i+1次迭代，</p>
+<p>第1步：记<script type="math/tex">\theta^{(i)}=(\theta_1^{(i)},\theta_2^{(i)},\cdots,\theta_d^{(i)})</script>为参数<script type="math/tex">\theta=(\theta_1,\theta_2,\cdots,\theta_d)</script>的估计值，计算</p>
 <script type="math/tex; mode=display">
-(2)固定$$\tilde{P}^{(i+1)}$$，求$$\theta^{(i+1)}$$使$$F(\tilde{P}^{(i+1)},\theta)$$极大化。得到：</script><p>\theta^{(i+1)} = \arg \max<em>{\theta} F(\tilde{P}^{(i+1)},\theta) = \arg \max</em>{\theta} Q(\theta,\theta^{(i)})</p>
-<script type="math/tex; mode=display">
-通过以上两步完成了EM算法的一次迭代。
-
-由此可知，由EM算法与F函数的极大-极大算法得到的参数估计序列$$\theta^{(i)}$$，i=1,2,…,是一致的。
-
-### 12.4.2 GEM算法
-
-**算法12.3(GEM算法1)**
-
-输入：观测数据,F函数
-
-输出：模型参数
-
-(1)初始化参数$$\theta^{(0)}$$，开始迭代
-
-(2)第i+1次迭代
-
-第1步:记$$\theta^{(i)}$$为参数$$\theta$$的估计值，计算</script><p>\begin{aligned}Q(\theta,\theta^{(i)})&amp;= E_Z[\log P(Y,Z|\theta)|Y,\theta^{(i)}]\&amp;= \sum_Z P(Z|Y,\theta^{(i)})\log P(Y,Z|\theta)\end{aligned}</p>
-<script type="math/tex; mode=display">
-(3)第2步:求$$\theta^{(i+1)}$$使：</script><p>Q(\theta^{(i+1)},\theta^{(i)}) &gt; Q(\theta^{(i)},\theta^{(i)})</p>
-<script type="math/tex; mode=display">
-(4)重复(2)和(3)，直到收敛。
-
-当参数$$\theta$$的维数为d$$(d \ge 2)$$时，可采用一种特殊的GEM算法，它将EM算法的M步分解为d次条件极大化，每次只改变参数向量的一个分量，其余分量不改变。
-
-**算法9.5(GEM算法3)**
-
-输入:观测数据，Q函数
-
-输出:模型参数
-
-(1) 初始化参数$$\theta^{(0)}=(\theta_1^{(0)},\theta_2^{(0)},\cdots,\theta_d^{(0)})$$，开始迭代
-
-(2)第i+1次迭代，
-
-第1步：记$$\theta^{(i)}=(\theta_1^{(i)},\theta_2^{(i)},\cdots,\theta_d^{(i)})$$为参数$$\theta=(\theta_1,\theta_2,\cdots,\theta_d)$$的估计值，计算</script><p>\begin{aligned}Q(\theta,\theta^{(i)}) &amp;= E_Z[\log P(Y,Z|\theta)|Y,\theta^{(i)}] \ &amp;= \sum_ZP(Z|y,\theta^{(i)})\log P(Y,Z|\theta)\end{aligned}</p>
-<script type="math/tex; mode=display">
-(3)第2步:进行d次条件极大化:
-
-首先，在$$\theta_2^{(i)},\cdots,\theta_k^{(i)}$$保持不变的条件下求使$$Q(\theta,\theta^{(i)})$$达到极大的$$\theta_1^{(i+1)}</script><p>然后，在<script type="math/tex">\theta_1=\theta_1^{(i+1)}</script>，<script type="math/tex">\theta_j=\theta_j^{(i)}</script>，j=3,4,…,k的条件下求使<script type="math/tex">Q(\theta,\theta^{(i)})</script>达到极大的<script type="math/tex">\theta_2^{(i+1)}</script>；</p>
+\begin{aligned}Q(\theta,\theta^{(i)}) &= E_Z[\log P(Y,Z|\theta)|Y,\theta^{(i)}] \\ &= \sum_ZP(Z|y,\theta^{(i)})\log P(Y,Z|\theta)\end{aligned}</script><p>(3)第2步:进行d次条件极大化:</p>
+<p>首先，在<script type="math/tex">\theta_2^{(i)},\cdots,\theta_k^{(i)}</script>保持不变的条件下求使<script type="math/tex">Q(\theta,\theta^{(i)})</script>达到极大的<script type="math/tex">\theta_1^{(i+1)}</script></p>
+<p>然后，在<script type="math/tex">\theta_1=\theta_1^{(i+1)}</script>，<script type="math/tex">\theta_j=\theta_j^{(i)}</script>，j=3,4,…,k的条件下求使<script type="math/tex">Q(\theta,\theta^{(i)})</script>达到极大的<script type="math/tex">\theta_2^{(i+1)}</script>；</p>
 <p>如此继续，经过d次条件极大化，得到<script type="math/tex">\theta^{(i+1)}=(\theta_1^{(i+1)},\theta_2^{(i+1)},\cdots,\theta_d^{(i+1)})</script>使得</p>
 <script type="math/tex; mode=display">
 Q(\theta^{(i+1)},\theta^{(i)}) > Q(\theta^{(i)},\theta^{(i)})</script><p>(4)重复(2)和(3)。直到收敛。</p>
@@ -813,7 +761,7 @@ Q(\theta^{(i+1)},\theta^{(i)}) > Q(\theta^{(i)},\theta^{(i)})</script><p>(4)重�
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#12-1-EM算法的引入"><span class="nav-number">1.</span> <span class="nav-text">12.1 EM算法的引入</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#12-1-1-EM算法"><span class="nav-number">1.1.</span> <span class="nav-text">12.1.1 EM算法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#12-1-2-EM算法的导出"><span class="nav-number">1.2.</span> <span class="nav-text">12.1.2 EM算法的导出</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#12-1-3-EM算法在非监督学习中的应用"><span class="nav-number">1.3.</span> <span class="nav-text">12.1.3 EM算法在非监督学习中的应用</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#12-2-EM算法的收敛性"><span class="nav-number">2.</span> <span class="nav-text">12.2 EM算法的收敛性</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#12-3-EM算法在高斯混合模型学习中的应用"><span class="nav-number">3.</span> <span class="nav-text">12.3 EM算法在高斯混合模型学习中的应用</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#12-3-1-高斯混合模型"><span class="nav-number">3.1.</span> <span class="nav-text">12.3.1 高斯混合模型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#12-3-2-高斯混合模型参数估计的EM算法"><span class="nav-number">3.2.</span> <span class="nav-text">12.3.2 高斯混合模型参数估计的EM算法</span></a></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#12-1-EM算法的引入"><span class="nav-number">1.</span> <span class="nav-text">12.1 EM算法的引入</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#12-1-1-EM算法"><span class="nav-number">1.1.</span> <span class="nav-text">12.1.1 EM算法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#12-1-2-EM算法的导出"><span class="nav-number">1.2.</span> <span class="nav-text">12.1.2 EM算法的导出</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#12-1-3-EM算法在非监督学习中的应用"><span class="nav-number">1.3.</span> <span class="nav-text">12.1.3 EM算法在非监督学习中的应用</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#12-2-EM算法的收敛性"><span class="nav-number">2.</span> <span class="nav-text">12.2 EM算法的收敛性</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#12-3-EM算法在高斯混合模型学习中的应用"><span class="nav-number">3.</span> <span class="nav-text">12.3 EM算法在高斯混合模型学习中的应用</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#12-3-1-高斯混合模型"><span class="nav-number">3.1.</span> <span class="nav-text">12.3.1 高斯混合模型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#12-3-2-高斯混合模型参数估计的EM算法"><span class="nav-number">3.2.</span> <span class="nav-text">12.3.2 高斯混合模型参数估计的EM算法</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#12-4-EM算法的推广"><span class="nav-number">4.</span> <span class="nav-text">12.4 EM算法的推广</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#12-4-1-F函数的极大-极大算法"><span class="nav-number">4.1.</span> <span class="nav-text">12.4.1 F函数的极大-极大算法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#12-4-2-GEM算法"><span class="nav-number">4.2.</span> <span class="nav-text">12.4.2 GEM算法</span></a></li></ol></li></ol></div>
             
 
           </div>
