@@ -1,0 +1,959 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="凸优化,">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="在约束最优化问题中，常常利用拉格朗日对偶性将原始问题转换为对偶问题，通过解对偶问题而得到原始问题的解。 该方法应用在许多统计学习方法中，例如，最大熵模型与支持向量机。 9.1 原始问题假设f(x)，c_i(x)，h_j(x)是定义在R^n上的连续可微函数。考虑约束最优化问题： \min_{x \in R^n} f(x)$$                              (9.1)  s">
+<meta name="keywords" content="凸优化">
+<meta property="og:type" content="article">
+<meta property="og:title" content="拉格朗日对偶性">
+<meta property="og:url" content="http://yoursite.com/2019/06/14/拉格朗日对偶性/index.html">
+<meta property="og:site_name" content="Jozee&#39;s技术博客">
+<meta property="og:description" content="在约束最优化问题中，常常利用拉格朗日对偶性将原始问题转换为对偶问题，通过解对偶问题而得到原始问题的解。 该方法应用在许多统计学习方法中，例如，最大熵模型与支持向量机。 9.1 原始问题假设f(x)，c_i(x)，h_j(x)是定义在R^n上的连续可微函数。考虑约束最优化问题： \min_{x \in R^n} f(x)$$                              (9.1)  s">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2019-06-14T09:11:51.532Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="拉格朗日对偶性">
+<meta name="twitter:description" content="在约束最优化问题中，常常利用拉格朗日对偶性将原始问题转换为对偶问题，通过解对偶问题而得到原始问题的解。 该方法应用在许多统计学习方法中，例如，最大熵模型与支持向量机。 9.1 原始问题假设f(x)，c_i(x)，h_j(x)是定义在R^n上的连续可微函数。考虑约束最优化问题： \min_{x \in R^n} f(x)$$                              (9.1)  s">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2019/06/14/拉格朗日对偶性/">
+
+
+
+
+
+  <title>拉格朗日对偶性 | Jozee's技术博客</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Jozee's技术博客</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/06/14/拉格朗日对偶性/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="jozee">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Jozee's技术博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">拉格朗日对偶性</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-06-14T17:09:19+08:00">
+                2019-06-14
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/机器学习/" itemprop="url" rel="index">
+                    <span itemprop="name">机器学习</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2019/06/14/拉格朗日对偶性/" class="leancloud_visitors" data-flag-title="拉格朗日对偶性">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数&#58;</span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>在约束最优化问题中，常常利用拉格朗日对偶性将原始问题转换为对偶问题，通过解对偶问题而得到原始问题的解。</p>
+<p>该方法应用在许多统计学习方法中，例如，最大熵模型与支持向量机。</p>
+<h2 id="9-1-原始问题"><a href="#9-1-原始问题" class="headerlink" title="9.1 原始问题"></a>9.1 原始问题</h2><p>假设<script type="math/tex">f(x)</script>，<script type="math/tex">c_i(x)</script>，<script type="math/tex">h_j(x)</script>是定义在<script type="math/tex">R^n</script>上的连续可微函数。考虑约束最优化问题：</p>
+<script type="math/tex; mode=display">\min_{x \in R^n} f(x)$$                              (9.1)
+
+s.t.           $$c_i(x)\le 0$$，i=1,2,…,k  (9.2)
+
+​                $$h_j(x)=0$$，j=1,2,…,l   (9.3)
+
+称此约束最优化问题为原始最优化问题或原始问题。
+
+首先，引进广义拉格朗日函数：</script><p>L(x,\alpha,\beta) = f(x)+\sum<em>{i=1}^k \alpha_i c_i(x)+\sum</em>{j=1}^l \beta_j h_j(x) \ (9.4)</p>
+<script type="math/tex; mode=display">
+这里，$$x=(x^{(1)},x^{(2)},...,x^{(n)})^\top \in R^n$$，$$\alpha_i$$，$$\beta_i$$是拉格朗日乘子，$$\alpha_i \ge 0$$。考虑x的函数:</script><p>\theta<em>p(x) = \max</em>{\alpha,\beta:\alpha_i \ge 0} L(x,\alpha,\beta) \ (9.5)</p>
+<script type="math/tex; mode=display">
+这里，下标P表示原始问题。
+
+假设给定某个x。如果**x违反原始问题的约束条件**，即存在某个i使得$$c_i(x)>0$$或者存在某个j使得$$h_j(x)\ne0$$，那么就有：</script><p>\theta<em>p(x) = \max</em>{\alpha,\beta:\alpha<em>i\ge0} \left[f(x)+\sum</em>{i=1}^k\alpha<em>ic_i(x)+\sum</em>{j=1}^l\beta_jh_j(x)\right] = +\infty \ (9.6)</p>
+<script type="math/tex; mode=display">
+由于某个i使得$$c_i(x)>0$$，它会使得$$\alpha_i \rightarrow +\infty$$，同样的若存在某个j使得$$h_j(x)\ne0$$，它会使得$$\beta_j \rightarrow +\infty$$，而将其他的$$\alpha_i$$，$$\beta_j$$均取为0。
+
+**相反地**，如果**x满足约束条件式(9.2)和式(9.3)**，则由式(9.5)和式(9.4)可知，$$\theta_p(x)=f(x)$$。因此，</script><p>\theta_p(x) = \left{\begin{aligned} f(x) , \ &amp; x satisfy the constraints \ +\infty, \ &amp; others \end{aligned}\right. \ (9.7)</p>
+<script type="math/tex; mode=display">
+所有如果考虑极小化问题:</script><p>\min<em>x \theta_p(x) = \min_x \max</em>{\alpha,\beta:\alpha_i\ge0} L(x,\alpha,\beta) \ (9.8)</p>
+<script type="math/tex; mode=display">
+**它是与原始最优化问题(9.1)~(9.3)等价的**。
+
+**问题$$\min_x \max_{\alpha,\beta:\alpha_i \ge 0} L(x,\alpha,\beta)$$称为广义拉格朗日函数的极大极小问题**。
+
+**定义原始问题的最优解**:</script><p>p^* = \min_x \theta_p(x) \ (9.9)</p>
+<script type="math/tex; mode=display">
+
+## 9.2 对偶问题
+
+定义</script><p>\theta_D(\alpha,\beta) = \min_x L(x, \alpha, \beta) \ (9.10)</p>
+<script type="math/tex; mode=display">
+再考虑极大化$$\theta_D(\alpha, \beta)=\min_x L(x, \alpha, \beta)$$，即</script><p>\max<em>{\alpha,\beta:\alpha_i\ge0} \theta_D(\alpha,\beta) = \max</em>{\alpha,\beta:\alpha_i\ge0} \min_x L(x,\alpha,\beta) \ (9.11)</p>
+<script type="math/tex; mode=display">
+**将广义拉格朗日函数的极大极小问题表示为约束最优化问题**：
+
+$$\max_{\alpha,\beta}\theta_D(\alpha,\beta) = \max_{\alpha,\beta}\min_x L(x, \alpha, \beta)$$    (9.12)
+
+s.t.        $$\alpha_i \ge 0$$，i=1,2,…,k                                  (9.13)
+
+称为原始问题的对偶问题。
+
+**定义对偶问题的最优解:**</script><p>d^* = \max_{\alpha,\beta:\alpha_i \ge0} \theta_D(\alpha, \beta) \ (9.14)</p>
+<script type="math/tex; mode=display">
+
+## 9.3 原始问题和对偶问题的关系
+
+下面讨论原始问题和对偶问题的关系。
+
+**定理9.1** 若原始问题和对偶问题都有最优值，则</script><p>d^<em> = \max<em>{\alpha,\beta:\alpha_i\ge0} \min_x L(x,\alpha,\beta) \le \min_x \max</em>{\alpha,\beta:\alpha_i\ge0} L(x,\alpha,\beta) = p^</em> \ (9.15)</p>
+<script type="math/tex; mode=display">
+**证明** 由式(9.12)和式(9.5)，对任意的$$\alpha$$，$$\beta$$和x，有</script><p>\theta<em>D(\alpha,\beta) = \min_x L(x,\alpha,\beta) \le L(x,\alpha,\beta) \le \max</em>{\alpha,\beta:\alpha_i \ge 0} L(x,\alpha,\beta) = \theta_p(x) \ (9.16)</p>
+<script type="math/tex; mode=display">
+即</script><p>\theta_D(\alpha,\beta) \le \theta_p(x) \ (9.17)</p>
+<script type="math/tex; mode=display">
+由于原始问题和对偶问题均有最优值，所以，</script><p>\max_{\alpha,\beta:\alpha_i\ge0}\theta_D(\alpha,\beta) \le \min_x \theta_p(x) \ (9.18)</p>
+<script type="math/tex; mode=display">
+即</script><p>d^<em> = \max<em>{\alpha,\beta:\alpha_i \ge 0} \min_x L(x,\alpha,\beta) \le \min_x \max</em>{\alpha,\beta:\alpha_i\ge0}L(x,\alpha,\beta) = p^</em> \ (9.19)</p>
+<script type="math/tex; mode=display">
+**推论9.1** 设$$x^*$$和$$\alpha^*$$，$$\beta^*$$分别是原始问题(9.1)\~(9.3)和对偶问题(9.12)\~(9.13)的可行解，并且$$d^*=p^*$$，则$$x^*$$和$$\alpha^*$$，$$\beta^*$$分别是原始问题和对偶问题的最优解。
+
+> 在某些条件下，**原始问题和对偶问题的最优解相等，$$d^*=p^*$$，这时对偶问题和原始问题等效**。
+
+
+
+**定理9.2** 考虑原始问题(9.1)\~(9.3)和对偶问题(9.12)\~(9.13)，假设函数$$f(x)$$和$$c_i(x)$$是凸函数，$$h_j(x)$$是仿射函数，并且不等式约束$$c_i(x)$$是严格可行的(即存在x，对所有i有$$c_i(x)<0$$，则存在$$x^*$$，$$\alpha^*$$,$$\beta^*$$，使$$x^*$$是原始问题的解，$$\alpha^*$$，$$\beta^*$$是对偶问题的解，并且</script><p>p^<em> = d^</em> = L(x^<em>,\alpha^</em>,\beta^*) \ (9.20)</p>
+<script type="math/tex; mode=display">
+**定理9.3** 对原始问题(9.1)\~(9.3)和对偶问题(9.12)\~(9.13)，假设函数$$f(x)$$和$$c_i(x)$$是凸函数，$$h_j(x)$$是仿射函数，并且不等式约束$$c_i(x)$$是严格可行的，则$$x^*$$和$$\alpha^*$$，$$\beta^*$$分别是原始问题和对偶问题的解的**充分必要条件是$$x^*$$，$$\alpha^*$$，$$\beta^*$$满足下面的KKT条件**：</script><p>\nabla_x L(x^<em>,\alpha^</em>,\beta^*) = 0 \ (9.21)</p>
+<script type="math/tex; mode=display">
+</script><p>\alpha_i^<em>c_i(x^</em>) = 0 , i=1,2,…,k \ (9.22)</p>
+<script type="math/tex; mode=display">
+</script><p>c_i(x^*) \le 0 , i=1,2,…,k \ (9.23)</p>
+<script type="math/tex; mode=display">
+</script><p>\alpha_i^* \ge 0 , i=1,2,…,k \ (9.24)</p>
+<script type="math/tex; mode=display">
+</script><p>h_j(x^*) = 0 , j=1,2,…,l \ (9.25)</p>
+<p>$$</p>
+<p>特别指出，<strong>式(9.24)称为KKT的对偶互补条件</strong>。由此条件可知：若<script type="math/tex">\alpha_i^* > 0</script>，则<script type="math/tex">c_i(x^*)=0</script>。</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/凸优化/" rel="tag"># 凸优化</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/06/14/最大熵模型/" rel="next" title="最大熵模型">
+                <i class="fa fa-chevron-left"></i> 最大熵模型
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">jozee</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">9</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">1</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">5</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#9-1-原始问题"><span class="nav-number">1.</span> <span class="nav-text">9.1 原始问题</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">jozee</span>
+
+  
+</div>
+
+
+
+
+
+
+
+
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<span id="busuanzi_container_site_pv">
+    本站总访问量<span id="busuanzi_value_site_pv"></span>次
+</span>
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.4.js"></script>
+  <script>AV.initialize("", "");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+
+  
+
+  
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+  
+
+  
+
+</body>
+</html>
