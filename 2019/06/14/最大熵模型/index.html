@@ -87,7 +87,7 @@
 <meta property="og:site_name" content="Jozee&#39;s技术博客">
 <meta property="og:description" content="7.1 最大熵模型最大熵模型(maximum entropy model)由最大熵原理推导实现。 7.1.1 最大熵原理最大熵原理：学习概率模型时，在所有可能的概率模型(分布)中，熵最大的模型是最好的模型。 通常用约束条件来确定概率模型的集合，所以，最大熵原理也可表述为在满足约束条件的模型集合中选取熵最大的模型。 假设离散随机变量X的概率分布是P(X)，则其熵是:  H(P) = -\sum_x">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2019-06-14T09:03:44.138Z">
+<meta property="og:updated_time" content="2019-06-14T09:07:13.563Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="最大熵模型">
 <meta name="twitter:description" content="7.1 最大熵模型最大熵模型(maximum entropy model)由最大熵原理推导实现。 7.1.1 最大熵原理最大熵原理：学习概率模型时，在所有可能的概率模型(分布)中，熵最大的模型是最好的模型。 通常用约束条件来确定概率模型的集合，所以，最大熵原理也可表述为在满足约束条件的模型集合中选取熵最大的模型。 假设离散随机变量X的概率分布是P(X)，则其熵是:  H(P) = -\sum_x">
@@ -474,43 +474,36 @@ L(w) = \sum_{x,y}\left(\tilde{P}(x,y) \sum_{i=1}^n w_if_i(x,y)\right)-\sum_{x}\t
 -\log \alpha \ge 1-\alpha \ , \alpha > 0</script><p>建立对数似然函数改变量的下界:</p>
 <script type="math/tex; mode=display">
 \begin{aligned}L(w+\delta)-L(w) &\ge \sum_{x,y}\tilde{P}(x,y)\sum_{i=1}^n \delta_i f_i(x,y)+\sum_x \tilde{P}(x)\left(1-\frac{Z_{w+\delta}(x)}{Z_w(x)}\right) \\ &= \sum_{x,y}\tilde{P}(x,y)\sum_{i=1}^n \delta_i f_i(x,y)+1-\sum_x \tilde{P}(x)\frac{Z_{w+\delta}(x)}{Z_w(x)} \\ &= \sum_{x,y}\tilde{P}(x,y)\sum_{i=1}^n \delta_i f_i(x,y)+1-\sum_x\tilde{P}(x)\sum_yP_w(y|x)\exp \sum_{i=1}^n \delta_i f_i(x,y)\end{aligned}</script><p>上式，第一步应用了不等式，第二步应用了<script type="math/tex">\sum_x \tilde{P}(x)=1</script>，第三步应用了</p>
-<script type="math/tex; mode=display">\sum_y \exp \left( \sum_{i=1}^n w_if_i(x,y)+\sum_{i=1}^n\delta_if_i(x,y)\right)$$以及式(6.22)。
-
-将右端记为:</script><p>A(\delta|w) = \sum<em>{x,y}\tilde{P}(x,y)\sum</em>{i=1}^n \delta<em>i f_i(x,y)+1-\sum_x\tilde{P}(x)\sum_yP_w(y|x)\exp \sum</em>{i=1}^n \delta_i f_i(x,y)</p>
 <script type="math/tex; mode=display">
-于是有:</script><p>L(w+\delta)-L(w) \ge A(\delta|w)</p>
+\sum_y \exp \left( \sum_{i=1}^n w_if_i(x,y)+\sum_{i=1}^n\delta_if_i(x,y)\right)</script><p>以及式(6.22)。</p>
+<p>将右端记为:</p>
 <script type="math/tex; mode=display">
-即$$A(\delta|w)$$是对数似然函数改变量的一个下界。
-
-**如果能找到适当的$$\delta$$使下界$$A(\delta|w)$$提高，那么对数似然函数也会提高**。
-
-引入一个量$$f^{*}(x,y)$$，</script><p>f^{*}(x,y) = \sum_i f_i(x,y)</p>
+A(\delta|w) = \sum_{x,y}\tilde{P}(x,y)\sum_{i=1}^n \delta_i f_i(x,y)+1-\sum_x\tilde{P}(x)\sum_yP_w(y|x)\exp \sum_{i=1}^n \delta_i f_i(x,y)</script><p>于是有:</p>
 <script type="math/tex; mode=display">
-因为特征函数$$f_i$$是一个二值函数，故$$f^{*}(x,y)$$表示所有特征在(x,y)出现的次数。这样，$$A(\delta,w)$$，改写为:</script><p>A(\delta|w) = \sum<em>{x,y}\tilde{P}(x,y)\sum</em>{i=1}^n \delta<em>i f_i(x,y)+1-\sum_x\tilde{P}(x)\sum_yP_w(y|x)\exp f^{*}(x,y) \sum</em>{i=1}^n \frac{\delta_i f_i(x,y)}{f^{*}(x,y)} \ (6.30)</p>
+L(w+\delta)-L(w) \ge A(\delta|w)</script><p>即<script type="math/tex">A(\delta|w)</script>是对数似然函数改变量的一个下界。</p>
+<p><strong>如果能找到适当的<script type="math/tex">\delta</script>使下界<script type="math/tex">A(\delta|w)</script>提高，那么对数似然函数也会提高</strong>。</p>
+<p>引入一个量<script type="math/tex">f^{*}(x,y)</script>，</p>
 <script type="math/tex; mode=display">
-利用指数函数的凸性以及对任意i，有$$\frac{f_i(x,y)}{f^{*}(x,y)} \ge 0$$且$$\sum_{i=1}^n \frac{f_i(x,y)}{f^{*}(x,y)} = 1$$这一事实。
-
-根据Jensen不等式，得到：</script><p>\exp \left(\sum<em>{i=1}^n \frac{f_i(x,y)}{f^{<em>}(x,y)}\delta_i f^{</em>}(x,y)\right) \le \sum</em>{i=1}^n \frac{f_i(x,y)}{f^{<em>}(x,y)} \exp \left(\delta_i f^{</em>}(x,y)\right)</p>
+f^{*}(x,y) = \sum_i f_i(x,y)</script><p>因为特征函数<script type="math/tex">f_i</script>是一个二值函数，故<script type="math/tex">f^{*}(x,y)</script>表示所有特征在(x,y)出现的次数。这样，<script type="math/tex">A(\delta,w)</script>，改写为:</p>
 <script type="math/tex; mode=display">
-于是式(6.30)可改写为:</script><p>A(\delta|w) \ge \sum<em>{x,y}\tilde{P}(x,y)\sum</em>{i=1}^n \delta<em>i f_i(x,y)+1-\sum_x\tilde{P}(x)\sum_yP_w(y|x)\sum</em>{i=1}^n \left(\frac{f_i(x,y)}{f^{<em>}(x,y)}\right) \exp \left(\delta_i f^{</em>}(x,y)\right) \ (6.31)</p>
+A(\delta|w) = \sum_{x,y}\tilde{P}(x,y)\sum_{i=1}^n \delta_i f_i(x,y)+1-\sum_x\tilde{P}(x)\sum_yP_w(y|x)\exp f^{*}(x,y) \sum_{i=1}^n \frac{\delta_i f_i(x,y)}{f^{*}(x,y)} \ (6.30)</script><p>利用指数函数的凸性以及对任意i，有<script type="math/tex">\frac{f_i(x,y)}{f^{*}(x,y)} \ge 0</script>且<script type="math/tex">\sum_{i=1}^n \frac{f_i(x,y)}{f^{*}(x,y)} = 1</script>这一事实。</p>
+<p>根据Jensen不等式，得到：</p>
 <script type="math/tex; mode=display">
-记不等式(6.31)右端为：</script><p>B(\delta|w) = \sum<em>{x,y}\tilde{P}(x,y)\sum</em>{i=1}^n \delta<em>i f_i(x,y)+1-\sum_x\tilde{P}(x)\sum_yP_w(y|x)\sum</em>{i=1}^n \left(\frac{f_i(x,y)}{f^{<em>}(x,y)}\right) \exp \left(\delta_i f^{</em>}(x,y)\right)</p>
+\exp \left(\sum_{i=1}^n \frac{f_i(x,y)}{f^{*}(x,y)}\delta_i f^{*}(x,y)\right) \le \sum_{i=1}^n \frac{f_i(x,y)}{f^{*}(x,y)} \exp \left(\delta_i f^{*}(x,y)\right)</script><p>于是式(6.30)可改写为:</p>
 <script type="math/tex; mode=display">
-于是得到了：</script><p>L(w+\delta)-L(w) \ge B(\delta|w)</p>
+A(\delta|w) \ge \sum_{x,y}\tilde{P}(x,y)\sum_{i=1}^n \delta_i f_i(x,y)+1-\sum_x\tilde{P}(x)\sum_yP_w(y|x)\sum_{i=1}^n \left(\frac{f_i(x,y)}{f^{*}(x,y)}\right) \exp \left(\delta_i f^{*}(x,y)\right) \ (6.31)</script><p>记不等式(6.31)右端为：</p>
 <script type="math/tex; mode=display">
-这里，$$B(\delta|w)$$是对数似然函数改变量的**一个新的(相对不紧的)下界**。
-
-求$$B(\delta|w)$$对$$\delta_i$$的偏导数:</script><p>\frac{\partial B(\delta|w)}{\partial \delta<em>i} = \sum</em>{x,y} \tilde{P}(x,y)f_i(x,y) - \sum_x \tilde{P}(x) \sum_y P_w(y|x)f_i(x,y)\exp (\delta_i f^{*}(x,y)) \ (6.32)</p>
+B(\delta|w) = \sum_{x,y}\tilde{P}(x,y)\sum_{i=1}^n \delta_i f_i(x,y)+1-\sum_x\tilde{P}(x)\sum_yP_w(y|x)\sum_{i=1}^n \left(\frac{f_i(x,y)}{f^{*}(x,y)}\right) \exp \left(\delta_i f^{*}(x,y)\right)</script><p>于是得到了：</p>
 <script type="math/tex; mode=display">
-在式(6.32)中，除$$\delta_i$$外，不含任何其他变量。令偏导数为0可得：</script><p>\sum<em>x \tilde{P}(x) \sum_y P_w(y|x)f_i(x,y)\exp (\delta_i f^{*}(x,y)) = E</em>{\tilde{P}}(f_i) \ (6.33)</p>
+L(w+\delta)-L(w) \ge B(\delta|w)</script><p>这里，<script type="math/tex">B(\delta|w)</script>是对数似然函数改变量的<strong>一个新的(相对不紧的)下界</strong>。</p>
+<p>求<script type="math/tex">B(\delta|w)</script>对<script type="math/tex">\delta_i</script>的偏导数:</p>
 <script type="math/tex; mode=display">
-于是，**依次对$$\delta_i$$求解方程(6.33)可以求出$$\delta$$。**
-
-
-
-**算法6.1(改进的迭代尺度算法IIS)**
-
-输入：特征函数$$f_1,f_2,...,f_n$$；经验分布$$\tilde{P}(X,Y)$$，模型$$P_w(y|x)</script><p>输出：最优参数值<script type="math/tex">w^*_i</script>；最优模型<script type="math/tex">P_{w^*}</script>。</p>
+\frac{\partial B(\delta|w)}{\partial \delta_i} = \sum_{x,y} \tilde{P}(x,y)f_i(x,y) - \sum_x \tilde{P}(x) \sum_y P_w(y|x)f_i(x,y)\exp (\delta_i f^{*}(x,y)) \ (6.32)</script><p>在式(6.32)中，除<script type="math/tex">\delta_i</script>外，不含任何其他变量。令偏导数为0可得：</p>
+<script type="math/tex; mode=display">
+\sum_x \tilde{P}(x) \sum_y P_w(y|x)f_i(x,y)\exp (\delta_i f^{*}(x,y)) = E_{\tilde{P}}(f_i) \ (6.33)</script><p>于是，<strong>依次对<script type="math/tex">\delta_i</script>求解方程(6.33)可以求出<script type="math/tex">\delta</script>。</strong></p>
+<p><strong>算法6.1(改进的迭代尺度算法IIS)</strong></p>
+<p>输入：特征函数<script type="math/tex">f_1,f_2,...,f_n</script>；经验分布<script type="math/tex">\tilde{P}(X,Y)</script>，模型<script type="math/tex">P_w(y|x)</script></p>
+<p>输出：最优参数值<script type="math/tex">w^*_i</script>；最优模型<script type="math/tex">P_{w^*}</script>。</p>
 <ol>
 <li><p>对所有<script type="math/tex">i \in \{1,2,...,n\}</script>，取初值<script type="math/tex">w_i=0</script></p>
 </li>
