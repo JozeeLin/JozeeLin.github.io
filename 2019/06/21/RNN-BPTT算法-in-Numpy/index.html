@@ -1,0 +1,937 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="RNN,BPTT,">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="RNN  中的BPTT算法 注：统一使用”*”表示element wise乘法，使用\times表示矩阵乘法。  公式推导 有上图可知,  o^{*}_t = Vs_t \\ o_t = \varphi(o_t^{*}) \\ s_t^{*} = Ux_t+Ws_{t-1}\\ s_t = \phi(s_t^{*}) \frac{\partial{L_t}}{\partial{o_t^{*}}}">
+<meta name="keywords" content="RNN,BPTT">
+<meta property="og:type" content="article">
+<meta property="og:title" content="RNN-BPTT算法 in Numpy">
+<meta property="og:url" content="http://yoursite.com/2019/06/21/RNN-BPTT算法-in-Numpy/index.html">
+<meta property="og:site_name" content="Jozee&#39;s技术博客">
+<meta property="og:description" content="RNN  中的BPTT算法 注：统一使用”*”表示element wise乘法，使用\times表示矩阵乘法。  公式推导 有上图可知,  o^{*}_t = Vs_t \\ o_t = \varphi(o_t^{*}) \\ s_t^{*} = Ux_t+Ws_{t-1}\\ s_t = \phi(s_t^{*}) \frac{\partial{L_t}}{\partial{o_t^{*}}}">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://yoursite.com/Users/jozee/Desktop/image/rnn-1.jpg">
+<meta property="og:updated_time" content="2019-06-21T08:11:16.807Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="RNN-BPTT算法 in Numpy">
+<meta name="twitter:description" content="RNN  中的BPTT算法 注：统一使用”*”表示element wise乘法，使用\times表示矩阵乘法。  公式推导 有上图可知,  o^{*}_t = Vs_t \\ o_t = \varphi(o_t^{*}) \\ s_t^{*} = Ux_t+Ws_{t-1}\\ s_t = \phi(s_t^{*}) \frac{\partial{L_t}}{\partial{o_t^{*}}}">
+<meta name="twitter:image" content="http://yoursite.com/Users/jozee/Desktop/image/rnn-1.jpg">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2019/06/21/RNN-BPTT算法-in-Numpy/">
+
+
+
+
+
+  <title>RNN-BPTT算法 in Numpy | Jozee's技术博客</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Jozee's技术博客</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/06/21/RNN-BPTT算法-in-Numpy/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="jozee">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Jozee's技术博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">RNN-BPTT算法 in Numpy</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-06-21T16:08:38+08:00">
+                2019-06-21
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/自然语言处理/" itemprop="url" rel="index">
+                    <span itemprop="name">自然语言处理</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2019/06/21/RNN-BPTT算法-in-Numpy/" class="leancloud_visitors" data-flag-title="RNN-BPTT算法 in Numpy">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数&#58;</span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="RNN-中的BPTT算法"><a href="#RNN-中的BPTT算法" class="headerlink" title="RNN  中的BPTT算法"></a>RNN  中的BPTT算法</h2><blockquote>
+<p>注：统一使用”*”表示element wise乘法，使用<script type="math/tex">\times</script>表示矩阵乘法。</p>
+</blockquote>
+<h3 id="公式推导"><a href="#公式推导" class="headerlink" title="公式推导"></a>公式推导</h3><p><img src="/Users/jozee/Desktop/image/rnn-1.jpg" alt="rnn-1"></p>
+<p>有上图可知,</p>
+<script type="math/tex; mode=display">
+o^{*}_t = Vs_t \\
+o_t = \varphi(o_t^{*}) \\
+s_t^{*} = Ux_t+Ws_{t-1}\\
+s_t = \phi(s_t^{*})</script><script type="math/tex; mode=display">
+\frac{\partial{L_t}}{\partial{o_t^{*}}} = \frac{\partial{L_t}}{\partial{o_t}}*\frac{\partial{o_t}}{\partial{o_t^{*}}} = \frac{\partial{L_t}}{\partial{o_t}}*\varphi^{'}(o_t^{*}) \tag{1.1}</script><script type="math/tex; mode=display">
+\frac{\partial{L_t}}{\partial{V}} = (\frac{\partial{L_t}}{\partial{o_t}}*\frac{\partial{o_t}}{\partial{o_t^{*}}} )\times \frac{\partial{Vs_t}}{\partial{V}} = \left(\frac{\partial{L_t}}{\partial{o_t}}*\varphi^{'}(o_t^{*})\right) \times s_t^{\top} \tag{1.2}</script><script type="math/tex; mode=display">
+L = \sum_{t=1}^n L_t \tag{1.3}</script><script type="math/tex; mode=display">
+\frac{\partial{L}}{\partial{V}} = \sum_{t=1}^n \left(\frac{\partial{L_t}}{\partial{o_t}} * \varphi^{'}(o_t^{*})\right) \times s_t^{\top} \tag{1.4}</script><script type="math/tex; mode=display">
+\begin{aligned}
+\frac{\partial{L_t}}{\partial{s_t^{*}}} &=\frac{\partial{L_t}}{\partial{o_t}}*\frac{\partial{o_t}}{\partial{o_t^{*}}}*\frac{\partial{o_t^{*}}}{\partial{s_t}}*\frac{\partial{s_t}}{\partial{s_t^{*}}}\\
+&=\frac{\partial{s_t}}{\partial{s_t^{*}}}*\left[V^{\top} \times \left(\frac{\partial{L_t}}{\partial{o_t}} * \varphi^{'}(o_t^{*})\right)\right]\\
+&=\phi^{'}(s_t^{*})* \left[V^{\top} \times \left(\frac{\partial{L_t}}{\partial{o_t}} * \varphi^{'}(o_t^{*})\right)\right]
+\end{aligned}\tag{1.5}</script><script type="math/tex; mode=display">
+\begin{aligned}
+\frac{\partial{L_t}}{\partial{s_{k-1}^{*}}} &= \frac{\partial{L_t}}{\partial{s_k^{*}}}* \left(\frac{\partial{s_k^{*}}}{\partial{s_{k-1}}}\times\frac{\partial{s_{k-1}}}{\partial{s_{k-1}^{*}}}\right)\\
+&= \frac{\partial{L_t}}{\partial{s_k^{*}}}*\left(W^{\top}\times \phi^{'}(s_{k-1}^*)\right) \\
+&= \phi^{'}(s_{k-1}^*) * \left(W^{\top}\times \frac{\partial{L_t}}{\partial{s_k^{*}}} \right) 
+\end{aligned}\tag{1.6}</script><p>根据以上的推导，可以得到U,W参数对应的局部梯度：</p>
+<script type="math/tex; mode=display">
+\frac{\partial{L_t}}{\partial{U}} = \sum_{k=1}^t \frac{\partial{L_t}}{\partial{s_k^{*}}} \times \frac{\partial{s_k^{*}}}{\partial{U}} = \sum_{k=1}^t \frac{\partial{L_t}}{\partial{s_k^{*}}} \times x_k^{\top} \tag{1.7}</script><script type="math/tex; mode=display">
+\frac{\partial{L_t}}{\partial{W}} = \sum_{k=1}^t \frac{\partial{L_t}}{\partial{s_k^{*}}} \times \frac{\partial{s_k^{*}}}{\partial{W}} = \sum_{k=1}^t \frac{\partial{L_t}}{\partial{s_k^*}} \times s_{k-1}^{\top} \tag{1.8}</script><blockquote>
+<p>补充知识:</p>
+<p>根据交叉熵损失函数的梯度公式可得:</p>
+<script type="math/tex; mode=display">
+\frac{\partial{L_t}}{\partial{o_t}}*\varphi^{'}(o_t^{*}) = o_t-y_t</script><p>根据sigmoid激活函数的梯度公式可得:</p>
+<script type="math/tex; mode=display">
+\phi^{'}(s_t^{*}) = \phi(s_t^{*})(1-\phi(s_t^*)) = s_t*(1-s_t)</script></blockquote>
+<p>从而，上式(1.4)可写成：</p>
+<script type="math/tex; mode=display">
+\frac{\partial{L}}{\partial{V}} = \sum_{t=1}^n (o_t-y_t) \times s_t^{\top} \tag{1.9}</script><p>式(1.5)可写成:</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+\frac{\partial{L_t}}{\partial{s_t^{*}}} &= \phi^{'}(s_t^{*})* \left[V^{\top} \times \left(\frac{\partial{L_t}}{\partial{o_t}} * \varphi^{'}(o_t^{*})\right)\right] \\
+&= [s_t * (1-s_t)]*\left[V^{\top} \times (o_t-y_t)\right]
+\end{aligned} \tag{2.0}</script><p>式(1.6)可写成:</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+\frac{\partial{L_t}}{\partial{s_{k-1}^{*}}} &= \phi^{'}(s_{k-1}^*) * \left(W^{\top}\times \frac{\partial{L_t}}{\partial{s_k^{*}}} \right) \\
+&= [s_{k-1}*(1-s_{k-1})]*\left(W^{\top} \times \frac{\partial{L_t}}{\partial{s_k^{*}}}\right)
+\end{aligned}\tag{2.1}</script><h3 id="代码实现"><a href="#代码实现" class="headerlink" title="代码实现"></a>代码实现</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">bptt</span><span class="params">(self, x, y)</span>:</span></span><br><span class="line">  <span class="string">'''</span></span><br><span class="line"><span class="string">  x: sequence</span></span><br><span class="line"><span class="string">  y: label</span></span><br><span class="line"><span class="string">  '''</span></span><br><span class="line">  bptt_truncate = <span class="number">10</span> <span class="comment">#表示最多只往回看10 time step</span></span><br><span class="line">  T = len(y)</span><br><span class="line">  o,s = self.forward_propagation(x) <span class="comment">#通过前向传播得到o=[o1,o2,...ot,...on],s=[s1,s2,...,st,...,sn]</span></span><br><span class="line">  <span class="comment">#u,v,w三个参数的梯度初始化为0</span></span><br><span class="line">  dLdU = np.zeros(self.U.shape)</span><br><span class="line">  dLdV = np.zeros(self.V.shape)</span><br><span class="line">  dLdW = np.zeros(self.W.shape)</span><br><span class="line">  <span class="comment">#(o-y):softmax交叉熵的梯度值</span></span><br><span class="line">  delta_o = o[np.arange(len(y)),y]<span class="number">-1.</span></span><br><span class="line">  </span><br><span class="line">  <span class="keyword">for</span> t <span class="keyword">in</span> np.arange(T)[::<span class="number">-1</span>]:</span><br><span class="line">    dLdV += np.outer(delta_o[t],s[t].T) <span class="comment">#式(1.9)</span></span><br><span class="line">    </span><br><span class="line">  <span class="keyword">for</span> t <span class="keyword">in</span> np.arange(T)[::<span class="number">-1</span>]:</span><br><span class="line">    delta_t = self.V.T.dot(delta_o[t])*(s[t]*(<span class="number">1</span>-s[t])) <span class="comment">#式(2.0),即式(1.8)中k=t时</span></span><br><span class="line">    <span class="keyword">for</span> bptt_step <span class="keyword">in</span> np.arange(max(<span class="number">0</span>,t-bptt_truncate),t+<span class="number">1</span>)[::<span class="number">-1</span>]:</span><br><span class="line">      <span class="string">'''式(1.8)'''</span></span><br><span class="line">      dLdW += np.outer(delta_t,s[bptt_step<span class="number">-1</span>]) </span><br><span class="line">      delta_t = self.W.T.dot(delta_t)*(s[btpp_step<span class="number">-1</span>]*(<span class="number">1</span>-s[bptt_step<span class="number">-1</span>]))<span class="comment">#式(2.1),式(1.8)中k!=t时</span></span><br><span class="line">    </span><br><span class="line">    delta_t = self.V.T.dot(delta_o[t])*(s[t]*(<span class="number">1</span>-s[t])) <span class="comment">#式(2.0),即式(1.7)中k=t时</span></span><br><span class="line">    <span class="keyword">for</span> bptt_step <span class="keyword">in</span> np.arange(max(<span class="number">0</span>,t-bptt_truncate),t+<span class="number">1</span>)[::<span class="number">-1</span>]:</span><br><span class="line">      <span class="string">'''式(1.7)'''</span></span><br><span class="line">      dLdU += np.outer(delta_t, x[bptt_step])</span><br><span class="line">      delta_t = self.W.T.dot(delta_t)*(s[btpp_step<span class="number">-1</span>]*(<span class="number">1</span>-s[bptt_step<span class="number">-1</span>]))<span class="comment">#式(2.1),式(1.7)中k!=t时</span></span><br><span class="line">  </span><br><span class="line">  <span class="keyword">return</span> [dLdU,dLdV,dLdW]</span><br></pre></td></tr></table></figure>
+<h3 id="完整的RNN类"><a href="#完整的RNN类" class="headerlink" title="完整的RNN类"></a>完整的RNN类</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">RNNNumpy</span><span class="params">(object)</span>:</span></span><br><span class="line">  <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, word_dim, hidden_dim=<span class="number">100</span>,bptt_truncate=<span class="number">4</span>)</span>:</span></span><br><span class="line">    <span class="string">'''</span></span><br><span class="line"><span class="string">    word_dim:vocabulary size</span></span><br><span class="line"><span class="string">    hidden_dim:隐藏状态的维度</span></span><br><span class="line"><span class="string">    bptt_truncate:最多往回看4 time step(在上面的实现中设置为10)</span></span><br><span class="line"><span class="string">    '''</span></span><br><span class="line">    self.word_dim = word_dim</span><br><span class="line">    self.hidden_dim = hidden_dim</span><br><span class="line">    self.bptt_truncate = bptt_truncate</span><br><span class="line">    </span><br><span class="line">    <span class="comment">#Randomly initialize the network parameters,http://proceedings.mlr.press/v9/glorot10a/glorot10a.pdf</span></span><br><span class="line">    self.U = np.random.uniform(-np.sqrt(<span class="number">1.</span>/word_dim), np.sqrt(<span class="number">1.</span>/word_dim),(hidden_dim,word_dim))</span><br><span class="line">    self.V = np.random.uniform(-np.sqrt(<span class="number">1.</span>/hidden_dim), np.sqrt(<span class="number">1.</span>/hidden_dim),(word_dim,hidden_dim))</span><br><span class="line">    self.W = np.random.uniform(-np.sqrt(<span class="number">1.</span>/hidden_dim), np.sqrt(<span class="number">1.</span>/hidden-dim),(hidden_dim,hidden_dim))</span><br><span class="line">    </span><br><span class="line">  <span class="function"><span class="keyword">def</span> <span class="title">forward_propagation</span><span class="params">(self, x)</span>:</span></span><br><span class="line">    <span class="comment">#the total number of time steps</span></span><br><span class="line">    T = len(x)</span><br><span class="line">    <span class="comment">#During forward propagation we save all hidden states in s</span></span><br><span class="line">    s = np.zeros((T+<span class="number">1</span>), self.hidden_dim) <span class="comment">#time step -1's hidden states</span></span><br><span class="line">    <span class="comment">#the outputs at each time step</span></span><br><span class="line">    o = np.zeros((T, self.word_dim))</span><br><span class="line">    <span class="comment">#for each time step</span></span><br><span class="line">    <span class="keyword">for</span> t <span class="keyword">in</span> np.arange(T):</span><br><span class="line">      <span class="comment">#Note that we are indexing U by x[t].</span></span><br><span class="line">      s[t] = np.tanh(self.U[:,x[t]]+self.W.dot(s[t<span class="number">-1</span>]))</span><br><span class="line">      o[t] = softmax(self.V.dot(s[t]))</span><br><span class="line">  </span><br><span class="line">  <span class="function"><span class="keyword">def</span> <span class="title">predict</span><span class="params">(self, x)</span>:</span></span><br><span class="line">    <span class="comment">#perform forward propagation and return index of highest score</span></span><br><span class="line">    o,s = self.forward_propagation(x)</span><br><span class="line">    <span class="keyword">return</span> np.argmax(o, axis=<span class="number">1</span>)</span><br><span class="line">  </span><br><span class="line">  <span class="function"><span class="keyword">def</span> <span class="title">calculate_total_loss</span><span class="params">(self, x, y)</span>:</span></span><br><span class="line">    <span class="string">'''</span></span><br><span class="line"><span class="string">    计算数据集x的交叉熵</span></span><br><span class="line"><span class="string">    '''</span></span><br><span class="line">    L = <span class="number">0</span></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> np.arange(len(y)):</span><br><span class="line">      print(<span class="string">"%d-th sentence"</span> % (i))</span><br><span class="line">      o,s = self.forward_propagation(x[i])</span><br><span class="line">      <span class="comment">#we only care about our prediction of the "correct" words</span></span><br><span class="line">      <span class="comment">#可参考：https://blog.csdn.net/u014380165/article/details/77284921</span></span><br><span class="line">      correct_word_predictions = o[np.arange(len(y[i])), y[i]]</span><br><span class="line">      <span class="comment">#Add to the loss based on how off we were,把所有的output的损失累加起来</span></span><br><span class="line">      L += <span class="number">-1</span>*np.sum(np.log(correct_word_predictions))</span><br><span class="line">    <span class="keyword">return</span> L</span><br><span class="line">  </span><br><span class="line">  <span class="function"><span class="keyword">def</span> <span class="title">calculate_loss</span><span class="params">(self, x, y)</span>:</span></span><br><span class="line">    <span class="comment">#Divide the total loss by the number of training examples</span></span><br><span class="line">    N = np.sum((len(y_i) <span class="keyword">for</span> y_i <span class="keyword">in</span> y)) <span class="comment">#y数据集中总的单词数</span></span><br><span class="line">    <span class="keyword">return</span> self.calculate_total_loss(x,y)/N</span><br><span class="line">  </span><br><span class="line">  <span class="function"><span class="keyword">def</span> <span class="title">bptt</span><span class="params">(self, x, y)</span>:</span></span><br><span class="line">    <span class="string">'''</span></span><br><span class="line"><span class="string">  	x: one sequence</span></span><br><span class="line"><span class="string">  	y: label</span></span><br><span class="line"><span class="string">  	'''</span></span><br><span class="line">  	bptt_truncate = <span class="number">10</span> <span class="comment">#表示最多只往回看10 time step</span></span><br><span class="line">  	T = len(y)</span><br><span class="line">  	o,s = self.forward_propagation(x) <span class="comment">#通过前向传播得到o=[o1,o2,...ot,...on],s=[s1,s2,...,st,...,sn]</span></span><br><span class="line">  	<span class="comment">#u,v,w三个参数的梯度初始化为0</span></span><br><span class="line">  	dLdU = np.zeros(self.U.shape)</span><br><span class="line">  	dLdV = np.zeros(self.V.shape)</span><br><span class="line">  	dLdW = np.zeros(self.W.shape)</span><br><span class="line">  	<span class="comment">#(o-y):softmax交叉熵的梯度值</span></span><br><span class="line">  	delta_o = o[np.arange(len(y)),y]<span class="number">-1.</span></span><br><span class="line">  </span><br><span class="line">  	<span class="keyword">for</span> t <span class="keyword">in</span> np.arange(T)[::<span class="number">-1</span>]:</span><br><span class="line">    	dLdV += np.outer(delta_o[t],s[t].T) <span class="comment">#式(1.9)</span></span><br><span class="line">    </span><br><span class="line">  	<span class="keyword">for</span> t <span class="keyword">in</span> np.arange(T)[::<span class="number">-1</span>]:</span><br><span class="line">    	delta_t = self.V.T.dot(delta_o[t])*(s[t]*(<span class="number">1</span>-s[t])) <span class="comment">#式(2.0),即式(1.8)中k=t时</span></span><br><span class="line">    	<span class="keyword">for</span> bptt_step <span class="keyword">in</span> np.arange(max(<span class="number">0</span>,t-bptt_truncate),t+<span class="number">1</span>)[::<span class="number">-1</span>]:</span><br><span class="line">      	<span class="string">'''式(1.8)'''</span></span><br><span class="line">      	dLdW += np.outer(delta_t,s[bptt_step<span class="number">-1</span>]) </span><br><span class="line">      	delta_t = self.W.T.dot(delta_t)*(s[btpp_step<span class="number">-1</span>]*(<span class="number">1</span>-s[bptt_step<span class="number">-1</span>]))<span class="comment">#式(2.1),式(1.8)中k!=t时</span></span><br><span class="line">    </span><br><span class="line">    	delta_t = self.V.T.dot(delta_o[t])*(s[t]*(<span class="number">1</span>-s[t])) <span class="comment">#式(2.0),即式(1.7)中k=t时</span></span><br><span class="line">    	<span class="keyword">for</span> bptt_step <span class="keyword">in</span> np.arange(max(<span class="number">0</span>,t-bptt_truncate),t+<span class="number">1</span>)[::<span class="number">-1</span>]:</span><br><span class="line">      	<span class="string">'''式(1.7)'''</span></span><br><span class="line">      	dLdU += np.outer(delta_t, x[bptt_step])</span><br><span class="line">      	delta_t = self.W.T.dot(delta_t)*(s[btpp_step<span class="number">-1</span>]*(<span class="number">1</span>-s[bptt_step<span class="number">-1</span>]))<span class="comment">#式(2.1),式(1.7)中k!=t时</span></span><br><span class="line">  	<span class="keyword">return</span> [dLdU,dLdV,dLdW]</span><br><span class="line">  </span><br><span class="line">  <span class="function"><span class="keyword">def</span> <span class="title">gradient_check</span><span class="params">(self, x, y, h=<span class="number">0.001</span>, error_threshold=<span class="number">0.01</span>)</span>:</span></span><br><span class="line">    <span class="string">'''</span></span><br><span class="line"><span class="string">    使用梯度公式计算的梯度来检验使用bptt得到的梯度是否正确</span></span><br><span class="line"><span class="string">    x: one sentence</span></span><br><span class="line"><span class="string">    y: label</span></span><br><span class="line"><span class="string">    '''</span></span><br><span class="line">    bptt_gradients = self.bptt(x, y)</span><br><span class="line">    <span class="comment">#list of all parameters we want to check</span></span><br><span class="line">    model_parameters = [<span class="string">'U'</span>,<span class="string">'V'</span>,<span class="string">'W'</span>]</span><br><span class="line">    <span class="comment">#Gradient check for each parameter</span></span><br><span class="line">    <span class="keyword">for</span> pidx, pname <span class="keyword">in</span> enumerate(model_parameters):</span><br><span class="line">      <span class="comment">#Get the actual parameter value from the mode.</span></span><br><span class="line">      parameter = operator.attrgetter(pname)(self)</span><br><span class="line">      print(<span class="string">"Performing gradient check for parameter %s with size %d"</span> % (pname, np.prod(parameter.shape)))</span><br><span class="line">      </span><br><span class="line">      <span class="comment">#Iterate over each element of the parameter matrix</span></span><br><span class="line">      it = np.nditer(parameter, flags=[<span class="string">'multi_index'</span>], op_flags=[<span class="string">'readwrite'</span>])</span><br><span class="line">      <span class="keyword">while</span> <span class="keyword">not</span> it.finished:</span><br><span class="line">        ix = it.multi_index</span><br><span class="line">        <span class="comment">#Save the original value so we can reset it later</span></span><br><span class="line">        original_value = parameter[ix]</span><br><span class="line">        <span class="comment">#Estimate the gradient using (f(x+h)-f(x-h))/(2*h)，分别对参数中的每个分量应用梯度公式</span></span><br><span class="line">        <span class="comment">#f(x+h)</span></span><br><span class="line">        parameter[ix] = original_value+h</span><br><span class="line">        gradplus = self.calculate_total_loss([x],[y])</span><br><span class="line">        <span class="comment">#f(x-h)</span></span><br><span class="line">        parameter[ix] = original_value-h</span><br><span class="line">        gradminus = self.calculate_total_loss([x],[y])</span><br><span class="line">        <span class="comment">#(f(x+h)-f(x-h))/(2*h)</span></span><br><span class="line">        estimated_gradient = (gradplus-gradminus)/(<span class="number">2</span>*h)</span><br><span class="line">        <span class="comment">#reset parameter to original_value</span></span><br><span class="line">        parameter[ix] = original_value</span><br><span class="line">        <span class="comment">#The gradient for this parameter calculated using backpropagation</span></span><br><span class="line">        backprop_gradient = bptt_gradients[pidx][ix]</span><br><span class="line">        <span class="comment">#calculate the relative error:(|x-y|/(|x|-|y|))</span></span><br><span class="line">        relative_error = np.abs(backprop_gradient-estimated_gradient)/(np.abs(backprob_gradient)+np.abs(estimated_gradient))</span><br><span class="line">        <span class="comment">#if the error is to large fail the gradient check</span></span><br><span class="line">        <span class="keyword">if</span> relative_error&gt;error_threshold:</span><br><span class="line">          print(<span class="string">"Gradient Check ERROR: parameter=%s ix=%s"</span> % (pname,ix))</span><br><span class="line">          print(<span class="string">"+h Loss: %f"</span> % gradplus)</span><br><span class="line">          print(<span class="string">"-h Loss: %f"</span> % gradminus)</span><br><span class="line">          print(<span class="string">"Estimated_gradient: %f"</span> % estimated_gradient)</span><br><span class="line">          print(<span class="string">"Backpropagation gradient: %f"</span> % backprop_gradient)</span><br><span class="line">          print(<span class="string">"Relative Error: %f"</span> % (relative_error))</span><br><span class="line">          <span class="keyword">return</span></span><br><span class="line">        it.iternext()</span><br><span class="line">      print(<span class="string">"Gradient check for parameter %s passed"</span> % (pname))</span><br><span class="line">      </span><br><span class="line">  <span class="function"><span class="keyword">def</span> <span class="title">numpy_sdg_step</span><span class="params">(self, x, y, learning_rate)</span>:</span></span><br><span class="line">    <span class="string">'''Calculate the gradients'''</span></span><br><span class="line">    dLdU,dLdV,dLdW = self.bptt(x, y)</span><br><span class="line">    <span class="comment">#Change parameters according to gradients and learning rate</span></span><br><span class="line">    self.U -= learning_rate * dLdU</span><br><span class="line">    self.V -= learning_rate * dLdV</span><br><span class="line">    self.W -= learning_rate * dLdW</span><br><span class="line">    </span><br><span class="line">  <span class="function"><span class="keyword">def</span> <span class="title">train_with_sgd</span><span class="params">(model, X_train, y_train, learning_rate=<span class="number">0.005</span>, n_epoch=<span class="number">10</span>, evaluate_loss_after=<span class="number">2</span>)</span>:</span></span><br><span class="line">    <span class="comment">#we keep track of the losses so we can plot them later</span></span><br><span class="line">    losses = []</span><br><span class="line">    num_examples_seen = <span class="number">0</span></span><br><span class="line">    <span class="keyword">for</span> epoch <span class="keyword">in</span> range(n_epoch):</span><br><span class="line">      <span class="keyword">if</span> (epoch%evaluate_loss_after==<span class="number">0</span>):</span><br><span class="line">        loss = model.calculate_loss(X_train, y_train)</span><br><span class="line">        losses.append((num_examples_seen, loss))</span><br><span class="line">        time = datetime.now().strftime(<span class="string">"%Y-%m-%d %H:%M:%S"</span>)</span><br><span class="line">        print(<span class="string">"Loss after num_examples_seen=%d epoch=%d:%f"</span> % (time,num_examples_seen,epoch,loss))</span><br><span class="line">        </span><br><span class="line">        <span class="comment">#Adjust the learning rate if loss increases</span></span><br><span class="line">        <span class="keyword">if</span>(len(losses)&gt;<span class="number">1</span> <span class="keyword">and</span> losses[<span class="number">-1</span>][<span class="number">1</span>]&gt;losses[<span class="number">-2</span>][<span class="number">1</span>]):</span><br><span class="line">          learning_rate = learning_rate*<span class="number">0.5</span></span><br><span class="line">          print(<span class="string">"Setting learning rate to %f"</span> % learning_rate)</span><br><span class="line">        sys.stdout.flush()</span><br><span class="line">        </span><br><span class="line">      <span class="comment">#for each training example</span></span><br><span class="line">      <span class="keyword">for</span> i <span class="keyword">in</span> range(len(y_train)):</span><br><span class="line">        model.sgd_step(X_train[i], y_train[i], learning_rate)</span><br><span class="line">        num_examples_seen += <span class="number">1</span></span><br></pre></td></tr></table></figure>
+<h2 id="参考文献"><a href="#参考文献" class="headerlink" title="参考文献"></a>参考文献</h2><ul>
+<li><a href="http://www.fit.vutbr.cz/research/groups/speech/publi/2010/mikolov_interspeech2010_IS100722.pdf" target="_blank" rel="noopener">Recurrent neural network based language model</a></li>
+<li><a href="http://karpathy.github.io/2015/05/21/rnn-effectiveness/" target="_blank" rel="noopener">The Unreasonable Effectiveness of Recurrent Neural Networks</a></li>
+<li><a href="http://www.wildml.com/2015/09/recurrent-neural-networks-tutorial-part-1-introduction-to-rnns/" target="_blank" rel="noopener">Recurrent Neural Networks Tutorial, Part 1 – Introduction to RNNs</a></li>
+<li><a href="http://www.wildml.com/2015/09/implementing-a-neural-network-from-scratch/" target="_blank" rel="noopener">Implementing a Neural Network from Scratch in Python – An Introduction</a></li>
+<li><a href="http://proceedings.mlr.press/v28/pascanu13.pdf" target="_blank" rel="noopener">On the difficulty of training recurrent neural networks</a></li>
+<li><a href="http://www.wildml.com/2015/09/recurrent-neural-networks-tutorial-part-2-implementing-a-language-model-rnn-with-python-numpy-and-theano/" target="_blank" rel="noopener">Recurrent Neural Networks Tutorial, Part 2 – Implementing a RNN with Python, Numpy and Theano</a></li>
+<li><a href="https://zhuanlan.zhihu.com/p/26892413" target="_blank" rel="noopener">数学 · RNN（二）· BPTT 算法</a></li>
+</ul>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/RNN/" rel="tag"># RNN</a>
+          
+            <a href="/tags/BPTT/" rel="tag"># BPTT</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/06/18/CNN-for-Sentence-Classification/" rel="next" title="CNN for Sentence Classification">
+                <i class="fa fa-chevron-left"></i> CNN for Sentence Classification
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">jozee</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">17</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">3</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">15</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#RNN-中的BPTT算法"><span class="nav-number">1.</span> <span class="nav-text">RNN  中的BPTT算法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#公式推导"><span class="nav-number">1.1.</span> <span class="nav-text">公式推导</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#代码实现"><span class="nav-number">1.2.</span> <span class="nav-text">代码实现</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#完整的RNN类"><span class="nav-number">1.3.</span> <span class="nav-text">完整的RNN类</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#参考文献"><span class="nav-number">2.</span> <span class="nav-text">参考文献</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">jozee</span>
+
+  
+</div>
+
+
+
+
+
+
+
+
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<span id="busuanzi_container_site_pv">
+    本站总访问量<span id="busuanzi_value_site_pv"></span>次
+</span>
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.4.js"></script>
+  <script>AV.initialize("", "");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+
+  
+
+  
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+  
+
+  
+
+</body>
+</html>
