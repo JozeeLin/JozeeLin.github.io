@@ -79,20 +79,20 @@
 
 
 
-<meta name="description" content="模型单词表示学习 c_l(w_i) = f(W^{(l)}c_l(w_{i-1})+W^{sl}e(w_{i-1})) \tag{1} c_r(w_i) = f(W^{(r)}c_r(w_{i+1})+W^{(sr)}e(w_{i+1})) \tag{2}单词w_i左侧的上下文向量表示为:c_l(w_i) 单词w_i右侧的上下文向量表示为:c_r(w_i) 参数e(w_{i-1})表示单词w_{i">
+<meta name="description" content="模型论文：Recurrent Convolutional Neural Networks for Text Classification 单词表示学习 c_l(w_i) = f(W^{(l)}c_l(w_{i-1})+W^{sl}e(w_{i-1})) \tag{1} c_r(w_i) = f(W^{(r)}c_r(w_{i+1})+W^{(sr)}e(w_{i+1})) \tag{2}单词w_i">
 <meta name="keywords" content="文本分类,RCNN,深度学习">
 <meta property="og:type" content="article">
 <meta property="og:title" content="RCNN for Text Classification">
 <meta property="og:url" content="http://yoursite.com/2019/06/25/RCNN-for-Text-Classification/index.html">
 <meta property="og:site_name" content="Jozee&#39;s技术博客">
-<meta property="og:description" content="模型单词表示学习 c_l(w_i) = f(W^{(l)}c_l(w_{i-1})+W^{sl}e(w_{i-1})) \tag{1} c_r(w_i) = f(W^{(r)}c_r(w_{i+1})+W^{(sr)}e(w_{i+1})) \tag{2}单词w_i左侧的上下文向量表示为:c_l(w_i) 单词w_i右侧的上下文向量表示为:c_r(w_i) 参数e(w_{i-1})表示单词w_{i">
+<meta property="og:description" content="模型论文：Recurrent Convolutional Neural Networks for Text Classification 单词表示学习 c_l(w_i) = f(W^{(l)}c_l(w_{i-1})+W^{sl}e(w_{i-1})) \tag{1} c_r(w_i) = f(W^{(r)}c_r(w_{i+1})+W^{(sr)}e(w_{i+1})) \tag{2}单词w_i">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:image" content="http://yoursite.com/Users/jozee/Desktop/image/rcnn-1.png">
-<meta property="og:updated_time" content="2019-06-25T11:37:41.590Z">
+<meta property="og:image" content="http://yoursite.com/2019/06/25/RCNN-for-Text-Classification/image/rcnn-1.png">
+<meta property="og:updated_time" content="2019-06-25T11:53:52.036Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="RCNN for Text Classification">
-<meta name="twitter:description" content="模型单词表示学习 c_l(w_i) = f(W^{(l)}c_l(w_{i-1})+W^{sl}e(w_{i-1})) \tag{1} c_r(w_i) = f(W^{(r)}c_r(w_{i+1})+W^{(sr)}e(w_{i+1})) \tag{2}单词w_i左侧的上下文向量表示为:c_l(w_i) 单词w_i右侧的上下文向量表示为:c_r(w_i) 参数e(w_{i-1})表示单词w_{i">
-<meta name="twitter:image" content="http://yoursite.com/Users/jozee/Desktop/image/rcnn-1.png">
+<meta name="twitter:description" content="模型论文：Recurrent Convolutional Neural Networks for Text Classification 单词表示学习 c_l(w_i) = f(W^{(l)}c_l(w_{i-1})+W^{sl}e(w_{i-1})) \tag{1} c_r(w_i) = f(W^{(r)}c_r(w_{i+1})+W^{(sr)}e(w_{i+1})) \tag{2}单词w_i">
+<meta name="twitter:image" content="http://yoursite.com/2019/06/25/RCNN-for-Text-Classification/image/rcnn-1.png">
 
 
 
@@ -365,7 +365,8 @@
       
 
       
-        <h2 id="模型"><a href="#模型" class="headerlink" title="模型"></a>模型</h2><h3 id="单词表示学习"><a href="#单词表示学习" class="headerlink" title="单词表示学习"></a>单词表示学习</h3><script type="math/tex; mode=display">
+        <h2 id="模型"><a href="#模型" class="headerlink" title="模型"></a>模型</h2><p>论文：<a href="https://www.aaai.org/ocs/index.php/AAAI/AAAI15/paper/view/9745/9552" target="_blank" rel="noopener">Recurrent Convolutional Neural Networks for Text Classification</a></p>
+<h3 id="单词表示学习"><a href="#单词表示学习" class="headerlink" title="单词表示学习"></a>单词表示学习</h3><script type="math/tex; mode=display">
 c_l(w_i) = f(W^{(l)}c_l(w_{i-1})+W^{sl}e(w_{i-1})) \tag{1}</script><script type="math/tex; mode=display">
 c_r(w_i) = f(W^{(r)}c_r(w_{i+1})+W^{(sr)}e(w_{i+1})) \tag{2}</script><p>单词<script type="math/tex">w_i</script>左侧的上下文向量表示为:<script type="math/tex">c_l(w_i)</script></p>
 <p>单词<script type="math/tex">w_i</script>右侧的上下文向量表示为:<script type="math/tex">c_r(w_i)</script></p>
@@ -375,7 +376,7 @@ c_r(w_i) = f(W^{(r)}c_r(w_{i+1})+W^{(sr)}e(w_{i+1})) \tag{2}</script><p>单词<s
 <p>任意文档的第一个单词的左侧的上下文向量使用相同的共享参数<script type="math/tex">c_l(w_1)</script>来表示。</p>
 <p>任意文档的最后一个单词的右侧的上下文向量使用相同的共享参数<script type="math/tex">c_r(w_n)</script>来表示。</p>
 </blockquote>
-<p><img src="/Users/jozee/Desktop/image/rcnn-1.png" alt="rcnn-1"></p>
+<p><img src="image/rcnn-1.png" alt="rcnn-1"></p>
 <blockquote>
 <p>本例中使用的示例句子为:”A sunset stroll along the South<br>Bank affords an array of stunning vantage points.”</p>
 </blockquote>
