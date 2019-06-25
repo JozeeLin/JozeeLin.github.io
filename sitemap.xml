@@ -2,9 +2,16 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>http://yoursite.com/2019/06/25/RCNN-for-Text-Classification/</loc>
+    
+    <lastmod>2019-06-25T11:34:16.067Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>http://yoursite.com/2019/06/21/RNN-BPTT%E7%AE%97%E6%B3%95-in-Numpy/</loc>
     
-    <lastmod>2019-06-21T08:17:20.986Z</lastmod>
+    <lastmod>2019-06-25T11:31:57.960Z</lastmod>
     
   </url>
   
