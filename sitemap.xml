@@ -2,6 +2,13 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>http://yoursite.com/2019/06/26/LSTM%E6%A8%A1%E5%9E%8B%E7%BB%93%E6%9E%84%E5%88%86%E8%A7%A3/</loc>
+    
+    <lastmod>2019-06-25T17:37:28.849Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>http://yoursite.com/2019/06/21/RNN-BPTT%E7%AE%97%E6%B3%95-in-Numpy/</loc>
     
     <lastmod>2019-06-25T16:42:50.127Z</lastmod>
