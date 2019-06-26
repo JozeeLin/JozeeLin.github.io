@@ -92,7 +92,11 @@
 <meta property="og:image" content="http://yoursite.com/2019/06/26/LSTM模型结构分解/image/input-gate-lstm.gif">
 <meta property="og:image" content="http://yoursite.com/2019/06/26/LSTM模型结构分解/image/output-gate-lstm.gif">
 <meta property="og:image" content="http://yoursite.com/2019/06/26/LSTM模型结构分解/image/cell-state-lstm.gif">
-<meta property="og:updated_time" content="2019-06-25T17:37:28.849Z">
+<meta property="og:image" content="http://yoursite.com/2019/06/26/LSTM模型结构分解/image/tanh-1.gif">
+<meta property="og:image" content="http://yoursite.com/2019/06/26/LSTM模型结构分解/image/tanh-2.gif">
+<meta property="og:image" content="http://yoursite.com/2019/06/26/LSTM模型结构分解/image/tanh-3.gif">
+<meta property="og:image" content="http://yoursite.com/2019/06/26/LSTM模型结构分解/image/sigmoid-1.gif">
+<meta property="og:updated_time" content="2019-06-26T04:57:40.588Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="LSTM模型结构分解">
 <meta name="twitter:description" content="forget gate  f_t = \mathrm{sigmoid}(x_tU^f+h_{t-1}W^f) \tag{1}input gate  i_t = \mathrm{sigmoid}(x_tU^i+h_{t-1}W^i) \tag{2} \hat{c_t} = \mathrm{tanh}(x_tU^g+h_{t-1}W^g) \tag{3} \textrm{input_gate_out">
@@ -382,15 +386,25 @@ o_t = \mathrm{sigmoid}(x_tU^o+h_{t-1}W^o) \tag{5}</script><script type="math/tex
 h_t = o_t \odot \mathrm{tanh}(c_t) \tag{6}</script><h2 id="cell-state"><a href="#cell-state" class="headerlink" title="cell state"></a>cell state</h2><p><img src="image/cell-state-lstm.gif" alt="cell-state-lstm"></p>
 <script type="math/tex; mode=display">
 c_t = c_{t-1}\odot f_t + \textrm{input_gate_output} \tag{7}</script><h2 id="实现"><a href="#实现" class="headerlink" title="实现"></a>实现</h2><p>(略)</p>
-<h2 id="其他"><a href="#其他" class="headerlink" title="其他"></a>其他</h2><h3 id="tanh-激活函数的作用"><a href="#tanh-激活函数的作用" class="headerlink" title="tanh 激活函数的作用"></a>tanh 激活函数的作用</h3><div align="center">![tanh-1](image/tanh-1.gif) tanh squishes value between -1 and 1</div>
-<div align="center">![tanh-2](image/tanh-2.gif)vector transformations without tanh</div>
-<div align="center">![tanh-3](image/tanh-3.gif)vector transformations with tanh</div>
-
+<h2 id="其他"><a href="#其他" class="headerlink" title="其他"></a>其他</h2><h3 id="tanh-激活函数的作用"><a href="#tanh-激活函数的作用" class="headerlink" title="tanh 激活函数的作用"></a>tanh 激活函数的作用</h3><ul>
+<li><p>tanh squishes value between -1 and 1</p>
+<p><img src="image/tanh-1.gif" alt="tanh-1"></p>
+</li>
+<li><p>vector transformations without tanh</p>
+<p><img src="image/tanh-2.gif" alt="tanh-2"></p>
+</li>
+<li><p>vector transformations with tanh</p>
+<p><img src="image/tanh-3.gif" alt="tanh-3"></p>
+</li>
+</ul>
 <h3 id="sigmoid激活函数的作用"><a href="#sigmoid激活函数的作用" class="headerlink" title="sigmoid激活函数的作用"></a>sigmoid激活函数的作用</h3><blockquote>
 <p>当向量通过sigmoid激活函数后，可以使得输出保持在[0,1]之间的范围里，越接近0表示分量贡献越小，接近1表示分量贡献越大。起到mask的作用。</p>
 </blockquote>
-<div align="center">![sigmoid-1](image/sigmoid-1.gif) Sigmoid squishes values between 0 and 1</div>
-
+<ul>
+<li><p>Sigmoid squishes values between 0 and 1</p>
+<p><img src="image/sigmoid-1.gif" alt="sigmoid-1"></p>
+</li>
+</ul>
 <h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><ul>
 <li><a href="https://towardsdatascience.com/illustrated-guide-to-lstms-and-gru-s-a-step-by-step-explanation-44e9eb85bf21" target="_blank" rel="noopener">Illustrated Guide to LSTM’s and GRU’s: A step by step explanation</a></li>
 <li><a href="http://www.wildml.com/2015/10/recurrent-neural-network-tutorial-part-4-implementing-a-grulstm-rnn-with-python-and-theano/" target="_blank" rel="noopener">Recurrent Neural Network Tutorial, Part 4 – Implementing a GRU/LSTM RNN with Python and Theano</a></li>
