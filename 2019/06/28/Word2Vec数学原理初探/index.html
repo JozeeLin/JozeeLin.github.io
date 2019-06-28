@@ -90,7 +90,7 @@
 <meta property="og:image" content="http://yoursite.com/2019/06/28/Word2Vec数学原理初探/image/huffman-1.png">
 <meta property="og:image" content="http://yoursite.com/2019/06/28/Word2Vec数学原理初探/image/cbow-1.png">
 <meta property="og:image" content="http://yoursite.com/2019/06/28/Word2Vec数学原理初探/image/skip-gram-1.png">
-<meta property="og:updated_time" content="2019-06-28T05:56:49.267Z">
+<meta property="og:updated_time" content="2019-06-28T06:07:22.404Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Word2Vec数学原理初探">
 <meta name="twitter:description" content="前言论文：https://arxiv.org/pdf/1301.3781.pdf  符号约定如下：  \textrm{context(w)}：表示词的上下文，即w前window个词和后window个词，但不包括词w C：表示整个有效的词样本空间(即语料库中所有词的集合去掉低频词后的词语集合) \textrm{Neg}(w)：w的负样本空间，不包括w。   sigmoid函数定义为：  \sigma">
@@ -547,9 +547,11 @@ P(u|w) = \prod_{j=1}^{\mathcal{l}^u-1} P(d_{j+1}^u|V_w,\theta_j^u) \tag{1-23}</s
 \frac{\partial{\mathcal{L}(w,u,j)}}{\partial{V_w}} = [1-d_{j+1}^u-\sigma(V_w^{\top}\theta_j^u)]\theta_j^u \tag{1-28}</script><p>则<script type="math/tex">V_w</script>的更新公式表示为:</p>
 <script type="math/tex; mode=display">
 V_w:=V_w+\alpha \sum_{u\in \textrm{context}(w)} \sum_{j=1}^{\mathcal{l}^u-1} \frac{\partial{\mathcal{L}(w,u,j)}}{\partial{V_w}} \tag{1-29}</script><h4 id="参数学习过程伪代码-2"><a href="#参数学习过程伪代码-2" class="headerlink" title="参数学习过程伪代码"></a>参数学习过程伪代码</h4><ul>
-<li>版本1<ol>
+<li><p>版本1</p>
+<ol>
 <li>e=0</li>
-<li>For <script type="math/tex">u \in \textrm{context}(w)</script> :<ol>
+<li><p>For <script type="math/tex">u \in \textrm{context}(w)</script> :</p>
+<ol>
 <li>for j=1 -&gt;<script type="math/tex">\mathcal{l}^u</script>-1:<ol>
 <li>q = <script type="math/tex">\sigma(V_w^{\top}\theta_j^u)</script></li>
 <li>g = <script type="math/tex">\alpha(1-d_{j+1}^u-q)</script></li>
@@ -562,10 +564,15 @@ V_w:=V_w+\alpha \sum_{u\in \textrm{context}(w)} \sum_{j=1}^{\mathcal{l}^u-1} \fr
 <li><script type="math/tex; mode=display">V_w = V_w+e</script></li>
 </ol>
 </li>
-<li>版本2(word2vec 源码中的更新规则)<ol>
-<li>For <script type="math/tex">u \in \textrm{context}(w)</script> :<ol>
+</ul>
+<ul>
+<li><p>版本2(word2vec 源码中的更新规则)</p>
+<ol>
+<li><p>For <script type="math/tex">u \in \textrm{context}(w)</script> :</p>
+<ol>
 <li>e=0</li>
-<li>for j=1 -&gt;<script type="math/tex">\mathcal{l}^u</script>-1:<ol>
+<li><p>for j=1 -&gt;<script type="math/tex">\mathcal{l}^u</script>-1:</p>
+<ol>
 <li>q = <script type="math/tex">\sigma(V_w^{\top}\theta_j^u)</script></li>
 <li>g = <script type="math/tex">\alpha(1-d_{j+1}^u-q)</script></li>
 <li>e = e+g<script type="math/tex">\theta_j^u</script></li>
@@ -631,13 +638,14 @@ V_u := V_u + \alpha \sum_{z\in\{w\}\cup\textrm{Neg}(w)}\frac{\partial{\mathcal{L
 <li><p>For u in context(w) :</p>
 <ol>
 <li>e = 0</li>
-<li>For z in {w}<script type="math/tex">\cup</script>Neg(w):</li>
-</ol>
-<p>​        1.q = <script type="math/tex">\sigma(V_u^{\top}\theta^u)</script></p>
-<p>​        2. g = <script type="math/tex">\alpha(Y_z-q)</script></p>
-<p>​        3.e = e+g<script type="math/tex">\theta^z</script></p>
-<p>​        4.<script type="math/tex">\theta^z =\theta^z+gV_u</script></p>
+<li><p>For z in {w}<script type="math/tex">\cup</script>Neg(w):</p>
 <ol>
+<li>q = <script type="math/tex">\sigma(V_u^{\top}\theta^u)</script></li>
+<li>g = <script type="math/tex">\alpha(Y_z-q)</script></li>
+<li>e = e+g<script type="math/tex">\theta^z</script></li>
+<li><script type="math/tex; mode=display">\theta^z =\theta^z+gV_u</script></li>
+</ol>
+</li>
 <li><script type="math/tex; mode=display">V_u=V_u+e</script></li>
 </ol>
 </li>
