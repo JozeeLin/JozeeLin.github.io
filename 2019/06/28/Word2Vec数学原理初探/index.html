@@ -1,0 +1,1169 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Word2Vec,词向量,">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="前言论文：https://arxiv.org/pdf/1301.3781.pdf  符号约定如下：  \textrm{context(w)}：表示词的上下文，即w前window个词和后window个词，但不包括词w C：表示整个有效的词样本空间(即语料库中所有词的集合去掉低频词后的词语集合) \textrm{Neg}(w)：w的负样本空间，不包括w。   sigmoid函数定义为：  \sigma">
+<meta name="keywords" content="Word2Vec,词向量">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Word2Vec数学原理初探">
+<meta property="og:url" content="http://yoursite.com/2019/06/28/Word2Vec数学原理初探/index.html">
+<meta property="og:site_name" content="Jozee&#39;s技术博客">
+<meta property="og:description" content="前言论文：https://arxiv.org/pdf/1301.3781.pdf  符号约定如下：  \textrm{context(w)}：表示词的上下文，即w前window个词和后window个词，但不包括词w C：表示整个有效的词样本空间(即语料库中所有词的集合去掉低频词后的词语集合) \textrm{Neg}(w)：w的负样本空间，不包括w。   sigmoid函数定义为：  \sigma">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://yoursite.com/2019/06/28/Word2Vec数学原理初探/image/huffman-1.png">
+<meta property="og:image" content="http://yoursite.com/2019/06/28/Word2Vec数学原理初探/image/cbow-1.png">
+<meta property="og:image" content="http://yoursite.com/2019/06/28/Word2Vec数学原理初探/image/skip-gram-1.png">
+<meta property="og:updated_time" content="2019-06-28T05:56:49.267Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Word2Vec数学原理初探">
+<meta name="twitter:description" content="前言论文：https://arxiv.org/pdf/1301.3781.pdf  符号约定如下：  \textrm{context(w)}：表示词的上下文，即w前window个词和后window个词，但不包括词w C：表示整个有效的词样本空间(即语料库中所有词的集合去掉低频词后的词语集合) \textrm{Neg}(w)：w的负样本空间，不包括w。   sigmoid函数定义为：  \sigma">
+<meta name="twitter:image" content="http://yoursite.com/2019/06/28/Word2Vec数学原理初探/image/huffman-1.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2019/06/28/Word2Vec数学原理初探/">
+
+
+
+
+
+  <title>Word2Vec数学原理初探 | Jozee's技术博客</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Jozee's技术博客</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/06/28/Word2Vec数学原理初探/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="jozee">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Jozee's技术博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Word2Vec数学原理初探</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-06-28T13:35:02+08:00">
+                2019-06-28
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/NLP/" itemprop="url" rel="index">
+                    <span itemprop="name">NLP</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2019/06/28/Word2Vec数学原理初探/" class="leancloud_visitors" data-flag-title="Word2Vec数学原理初探">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数&#58;</span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>论文：<a href="https://arxiv.org/pdf/1301.3781.pdf" target="_blank" rel="noopener">https://arxiv.org/pdf/1301.3781.pdf</a></p>
+<blockquote>
+<p>符号约定如下：</p>
+<ol>
+<li><script type="math/tex">\textrm{context(w)}</script>：表示词的上下文，即w前window个词和后window个词，但不包括词w</li>
+<li>C：表示整个有效的词样本空间(即语料库中所有词的集合去掉低频词后的词语集合)</li>
+<li><script type="math/tex">\textrm{Neg}(w)</script>：w的负样本空间，不包括w。</li>
+</ol>
+</blockquote>
+<h2 id="sigmoid函数"><a href="#sigmoid函数" class="headerlink" title="sigmoid函数"></a>sigmoid函数</h2><p>定义为：</p>
+<script type="math/tex; mode=display">
+\sigma(x) = \frac{1}{1+e^{-x}}</script><p>导数为:</p>
+<script type="math/tex; mode=display">
+\sigma^{'}(x)=\sigma{x}(1-\sigma(x))</script><p>函数<script type="math/tex">\log \sigma(x)</script>的导数为:</p>
+<script type="math/tex; mode=display">
+[\log \sigma(x)]^{'} = 1-\sigma(x)</script><p>函数<script type="math/tex">\log(1- \sigma(x))</script>的导数为:</p>
+<script type="math/tex; mode=display">
+[\log(1-\sigma(x))]^{'} = -\sigma(x)</script><h2 id="Hierarchical-Softmax"><a href="#Hierarchical-Softmax" class="headerlink" title="Hierarchical Softmax"></a>Hierarchical Softmax</h2><h3 id="huffman树结构及其表示"><a href="#huffman树结构及其表示" class="headerlink" title="huffman树结构及其表示"></a>huffman树结构及其表示</h3><p><img src="image/huffman-1.png" alt="huffman-1"></p>
+<p>如上图所示，黄色为叶子节点用于表示字典中的单词，白色为非叶子结点为辅助节点。除了根节点外，其余节点会标识0或者1，左边为1，右边为0。</p>
+<p>关于数学符号的相关约定如下：</p>
+<ol>
+<li><script type="math/tex; mode=display">P^w$$表示从根节点到达w对应叶子结点的路径。以上图为例，$$w_2$$的路径$$P^{w2}$$ 为$$P_1^{w_2},P_2^{w_2},P_3^{w_2},w_2</script></li>
+<li><script type="math/tex">\mathcal{l}^w</script>表示路径<script type="math/tex">P^{w}</script>包含结点的个数</li>
+<li><script type="math/tex">P_j^w</script>表示词w的路径<script type="math/tex">P^w</script>上第j个节点</li>
+<li><script type="math/tex">d_j^w \in \{0,1\}</script>表示对于词w，在路径<script type="math/tex">P^w</script>的第j个节点<script type="math/tex">P_j^w</script>的编码；比如，词<script type="math/tex">w_2</script>在<script type="math/tex">P_2^w</script>节点上的编码为1</li>
+<li><script type="math/tex">\theta_j^w \in R</script>表示词w在路径<script type="math/tex">P^w</script>上第j个节点的参数(向量)</li>
+</ol>
+<p>从根节点开始，在每个非叶子结点上，都有两个选择，要么编码为1，要么编码为0，这正好对应到二值分类器。在w2v的实现中，将huffman编码为0对应到正类，编码为1对应到负类。<strong>所使用的二分类器为逻辑回归分类器</strong>。</p>
+<p>在上图的huffman树中，逻辑回归二分类器的正类概率表示为:</p>
+<script type="math/tex; mode=display">
+\sigma(X^{\top}\theta) = \frac{1}{1+e^{-X^{\top}\theta}} \tag{1-1}</script><p>负类概率表示为：</p>
+<script type="math/tex; mode=display">
+1-\sigma(X^{\top}\theta) \tag{1-2}</script><p>那么对于节点<script type="math/tex">P_j^w</script>的编码可表示成:</p>
+<script type="math/tex; mode=display">
+\textrm{label}(P_j^w) = 1-d_j^w \tag{1-3}</script><h4 id="使用huffman树求词的概率"><a href="#使用huffman树求词的概率" class="headerlink" title="使用huffman树求词的概率"></a>使用huffman树求词的概率</h4><p>以w2为例<script type="math/tex">\mathcal{P}_{w_2}=P_1,P_2,P_3,w_2</script>，处理过程如下：</p>
+<ol>
+<li>在<script type="math/tex">P_1</script>处向左转移，概率为:<script type="math/tex">P(d_2^{w_2}=1|X_{w_2}^{\top},\theta_1^{w_2}) = 1-\sigma(X_{w_2}^{\top}\theta_1^{w_2})</script></li>
+<li>在<script type="math/tex">P_2</script>处向右转移，概率为:<script type="math/tex">P(d_3^{w_2}=0|X_{w_2}^{\top},\theta_2^{w_2})=\sigma(X_{w_2}^{\top}\theta_2^{w_2})</script></li>
+<li>在<script type="math/tex">P_3</script>处向左转移，概率为:<script type="math/tex">P(d_4^{w_2}=1|X_{w_2}^{\top},\theta_3^{w_2})=1-\sigma(X_{w_2}^{\top}\theta_3^{w_2})</script></li>
+</ol>
+<p>以w2的概率为例，其概率可以写成如下形式:</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+P(w_2) &= \prod_{j=1}^{\mathcal{l}^{w_2}-1}P(d_{j+1}^{w_2}|X_{w_2}^{\top},\theta_j^{w_2})\\
+&= \prod_{j=1}^{\mathcal{l}^{w_2}-1} \{[1-\sigma(X_{w_2}^{\top}\theta_j^{w_2})]^{d_{j+1}^{w_2}}[\sigma(X_{w_2}^{\top}\theta_j^{w_2})]^{1-d_{j+1}^{w_2}}\}
+\end{aligned} \tag{1-4}</script><p>推广到一半情况，即为:</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+P(w) &= \prod_{j=1}^{\mathcal{l}^{w}-1}P(d_{j+1}^{w}|X_{w}^{\top},\theta_j^{w})\\
+&= \prod_{j=1}^{\mathcal{l}^{w}-1} \{[1-\sigma(X_{w}^{\top}\theta_j^{w})]^{d_{j+1}^{w}}[\sigma(X_{w}^{\top}\theta_j^{w})]^{1-d_{j+1}^{w}}\}
+\end{aligned} \tag{1-5}</script><h2 id="CBOW连续词袋模型"><a href="#CBOW连续词袋模型" class="headerlink" title="CBOW连续词袋模型"></a>CBOW连续词袋模型</h2><p><img src="image/cbow-1.png" alt="cbow-1"></p>
+<p>如上图所示，cbow有三层结构，分别为:</p>
+<ol>
+<li>输入层：<script type="math/tex">V_{u}</script>,其中<script type="math/tex">u\in \textrm{context}(w)</script>，<script type="math/tex">\textrm{context}(w) \subset C</script></li>
+<li>投影层：<script type="math/tex">\textrm{sum}(V_u)=\sum_{u\in \textrm{context(w)}} V_u</script></li>
+<li>输出层：输出层对应一棵huffman树</li>
+</ol>
+<h3 id="目标函数"><a href="#目标函数" class="headerlink" title="目标函数"></a>目标函数</h3><script type="math/tex; mode=display">
+\varGamma = \sum_{w\in C} \log P(w|\textrm{context(w)}) \tag{1-6}</script><p>由于cbow有投影层，则令<script type="math/tex">X_w = \sum V_u ,u\in \textrm{context}(w)</script></p>
+<h3 id="基于Hierarchical-Softmax"><a href="#基于Hierarchical-Softmax" class="headerlink" title="基于Hierarchical Softmax"></a>基于Hierarchical Softmax</h3><p>根据公式(1-5)可把式(1-6)写成：</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+\varGamma &= \sum_{w\in C} \log \left[ \prod_{j=1}^{\mathcal{l}^{w}-1} \{[1-\sigma(X_{w}^{\top}\theta_j^{w})]^{d_{j+1}^{w}}[\sigma(X_{w}^{\top}\theta_j^{w})]^{1-d_{j+1}^{w}}\}\right]\\
+&= \sum_{w\in C}\sum_{j=1}^{\mathcal{l^w}-1} \log\{[1-\sigma(X_{w}^{\top}\theta_j^{w})]^{d_{j+1}^{w}}[\sigma(X_{w}^{\top}\theta_j^{w})]^{1-d_{j+1}^{w}}\}
+\end{aligned}\tag{1-7}</script><p>令</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+\mathcal{L}(w,j) &=\log\{ [1-\sigma(X_{w}^{\top}\theta_j^{w})]^{d_{j+1}^{w}}[\sigma(X_{w}^{\top}\theta_j^{w})]^{1-d_{j+1}^{w}}\}\\
+&=d_{j+1}^w \log[1-\sigma(X_{w}^{\top}\theta_j^{w})]+(1-d_{j+1}^w)\log[\sigma(X_{w}^{\top}\theta_j^{w})]
+\end{aligned} \tag{1-8}</script><p>对<script type="math/tex">\theta_j^w</script>求导，(参考前面《sigmoid函数》小节):</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+\frac{\partial{\mathcal{L}(w,j)}}{\partial{\theta_j^w}} &= \frac{\partial}{\partial{\theta_j^w}} \{d_{j+1}^w \log[1-\sigma(X_{w}^{\top}\theta_j^{w})]+(1-d_{j+1}^w)\log[\sigma(X_{w}^{\top}\theta_j^{w})]\} \\
+&= -d_{j+1}^w \sigma(X_w^{\top}\theta_j^w)X_w+(1-d_{j+1})(1-\sigma(X_w^{\top}\theta_j^w))X_w\\
+&= [1-d_{j+1}^w-\sigma(X_w^{\top}\theta_j^w)]X_w
+\end{aligned} \tag{1-9}</script><p>令学习速率为<script type="math/tex">\alpha</script>，则梯度更新公式可写成:</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+\theta_{j} &:= \theta_j + \alpha\frac{\partial{\mathcal{L}(w,j)}}{\partial{\theta_j}}\\
+&:= \theta_j+\alpha [1-d_{j+1}^w-\sigma(X_w^{\top}\theta_j^w)]X_w
+\end{aligned}\tag{1-10}</script><p>由于<script type="math/tex">X_w</script>与<script type="math/tex">\theta_j</script>对称，则对于<script type="math/tex">X_w</script>的求导：</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+\frac{\partial{\mathcal{L}(w,j)}}{\partial{X_w}} &= \frac{\partial}{\partial{X_w}}\{d_{j+1}^w \log[1-\sigma(X_{w}^{\top}\theta_j^{w})]+(1-d_{j+1}^w)\log[\sigma(X_{w}^{\top}\theta_j^{w})]\}\\
+&= [1-d_{j+1}^w-\sigma(X_w^{\top}\theta_j^w)]\theta_j
+\end{aligned}\tag{1-11}</script><p>对于<script type="math/tex">V_u</script>参数的梯度更新公式可写成:</p>
+<script type="math/tex; mode=display">
+V_u = V_u +\alpha \sum_{j=1}^{\mathcal{l}^w-1} \frac{\partial{\mathcal{L}(w,j)}}{\partial{X_w}},u\in \textrm{context}(w) \tag{1-12}</script><h4 id="参数学习过程伪代码"><a href="#参数学习过程伪代码" class="headerlink" title="参数学习过程伪代码"></a>参数学习过程伪代码</h4><ol>
+<li>e=0</li>
+<li><script type="math/tex; mode=display">X_w=\sum_{u\in\textrm{context}(w)}V_u</script></li>
+<li>for j=1 -&gt;<script type="math/tex">\mathcal{l}^w</script>-1:<ol>
+<li>q = <script type="math/tex">\sigma(X^{\top}_w\theta_j^w)</script></li>
+<li>g = <script type="math/tex">\alpha[1-d_{j+1}^w-q]</script></li>
+<li>e = e+g<script type="math/tex">\theta_j^w</script></li>
+<li><script type="math/tex; mode=display">\theta_j^w = \theta_j^w+gX_w</script></li>
+</ol>
+</li>
+<li>for <script type="math/tex">u \in \textrm{context}(w)</script>:<ol>
+<li><script type="math/tex; mode=display">V_u = V_u+e</script></li>
+</ol>
+</li>
+</ol>
+<h3 id="基于Negative-Sampling"><a href="#基于Negative-Sampling" class="headerlink" title="基于Negative Sampling"></a>基于Negative Sampling</h3><blockquote>
+<p>相当于小型的softmax，把维数从字典词语个数V降低到到|Neg(w)|+1。</p>
+</blockquote>
+<p>正样本：词z=w</p>
+<p>负样本：词z!=w</p>
+<p>令</p>
+<script type="math/tex; mode=display">
+Y_z = \left\{\begin{aligned}1,z=w \\ 0,z\ne w \end{aligned}\right.\tag{1-13}</script><p>基于Negative Sampling的P(context(w))表示为:</p>
+<script type="math/tex; mode=display">
+P(w) = \prod_{z\in \{\{w\} \cup\textrm{Neg}(w)\}} P(z|\textrm{context}(w)) \tag{1-14}</script><script type="math/tex; mode=display">
+P(z|\textrm{context}(w)) = [\sigma(X_w^{\top}\theta^z)]^{Y_z}[1-\sigma(X^{\top}_w\theta^z)]^{1-Y_z} \tag{1-15}</script><blockquote>
+<p>此处的<script type="math/tex">X_w</script> 仍然表示各词的词向量之和。</p>
+</blockquote>
+<p>那么目标函数式(1-6)可写成:</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+\varGamma &= \sum_{w\in C} \log P(w) \\
+&= \sum_{w \in C} \sum_{z\in \{\{w\} \cup\textrm{Neg}(w)\}} \log P(z|\textrm{context}(w))\\
+&= \sum_{w \in C} \sum_{z\in \{\{w\} \cup\textrm{Neg}(w)\}}\{\log[\sigma(X_w^{\top}\theta^z)]^{Y_z}[1-\sigma(X^{\top}_w\theta^z)]^{1-Y_z} \}\\
+&= \sum_{w \in C} \sum_{z\in \{\{w\} \cup\textrm{Neg}(w)\}}\{(Y_z)\log[\sigma(X_w^{\top}\theta^z)]+(1-Y_z)\log[1-\sigma(X^{\top}_w\theta^z)] \}\\
+&= \sum_{w\in C}\{\log[\sigma(X_w^{\top}\theta^z)]+\sum_{z\in \textrm{Neg}(w)}\log[1-\sigma(X^{\top}_w\theta^z)]\} \\
+\end{aligned} \tag{1-16}</script><p>令</p>
+<script type="math/tex; mode=display">
+\mathcal{L}(w,z) = (Y_z)\log[\sigma(X_w^{\top}\theta^z)]+(1-Y_z)\log[1-\sigma(X^{\top}_w\theta^z)] \tag{1-17}</script><p>对<script type="math/tex">\theta^z</script>求导：</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+\frac{\partial{\mathcal{L}(w,z)}}{\partial{\theta^z}} &= \frac{\partial}{\partial{\theta^z}}\{(Y_z)\log[\sigma(X_w^{\top}\theta^z)]+(1-Y_z)\log[1-\sigma(X^{\top}_w\theta^z)]\}\\
+&= Y_z[1-\sigma(X^{\top}_w\theta^z)]X_w-(1-Y_z)\sigma(X^{\top}_w\theta^z)X_w\\
+&= [Y_z-\sigma(X^{\top}_w\theta^z)]X_w 
+\end{aligned}\tag{1-18}</script><p>对<script type="math/tex">\theta^z</script>的梯度更新为：</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+\theta^{z} &:= \theta^z +\alpha \frac{\partial{\mathcal{L}(w,z)}}{\partial{\theta^z}} \\
+&:= \theta^z + \alpha[Y_z-\sigma(W^{\top}_w\theta^z)]W_w
+\end{aligned}</script><p>对<script type="math/tex">X_w</script>求导:</p>
+<script type="math/tex; mode=display">
+\frac{\partial{\mathcal{L}(w,z)}}{\partial{X_w}} = [Y_z-\sigma(X_w^{\top}\theta^z)]\theta^z \tag{1-19}</script><p>对<script type="math/tex">V_u</script>的梯度更新公式可写为:</p>
+<script type="math/tex; mode=display">
+V_u = V_u + \alpha \sum_{z\in \{\{w\} \cup\textrm{Neg}(w)\}} \frac{\partial{\mathcal{L}(w,z)}}{\partial{X_w}} ,u \in \textrm{context(w)} \tag{1-20}</script><h4 id="参数学习过程伪代码-1"><a href="#参数学习过程伪代码-1" class="headerlink" title="参数学习过程伪代码"></a>参数学习过程伪代码</h4><ol>
+<li>e=0</li>
+<li><script type="math/tex; mode=display">X_w=\sum_{u \in\textrm{context}(w)}V_u</script></li>
+<li>For z in {w}<script type="math/tex">\cup</script>Neg(w):<ol>
+<li>q = <script type="math/tex">\sigma(X^{\top}_w\theta^z)</script></li>
+<li>g = <script type="math/tex">\sigma[Y_z-q]</script></li>
+<li>e = e+g<script type="math/tex">\theta^z</script></li>
+<li><script type="math/tex; mode=display">\theta^z = \theta^z+gX_w</script></li>
+</ol>
+</li>
+<li>For u in context(w):<ol>
+<li><script type="math/tex; mode=display">V_u=V_u+e</script></li>
+</ol>
+</li>
+</ol>
+<h2 id="skip-gram-模型"><a href="#skip-gram-模型" class="headerlink" title="skip-gram 模型"></a>skip-gram 模型</h2><p><img src="image/skip-gram-1.png" alt="skip-gram-1"></p>
+<p>对于skip-gram模型而言，已知当前w,求上下文context(w)的概率。</p>
+<h3 id="目标函数-1"><a href="#目标函数-1" class="headerlink" title="目标函数"></a>目标函数</h3><script type="math/tex; mode=display">
+\varGamma = \sum_{w\in C} \log P(\textrm{context(w)}|w) \tag{1-21}</script><script type="math/tex; mode=display">
+P(\textrm{context(w)}|w) = \prod_{u \in \textrm{context}(w)} P(u|w) \tag{1-22}</script><h3 id="基于层次softmax"><a href="#基于层次softmax" class="headerlink" title="基于层次softmax"></a>基于层次softmax</h3><script type="math/tex; mode=display">
+P(u|w) = \prod_{j=1}^{\mathcal{l}^u-1} P(d_{j+1}^u|V_w,\theta_j^u) \tag{1-23}</script><p>根据式(1-5)，目标函数可写成：</p>
+<script type="math/tex; mode=display">
+\varGamma = \sum_{w\in C} \sum_{u\in \textrm{context}(w)} \sum_{j=1}^{\mathcal{l^u}-1} \log\{[1-\sigma(V_w^{\top}\theta_j^{u})]^{d_{j+1}^{u}}[\sigma(V_{w}^{\top}\theta_j^{u})]^{1-d_{j+1}^{u}}\} \tag{1-24}</script><p>令</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+\mathcal{L}(w,u,j) &= \log\{[1-\sigma(V_w^{\top}\theta_j^{u})]^{d_{j+1}^{u}}[\sigma(V_{w}^{\top}\theta_j^{u})]^{1-d_{j+1}^{u}}\}\\
+&=d_{j+1}^u\log[1-\sigma(V_w^{\top}\theta_j^u)]+(1-d_{j+1}^u)\log[\sigma(V_w^{\top}\theta_j^u)]
+\end{aligned}\tag{1-25}</script><p>对<script type="math/tex">\theta_j^u</script>求导，</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+\frac{\partial{\mathcal{L}(w,u,j)}}{\partial{\theta_{j}^u}} &= \frac{\partial}{\partial{\theta_j^u}}\{d_{j+1}^u\log[1-\sigma(V_w^{\top}\theta_j^u)]+(1-d_{j+1}^u)\log[\sigma(V_w^{\top}\theta_j^u)]\}\\
+&= -d_{j+1}^u \sigma(V_w^{\top}\theta^u_j)V_w+(1-d_{j+1}^u)(1-\sigma(V_w^{\top}\theta_j^u))V_w \\
+&= [1-d_{j+1}^u-\sigma(V_w^{\top}\theta_{j}^u)]V_w
+\end{aligned} \tag{1-26}</script><p>则<script type="math/tex">\theta_j^u</script> 的梯度更新公式表示为:</p>
+<script type="math/tex; mode=display">
+\theta^u_j := \theta^u_j + \alpha[1-d_{j+1}^u-\sigma(V_w^{\top}\theta_j^u)]V_w \tag{1-27}</script><p>对<script type="math/tex">V_w</script>求导，</p>
+<script type="math/tex; mode=display">
+\frac{\partial{\mathcal{L}(w,u,j)}}{\partial{V_w}} = [1-d_{j+1}^u-\sigma(V_w^{\top}\theta_j^u)]\theta_j^u \tag{1-28}</script><p>则<script type="math/tex">V_w</script>的更新公式表示为:</p>
+<script type="math/tex; mode=display">
+V_w:=V_w+\alpha \sum_{u\in \textrm{context}(w)} \sum_{j=1}^{\mathcal{l}^u-1} \frac{\partial{\mathcal{L}(w,u,j)}}{\partial{V_w}} \tag{1-29}</script><h4 id="参数学习过程伪代码-2"><a href="#参数学习过程伪代码-2" class="headerlink" title="参数学习过程伪代码"></a>参数学习过程伪代码</h4><ul>
+<li>版本1<ol>
+<li>e=0</li>
+<li>For <script type="math/tex">u \in \textrm{context}(w)</script> :<ol>
+<li>for j=1 -&gt;<script type="math/tex">\mathcal{l}^u</script>-1:<ol>
+<li>q = <script type="math/tex">\sigma(V_w^{\top}\theta_j^u)</script></li>
+<li>g = <script type="math/tex">\alpha(1-d_{j+1}^u-q)</script></li>
+<li>e = e+g<script type="math/tex">\theta_j^u</script></li>
+<li><script type="math/tex; mode=display">\theta_j^u = \theta_j^u+gV_w</script></li>
+</ol>
+</li>
+</ol>
+</li>
+<li><script type="math/tex; mode=display">V_w = V_w+e</script></li>
+</ol>
+</li>
+<li>版本2(word2vec 源码中的更新规则)<ol>
+<li>For <script type="math/tex">u \in \textrm{context}(w)</script> :<ol>
+<li>e=0</li>
+<li>for j=1 -&gt;<script type="math/tex">\mathcal{l}^u</script>-1:<ol>
+<li>q = <script type="math/tex">\sigma(V_w^{\top}\theta_j^u)</script></li>
+<li>g = <script type="math/tex">\alpha(1-d_{j+1}^u-q)</script></li>
+<li>e = e+g<script type="math/tex">\theta_j^u</script></li>
+<li><script type="math/tex; mode=display">\theta_j^u = \theta_j^u+gV_w</script></li>
+</ol>
+</li>
+<li><script type="math/tex; mode=display">V_w=V_w+e</script></li>
+</ol>
+</li>
+</ol>
+</li>
+</ul>
+<h3 id="基于Negative-Sampling-1"><a href="#基于Negative-Sampling-1" class="headerlink" title="基于Negative Sampling"></a>基于Negative Sampling</h3><p>对于Negative Sampling，式(1-22)可写成：</p>
+<script type="math/tex; mode=display">
+P(u|w) = \prod_{z \in \{u\}\cup\textrm{Neg}(u)} P(z|w) \tag{1-30}</script><p>根据式(1-13)以及逻辑斯蒂回归二分类器，<script type="math/tex">P(z|w)</script>可表示为：</p>
+<script type="math/tex; mode=display">
+P(z|w) = [\sigma(V_w^{\top}\theta^z)]^{Y_z}[1-\sigma(V_w^{\top}\theta^z)]^{1-Y_z} \tag{1-31}</script><p>根据式(1-21),式(1-22),式(1-30),式(1-31)，最终目标函数表示为:</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+\varGamma &= \sum_{w\in C}\sum_{u\in \textrm{context}(w)} \sum_{z\in\{u\}\cup\textrm{Neg}(u)} \log{P(z|w)}\\
+&= \sum_{w\in C}\sum_{u\in \textrm{context}(w)} \sum_{z\in\{u\}\cup\textrm{Neg}(u)} \log \left\{[\sigma(V_w^{\top}\theta^z)]^{Y_z}[1-\sigma(V_w^{\top}\theta^z)]^{1-Y_z}\right\} \\
+&= \sum_{w\in C}\sum_{u\in \textrm{context}(w)} \sum_{z\in\{u\}\cup\textrm{Neg}(u)}\left\{Y_z\log[\sigma(V_w^{\top}\theta^z)]+(1-Y_z)\log[1-\sigma(V_w^{\top}\theta^z)]\right\}
+\end{aligned} \tag{1-32}</script><p>式(1-32)表示，对于每一个w的上下文词语u，都进行一次负采样。而在w2v源码中只针对w进行了|context(w)|次负采样。令</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+\varGamma &= \sum_{w\in C}\sum_{u\in \textrm{context}(w)} \sum_{z\in\{u\}\cup\textrm{Neg}(u)} \log{P(z|w)}\\
+&= \sum_{w\in C} g(w)
+\end{aligned}</script><p><strong>则对于w2v源码中的g(w)与式(1-32)有所不同，其表示为</strong>(版本2):</p>
+<script type="math/tex; mode=display">
+g(w) = \sum_{u\in \textrm{context}(w)} \sum_{z\in\{w\}\cup\textrm{Neg}(w)} \log{P(z|u)} \tag{1-33}</script><blockquote>
+<p>式(1-33)本质上还是cbow，只是把context(w)拆分，与目标词w组成pair(u,w)。即把式(1-14)写成式(1-33)的形式。</p>
+</blockquote>
+<p>根据式(1-15)，P(z|u)可表示为:</p>
+<script type="math/tex; mode=display">
+P(z|u) = [\sigma(V_u^{\top}\theta^z)]^{Y_z}[1-\sigma(V^{\top}_u\theta^z)]^{1-Y_z} \tag{1-34}</script><p>结合式(1-33)、式(1-34)，目标函数可写成:</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+\varGamma &= \sum_{w\in C}\sum_{u\in \textrm{context}(w)} \sum_{z\in\{w\}\cup\textrm{Neg}(w)} \log{P(z|u)} \\
+&= \sum_{w\in C}\sum_{u\in \textrm{context}(w)} \sum_{z\in\{w\}\cup\textrm{Neg}(w)}\log \left\{[\sigma(V_u^{\top}\theta^z)]^{Y_z}[1-\sigma(V^{\top}_u\theta^z)]^{1-Y_z}\right\}\\
+&= \sum_{w\in C}\sum_{u\in \textrm{context}(w)} \sum_{z\in\{w\}\cup\textrm{Neg}(w)}\left\{(Y_z)\log[\sigma(V_u^{\top}\theta^z)]+(1-Y_z)\log[1-\sigma(V_u^{\top}\theta^z)]\right\}\\
+\end{aligned}</script><p>令</p>
+<script type="math/tex; mode=display">
+\mathcal{L}(w,u,z) =(Y_z)\log[\sigma(V_u^{\top}\theta^z)]+(1-Y_z)\log[1-\sigma(V_u^{\top}\theta^z)] \tag{1-35}</script><p>关于<script type="math/tex">\theta^z</script>的梯度计算：</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+\frac{\partial{\mathcal{L}}}{\partial{\theta^z}} &= \frac{\partial}{\partial{\theta^z}}\{(Y_z)\log[\sigma(V_u^{\top}\theta^z)]+(1-Y_z)\log[1-\sigma(V_u^{\top}\theta^z)]\}\\
+&= [Y_z-\sigma(V_u^{\top}\theta^z)]V_u 
+\end{aligned}\tag{1-36}</script><p>于是<script type="math/tex">\theta^z</script>的更新公式可写成:</p>
+<script type="math/tex; mode=display">
+\theta^z := \theta^z + \alpha [Y_z-\sigma(V_u^{\top}\theta^z)]V_u \tag{1-37}</script><p>关于<script type="math/tex">V_u</script>的梯度计算：</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+\frac{\partial{\mathcal{L}}}{\partial{V_u}} &= \frac{\partial}{\partial{V_u}}\{(Y_z)\log[\sigma(V_u^{\top}\theta^z)]+(1-Y_z)\log[1-\sigma(V_u^{\top}\theta^z)]\}\\
+&= [Y_z-\sigma(V_u^{\top}\theta^z)]\theta^z
+\end{aligned} \tag{1-38}</script><p>于是<script type="math/tex">V_u</script>的更新公式为:</p>
+<script type="math/tex; mode=display">
+V_u := V_u + \alpha \sum_{z\in\{w\}\cup\textrm{Neg}(w)}\frac{\partial{\mathcal{L}}}{\partial{V_u}}</script><h4 id="参数学习伪代码"><a href="#参数学习伪代码" class="headerlink" title="参数学习伪代码"></a>参数学习伪代码</h4><ul>
+<li><p>版本1</p>
+<p>略</p>
+</li>
+<li><p>版本2</p>
+<ol>
+<li><p>For u in context(w) :</p>
+<ol>
+<li>e = 0</li>
+<li>For z in {w}<script type="math/tex">\cup</script>Neg(w):</li>
+</ol>
+<p>​        1.q = <script type="math/tex">\sigma(V_u^{\top}\theta^u)</script></p>
+<p>​        2. g = <script type="math/tex">\alpha(Y_z-q)</script></p>
+<p>​        3.e = e+g<script type="math/tex">\theta^z</script></p>
+<p>​        4.<script type="math/tex">\theta^z =\theta^z+gV_u</script></p>
+<ol>
+<li><script type="math/tex; mode=display">V_u=V_u+e</script></li>
+</ol>
+</li>
+</ol>
+</li>
+</ul>
+<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><ul>
+<li><a href="https://blog.csdn.net/itplus/article/details/37969519" target="_blank" rel="noopener">word2vec 中的数学原理详解（一）目录和前言</a></li>
+<li><a href="https://blog.csdn.net/itplus/article/details/37969635" target="_blank" rel="noopener">word2vec 中的数学原理详解（二）预备知识</a></li>
+<li><a href="https://blog.csdn.net/itplus/article/details/37969817" target="_blank" rel="noopener">word2vec 中的数学原理详解（三）背景知识</a></li>
+<li><a href="https://blog.csdn.net/itplus/article/details/37969979" target="_blank" rel="noopener">word2vec 中的数学原理详解（四）基于 Hierarchical Softmax 的模型</a></li>
+<li><a href="https://blog.csdn.net/itplus/article/details/37998797" target="_blank" rel="noopener">word2vec 中的数学原理详解（五）基于 Negative Sampling 的模型</a></li>
+<li><a href="https://blog.csdn.net/itplus/article/details/37999613" target="_blank" rel="noopener">word2vec 中的数学原理详解（六）若干源码细节</a></li>
+<li><a href="https://arxiv.org/pdf/1402.3722.pdf" target="_blank" rel="noopener">word2vec Explained: Deriving Negative-Sampling Word-Embedding Method</a></li>
+</ul>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Word2Vec/" rel="tag"># Word2Vec</a>
+          
+            <a href="/tags/词向量/" rel="tag"># 词向量</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/06/26/GRU模型结构分解/" rel="next" title="GRU模型结构分解">
+                <i class="fa fa-chevron-left"></i> GRU模型结构分解
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">jozee</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">22</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">2</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">25</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#sigmoid函数"><span class="nav-number">2.</span> <span class="nav-text">sigmoid函数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Hierarchical-Softmax"><span class="nav-number">3.</span> <span class="nav-text">Hierarchical Softmax</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#huffman树结构及其表示"><span class="nav-number">3.1.</span> <span class="nav-text">huffman树结构及其表示</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#使用huffman树求词的概率"><span class="nav-number">3.1.1.</span> <span class="nav-text">使用huffman树求词的概率</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#CBOW连续词袋模型"><span class="nav-number">4.</span> <span class="nav-text">CBOW连续词袋模型</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#目标函数"><span class="nav-number">4.1.</span> <span class="nav-text">目标函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#基于Hierarchical-Softmax"><span class="nav-number">4.2.</span> <span class="nav-text">基于Hierarchical Softmax</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#参数学习过程伪代码"><span class="nav-number">4.2.1.</span> <span class="nav-text">参数学习过程伪代码</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#基于Negative-Sampling"><span class="nav-number">4.3.</span> <span class="nav-text">基于Negative Sampling</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#参数学习过程伪代码-1"><span class="nav-number">4.3.1.</span> <span class="nav-text">参数学习过程伪代码</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#skip-gram-模型"><span class="nav-number">5.</span> <span class="nav-text">skip-gram 模型</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#目标函数-1"><span class="nav-number">5.1.</span> <span class="nav-text">目标函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#基于层次softmax"><span class="nav-number">5.2.</span> <span class="nav-text">基于层次softmax</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#参数学习过程伪代码-2"><span class="nav-number">5.2.1.</span> <span class="nav-text">参数学习过程伪代码</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#基于Negative-Sampling-1"><span class="nav-number">5.3.</span> <span class="nav-text">基于Negative Sampling</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#参数学习伪代码"><span class="nav-number">5.3.1.</span> <span class="nav-text">参数学习伪代码</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#参考资料"><span class="nav-number">6.</span> <span class="nav-text">参考资料</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">jozee</span>
+
+  
+</div>
+
+
+
+
+
+
+
+
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<span id="busuanzi_container_site_pv">
+    本站总访问量<span id="busuanzi_value_site_pv"></span>次
+</span>
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.4.js"></script>
+  <script>AV.initialize("", "");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+
+  
+
+  
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+  
+
+  
+
+</body>
+</html>
