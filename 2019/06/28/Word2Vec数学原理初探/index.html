@@ -90,7 +90,7 @@
 <meta property="og:image" content="http://yoursite.com/2019/06/28/Word2Vec数学原理初探/image/huffman-1.png">
 <meta property="og:image" content="http://yoursite.com/2019/06/28/Word2Vec数学原理初探/image/cbow-1.png">
 <meta property="og:image" content="http://yoursite.com/2019/06/28/Word2Vec数学原理初探/image/skip-gram-1.png">
-<meta property="og:updated_time" content="2019-06-28T06:07:22.404Z">
+<meta property="og:updated_time" content="2019-06-28T07:07:52.972Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Word2Vec数学原理初探">
 <meta name="twitter:description" content="前言论文：https://arxiv.org/pdf/1301.3781.pdf  符号约定如下：  \textrm{context(w)}：表示词的上下文，即w前window个词和后window个词，但不包括词w C：表示整个有效的词样本空间(即语料库中所有词的集合去掉低频词后的词语集合) \textrm{Neg}(w)：w的负样本空间，不包括w。   sigmoid函数定义为：  \sigma">
@@ -546,7 +546,7 @@ P(u|w) = \prod_{j=1}^{\mathcal{l}^u-1} P(d_{j+1}^u|V_w,\theta_j^u) \tag{1-23}</s
 <script type="math/tex; mode=display">
 \frac{\partial{\mathcal{L}(w,u,j)}}{\partial{V_w}} = [1-d_{j+1}^u-\sigma(V_w^{\top}\theta_j^u)]\theta_j^u \tag{1-28}</script><p>则<script type="math/tex">V_w</script>的更新公式表示为:</p>
 <script type="math/tex; mode=display">
-V_w:=V_w+\alpha \sum_{u\in \textrm{context}(w)} \sum_{j=1}^{\mathcal{l}^u-1} \frac{\partial{\mathcal{L}(w,u,j)}}{\partial{V_w}} \tag{1-29}</script><h4 id="参数学习过程伪代码-2"><a href="#参数学习过程伪代码-2" class="headerlink" title="参数学习过程伪代码"></a>参数学习过程伪代码</h4><ul>
+V_w:=V_w+\alpha \sum_{u\in \textrm{context}(w)} \sum_{j=1}^{\mathcal{l}^u-1} \frac{\partial{\mathcal{L}(w,u,j)}}{\partial{V_w}} \tag{1-29}</script><h4 id="参数学习过程伪代码-2"><a href="#参数学习过程伪代码-2" class="headerlink" title="参数学习过程伪代码"></a>参数学习过程伪代码</h4><ol>
 <li><p>版本1</p>
 <ol>
 <li>e=0</li>
@@ -564,8 +564,8 @@ V_w:=V_w+\alpha \sum_{u\in \textrm{context}(w)} \sum_{j=1}^{\mathcal{l}^u-1} \fr
 <li><script type="math/tex; mode=display">V_w = V_w+e</script></li>
 </ol>
 </li>
-</ul>
-<ul>
+</ol>
+<ol>
 <li><p>版本2(word2vec 源码中的更新规则)</p>
 <ol>
 <li><p>For <script type="math/tex">u \in \textrm{context}(w)</script> :</p>
@@ -584,7 +584,7 @@ V_w:=V_w+\alpha \sum_{u\in \textrm{context}(w)} \sum_{j=1}^{\mathcal{l}^u-1} \fr
 </li>
 </ol>
 </li>
-</ul>
+</ol>
 <h3 id="基于Negative-Sampling-1"><a href="#基于Negative-Sampling-1" class="headerlink" title="基于Negative Sampling"></a>基于Negative Sampling</h3><p>对于Negative Sampling，式(1-22)可写成：</p>
 <script type="math/tex; mode=display">
 P(u|w) = \prod_{z \in \{u\}\cup\textrm{Neg}(u)} P(z|w) \tag{1-30}</script><p>根据式(1-13)以及逻辑斯蒂回归二分类器，<script type="math/tex">P(z|w)</script>可表示为：</p>
