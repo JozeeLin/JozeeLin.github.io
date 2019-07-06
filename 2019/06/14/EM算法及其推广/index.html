@@ -88,7 +88,7 @@
 <meta property="og:description" content="EM算法是一种迭代算法。用于含有隐变量(hidden variable)的概率模型参数的极大似然估计，或极大后验概率估计。 EM算法每次迭代由两步组成:  E步，求期望 M步，求极大  因此，EM算法也称为期望极大算法。 本章首先叙述EM算法，然后讨论算法的收敛性，接着介绍EM算法中的高斯混合模型的学习，最后叙述EM算法的推广——GEM算法。 12.1 EM算法的引入概率模型有时既含有观测变量，又">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="http://yoursite.com/2019/06/14/EM算法及其推广/image/ch12-1.png">
-<meta property="og:updated_time" content="2019-06-14T09:38:56.134Z">
+<meta property="og:updated_time" content="2019-07-04T09:18:13.237Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="EM算法及其推广">
 <meta name="twitter:description" content="EM算法是一种迭代算法。用于含有隐变量(hidden variable)的概率模型参数的极大似然估计，或极大后验概率估计。 EM算法每次迭代由两步组成:  E步，求期望 M步，求极大  因此，EM算法也称为期望极大算法。 本章首先叙述EM算法，然后讨论算法的收敛性，接着介绍EM算法中的高斯混合模型的学习，最后叙述EM算法的推广——GEM算法。 12.1 EM算法的引入概率模型有时既含有观测变量，又">
@@ -330,6 +330,16 @@
 
           
             
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2019/06/14/EM算法及其推广/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2019/06/14/EM算法及其推广/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
           
 
           
@@ -373,7 +383,7 @@
 <p><strong>EM算法就是含有隐变量的概率模型参数的极大似然估计法，或极大后验概率估计法</strong>。</p>
 <p>在这里，我们只讨论极大似然估计法。</p>
 <h3 id="12-1-1-EM算法"><a href="#12-1-1-EM算法" class="headerlink" title="12.1.1 EM算法"></a>12.1.1 EM算法</h3><p>一般地，用Y表示观测随机变量的数据，Z表示隐随机变量的数据。Y和Z连在一起称为完全数据，观测数据Y又称为不完全数据。</p>
-<p>假设给定观测数据Y，其概率分布是<script type="math/tex">P(Y|\theta)</script>，其中<script type="math/tex">\theta</script>是完全估计的模型参数，那么不完全数据Y的似然函数是<script type="math/tex">P(Y|\theta)</script>，对数似然函数<script type="math/tex">L(\theta)=\log P(Y|\theta)</script>；假设Y和Z的联合概率分布是<script type="math/tex">P(Y,Z|\theta)</script>，那么完全数据的对数似然函数是<script type="math/tex">\log P(Y,Z|\theta)</script>。</p>
+<p>假设给定观测数据Y，其概率分布是<script type="math/tex">P(Y|\theta)</script>，其中<script type="math/tex">\theta</script>是需要估计的模型参数，那么不完全数据Y的似然函数是<script type="math/tex">P(Y|\theta)</script>，对数似然函数<script type="math/tex">L(\theta)=\log P(Y|\theta)</script>；假设Y和Z的联合概率分布是<script type="math/tex">P(Y,Z|\theta)</script>，那么完全数据的对数似然函数是<script type="math/tex">\log P(Y,Z|\theta)</script>。</p>
 <p>EM算法通过迭代求<script type="math/tex">L(\theta)=\log P(Y|\theta)</script>的极大似然估计。每次迭代包含两步：E步，求期望；M步，求极大化。</p>
 <p><strong>算法12.1(EM算法)</strong> </p>
 <p>输入：观测变量数据Y，隐变量数据Z，联合分布<script type="math/tex">P(Y,Z|\theta)</script>，条件分布<script type="math/tex">P(Z|Y,\theta)</script>；</p>
@@ -401,7 +411,7 @@ Q(\theta,\theta^{(i)}) = E_Z[\log P(Y,Z|\theta)|Y,\theta^{(i)}] \ (12.3)</script
 <p>下面通过近似求解观测数据的对数似然函数的极大化问题来导出EM算法，由此可以清楚地看出EM算法的作用。</p>
 <p>对于一个含有隐变量的概率模型，<strong>目标是极大化观测数据(不完全数据)Y关于参数<script type="math/tex">\theta</script>的对数似然函数</strong>，即极大化</p>
 <script type="math/tex; mode=display">
-\begin{aligned} L(\theta) &= \log P(Y|\theta) = \log \sum_Z P(Y,Z|\theta)\\&= \log \left(\sum_Z P(Y|Z,\theta)P(Z|\theta) \right) \end{aligned}  \ (12.4)</script><p>式(12.4)中有未观测并有包含和(或积分)的对数。</p>
+\begin{aligned} L(\theta) &= \log P(Y|\theta) = \log \sum_Z P(Y,Z|\theta)\\&= \log \left(\sum_Z P(Y|Z,\theta)P(Z|\theta) \right) \end{aligned}  \ (12.4)</script><p>式(12.4)中有未观测数据并有包含和(或积分)的对数。</p>
 <p>事实上，EM算法是通过迭代逐步近似极大化<script type="math/tex">L(\theta)</script>的。假设在第i次迭代后<script type="math/tex">\theta</script>的估计值是<script type="math/tex">\theta^{(i)}</script>。我们希望新估计值<script type="math/tex">\theta</script>能使<script type="math/tex">L(\theta)</script>增加，即<script type="math/tex">L(\theta)>L(\theta^{(i)})</script>，并逐步达到极大值。为此，考虑两者的差:</p>
 <script type="math/tex; mode=display">
 L(\theta)-L(\theta^{(i)}) = \log \left(\sum_Z P(Y|Z,\theta)P(Z|\theta)\right)-\log P(Y|\theta^{(i)})</script><p>利用Jensen不等式得到其下界:</p>
@@ -485,7 +495,7 @@ j=1,2,\cdots,N;k=1,2,\cdots,K</script><p><script type="math/tex">\gamma_{jk}</sc
 <script type="math/tex; mode=display">
 (y_j,\gamma_{j1},\gamma_{j2},\cdots,\gamma_{jK}) , j=1,2,\cdots,N</script><p>于是，可以写出完全数据的似然函数:</p>
 <script type="math/tex; mode=display">
-\begin{aligned}P(y,\gamma|\theta) &= \prod_{j=1}^N P(y_j,\gamma_{j1},\gamma_{j2},\cdots,\gamma_{jK}|\theta) \\ &= \prod_{k=1}^K \prod_{j=1}^N [\alpha_k \phi(y_j|\theta_k)]^{\gamma_{jk}} \\ &= \prod_{k=1}^K \alpha_k^{n_k} \prod_{j=1}^N [\phi(y_j|\theta_k)]^{\gamma_{jk}} \\ &=\prod_{k=1}^K \alpha_k^{n_k} \prod_{j=1}^N \left[\frac{1}{\sqrt{2\pi}\sigma_k} \exp \left(-\frac{(y_j-\mu_k)^2}{2\gamma_k^2}\right)\right]^{\gamma_{jk}}\end{aligned}</script><p>式中，<script type="math/tex">n_k = \sum_{j=1}^N \gamma_{jk}</script>，<script type="math/tex">\sum_{k=1}^K n_k = N</script>。</p>
+\begin{aligned}P(y,\gamma|\theta) &= \prod_{j=1}^N P(y_j,\gamma_{j1},\gamma_{j2},\cdots,\gamma_{jK}|\theta) \\ &= \prod_{k=1}^K \prod_{j=1}^N [\alpha_k \phi(y_j|\theta_k)]^{\gamma_{jk}} \\ &= \prod_{k=1}^K \alpha_k^{n_k} \prod_{j=1}^N [\phi(y_j|\theta_k)]^{\gamma_{jk}} \\ &=\prod_{k=1}^K \alpha_k^{n_k} \prod_{j=1}^N \left[\frac{1}{\sqrt{2\pi}\sigma_k} \exp \left(-\frac{(y_j-\mu_k)^2}{2\sigma_k^2}\right)\right]^{\gamma_{jk}}\end{aligned}</script><p>式中，<script type="math/tex">n_k = \sum_{j=1}^N \gamma_{jk}</script>，<script type="math/tex">\sum_{k=1}^K n_k = N</script>。</p>
 <p>那么，完全数据的对数似然函数为:</p>
 <script type="math/tex; mode=display">
 \log P(y,\gamma|\theta) = \sum_{k=1}^K \left\{n_k \log \alpha_k + \sum_{j=1}^N \gamma_{jk} \left[\log \left(\frac{1}{\sqrt{2\pi}}\right)-\log \sigma_k-\frac{1}{2\sigma_k^2}(y_j-\mu_k)^2\right]\right\}</script><p><strong>2.EM算法的E步:确定Q函数</strong></p>
@@ -655,6 +665,16 @@ Q(\theta^{(i+1)},\theta^{(i)}) > Q(\theta^{(i)},\theta^{(i)})</script><p>(4)重�
 
 
           
+
+  
+    <div class="comments" id="comments">
+      <div id="disqus_thread">
+        <noscript>
+          Please enable JavaScript to view the
+          <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a>
+        </noscript>
+      </div>
+    </div>
 
   
 
@@ -937,6 +957,26 @@ Q(\theta^{(i+1)},\theta^{(i)}) > Q(\theta^{(i)},\theta^{(i)})</script><p>(4)重�
 
   
 
+    
+      <script id="dsq-count-scr" src="https://jozeelin.disqus.com/count.js" async></script>
+    
+
+    
+      <script type="text/javascript">
+        var disqus_config = function () {
+          this.page.url = 'http://yoursite.com/2019/06/14/EM算法及其推广/';
+          this.page.identifier = '2019/06/14/EM算法及其推广/';
+          this.page.title = 'EM算法及其推广';
+        };
+        var d = document, s = d.createElement('script');
+        s.src = 'https://jozeelin.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', '' + +new Date());
+        (d.head || d.body).appendChild(s);
+      </script>
+    
+
+  
+
 
 
 
@@ -949,10 +989,6 @@ Q(\theta^{(i+1)},\theta^{(i)}) > Q(\theta^{(i)},\theta^{(i)})</script><p>(4)重�
   
 
 
-
-
-
-  
 
 
 
