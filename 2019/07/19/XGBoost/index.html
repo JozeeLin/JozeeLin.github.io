@@ -105,7 +105,7 @@
 <meta property="og:image" content="http://yoursite.com/2019/07/19/XGBoost/image/xgboost-cache-1.png">
 <meta property="og:image" content="http://yoursite.com/2019/07/19/XGBoost/image/xgboost-cache-2.png">
 <meta property="og:image" content="http://yoursite.com/2019/07/19/XGBoost/image/xgboost-cache-3.png">
-<meta property="og:updated_time" content="2019-07-19T06:04:59.808Z">
+<meta property="og:updated_time" content="2019-07-19T06:23:05.736Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="XGBoost论文解读">
 <meta name="twitter:description" content="论文：XGBoost: A Scalable Tree Boosting System 1.1 决策树决策树学习本质上是从训练数据集中归纳出一组分类规则。 学习过程通常包含3个步骤：  特征选择(评估标准：信息增益，信息增益比，基尼指数，平方误差) 决策树的生成算法(ID3,C4.5,CART) 决策树的修剪(前剪枝early stop,后剪枝相当于regularization)  这里使用ID3">
@@ -427,25 +427,25 @@
 D = \{(x_1,y_1),(x_2,y_2),...,(x_N,y_N)\}</script><p>考虑如何生成回归树。</p>
 <p>假设已将输入空间划分为M个单元<script type="math/tex">R_1,R_2,...,R_M</script>，并且在每个单元<script type="math/tex">R_m</script>上有一个固定的输出值<script type="math/tex">c_m</script>，于是回归树模型可表示为:</p>
 <script type="math/tex; mode=display">
-f(x) = \sum_{m=1}^M c_m I(x \in R_m) \ (5.16)</script><p>当输入空间的划分确定时，可以用平方误差<script type="math/tex">\sum_{x_i\in R_m}(y_i - f(x_i))^2</script>来表示回归树对于训练数据的预测误差。</p>
+f(x) = \sum_{m=1}^M c_m I(x \in R_m) \tag{2-1}</script><p>当输入空间的划分确定时，可以用平方误差<script type="math/tex">\sum_{x_i\in R_m}(y_i - f(x_i))^2</script>来表示回归树对于训练数据的预测误差。</p>
 <p><strong>用平方误差最小的准则求解每个单元上的最优输出值</strong>。易知，单元<script type="math/tex">R_m</script>上的<script type="math/tex">c_m</script>的最优值<script type="math/tex">\hat{c}_m</script>是<script type="math/tex">R_m</script>上的所有输入实例<script type="math/tex">x_i</script>对应的输出<script type="math/tex">y_i</script>的均值，即</p>
 <script type="math/tex; mode=display">
-\hat{c}_m = \mathrm{ave}(y_i|x_i \in R_m) \ (5.17)</script><p>这里采用<strong>启发式方法</strong>对输入空间进行划分。选择第j个变量<script type="math/tex">x^{(j)}</script>和它取的值s，作为切分变量和切分点并定义两个区域:</p>
+\hat{c}_m = \mathrm{ave}(y_i|x_i \in R_m) \tag{2-2}</script><p>这里采用<strong>启发式方法</strong>对输入空间进行划分。选择第j个变量<script type="math/tex">x^{(j)}</script>和它取的值s，作为切分变量和切分点并定义两个区域:</p>
 <script type="math/tex; mode=display">
-R_1(j,s) = \{x|x^{(j)} \le s\} \ , R_2(j,s) = \{x|x^{(j)} > s\} \ (5.18)</script><p>然后寻找最优切分变量j和最优切分点s。具体地，求解:</p>
+R_1(j,s) = \{x|x^{(j)} \le s\} \ , R_2(j,s) = \{x|x^{(j)} > s\} \tag{2-3}</script><p>然后寻找最优切分变量j和最优切分点s。具体地，求解:</p>
 <script type="math/tex; mode=display">
-\min_{j,s} \left[ \min_{c_1} \sum_{x_i \in R_1(j,s)} (y_i-c_1)^2 + \min_{c_2} \sum_{x_i \in R_2(j,s)} (y_i-c_2)^2 \right] \ (5.19)</script><p>对固定输入变量j可以找到最优切分点s。</p>
+\min_{j,s} \left[ \min_{c_1} \sum_{x_i \in R_1(j,s)} (y_i-c_1)^2 + \min_{c_2} \sum_{x_i \in R_2(j,s)} (y_i-c_2)^2 \right] \tag{2-4}</script><p>对固定输入变量j可以找到最优切分点s。</p>
 <script type="math/tex; mode=display">
 \hat{c}_1 = \mathrm{ave}(y_i|x_i \in R_1(j,s)) \ , \hat{c}_2 = \mathrm{ave}(y_i|x_i \in R_2(j,s))</script><p><strong>遍历所有输入变量</strong>，找到最优的切分变量j，构成一个对(j,s)。以此将输入空间划分为两个区域。</p>
 <p>接着，对每个区域重复上述划分过程，直到满足停止条件为止。这样就生成一颗回归树。<strong>通常称为最小二乘回归树</strong>，现将算法叙述如下:</p>
-<p><strong>算法5.5(最小二乘回归树生成算法)</strong></p>
+<p><strong>算法(最小二乘回归树生成算法)</strong></p>
 <p>输入:训练数据集D</p>
 <p>输出:回归树f(x)</p>
 <p>在训练数据集所在的输入空间中，<strong>递归的将每个区域划分为两个子区域</strong>并<strong>决定每个子区域上的输出值</strong>，构建二叉决策树：</p>
 <ol>
 <li><p>选择最优切分变量j与切分点s，求解</p>
 <script type="math/tex; mode=display">
-\min_{j,s} \left[ \min_{c_1} \sum_{x_i \in R_1(j,s)} (y_i-c_1)^2 + \min_{c_2} \sum_{x_i \in R_2(j,s)} (y_i-c_2)^2 \right] \ (5.21)</script><p>遍历变量j，对固定的切分变量j扫描切分点s，选择使式(5.21)达到最小值的对(j,s)。</p>
+\min_{j,s} \left[ \min_{c_1} \sum_{x_i \in R_1(j,s)} (y_i-c_1)^2 + \min_{c_2} \sum_{x_i \in R_2(j,s)} (y_i-c_2)^2 \right] \tag{2-5}</script><p>遍历变量j，对固定的切分变量j扫描切分点s，选择使式(2-5)达到最小值的对(j,s)。</p>
 </li>
 <li><p>用选定的对(j,s)划分区域并决定相应的输出值:</p>
 <script type="math/tex; mode=display">
@@ -459,7 +459,7 @@ f(x) = \sum_{m=1}^M c_m I(x \in R_m)</script></li>
 </ol>
 <h2 id="3-1-AdaBoost与前向分步算法"><a href="#3-1-AdaBoost与前向分步算法" class="headerlink" title="3.1 AdaBoost与前向分步算法"></a>3.1 AdaBoost与前向分步算法</h2><h3 id="3-1-1-AdaBoost算法"><a href="#3-1-1-AdaBoost算法" class="headerlink" title="3.1.1 AdaBoost算法"></a>3.1.1 AdaBoost算法</h3><p>假设给定一个二类分类的训练数据集<script type="math/tex">T=\{(x_1,y_1),(x_2,y_2),\cdots,(x_N,y_N)\}</script>，其中，每个样本点由实例与标记组成。实例<script type="math/tex">x_i \in \mathcal{X} \subseteq R^n</script>，标记<script type="math/tex">y_i \in \mathcal{Y} = \{-1,+1\}</script>，<script type="math/tex">\mathcal{X}</script>是实例空间，<script type="math/tex">\mathcal{Y}</script>是标记集合。</p>
 <p>AdaBoost利用以下算法，从训练数据中学习一系列弱分类器或基本分类器，并将这些弱分类器线性组合成为一个强分类器。</p>
-<p><strong>算法10.1(AdaBoost)</strong></p>
+<p><strong>算法(AdaBoost)</strong></p>
 <p>输入：训练数据集<script type="math/tex">T = \{(x_1,y_1),(x_2,y_2),\cdots,(x_N,y_N)\}</script>，其中<script type="math/tex">x_i \in \mathcal{X} \subseteq R^n</script>，<script type="math/tex">y_i \in \mathcal{Y}=\{-1,+1\}</script>；弱学习算法；</p>
 <p>输出：最终分类器<script type="math/tex">G(x)</script></p>
 <p>(1)初始化训练数据的权值分布</p>
@@ -469,60 +469,60 @@ D_1 = (w_{11},\cdots,w_{1i},\cdots,w_{1N}) , w_{1i} = \frac{1}{N},i=1,2,\cdots,N
 <script type="math/tex; mode=display">
 G_m(x):\mathcal{X} \rightarrow \{-1,+1\}</script><p>​    (b)计算<script type="math/tex">G_m(x)</script>在训练数据集上的分类误差率</p>
 <script type="math/tex; mode=display">
-e_m = \sum_{i=1}^N P(G_m(x_i)\ne y_i) = \sum_{i=1}^N w_{mi}I(G_m(x_i)\ne y_i) \ (10.1)</script><p>​    (c)计算<script type="math/tex">G_m(x)</script>的系数</p>
+e_m = \sum_{i=1}^N P(G_m(x_i)\ne y_i) = \sum_{i=1}^N w_{mi}I(G_m(x_i)\ne y_i) \tag{3-1}</script><p>​    (c)计算<script type="math/tex">G_m(x)</script>的系数</p>
 <script type="math/tex; mode=display">
-\alpha_m = \frac{1}{2} \log \frac{1-e_m}{e_m} \ (10.2)</script><p>​    这里的对数是自然对数。</p>
+\alpha_m = \frac{1}{2} \log \frac{1-e_m}{e_m} \tag{3-2}</script><p>​    这里的对数是自然对数。</p>
 <p>​    (d)更新训练数据集的权值分布</p>
 <script type="math/tex; mode=display">
-D_{m+1} = (w_{m+1,1},\cdots,w_{m+1,i},\cdots,w_{m+1,N}) \ (10.3)</script><script type="math/tex; mode=display">
-w_{m+1,i} = \frac{w_{mi}}{Z_m}\exp (-\alpha_m y_i G_m(x_i)) \ , i=1,2,\cdots,N \ (10.4)</script><p>​    这里，<script type="math/tex">Z_m</script>是规范化因子</p>
+D_{m+1} = (w_{m+1,1},\cdots,w_{m+1,i},\cdots,w_{m+1,N}) \tag{3-3}</script><script type="math/tex; mode=display">
+w_{m+1,i} = \frac{w_{mi}}{Z_m}\exp (-\alpha_m y_i G_m(x_i)) \ , i=1,2,\cdots,N \tag{3-4}</script><p>​    这里，<script type="math/tex">Z_m</script>是规范化因子</p>
 <script type="math/tex; mode=display">
-Z_m = \sum_{i=1}^N w_{mi}\exp(-\alpha_m y_i G_m(x_i)) \ (10.5)</script><p>(3)构建基本分类器的线性组合</p>
+Z_m = \sum_{i=1}^N w_{mi}\exp(-\alpha_m y_i G_m(x_i)) \tag{3-5}</script><p>(3)构建基本分类器的线性组合</p>
 <script type="math/tex; mode=display">
-f(x) = \sum_{m=1}^M \alpha_m G_m(x) \ (10.6)</script><p>得到最终分类器</p>
+f(x) = \sum_{m=1}^M \alpha_m G_m(x) \tag{3-6}</script><p>得到最终分类器</p>
 <script type="math/tex; mode=display">
-G(x) = \mathrm{sign}(f(x)) = \mathrm{sign} \left(\sum_{m=1}^M \alpha_m G_m(x)\right) \ (10.7)</script><p><strong>对AdaBoost算法作如下说明:</strong></p>
+G(x) = \mathrm{sign}(f(x)) = \mathrm{sign} \left(\sum_{m=1}^M \alpha_m G_m(x)\right) \tag{3-7}</script><p><strong>对AdaBoost算法作如下说明:</strong></p>
 <p><strong><u>步骤(1)</u></strong> <strong>假设训练数据集具有均匀的权值分布(即每个训练样本在基本分类器的学习中作用相同)</strong>；在此权值分布下，基于原始数据训练出基本分类器<script type="math/tex">G_1(x)</script></p>
 <p><strong><u>步骤(2)</u></strong>AdaBoost反复学习基本分类器，在每一轮m=1,2,…,M顺次的执行下列操作:</p>
 <p>​    <strong>(a)</strong>使用当前分布<script type="math/tex">D_m</script>加权的训练数据集，学习基本分类器<script type="math/tex">G_m(x)</script>。</p>
 <p>​    <strong>(b)</strong>计算基本分类器<script type="math/tex">G_m(x)</script>在加权训练数据集上的分类误差率:</p>
 <script type="math/tex; mode=display">
-e_m = \sum_{i=1}^N P(G_m(x_i) \ne y_i) = \sum_{G_m(x_i) \ne y_i} w_{mi} \ (10.8)</script><p>​    这里，<script type="math/tex">w_{mi}</script>表示第m轮第i个样本点的权值，<script type="math/tex">\sum_{i=1}^N w_{mi}=1</script>。这表明，<strong><script type="math/tex">G_m(x)</script>在加权的训练数据集上的分类误差率是被<script type="math/tex">G_m(x)</script>误分类的样本的权值之和</strong>。</p>
-<p>​    <strong>(c)</strong>计算基本分类器<script type="math/tex">G_m(x)</script>的系数<script type="math/tex">\alpha_m</script>，<script type="math/tex">\alpha_m</script>表示<script type="math/tex">G_m(x)</script>在最终分类器中的重要性。由式(10.2)可知，当<script type="math/tex">e_m \le \frac{1}{2}</script>时，<script type="math/tex">\alpha_m \ge 0</script>，并且<script type="math/tex">\alpha_m</script>随着<script type="math/tex">e_m</script>的减小而增大。<strong>相当于误分类率越小的基本分类器在最终分类器中的重要性越大</strong>。</p>
-<p>​    <strong>(d)</strong>更新训练数据的权值分布。式(10.4)可以写成:</p>
+e_m = \sum_{i=1}^N P(G_m(x_i) \ne y_i) = \sum_{G_m(x_i) \ne y_i} w_{mi} \tag{3-8}</script><p>​    这里，<script type="math/tex">w_{mi}</script>表示第m轮第i个样本点的权值，<script type="math/tex">\sum_{i=1}^N w_{mi}=1</script>。这表明，<strong><script type="math/tex">G_m(x)</script>在加权的训练数据集上的分类误差率是被<script type="math/tex">G_m(x)</script>误分类的样本的权值之和</strong>。</p>
+<p>​    <strong>(c)</strong>计算基本分类器<script type="math/tex">G_m(x)</script>的系数<script type="math/tex">\alpha_m</script>，<script type="math/tex">\alpha_m</script>表示<script type="math/tex">G_m(x)</script>在最终分类器中的重要性。由式(3-2)可知，当<script type="math/tex">e_m \le \frac{1}{2}</script>时，<script type="math/tex">\alpha_m \ge 0</script>，并且<script type="math/tex">\alpha_m</script>随着<script type="math/tex">e_m</script>的减小而增大。<strong>相当于误分类率越小的基本分类器在最终分类器中的重要性越大</strong>。</p>
+<p>​    <strong>(d)</strong>更新训练数据的权值分布。式(3-4)可以写成:</p>
 <script type="math/tex; mode=display">
 w_{m+1,i} = \left\{\begin{aligned}\frac{w_{mi}}{Z_m}e^{-\alpha_m},&G_m(x_i)=y_i \\ \frac{w_{mi}}{Z_m}e^{\alpha_m},&G_m(x_i)\ne y_i\end{aligned}\right.</script><p>​    由此可知，<strong>被基本分类器<script type="math/tex">G_m(x)</script>误分类样本的权值得以扩大，而被正确分类样本的权值却得以缩小</strong>。</p>
-<p>​    由式(10.2)可知误分类样本的权值被放大<script type="math/tex">e^{2\alpha_m} = \frac{1-e_m}{e_m}</script>倍。</p>
+<p>​    由式(3-2)可知误分类样本的权值被放大<script type="math/tex">e^{2\alpha_m} = \frac{1-e_m}{e_m}</script>倍。</p>
 <p><strong><u>步骤(3)</u></strong> 线性组合<script type="math/tex">f(x)</script>实现M个基本分类器的加权表决。系数<script type="math/tex">\alpha_m</script>表示了基本分类器<script type="math/tex">G_m(x)</script>重要性，这里，<strong>所有<script type="math/tex">\alpha_m</script>之和并不为1</strong>。<script type="math/tex">f(x)</script>的<strong>符号决定实例x的类</strong>，<strong><script type="math/tex">f(x)</script>的绝对值表示分类的确信度</strong>。</p>
 <blockquote>
 <p>关于adaboost的更详细的说明及python实现请参考<a href="[https://jozeelin.github.io/2019/06/14/%E6%8F%90%E5%8D%87%E6%96%B9%E6%B3%95/](https://jozeelin.github.io/2019/06/14/提升方法/">统计学习方法-adaboost</a>)</p>
 </blockquote>
 <h3 id="3-1-2-前向分步算法"><a href="#3-1-2-前向分步算法" class="headerlink" title="3.1.2 前向分步算法"></a>3.1.2 前向分步算法</h3><p>考虑加法模型:</p>
 <script type="math/tex; mode=display">
-f(x) = \sum_{m=1}^M \beta_m b(x;\gamma_m) \ (10.13)</script><p>其中，<script type="math/tex">b(x;\gamma_m)</script>为基函数，<script type="math/tex">\gamma_m</script>为基函数的参数，<script type="math/tex">\beta_m</script>为基函数的系数。由此可见，式(10.6)是加法模型。</p>
+f(x) = \sum_{m=1}^M \beta_m b(x;\gamma_m) \tag{3-9}</script><p>其中，<script type="math/tex">b(x;\gamma_m)</script>为基函数，<script type="math/tex">\gamma_m</script>为基函数的参数，<script type="math/tex">\beta_m</script>为基函数的系数。由此可见，式(3-6)是加法模型。</p>
 <p>在给定训练数据及损失函数<script type="math/tex">L(y,f(x))</script>的条件下，学习加法模型<script type="math/tex">f(x)</script>称为经验风险极小化即损失函数极小化问题:</p>
 <script type="math/tex; mode=display">
-\min_{\beta_m,\gamma_m} \sum_{i=1}^N L\left(y_i,\sum_{m=1}^M \beta_m b(x_i;\gamma_m)\right) \ (10.14)</script><p><strong>前向分步算法的求解思路是</strong>：因为学习的是加法模型，如果能够从前向后，每一步只学习一个基函数及其系数，逐步逼近优化目标函数式(10.14)，那么就可以简化优化的复杂度。具体地，每步只需优化如下损失函数:</p>
+\min_{\beta_m,\gamma_m} \sum_{i=1}^N L\left(y_i,\sum_{m=1}^M \beta_m b(x_i;\gamma_m)\right) \tag{3-10}</script><p><strong>前向分步算法的求解思路是</strong>：因为学习的是加法模型，如果能够从前向后，每一步只学习一个基函数及其系数，逐步逼近优化目标函数式(3-10)，那么就可以简化优化的复杂度。具体地，每步只需优化如下损失函数:</p>
 <script type="math/tex; mode=display">
-\min_{\beta,\gamma} \sum_{i=1}^N L(y_i,\beta b(x_i;\gamma)) \ (10.15)</script><p>给定训练数据集<script type="math/tex">T=\{(x_1,y_1),(x_2,y_2),\cdots,(x_N,y_N)\}</script>，<script type="math/tex">x_i \in \mathcal{X} \subseteq R^n</script>，<script type="math/tex">y_i \in \mathcal{Y} = \{-1,+1\}</script>。损失函数<script type="math/tex">L(y,f(x))</script>和基函数的集合<script type="math/tex">\{b(x;\gamma)\}</script>，学习加法模型<script type="math/tex">f(x)</script>的前向分步算法如下:</p>
-<p><strong>算法10.2(前向分步算法)</strong></p>
+\min_{\beta,\gamma} \sum_{i=1}^N L(y_i,\beta b(x_i;\gamma)) \tag{3-11}</script><p>给定训练数据集<script type="math/tex">T=\{(x_1,y_1),(x_2,y_2),\cdots,(x_N,y_N)\}</script>，<script type="math/tex">x_i \in \mathcal{X} \subseteq R^n</script>，<script type="math/tex">y_i \in \mathcal{Y} = \{-1,+1\}</script>。损失函数<script type="math/tex">L(y,f(x))</script>和基函数的集合<script type="math/tex">\{b(x;\gamma)\}</script>，学习加法模型<script type="math/tex">f(x)</script>的前向分步算法如下:</p>
+<p><strong>算法(前向分步算法)</strong></p>
 <p>输入:训练数据集<script type="math/tex">T=\{(x_1,y_1),(x_2,y_2),\cdots,(x_N,y_N)\}</script>；损失函数<script type="math/tex">L(y,f(x))</script>；基函数集<script type="math/tex">\{b(x;\gamma)\}</script>；</p>
 <p>输出:加法模型<script type="math/tex">f(x)</script>。</p>
 <p>(1)初始化<script type="math/tex">f_0(x)=0</script></p>
 <p>(2)对m=1,2,…,M</p>
 <p>​    (a)极小化损失函数</p>
 <script type="math/tex; mode=display">
-(\beta_m,\gamma_m)=\arg\min_{\beta,\gamma} \sum_{i=1}^N L(y_i,f_{m-1}(x_i)+\beta b(x_i;\gamma)) \ (10.16)</script><p>​    得到参数<script type="math/tex">\beta_m</script>，<script type="math/tex">\gamma_m</script>。</p>
+(\beta_m,\gamma_m)=\arg\min_{\beta,\gamma} \sum_{i=1}^N L(y_i,f_{m-1}(x_i)+\beta b(x_i;\gamma)) \tag{3-12}</script><p>​    得到参数<script type="math/tex">\beta_m</script>，<script type="math/tex">\gamma_m</script>。</p>
 <p>​    (b)更新</p>
 <script type="math/tex; mode=display">
-f_m(x) = f_{m-1}(x)+\beta_mb(x;\gamma_m) \ (10.17)</script><p>(3)得到加法模型</p>
+f_m(x) = f_{m-1}(x)+\beta_mb(x;\gamma_m) \tag{3-13}</script><p>(3)得到加法模型</p>
 <script type="math/tex; mode=display">
-f(x) = f_M(x) = \sum_{m=1}^M \beta_mb(x;\gamma_m) \ (10.18)</script><p>这样，<strong>前向分步算法将同时求解从m=1到M所有参数<script type="math/tex">\beta_m</script>，<script type="math/tex">\gamma_m</script>的优化问题简化为逐次求解各个<script type="math/tex">\beta_m</script>，<script type="math/tex">\gamma_m</script>的优化问题</strong>。</p>
+f(x) = f_M(x) = \sum_{m=1}^M \beta_mb(x;\gamma_m) \tag{3-14}</script><p>这样，<strong>前向分步算法将同时求解从m=1到M所有参数<script type="math/tex">\beta_m</script>，<script type="math/tex">\gamma_m</script>的优化问题简化为逐次求解各个<script type="math/tex">\beta_m</script>，<script type="math/tex">\gamma_m</script>的优化问题</strong>。</p>
 <h3 id="3-1-3-AdaBoost算法与前向分步算法的关系"><a href="#3-1-3-AdaBoost算法与前向分步算法的关系" class="headerlink" title="3.1.3 AdaBoost算法与前向分步算法的关系"></a>3.1.3 AdaBoost算法与前向分步算法的关系</h3><p>AdaBoost算法还可以理解为:模型为<strong>加法模型</strong>、损失函数为<strong>指数函数</strong>、学习算法为<strong>前向分步算法</strong>时的学习方法。</p>
 <p>关于AdaBoost算法与前向分步算法的等价性证明如下：</p>
 <p>前向分步算法学习的是加法模型，<strong>当基函数为基本分类器时，该加法模型等价于AdaBoost的最终分类器</strong>：</p>
 <script type="math/tex; mode=display">
-f(x) = \sum_{m=1}^M \alpha_m G_m(x) \ (10.19)</script><p>由基本分类器<script type="math/tex">G_m(x)</script>及其系数<script type="math/tex">\alpha_m</script>组成，m=1,2,…,M。前向分步算法逐一学习基函数，这一过程与AdaBoost算法逐一学习基本分类器的过程一致。</p>
+f(x) = \sum_{m=1}^M \alpha_m G_m(x) \tag{3-15}</script><p>由基本分类器<script type="math/tex">G_m(x)</script>及其系数<script type="math/tex">\alpha_m</script>组成，m=1,2,…,M。前向分步算法逐一学习基函数，这一过程与AdaBoost算法逐一学习基本分类器的过程一致。</p>
 <p><strong>接下来证明前向分步算法的损失函数是指数损失函数</strong>：</p>
 <script type="math/tex; mode=display">
 L(y,f(x)) = \exp[-yf(x)]</script><p><strong>时</strong>，其学习的具体操作等价于AdaBoost算法学习的具体操作。</p>
@@ -532,24 +532,24 @@ L(y,f(x)) = \exp[-yf(x)]</script><p><strong>时</strong>，其学习的具体操
 <script type="math/tex; mode=display">
 f_m(x) = f_{m-1}(x)+\alpha_mG_m(x)</script><p>目标是使前向分步算法得到的<script type="math/tex">\alpha_m</script>和<script type="math/tex">G_m(x)</script>使<script type="math/tex">f_m(x)</script>在训练数据集T上的指数损失最小，即</p>
 <script type="math/tex; mode=display">
-(\alpha_m,G_m(x)) = \arg\min_{\alpha,G} \sum_{i=1}^N\exp[-y_i(f_{m-1}(x_i)+\alpha G(x_i))] \ (10.20)</script><p>式(10.20)可以表示为:</p>
+(\alpha_m,G_m(x)) = \arg\min_{\alpha,G} \sum_{i=1}^N\exp[-y_i(f_{m-1}(x_i)+\alpha G(x_i))] \tag{3-16}</script><p>式(3-16)可以表示为:</p>
 <script type="math/tex; mode=display">
-(\alpha_m,G_m(x)) = \arg\min_{\alpha,G} \sum_{i=1}^N \bar{w}_{mi}\exp[-y_i\alpha G(x_i)] \ (10.21)</script><p>其中，<script type="math/tex">\bar{w}_{mi}=\exp[-y_if_{m-1}(x_i)]</script>。因为<script type="math/tex">\bar{w}_{mi}</script>既不依赖<script type="math/tex">\alpha</script>也不依赖于G，所以与最小化无关。但<script type="math/tex">\bar{w}_{mi}</script>依赖于<script type="math/tex">f_{m-1}(x)</script>，随着每一轮迭代而发生改变。</p>
-<p><strong>证明式(10.21)的解<script type="math/tex">\alpha_m^*</script>和<script type="math/tex">G_m^*</script>就是AdaBoost算法所得到的<script type="math/tex">\alpha_m</script>和<script type="math/tex">G_m(x)</script></strong>。</p>
-<p>求解式(10.21):</p>
+(\alpha_m,G_m(x)) = \arg\min_{\alpha,G} \sum_{i=1}^N \bar{w}_{mi}\exp[-y_i\alpha G(x_i)] \tag{3-17}</script><p>其中，<script type="math/tex">\bar{w}_{mi}=\exp[-y_if_{m-1}(x_i)]</script>。因为<script type="math/tex">\bar{w}_{mi}</script>既不依赖<script type="math/tex">\alpha</script>也不依赖于G，所以与最小化无关。但<script type="math/tex">\bar{w}_{mi}</script>依赖于<script type="math/tex">f_{m-1}(x)</script>，随着每一轮迭代而发生改变。</p>
+<p><strong>证明式(3-17)的解<script type="math/tex">\alpha_m^*</script>和<script type="math/tex">G_m^*</script>就是AdaBoost算法所得到的<script type="math/tex">\alpha_m</script>和<script type="math/tex">G_m(x)</script></strong>。</p>
+<p>求解式(3-17):</p>
 <ol>
-<li><p>求<script type="math/tex">G_m^*</script>。对任意<script type="math/tex">\alpha>0</script>，使式(10.21)最小的<script type="math/tex">G(x)</script>由下式得到：</p>
+<li><p>求<script type="math/tex">G_m^*</script>。对任意<script type="math/tex">\alpha>0</script>，使式(3-17)最小的<script type="math/tex">G(x)</script>由下式得到：</p>
 <script type="math/tex; mode=display">
 G_m^* = \arg\min_G \sum_{i=1}^N \bar{w}_{mi}I(y_i \ne G(x_i))</script><p>其中，<script type="math/tex">\bar{w}_{mi} = \exp[-y_i f_{m-1}(x_i)]</script>。</p>
 <p><strong>此分类器<script type="math/tex">G_m^*(x)</script>即为AdaBoost算法的基本分类器<script type="math/tex">G_m(x)</script>，因为它是使第m轮加权训练数据分类误差率最小的基本分类器</strong>。</p>
 </li>
-<li><p>求<script type="math/tex">\alpha_m^*</script>。参照式(10.11)，式(10.21)中</p>
+<li><p>求<script type="math/tex">\alpha_m^*</script>。式(3-17)可写成以下形式：</p>
 <script type="math/tex; mode=display">
 \begin{aligned} 
 \sum_{i=1}^N \bar{w}_{mi} \exp[-y_i\alpha G(x_i)] &= \sum_{y_i=G_m(x_i)} \bar{w}_{mi}e^{-\alpha}+\sum_{y_i\ne G_m(x_i)} \bar{w}_{mi}e^{\alpha}\\ 
 &=(e^{\alpha}-e^{-\alpha})\sum_{i=1}^N \bar{w}_{mi} I(y_i\ne G(x_i))+e^{-\alpha}\sum_{i=1}^N \bar{w}_{mi}
 
-\end{aligned} \ (10.22)</script><blockquote>
+\end{aligned} \tag{3-18}</script><blockquote>
 <script type="math/tex; mode=display">
 \begin{aligned}
 \sum_{y_i=G_m(x_i)} \bar{w}_{mi}e^{-\alpha} &= \bar{w}_{mi}e^{-\alpha}(\sum_{i=1}^N-\sum_{y_i\ne G_m(x_i)}) \\
@@ -557,9 +557,9 @@ G_m^* = \arg\min_G \sum_{i=1}^N \bar{w}_{mi}I(y_i \ne G(x_i))</script><p>其中�
 \end{aligned}</script></blockquote>
 </li>
 </ol>
-<p>   将已求得的<script type="math/tex">G_m^*</script>代入式(10.22)，可得：</p>
+<p>   将已求得的<script type="math/tex">G_m^*</script>代入式(3-18)，可得：</p>
 <script type="math/tex; mode=display">
-   \sum_{i=1}^N \bar{w}_{mi} \exp[-y_i\alpha G(x_i)] = (e^{\alpha}-e^{-\alpha})G_m^{*}+e^{-\alpha}\sum_{i=1}^N \bar{w}_{mi} \tag{10.22.1}</script><p>   对<script type="math/tex">\alpha</script>求导并使导数为0，即得到使式(10.21)最小的<script type="math/tex">\alpha</script>。</p>
+   \sum_{i=1}^N \bar{w}_{mi} \exp[-y_i\alpha G(x_i)] = (e^{\alpha}-e^{-\alpha})G_m^{*}+e^{-\alpha}\sum_{i=1}^N \bar{w}_{mi} \tag{3-19}</script><p>   对<script type="math/tex">\alpha</script>求导并使导数为0，即得到使式(3-17)最小的<script type="math/tex">\alpha</script>。</p>
 <script type="math/tex; mode=display">
    \alpha_m^* = \frac{1}{2}\log \frac{1-e_m}{e_m}</script><p>   其中，<script type="math/tex">e_m</script>是分类误差率:</p>
 <script type="math/tex; mode=display">
@@ -769,8 +769,12 @@ r_k(z) = \frac{1}{\sum_{(x,h)\in\mathcal{D}_k}h} \sum_{(x,h)\in \mathcal{D}_k,x<
 <li>Block Sharding， 将数据划分到不同硬盘上，提高磁盘吞吐率</li>
 </ul>
 <h2 id="7-1-参考资料"><a href="#7-1-参考资料" class="headerlink" title="7.1 参考资料"></a>7.1 参考资料</h2><ul>
-<li><a href="http://wepon.me/files/gbdt.pdf" target="_blank" rel="noopener">GBDT算法原理与系统设计简介</a></li>
-<li><a href="https://www.hrwhisper.me/machine-learning-xgboost/" target="_blank" rel="noopener">『我爱机器学习』集成学习（三）XGBoost</a></li>
+<li><p><a href="http://wepon.me/files/gbdt.pdf" target="_blank" rel="noopener">GBDT算法原理与系统设计简介</a></p>
+</li>
+<li><p><a href="https://www.hrwhisper.me/machine-learning-xgboost/" target="_blank" rel="noopener">『我爱机器学习』集成学习（三）XGBoost</a></p>
+</li>
+<li><p><a href="https://homes.cs.washington.edu/~tqchen/pdf/BoostedTree.pdf" target="_blank" rel="noopener">[Tianqi’s Slide]Introduction to Boosted Trees</a></p>
+</li>
 </ul>
 
       
