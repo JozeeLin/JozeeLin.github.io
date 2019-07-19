@@ -105,7 +105,7 @@
 <meta property="og:image" content="http://yoursite.com/2019/07/19/XGBoost/image/xgboost-cache-1.png">
 <meta property="og:image" content="http://yoursite.com/2019/07/19/XGBoost/image/xgboost-cache-2.png">
 <meta property="og:image" content="http://yoursite.com/2019/07/19/XGBoost/image/xgboost-cache-3.png">
-<meta property="og:updated_time" content="2019-07-19T06:23:05.736Z">
+<meta property="og:updated_time" content="2019-07-19T06:27:04.730Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="XGBoost论文解读">
 <meta name="twitter:description" content="论文：XGBoost: A Scalable Tree Boosting System 1.1 决策树决策树学习本质上是从训练数据集中归纳出一组分类规则。 学习过程通常包含3个步骤：  特征选择(评估标准：信息增益，信息增益比，基尼指数，平方误差) 决策树的生成算法(ID3,C4.5,CART) 决策树的修剪(前剪枝early stop,后剪枝相当于regularization)  这里使用ID3">
@@ -572,7 +572,7 @@ G_m^* = \arg\min_G \sum_{i=1}^N \bar{w}_{mi}I(y_i \ne G(x_i))</script><p>其中�
 <h2 id="4-1-回归问题提升树的前向分布算法"><a href="#4-1-回归问题提升树的前向分布算法" class="headerlink" title="4.1 回归问题提升树的前向分布算法"></a>4.1 回归问题提升树的前向分布算法</h2><p>对应着二分类问题的adaboost算法，回归问题提升树对应的加法模型如下所示：</p>
 <p>已知一个训练数据集<script type="math/tex">T=\{(x_1,y_1),(x_2,y_2),\cdots,(x_N,y_N)\},x_i \in \mathcal{X} \subseteq R^n,\mathcal{X}</script>为输入空间，<script type="math/tex">y_i \in \mathcal{Y} \subseteq R</script>，<script type="math/tex">\mathcal{Y}</script>为输出空间。树可以表示为如下加法模型的形式:</p>
 <script type="math/tex; mode=display">
-T(x;\Theta) = \sum_{j=1}^J c_j I(x\in R_j) \ (11.4)</script><p>其中，参数<script type="math/tex">\Theta=\{(R_1,c_1),(R_2,c_2),\cdots,(R_J,c_J)\}</script>表示树的区域划分和各区域上的常数。<strong>J是回归树的复杂度即叶节点个数。</strong></p>
+T(x;\Theta) = \sum_{j=1}^J c_j I(x\in R_j) \tag{4-1}</script><p>其中，参数<script type="math/tex">\Theta=\{(R_1,c_1),(R_2,c_2),\cdots,(R_J,c_J)\}</script>表示树的区域划分和各区域上的常数。<strong>J是回归树的复杂度即叶节点个数。</strong></p>
 <p>在前向分步算法的第m步，给定当前模型<script type="math/tex">f_{m-1}(x)</script>，需求解</p>
 <script type="math/tex; mode=display">
 \hat{\Theta}_m = \arg\min_{\Theta_m} \sum_{i=1}^N L(y_i,f_{m-1}(x_i)+T(x_i;\Theta_m))</script><p>得到<script type="math/tex">\hat{\Theta_m}</script>，即第m棵树的参数。</p>
