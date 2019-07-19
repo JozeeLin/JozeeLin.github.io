@@ -87,7 +87,7 @@
 <meta property="og:site_name" content="Jozee&#39;s技术博客">
 <meta property="og:description" content="提升(boosting)方法是一种常用的统计学习方法，应用广泛且有效。在分类问题中，它通过改变训练样本的权重，学习多个分类器，并将这些分类器进行线性组合，提高分类性能。 本章的内容如下几点：  首先介绍提升方法的思路和具有代表性的提升算法AdaBoost。 然后通过训练误差分析探讨AdaBoost为什么能够提供学习精度；从前向分步加法模型的角度解释AdaBoost； 最后叙述提升方法更具体的实例—">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2019-06-15T16:50:36.050Z">
+<meta property="og:updated_time" content="2019-07-18T11:54:35.078Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="提升方法">
 <meta name="twitter:description" content="提升(boosting)方法是一种常用的统计学习方法，应用广泛且有效。在分类问题中，它通过改变训练样本的权重，学习多个分类器，并将这些分类器进行线性组合，提高分类性能。 本章的内容如下几点：  首先介绍提升方法的思路和具有代表性的提升算法AdaBoost。 然后通过训练误差分析探讨AdaBoost为什么能够提供学习精度；从前向分步加法模型的角度解释AdaBoost； 最后叙述提升方法更具体的实例—">
@@ -477,7 +477,7 @@ f(x) = f_M(x) = \sum_{m=1}^M \beta_mb(x;\gamma_m) \ (10.18)</script><p>这样，
 f(x) = \sum_{m=1}^M \alpha_m G_m(x) \ (10.19)</script><p>由基本分类器<script type="math/tex">G_m(x)</script>及其系数<script type="math/tex">\alpha_m</script>组成，m=1,2,…,M。前向分步算法逐一学习基函数，这一过程与AdaBoost算法逐一学习基本分类器的过程一致。</p>
 <p><strong>接下来证明前向分步算法的损失函数是指数损失函数</strong>：</p>
 <script type="math/tex; mode=display">
-L(y,f(x)) = \exp[-yf(x)]</script><p>时，其学习的具体操作等价于AdaBoost算法学习的具体操作。</p>
+L(y,f(x)) = \exp[-yf(x)]</script><p><strong>时</strong>，其学习的具体操作等价于AdaBoost算法学习的具体操作。</p>
 <p>假设经过m-1轮迭代前向分步算法已经得到<script type="math/tex">f_{m-1}(x)</script>:</p>
 <script type="math/tex; mode=display">
 \begin{aligned}f_{m-1}(x) &= f_{m-2}(x)+\alpha_{m-1}G_{m-1}(x)\\&=\alpha_1G_1(x)+\cdots+\alpha_{m-1}G_{m-1}(x)\end{aligned}</script><p>在第m轮迭代得到<script type="math/tex">\alpha_m</script>，<script type="math/tex">G_m(x)</script>和<script type="math/tex">f_m(x)</script>。</p>
@@ -486,7 +486,7 @@ f_m(x) = f_{m-1}(x)+\alpha_mG_m(x)</script><p>目标是使前向分步算法得�
 <script type="math/tex; mode=display">
 (\alpha_m,G_m(x)) = \arg\min_{\alpha,G} \sum_{i=1}^N\exp[-y_i(f_{m-1}(x_i)+\alpha G(x_i))] \ (10.20)</script><p>式(10.20)可以表示为:</p>
 <script type="math/tex; mode=display">
-(\alpha_m,G_m(x)) = \arg\min_{\alpha,G} \sum_{i=1}^N \bar{w}_{mi}\exp[-y_i\alpha G(x)] \ (10.21)</script><p>其中，<script type="math/tex">\bar{w}_{mi}=\exp[-y_if_{m-1}(x_i)]</script>。因为<script type="math/tex">\bar{w}_{mi}</script>既不依赖<script type="math/tex">\alpha</script>也不依赖于G，所以与最小化无关。但<script type="math/tex">\bar{w}_{mi}</script>依赖于<script type="math/tex">f_{m-1}(x)</script>，随着每一轮迭代而发生改变。</p>
+(\alpha_m,G_m(x)) = \arg\min_{\alpha,G} \sum_{i=1}^N \bar{w}_{mi}\exp[-y_i\alpha G(x_i)] \ (10.21)</script><p>其中，<script type="math/tex">\bar{w}_{mi}=\exp[-y_if_{m-1}(x_i)]</script>。因为<script type="math/tex">\bar{w}_{mi}</script>既不依赖<script type="math/tex">\alpha</script>也不依赖于G，所以与最小化无关。但<script type="math/tex">\bar{w}_{mi}</script>依赖于<script type="math/tex">f_{m-1}(x)</script>，随着每一轮迭代而发生改变。</p>
 <p><strong>证明式(10.21)的解<script type="math/tex">\alpha_m^*</script>和<script type="math/tex">G_m^*</script>就是AdaBoost算法所得到的<script type="math/tex">\alpha_m</script>和<script type="math/tex">G_m(x)</script></strong>。</p>
 <p>求解式(10.21):</p>
 <ol>
@@ -497,18 +497,30 @@ G_m^* = \arg\min_G \sum_{i=1}^N \bar{w}_{mi}I(y_i \ne G(x_i))</script><p>其中�
 </li>
 <li><p>求<script type="math/tex">\alpha_m^*</script>。参照式(10.11)，式(10.21)中</p>
 <script type="math/tex; mode=display">
-\begin{aligned} \sum_{i=1}^N \bar{w}_{mi} \exp[-y_i\alpha G(x_i)] &= \sum_{y_i=G_m(x_i)} \bar{w}_{mi}e^{-\alpha}+\sum_{y_i\ne G_m(x_i)} \bar{w}_{mi}e^{\alpha}\\ &=(e^{\alpha}-e^{-\alpha})\sum_{i=1}^N \bar{w}_{mi} I(y_i\ne G(x_i))+e^{-\alpha}\sum_{i=1}^N \bar{w}_{mi}\end{aligned} \ (10.22)</script><p>将已求得的<script type="math/tex">G_m^*</script>代入式(10.22)，对<script type="math/tex">\alpha</script>求导并使导数为0，即得到使式(10.21)最小的<script type="math/tex">\alpha</script>。</p>
+\begin{aligned} 
+\sum_{i=1}^N \bar{w}_{mi} \exp[-y_i\alpha G(x_i)] &= \sum_{y_i=G_m(x_i)} \bar{w}_{mi}e^{-\alpha}+\sum_{y_i\ne G_m(x_i)} \bar{w}_{mi}e^{\alpha}\\ 
+&=(e^{\alpha}-e^{-\alpha})\sum_{i=1}^N \bar{w}_{mi} I(y_i\ne G(x_i))+e^{-\alpha}\sum_{i=1}^N \bar{w}_{mi}
+
+\end{aligned} \ (10.22)</script><blockquote>
 <script type="math/tex; mode=display">
-\alpha_m^* = \frac{1}{2}\log \frac{1-e_m}{e_m}</script><p>其中，<script type="math/tex">e_m</script>是分类误差率:</p>
-<script type="math/tex; mode=display">
-e_m = \frac{\sum_{i=1}^N \bar{w}_{mi} I(y_i \ne G_m(x_i))}{\sum_{i=1}^N \bar{w}_{mi}}=\sum_{i=1}^N w_{mi}I(y_i \ne G_m(x_i))</script><p>这里的<script type="math/tex">\alpha_m^*</script>与AdaBoost算法第2(c)步的<script type="math/tex">\alpha_m</script>完全一致。</p>
-<p>最后来看每一轮样本权值的更新。由</p>
-<script type="math/tex; mode=display">
-f_m(x) = f_{m-1}(x)+\alpha_mG_m(x)</script><p>以及<script type="math/tex">\bar{w}_{mi}=\exp[-y_i f_{m-1}(x_i)]</script>，可得</p>
-<script type="math/tex; mode=display">
-\bar{w}_{m+1,i}=\bar{w}_{m,i} \exp[-y_i \alpha_m G_m(x)]</script><p>这与AdaBoost算法第2(d)步的样本权值的更新，只相差规范化因子，因而等价。</p>
+\begin{aligned}
+\sum_{y_i=G_m(x_i)} \bar{w}_{mi}e^{-\alpha} &= \bar{w}_{mi}e^{-\alpha}(\sum_{i=1}^N-\sum_{y_i\ne G_m(x_i)}) \\
+&=\bar{w}_{mi}e^{-\alpha}(\sum_{i=1}^N 1-I(y_i\ne G_m(x_i)))
+\end{aligned}</script></blockquote>
 </li>
 </ol>
+<p>   将已求得的<script type="math/tex">G_m^*</script>代入式(10.22)，可得：</p>
+<script type="math/tex; mode=display">
+   \sum_{i=1}^N \bar{w}_{mi} \exp[-y_i\alpha G(x_i)] = (e^{\alpha}-e^{-\alpha})G_m^{*}+e^{-\alpha}\sum_{i=1}^N \bar{w}_{mi} \tag{10.22.1}</script><p>   对<script type="math/tex">\alpha</script>求导并使导数为0，即得到使式(10.21)最小的<script type="math/tex">\alpha</script>。</p>
+<script type="math/tex; mode=display">
+   \alpha_m^* = \frac{1}{2}\log \frac{1-e_m}{e_m}</script><p>   其中，<script type="math/tex">e_m</script>是分类误差率:</p>
+<script type="math/tex; mode=display">
+   e_m = \frac{\sum_{i=1}^N \bar{w}_{mi} I(y_i \ne G_m(x_i))}{\sum_{i=1}^N \bar{w}_{mi}}=\sum_{i=1}^N w_{mi}I(y_i \ne G_m(x_i))</script><p>   这里的<script type="math/tex">\alpha_m^*</script>与AdaBoost算法第2(c)步的<script type="math/tex">\alpha_m</script>完全一致。</p>
+<p>   最后来看每一轮样本权值的更新。由</p>
+<script type="math/tex; mode=display">
+   f_m(x) = f_{m-1}(x)+\alpha_mG_m(x)</script><p>   以及<script type="math/tex">\bar{w}_{mi}=\exp[-y_i f_{m-1}(x_i)]</script>，可得</p>
+<script type="math/tex; mode=display">
+   \bar{w}_{m+1,i}=\bar{w}_{m,i} \exp[-y_i \alpha_m G_m(x)]</script><p>   这与AdaBoost算法第2(d)步的样本权值的更新，只相差规范化因子，因而等价。</p>
 <h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><ul>
 <li><a href="http://blog.csdn.net/v_july_v/article/details/40718799" target="_blank" rel="noopener">http://blog.csdn.net/v_july_v/article/details/40718799</a></li>
 <li><a href="https://blog.csdn.net/guyuealian/article/details/70995333" target="_blank" rel="noopener">https://blog.csdn.net/guyuealian/article/details/70995333</a></li>
@@ -642,7 +654,7 @@ f_m(x) = f_{m-1}(x)+\alpha_mG_m(x)</script><p>以及<script type="math/tex">\bar
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">24</span>
+                  <span class="site-state-item-count">25</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -664,7 +676,7 @@ f_m(x) = f_{m-1}(x)+\alpha_mG_m(x)</script><p>以及<script type="math/tex">\bar
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">27</span>
+                  <span class="site-state-item-count">30</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>
