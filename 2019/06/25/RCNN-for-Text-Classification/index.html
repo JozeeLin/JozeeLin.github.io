@@ -1,0 +1,870 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="文本分类,RCNN,深度学习,">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="模型论文：Recurrent Convolutional Neural Networks for Text Classification 单词表示学习 c_l(w_i) = f(W^{(l)}c_l(w_{i-1})+W^{sl}e(w_{i-1})) \tag{1} c_r(w_i) = f(W^{(r)}c_r(w_{i+1})+W^{(sr)}e(w_{i+1})) \tag{2}单词w_i">
+<meta name="keywords" content="文本分类,RCNN,深度学习">
+<meta property="og:type" content="article">
+<meta property="og:title" content="RCNN for Text Classification">
+<meta property="og:url" content="http://yoursite.com/2019/06/25/RCNN-for-Text-Classification/index.html">
+<meta property="og:site_name" content="Jozee&#39;s技术博客">
+<meta property="og:description" content="模型论文：Recurrent Convolutional Neural Networks for Text Classification 单词表示学习 c_l(w_i) = f(W^{(l)}c_l(w_{i-1})+W^{sl}e(w_{i-1})) \tag{1} c_r(w_i) = f(W^{(r)}c_r(w_{i+1})+W^{(sr)}e(w_{i+1})) \tag{2}单词w_i">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://yoursite.com/2019/06/25/RCNN-for-Text-Classification/image/rcnn-1.png">
+<meta property="og:updated_time" content="2019-06-25T11:53:52.036Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="RCNN for Text Classification">
+<meta name="twitter:description" content="模型论文：Recurrent Convolutional Neural Networks for Text Classification 单词表示学习 c_l(w_i) = f(W^{(l)}c_l(w_{i-1})+W^{sl}e(w_{i-1})) \tag{1} c_r(w_i) = f(W^{(r)}c_r(w_{i+1})+W^{(sr)}e(w_{i+1})) \tag{2}单词w_i">
+<meta name="twitter:image" content="http://yoursite.com/2019/06/25/RCNN-for-Text-Classification/image/rcnn-1.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2019/06/25/RCNN-for-Text-Classification/">
+
+
+
+
+
+  <title>RCNN for Text Classification | Jozee's技术博客</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Jozee's技术博客</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/06/25/RCNN-for-Text-Classification/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content>
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content>
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">RCNN for Text Classification
+
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+
+          
+          
+          
+
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建于：2019-06-25 19:30:34" itemprop="dateCreated datePublished" datetime="2019-06-25T19:30:34+08:00">2019-06-25</time>
+            </span>
+          
+
+          
+
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/NLP/" itemprop="url" rel="index"><span itemprop="name">NLP</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            
+              
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+            
+                <span class="post-meta-item-text">post.comments_count：</span>
+                <a href="/2019/06/25/RCNN-for-Text-Classification/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2019/06/25/RCNN-for-Text-Classification/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="模型"><a href="#模型" class="headerlink" title="模型"></a>模型</h2><p>论文：<a href="https://www.aaai.org/ocs/index.php/AAAI/AAAI15/paper/view/9745/9552" target="_blank" rel="noopener">Recurrent Convolutional Neural Networks for Text Classification</a></p>
+<h3 id="单词表示学习"><a href="#单词表示学习" class="headerlink" title="单词表示学习"></a>单词表示学习</h3><script type="math/tex; mode=display">
+c_l(w_i) = f(W^{(l)}c_l(w_{i-1})+W^{sl}e(w_{i-1})) \tag{1}</script><script type="math/tex; mode=display">
+c_r(w_i) = f(W^{(r)}c_r(w_{i+1})+W^{(sr)}e(w_{i+1})) \tag{2}</script><p>单词<script type="math/tex">w_i</script>左侧的上下文向量表示为:<script type="math/tex">c_l(w_i)</script></p>
+<p>单词<script type="math/tex">w_i</script>右侧的上下文向量表示为:<script type="math/tex">c_r(w_i)</script></p>
+<p>参数<script type="math/tex">e(w_{i-1})</script>表示单词<script type="math/tex">w_{i-1}</script>的词嵌入向量</p>
+<p>函数f时激活函数</p>
+<blockquote>
+<p>任意文档的第一个单词的左侧的上下文向量使用相同的共享参数<script type="math/tex">c_l(w_1)</script>来表示。</p>
+<p>任意文档的最后一个单词的右侧的上下文向量使用相同的共享参数<script type="math/tex">c_r(w_n)</script>来表示。</p>
+</blockquote>
+<p><img src="image/rcnn-1.png" alt="rcnn-1"></p>
+<blockquote>
+<p>本例中使用的示例句子为:”A sunset stroll along the South<br>Bank affords an array of stunning vantage points.”</p>
+</blockquote>
+<script type="math/tex; mode=display">
+x_i = [c_l(w_i);e(w_i);c_r(w_i)] \tag{3}</script><p>关于<script type="math/tex">x_i</script>为单词<script type="math/tex">w_i</script>的嵌入向量表示。</p>
+<script type="math/tex; mode=display">
+y_i^{(2)} = \tanh (W^{(2)}x_i+b^{(2)}) \tag{4}</script><p>此处<script type="math/tex">y_i^{(2)}</script>为潜在语义向量。</p>
+<p>通过使用循环神经网络来获取<script type="math/tex">c_l</script>和<script type="math/tex">c_r</script>的信息。</p>
+<h3 id="文本表示学习"><a href="#文本表示学习" class="headerlink" title="文本表示学习"></a>文本表示学习</h3><p>max-pooling 层:</p>
+<script type="math/tex; mode=display">
+y^{(3)} = \max_{i=1}^n y_i^{(2)} \tag{5}</script><p>作用：</p>
+<ol>
+<li>得到固定长度的向量，即<script type="math/tex">y^{(3)}</script>为固定长度的向量。</li>
+<li>获取最能表示文本意思的潜在语义信息。</li>
+</ol>
+<p>输出层：</p>
+<script type="math/tex; mode=display">
+y^{(4)} = W^{(4)}y^{(3)}+b^{(4)} \tag{6}</script><p>softmax层：</p>
+<script type="math/tex; mode=display">
+pi = \frac{\exp (y_i^{(4)})}{\sum_{k=1}^n \exp(y_k^{(4)})} \tag{7}</script><h2 id="论文复现"><a href="#论文复现" class="headerlink" title="论文复现"></a>论文复现</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">TextRCNN</span><span class="params">(object)</span>:</span></span><br><span class="line">  <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self,</span></span></span><br><span class="line"><span class="function"><span class="params">               num_classes,learning_rate,</span></span></span><br><span class="line"><span class="function"><span class="params">               decay_steps,decay_rate,</span></span></span><br><span class="line"><span class="function"><span class="params">               sequence_length,vocab_size,</span></span></span><br><span class="line"><span class="function"><span class="params">               embed_size,is_training,</span></span></span><br><span class="line"><span class="function"><span class="params">               batch_size,initializer=tf.random_normal_initializer<span class="params">(stddev=<span class="number">0.1</span>)</span>)</span>:</span></span><br><span class="line">    self.num_classes = num_classes</span><br><span class="line">    self.batch_size = batch_size</span><br><span class="line">    self.sequence_length=sequence_length</span><br><span class="line">    self.vocab_size=vocab_size</span><br><span class="line">    self.embed_size=embed_size</span><br><span class="line">    self.hidden_size=embed_size</span><br><span class="line">    self.is_training=is_training</span><br><span class="line">    self.learning_rate=learning_rate</span><br><span class="line">    self.initializer=initializer</span><br><span class="line"></span><br><span class="line">    <span class="comment"># add placeholder</span></span><br><span class="line">    self.input_x = tf.placeholder(tf.int32, [<span class="literal">None</span>, self.sequence_length], name=<span class="string">"input_x"</span>)</span><br><span class="line">    self.input_y = tf.placeholder(tf.int32, [<span class="literal">None</span>,self.num_classes], name=<span class="string">"input_y"</span>)</span><br><span class="line">    self.dropout_keep_prob=tf.placeholder(tf.float32,name=<span class="string">"dropout_keep_prob"</span>)</span><br><span class="line">    self.global_step = tf.Variable(<span class="number">0</span>, trainable=<span class="literal">False</span>, name=<span class="string">"Global_Step"</span>)</span><br><span class="line">    self.decay_steps, self.decay_rate = decay_steps, decay_rate</span><br><span class="line">    </span><br><span class="line">    <span class="comment">#参数初始化</span></span><br><span class="line">    self.instantiate_weights()</span><br><span class="line">    self.logits = self.inference() <span class="comment">#[None, self.label_size].</span></span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">not</span> is_training:</span><br><span class="line">      <span class="keyword">return</span></span><br><span class="line">    </span><br><span class="line">    self.loss_val = self.loss()</span><br><span class="line">    self.train_op = self.train()</span><br><span class="line">    self.predictions = tf.argmax(self.logits, axis=<span class="number">1</span>, name=<span class="string">"predictions"</span>)</span><br><span class="line">    correct_prediction = tf.equal(tf.cast(self.predictions,tf.int64), tf.argmax(self.input_y,axis=<span class="number">1</span>))</span><br><span class="line">    self.accuracy =tf.reduce_mean(tf.cast(correct_prediction, tf.float32), name=<span class="string">"Accuracy"</span>)</span><br><span class="line">    </span><br><span class="line">  <span class="function"><span class="keyword">def</span> <span class="title">instantiate_weights</span><span class="params">(self)</span>:</span></span><br><span class="line">    <span class="keyword">with</span> tf.name_scope(<span class="string">"weights"</span>): <span class="comment"># embedding matrix</span></span><br><span class="line">      self.Embedding = tf.get_variable(<span class="string">"Embedding"</span>,shape=[self.vocab_size, self.embed_size],initializer=self.initializer)</span><br><span class="line">      self.left_side_first_word= tf.get_variable(<span class="string">"left_side_first_word"</span>,shape=[self.batch_size,self.embed_size],initializer=self.initializer)</span><br><span class="line">      self.right_side_last_word = tf.get_variable(<span class="string">"right_side_last_word"</span>,shape=[self.batch_size,self.embed_size],initializer=self.initializer)</span><br><span class="line">      </span><br><span class="line">      self.W_l=tf.get_variable(<span class="string">"W_l"</span>,shape=[self.embed_size, self.embed_size],initializer=self.initializer)</span><br><span class="line">      self.W_r=tf.get_variable(<span class="string">"W_r"</span>,shape=[self.embed_size, self.embed_size],initializer=self.initializer)</span><br><span class="line">      </span><br><span class="line">      self.W_sl=tf.get_variable(<span class="string">"W_sl"</span>,shape=[self.embed_size, self.embed_size],initializer=self.initializer)</span><br><span class="line">      self.W_sr=tf.get_variable(<span class="string">"W_sr"</span>,shape=[self.embed_size, self.embed_size],initializer=self.initializer)</span><br><span class="line">      self.b = tf.get_variable(<span class="string">"b"</span>, [self.embed_size])</span><br><span class="line">      </span><br><span class="line">      self.W2 = tf.get_variable(<span class="string">"W2"</span>,shape=[self.hidden_size*<span class="number">3</span>,self.hidden_size*<span class="number">3</span>],initializer=self.initializer)</span><br><span class="line">      self.b2 = tf.get_variable(<span class="string">"b2"</span>,shape=[self.hidden_size*<span class="number">3</span>])</span><br><span class="line">      </span><br><span class="line">      self.W_projection = tf.get_variable(<span class="string">"W_projection"</span>,shape=[self.hidden_size*<span class="number">3</span>, self.num_classes],initializer=self.initializer)</span><br><span class="line">      self.b_projection = tf.get_variable(<span class="string">"b_projection"</span>,shape=[self.num_classes])</span><br><span class="line">      </span><br><span class="line">  <span class="function"><span class="keyword">def</span> <span class="title">get_context_left</span><span class="params">(self,context_left,embedding_previous)</span>:</span></span><br><span class="line">    <span class="string">"""</span></span><br><span class="line"><span class="string">    公式(1)</span></span><br><span class="line"><span class="string">    :param context_left</span></span><br><span class="line"><span class="string">    :param embedding_previous</span></span><br><span class="line"><span class="string">    :return [None,embed_size]</span></span><br><span class="line"><span class="string">    """</span></span><br><span class="line">    left_c=tf.matmul(context_left,self.W_l) <span class="comment">#[batch_size,embed_size]</span></span><br><span class="line">    left_e=tf.matmul(embedding_previous,self.W_sl)</span><br><span class="line">    left_h=left_c+left_e</span><br><span class="line">    context_left = tf.nn.relu(tf.nn.bias_add(left_h, self.b), <span class="string">"relu"</span>)</span><br><span class="line">    <span class="keyword">return</span> context_left</span><br><span class="line">  <span class="function"><span class="keyword">def</span> <span class="title">get_context_right</span><span class="params">(self,context_right,embedding_afterward)</span>:</span></span><br><span class="line">    <span class="string">"""</span></span><br><span class="line"><span class="string">    公式(2)</span></span><br><span class="line"><span class="string">    :param context_right</span></span><br><span class="line"><span class="string">    :param embedding_afterward</span></span><br><span class="line"><span class="string">    :return [None,embed_size]</span></span><br><span class="line"><span class="string">    """</span></span><br><span class="line">    right_c=tf.matmul(context_right,self.W_r)</span><br><span class="line">    right_e=tf.matmul(embedding_afterward,self.W_sr)</span><br><span class="line">    right_h=right_c+right_e</span><br><span class="line">    context_right = tf.nn.relu(tf.nn.bias_add(right_h, self.b), <span class="string">"relu"</span>)</span><br><span class="line">    <span class="keyword">return</span> context_right</span><br><span class="line">  </span><br><span class="line">  <span class="function"><span class="keyword">def</span> <span class="title">conv_layer_with_recurrent_structure</span><span class="params">(self)</span>:</span></span><br><span class="line">    <span class="string">"""</span></span><br><span class="line"><span class="string">    公式(3)</span></span><br><span class="line"><span class="string">    input:self.embedded_words:[None,sentence_length,embed_size]</span></span><br><span class="line"><span class="string">    :return [None,sentence_length,embed_size*3]</span></span><br><span class="line"><span class="string">    """</span></span><br><span class="line">    <span class="comment">#1. get splitted list of word embeddings</span></span><br><span class="line">    embedded_words_split=tf.split(self.embedded_words,self.sequence_length,axis=<span class="number">1</span>)</span><br><span class="line">    embedded_words_squeezed=[tf.squeeze(x,axis=<span class="number">1</span>) <span class="keyword">for</span> x <span class="keyword">in</span> embedded_words_split]</span><br><span class="line">    embedding_previous=self.left_side_first_word</span><br><span class="line">    context_left_previous=tf.zeros((self.batch_size,self.embed_size))</span><br><span class="line">    </span><br><span class="line">    <span class="comment">#2. get list of context left</span></span><br><span class="line">    context_left_list=[]</span><br><span class="line">    <span class="keyword">for</span> i,current_embedding_word <span class="keyword">in</span> enumerate(embedded_words_squeezed):</span><br><span class="line">      context_left=self.get_context_left(context_left_previous, embedding_previous)</span><br><span class="line">      context_left_list.append(context_left)</span><br><span class="line">      embedding_previous=current_embedding_word</span><br><span class="line">      context_left_previous=context_left</span><br><span class="line">    <span class="comment">#3. get context right</span></span><br><span class="line">    embedded_words_squeezed2=copy.copy(embedded_words_squeezed)</span><br><span class="line">    embedded_words_squeezed2.reverse()</span><br><span class="line">    embedding_afterward=self.right_side_last_word</span><br><span class="line">    context_right_afterward = tf.zeros((self.batch_size, self.embed_size))</span><br><span class="line">    context_right_list=[]</span><br><span class="line">    <span class="keyword">for</span> j,current_embedding_word <span class="keyword">in</span> enumerate(embedded_words_squeezed2):</span><br><span class="line">      context_right=self.get_context_right(context_right_afterward,embedding_afterward)</span><br><span class="line">      context_right_list.append(context_right)</span><br><span class="line">      embedding_afterward=current_embedding_word</span><br><span class="line">      context_right_afterward=context_right</span><br><span class="line">      </span><br><span class="line">    <span class="comment">#4.ensemble "left,embedding,right" to output</span></span><br><span class="line">    output_list=[]</span><br><span class="line">    <span class="keyword">for</span> index,current_embedding_word <span class="keyword">in</span> enumerate(embedded_words_squeezed):</span><br><span class="line">      representation=tf.concat([context_left_list[index],current_embedding_word,</span><br><span class="line">                                context_right_list[index]],axis=<span class="number">1</span>)</span><br><span class="line">      <span class="comment">#公式(4)</span></span><br><span class="line">      representation = tf.nn.tanh(tf.matmul(representation,self.W2)+self.b2)</span><br><span class="line">      output_list.append(representation)</span><br><span class="line">    <span class="comment">#5. stack list to a tensor</span></span><br><span class="line">    output=tf.stack(output_list,axis=<span class="number">1</span>)</span><br><span class="line">    <span class="keyword">return</span> output</span><br><span class="line">  </span><br><span class="line">  <span class="function"><span class="keyword">def</span> <span class="title">inference</span><span class="params">(self)</span>:</span></span><br><span class="line">    <span class="comment">#1.get emebedding of words in the sentence</span></span><br><span class="line">    self.embedded_words = tf.nn.embedding_lookup(self.Embedding,self.input_x)</span><br><span class="line">    <span class="comment">#2. Bi-lstm layer</span></span><br><span class="line">    output_conv=self.conv_layer_with_recurrent_structure()</span><br><span class="line">    <span class="comment">#2.1 W2,b2,h=tf.nn.relu</span></span><br><span class="line">    <span class="comment">#3. max pooling公式(5)</span></span><br><span class="line">    output_pooling=tf.reduce_max(output_conv,axis=<span class="number">1</span>) <span class="comment">#shape:[None,embed_size*3]</span></span><br><span class="line">    <span class="comment">#4. logits(use linear layer)</span></span><br><span class="line">    <span class="keyword">with</span> tf.name_scope(<span class="string">"dropout"</span>):</span><br><span class="line">      h_drop=tf.nn.dropout(output_pooling,keep_prob=self.dropout_keep_prob)</span><br><span class="line">    <span class="keyword">with</span> tf.name_scope(<span class="string">"output"</span>):</span><br><span class="line">      <span class="comment">#公式(6)</span></span><br><span class="line">      logits = tf.matmul(h_drop, self.W_projection) + self.b_projection</span><br><span class="line">      </span><br><span class="line">    <span class="keyword">return</span> logits</span><br><span class="line">  </span><br><span class="line">  <span class="function"><span class="keyword">def</span> <span class="title">loss</span><span class="params">(self,l2_lambda=<span class="number">0.0001</span>)</span>:</span></span><br><span class="line">    <span class="keyword">with</span> tf.name_scope(<span class="string">"loss"</span>):</span><br><span class="line">      losses = tf.nn.softmax_cross_entropy_with_logits(labels=self.input_y,logits=self.logits)</span><br><span class="line">      loss=tf.reduce_mean(losses)</span><br><span class="line">      l2_losses = tf.add_n([tf.nn.l2_loss(v) <span class="keyword">for</span> v <span class="keyword">in</span> tf.trainable_variables()</span><br><span class="line">                            <span class="keyword">if</span> <span class="string">'bias'</span> <span class="keyword">not</span> <span class="keyword">in</span> v.name]) * l2_lambda</span><br><span class="line">      loss=loss+l2_losses</span><br><span class="line">    <span class="keyword">return</span> loss</span><br><span class="line">  </span><br><span class="line">  <span class="function"><span class="keyword">def</span> <span class="title">train</span><span class="params">(self)</span>:</span></span><br><span class="line">    learning_rate = tf.train.exponential_decay(self.learning_rate, self.global_step,</span><br><span class="line">                                           self.decay_steps,self.decay_rate, staircase=<span class="literal">True</span>)</span><br><span class="line">    train_op = tf.contrib.layers.optimize_loss(self.loss_val, global_step=self.global_step,</span><br><span class="line">                                        learning_rate=learning_rate, optimizer=<span class="string">"Adam"</span>)</span><br><span class="line">    <span class="keyword">return</span> train_op</span><br></pre></td></tr></table></figure>
+<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><ul>
+<li><p><a href="https://github.com/brightmart/text_classification/tree/master/a04_TextRCNN" target="_blank" rel="noopener">https://github.com/brightmart/text_classification/tree/master/a04_TextRCNN</a></p>
+</li>
+<li><p><a href="https://github.com/roomylee/rcnn-text-classification" target="_blank" rel="noopener">https://github.com/roomylee/rcnn-text-classification</a></p>
+</li>
+</ul>
+
+      
+    </div>
+
+    
+
+    
+      
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+        
+          
+        
+        <div class="post-tags">
+          
+            <a href="/tags/文本分类/" rel="tag"># 文本分类</a>
+          
+            <a href="/tags/RCNN/" rel="tag"># RCNN</a>
+          
+            <a href="/tags/深度学习/" rel="tag"># 深度学习</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/06/21/RNN-BPTT算法-in-Numpy/" rel="next" title="RNN-BPTT算法 in Numpy">
+                <i class="fa fa-chevron-left"></i> RNN-BPTT算法 in Numpy
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/06/26/softmax-cross-entropy-derivative/" rel="prev" title="Softmax with cross-entropy derivative">
+                Softmax with cross-entropy derivative <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+      <div id="disqus_thread">
+        <noscript>
+          Please enable JavaScript to view the
+          <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a>
+        </noscript>
+      </div>
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">jozee</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">25</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">3</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">30</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#模型"><span class="nav-number">1.</span> <span class="nav-text">模型</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#单词表示学习"><span class="nav-number">1.1.</span> <span class="nav-text">单词表示学习</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#文本表示学习"><span class="nav-number">1.2.</span> <span class="nav-text">文本表示学习</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#论文复现"><span class="nav-number">2.</span> <span class="nav-text">论文复现</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#参考资料"><span class="nav-number">3.</span> <span class="nav-text">参考资料</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">jozee</span>
+
+  
+</div>
+<div class="busuanzi_count">
+    <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js">
+    </script>
+    <span> 本站访客数:<span id="busuanzi_value_site_uv"></span>人</span>
+    <span class="post-meta-divider">|</span>
+    <span>本站总访问量:<span id="busuanzi_value_site_pv"></span>次</span>
+</div>
+
+
+
+
+
+
+
+
+
+        
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+    
+      <script id="dsq-count-scr" src="https://jozeelin.disqus.com/count.js" async></script>
+    
+
+    
+      <script type="text/javascript">
+        var disqus_config = function () {
+          this.page.url = 'http://yoursite.com/2019/06/25/RCNN-for-Text-Classification/';
+          this.page.identifier = '2019/06/25/RCNN-for-Text-Classification/';
+          this.page.title = 'RCNN for Text Classification';
+        };
+        var d = document, s = d.createElement('script');
+        s.src = 'https://jozeelin.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', '' + +new Date());
+        (d.head || d.body).appendChild(s);
+      </script>
+    
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+  
+
+  
+
+</body>
+</html>

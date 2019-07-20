@@ -1,0 +1,874 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="GloVe,词向量,">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="GloVe论文：https://www.aclweb.org/anthology/D14-1162 相较于skip-gram+softmax模型，GloVe利用了语料数据集的全局统计信息，并使用最小二乘法重新设计目标函数。 论文解读相关的数学符号定义如下： 词-词共现矩阵：X 词j出现在词i上下文的次数：X_{ij} 令X_i = \sum_{k}X_{ik}表示出现在词i上下文的所有词的次数总和">
+<meta name="keywords" content="GloVe,词向量">
+<meta property="og:type" content="article">
+<meta property="og:title" content="GloVe模型的原理与实现">
+<meta property="og:url" content="http://yoursite.com/2019/07/01/GloVe模型的原理与实现/index.html">
+<meta property="og:site_name" content="Jozee&#39;s技术博客">
+<meta property="og:description" content="GloVe论文：https://www.aclweb.org/anthology/D14-1162 相较于skip-gram+softmax模型，GloVe利用了语料数据集的全局统计信息，并使用最小二乘法重新设计目标函数。 论文解读相关的数学符号定义如下： 词-词共现矩阵：X 词j出现在词i上下文的次数：X_{ij} 令X_i = \sum_{k}X_{ik}表示出现在词i上下文的所有词的次数总和">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://yoursite.com/2019/07/01/GloVe模型的原理与实现/image/glove-1.png">
+<meta property="og:image" content="http://yoursite.com/2019/07/01/GloVe模型的原理与实现/image/glove-2.png">
+<meta property="og:updated_time" content="2019-07-01T05:32:07.929Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="GloVe模型的原理与实现">
+<meta name="twitter:description" content="GloVe论文：https://www.aclweb.org/anthology/D14-1162 相较于skip-gram+softmax模型，GloVe利用了语料数据集的全局统计信息，并使用最小二乘法重新设计目标函数。 论文解读相关的数学符号定义如下： 词-词共现矩阵：X 词j出现在词i上下文的次数：X_{ij} 令X_i = \sum_{k}X_{ik}表示出现在词i上下文的所有词的次数总和">
+<meta name="twitter:image" content="http://yoursite.com/2019/07/01/GloVe模型的原理与实现/image/glove-1.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2019/07/01/GloVe模型的原理与实现/">
+
+
+
+
+
+  <title>GloVe模型的原理与实现 | Jozee's技术博客</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Jozee's技术博客</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/07/01/GloVe模型的原理与实现/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content>
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content>
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">GloVe模型的原理与实现
+
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+
+          
+          
+          
+
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建于：2019-07-01 13:26:06" itemprop="dateCreated datePublished" datetime="2019-07-01T13:26:06+08:00">2019-07-01</time>
+            </span>
+          
+
+          
+
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/NLP/" itemprop="url" rel="index"><span itemprop="name">NLP</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            
+              
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+            
+                <span class="post-meta-item-text">post.comments_count：</span>
+                <a href="/2019/07/01/GloVe模型的原理与实现/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2019/07/01/GloVe模型的原理与实现/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="GloVe"><a href="#GloVe" class="headerlink" title="GloVe"></a>GloVe</h2><p>论文：<a href="https://www.aclweb.org/anthology/D14-1162" target="_blank" rel="noopener">https://www.aclweb.org/anthology/D14-1162</a></p>
+<p>相较于skip-gram+softmax模型，GloVe利用了语料数据集的全局统计信息，并使用最小二乘法重新设计目标函数。</p>
+<h2 id="论文解读"><a href="#论文解读" class="headerlink" title="论文解读"></a>论文解读</h2><p>相关的数学符号定义如下：</p>
+<p>词-词共现矩阵：X</p>
+<p>词j出现在词i上下文的次数：<script type="math/tex">X_{ij}</script></p>
+<p>令<script type="math/tex">X_i = \sum_{k}X_{ik}</script>表示出现在词i上下文的所有词的次数总和</p>
+<p>令<script type="math/tex">P_{ij} = P(j|i)=X_{ij}/X_i</script>表示词j出现在词i上下文窗口中的概率</p>
+<p>假设i=ice，j=steam，这两个单词的关系可以通过学习它们分别与第三个词的共现概率的比率来表示。</p>
+<p>假设k=solid，那么k与i更加相关，因此我们希望<script type="math/tex">P_{ik}/P_{jk}</script>的值比较大。同样的，k=gas，那么k与j更加相关，因此我们希望<script type="math/tex">P_{ik}/P_{jk}</script>的值很小。那么对于k=water或者fashion时，k同时与i和j相关或者不相关，因此<script type="math/tex">P_{ik}/P_{jk}</script>应该接近1。上述规律如下表所示：</p>
+<p><img src="image/glove-1.png" alt="glove-1"></p>
+<p>综上所述，比率<script type="math/tex">P_{ik}/P_{jk}</script>涉及到i,jk三个词，这个比率的一般形式表示如下:</p>
+<script type="math/tex; mode=display">
+F(w_i,w_j,\tilde{w_k}) = \frac{P_{ik}}{P_{jk}} \tag{1}</script><p>此时，<script type="math/tex">w\in \mathrm{R}^d</script>为词向量。</p>
+<blockquote>
+<p>后面的公式演变都是为了找到函数F使得，式(1)左右两边接近或相等。</p>
+</blockquote>
+<p>为了表示词向量在向量空间的线性关系，式(1)使用差分的形式进行表示：</p>
+<script type="math/tex; mode=display">
+F(w_i-w_j,\tilde{w_k}) = \frac{P_{ik}}{P_{jk}} \tag{2}</script><p>式(2)的左边参数为向量，右边为标量，我们可以使用比较复杂的神经网络来实现这个F函数，但是神经网络会把我们试图获取到的线性关系抵消掉。因此，使用向量点乘的方式来表示左边的参数：</p>
+<script type="math/tex; mode=display">
+F((w_i-w_j)^{\top}\tilde{w_k}) = \frac{P_{ik}}{P_{jk}} \tag{3}</script><p>首先，令函数F是同质的，则可得到:</p>
+<script type="math/tex; mode=display">
+F((w_i-w_j)^{\top}\tilde{w_k}) = \frac{F(w_i^{\top}\tilde{w_k})}{F(w_j^{\top}\tilde{w_k})} \tag{4}</script><p>式(3)和式(4)一一对应，可得到：</p>
+<script type="math/tex; mode=display">
+F(w_i^{\top}\tilde{w_k}) = P_{ik} = \frac{X_{ik}}{X_i} \tag{5}</script><p>令<script type="math/tex">F=\exp</script>，则式(4)表示为</p>
+<script type="math/tex; mode=display">
+w_i^{\top}\tilde{w_k} = \log(P_{ik})=\log(X_{ik})-\log(X_i) \tag{6}</script><p>式(6)中，<script type="math/tex">\log(X_i)</script>独立于k，所以该项可以都放在<script type="math/tex">w_i</script>的偏置项<script type="math/tex">b_i</script>中；最后再为<script type="math/tex">\tilde{w_k}</script>加上一个偏置项<script type="math/tex">\tilde{b_k}</script>，使得得到的式(7)满足词向量中的线性结构，即i,k同质：</p>
+<script type="math/tex; mode=display">
+w_i^{\top}\tilde{w_k} +b_i+\tilde{b_k} = \log(X_{ik}) \tag{7}</script><p>式(7)可以发现，我们可以通过词向量和偏执项一起来表示词共现次数的log值。</p>
+<p>我们的目标是使得等式两边的差距最小化，因此自然而言的就想到使用平方差损失函数来构建目标函数。</p>
+<p>还有一个问题，那就是词的权重都是一样的，而我们希望对于很少出现(可能是噪声)，或经常出现的词的权重不要太大。因此，在式(7)的基础上引入权重<script type="math/tex">f(X_{ij})</script>:</p>
+<script type="math/tex; mode=display">
+\mathcal{J} = \sum_{i,j=1}^V f(X_{ij})(w_i^{\top}\tilde{w_j}+b_i+\tilde{b_j}-\log X_{ij})^2 \tag{8}</script><p>此处，V为字典大小，通过实验，作者得到权重函数<script type="math/tex">f(x)</script>如下所示:</p>
+<script type="math/tex; mode=display">
+f(x) = \left\{\begin{aligned}(&x/x_{max})^{\alpha}\ \textrm{if}\ x<x_{max} \\
+&1\ \textrm{otherwise}\end{aligned}\right. \tag{9}</script><p><img src="image/glove-2.png" alt="glove-2"></p>
+<p>此处<script type="math/tex">x_{max}=100</script>。</p>
+<h2 id="代码实现"><a href="#代码实现" class="headerlink" title="代码实现"></a>代码实现</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">GloVe</span><span class="params">(object)</span>:</span></span><br><span class="line">    <span class="string">"""</span></span><br><span class="line"><span class="string">    parameters:</span></span><br><span class="line"><span class="string">        n:the embedding dimension.</span></span><br><span class="line"><span class="string">        xmax : int (default: 100)</span></span><br><span class="line"><span class="string">            Word pairs with frequency greater than this are given weight 1.0.</span></span><br><span class="line"><span class="string">            Word pairs with frequency under this are given weight</span></span><br><span class="line"><span class="string">            (c / xmax) ** alpha, where c is the co-occurence count</span></span><br><span class="line"><span class="string">        alpha:float (default: 0.75)</span></span><br><span class="line"><span class="string">            Exponent in the weighting function (see [1]_, eq. (9)).</span></span><br><span class="line"><span class="string">        learning_rate: float (default: 0.01)</span></span><br><span class="line"><span class="string">            Learning rate used for the Adagrad optimizer.</span></span><br><span class="line"><span class="string">        max_iter : int (default: 100)</span></span><br><span class="line"><span class="string">            Number of training epochs. Default: 100</span></span><br><span class="line"><span class="string">    """</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, n=<span class="number">100</span>,xmax=<span class="number">100</span>,alpha=<span class="number">0.75</span>,</span></span></span><br><span class="line"><span class="function"><span class="params">                max_iter=<span class="number">100</span>,learning_rate=<span class="number">0.05</span>,**kwargs)</span>:</span></span><br><span class="line">        self.n = n</span><br><span class="line">        self.xmax = xmax</span><br><span class="line">        self.alpha = alpha</span><br><span class="line">        self.max_iter = max_iter</span><br><span class="line">        self.learning_rate = learning_rate</span><br><span class="line">        self.n_words = <span class="literal">None</span></span><br><span class="line">        self.errors = list()</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">fit</span><span class="params">(self, X, vocab=None)</span>:</span></span><br><span class="line">        <span class="string">"""</span></span><br><span class="line"><span class="string">        parameter:</span></span><br><span class="line"><span class="string">            X:array-like of shape = [n_words,n_words] co-occurrence matrix</span></span><br><span class="line"><span class="string">            vocab: iterable or None,Rownames for 'X'</span></span><br><span class="line"><span class="string">        returns:</span></span><br><span class="line"><span class="string">            embedding matrix:[n_words,embedding_dim]</span></span><br><span class="line"><span class="string">        """</span></span><br><span class="line">        weights, log_coincidence=self._initialize(X)</span><br><span class="line">        <span class="keyword">return</span> self._fit(X, weights, log_coincidence,vocab=vocab)</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">_initialize</span><span class="params">(self, coincidence)</span>:</span></span><br><span class="line">        self.n_words = coincidence.shape[<span class="number">0</span>]</span><br><span class="line">        bounded = np.minimum(coincidence, self.xmax)<span class="comment">#式(9)中的x_max</span></span><br><span class="line">        weights = (bounded/float(self.xmax))**self.alpha</span><br><span class="line">        log_coincidence = log_of_array_ignoring_zeros(coincidence)<span class="comment">#目标函数中的log项</span></span><br><span class="line">        <span class="keyword">return</span> weights, log_coincidence</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">_fit</span><span class="params">(self, coincidence, weights, log_coincidence, vocab=None)</span>:</span></span><br><span class="line">        self._initialize_w_c_b(self.n_words,vocab)</span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span> iteration <span class="keyword">in</span> range(self.max_iter):</span><br><span class="line">            pred = self._make_prediction()</span><br><span class="line">            gradients, error = self._get_gradients_and_error(pred,log_coincidence,weights)</span><br><span class="line">            self.errors.append(error)</span><br><span class="line">            self._apply_updates(gradients)</span><br><span class="line">        <span class="keyword">return</span> self.W+self.C</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">_initialize_w_c_b</span><span class="params">(self, n_words, vocab)</span>:</span></span><br><span class="line">        self.W = randmatrix(n_words,self.n)</span><br><span class="line">        self.C = randmatrix(n_words, self.n)</span><br><span class="line"></span><br><span class="line">        self.bw = randmatrix(n_words,<span class="number">1</span>)</span><br><span class="line">        self.bc = randmatrix(n_words, <span class="number">1</span>)</span><br><span class="line">        self.ones= np.ones((n_words,<span class="number">1</span>))</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">_make_prediction</span><span class="params">(self)</span>:</span></span><br><span class="line">        <span class="string">'''式(7)的左侧'''</span></span><br><span class="line">        pred = np.dot(self.W, self.C.T)+self.bw+self.bc.T</span><br><span class="line">        <span class="keyword">return</span> pred</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">_get_gradients_and_error</span><span class="params">(self,predictions,log_coincidence,weights)</span>:</span></span><br><span class="line">        diffs = np.square(predictions-log_coincidence)</span><br><span class="line">        weighted_diffs = np.multiply(weights, diffs)</span><br><span class="line">        wgrad = weighted_diffs.dot(self.C)</span><br><span class="line">        cgrad = weighted_diffs.T.dot(self.W)</span><br><span class="line">        bwgrad = weighted_diffs.sum(axis=<span class="number">1</span>).reshape(<span class="number">-1</span>,<span class="number">1</span>)</span><br><span class="line">        bcgrad = weighted_diffs.sum(axis=<span class="number">0</span>).reshape(<span class="number">-1</span>,<span class="number">1</span>)</span><br><span class="line">        error = (<span class="number">0.5</span>*np.multiply(weights, diffs**<span class="number">2</span>)).sum()</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> &#123;<span class="string">'W'</span>:wgrad,<span class="string">'C'</span>:cgrad,<span class="string">'bw'</span>:bwgrad,<span class="string">'bc'</span>:bcgrad&#125;,error</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">_apply_updates</span><span class="params">(self, gradients)</span>:</span></span><br><span class="line">        <span class="string">'''Apply AdaGrad update to parameters'''</span></span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">not</span> hasattr(self, <span class="string">'optimizers'</span>):</span><br><span class="line">            self.optimizer=&#123;obj:AdaGradOptimizer(self.learning_rate) <span class="keyword">for</span> obj <span class="keyword">in</span> [<span class="string">'W'</span>,<span class="string">'C'</span>,<span class="string">'bw'</span>,<span class="string">'bc'</span>]&#125;</span><br><span class="line"></span><br><span class="line">        self.W -= self.optimizer[<span class="string">'W'</span>].get_step(gradients[<span class="string">'W'</span>])</span><br><span class="line">        self.C -= self.optimizer[<span class="string">'C'</span>].get_step(gradients[<span class="string">'C'</span>])</span><br><span class="line">        self.bw -= self.optimizer[<span class="string">'bw'</span>].get_step(gradients[<span class="string">'bw'</span>])</span><br><span class="line">        self.bc -= self.optimizer[<span class="string">'bc'</span>].get_step(gradients[<span class="string">'bc'</span>])</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">AdaGradOptimizer</span><span class="params">(object)</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, learning_rate, initial_accumulator_value=<span class="number">0.1</span>)</span>:</span></span><br><span class="line">        self.learning_rate = learning_rate</span><br><span class="line">        self.initial_accumulator_value = initial_accumulator_value</span><br><span class="line">        self._momentum = <span class="literal">None</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">get_step</span><span class="params">(self, grad)</span>:</span></span><br><span class="line">        <span class="string">"""Compuet the 'step' to take for the next gradient descent update."""</span></span><br><span class="line">        <span class="keyword">if</span> self._momentum <span class="keyword">is</span> <span class="literal">None</span>:</span><br><span class="line">            self._momentum = self.initial_accumulator_value*np.ones_like(grad)</span><br><span class="line">        self._momentum += grad**<span class="number">2</span></span><br><span class="line">        <span class="keyword">return</span> self.learning_rate*grad/np.sqrt(self._momentum)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">log_of_array_ignoring_zeros</span><span class="params">(M)</span>:</span></span><br><span class="line">    log_M = M.copy()</span><br><span class="line">    mask = log_M&gt;<span class="number">0</span></span><br><span class="line">    log_M[mask]=np.log(log_M[mask])</span><br><span class="line">    <span class="keyword">return</span> log_M</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">randmatrix</span><span class="params">(m, n, random_seed=None)</span>:</span></span><br><span class="line">    <span class="string">"""参数初始化函数"""</span></span><br><span class="line">    val = np.sqrt(<span class="number">6.0</span> / (m + n))</span><br><span class="line">    np.random.seed(random_seed)</span><br><span class="line">    <span class="keyword">return</span> np.random.uniform(-val, val, size=(m, n))</span><br></pre></td></tr></table></figure>
+<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><ul>
+<li><a href="http://zh.d2l.ai/chapter_natural-language-processing/glove.html" target="_blank" rel="noopener">全局向量的词嵌入（GloVe）</a></li>
+<li><a href="https://mp.weixin.qq.com/s/DvbvYppeuMaPn84SRAINcQ" target="_blank" rel="noopener">NLP中的词向量对比：word2vec/glove/fastText/elmo/GPT/bert</a></li>
+<li><a href="https://github.com/roamanalytics/mittens" target="_blank" rel="noopener">Mittens</a></li>
+</ul>
+
+      
+    </div>
+
+    
+
+    
+      
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+        
+          
+        
+        <div class="post-tags">
+          
+            <a href="/tags/GloVe/" rel="tag"># GloVe</a>
+          
+            <a href="/tags/词向量/" rel="tag"># 词向量</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/06/28/Word2Vec数学原理初探/" rel="next" title="Word2Vec数学原理初探">
+                <i class="fa fa-chevron-left"></i> Word2Vec数学原理初探
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/07/03/UCR-DTW和UCR-ED模型详解/" rel="prev" title="UCR-DTW和UCR-ED模型详解">
+                UCR-DTW和UCR-ED模型详解 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+      <div id="disqus_thread">
+        <noscript>
+          Please enable JavaScript to view the
+          <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a>
+        </noscript>
+      </div>
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">jozee</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">25</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">3</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">30</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#GloVe"><span class="nav-number">1.</span> <span class="nav-text">GloVe</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#论文解读"><span class="nav-number">2.</span> <span class="nav-text">论文解读</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#代码实现"><span class="nav-number">3.</span> <span class="nav-text">代码实现</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#参考资料"><span class="nav-number">4.</span> <span class="nav-text">参考资料</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">jozee</span>
+
+  
+</div>
+<div class="busuanzi_count">
+    <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js">
+    </script>
+    <span> 本站访客数:<span id="busuanzi_value_site_uv"></span>人</span>
+    <span class="post-meta-divider">|</span>
+    <span>本站总访问量:<span id="busuanzi_value_site_pv"></span>次</span>
+</div>
+
+
+
+
+
+
+
+
+
+        
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+    
+      <script id="dsq-count-scr" src="https://jozeelin.disqus.com/count.js" async></script>
+    
+
+    
+      <script type="text/javascript">
+        var disqus_config = function () {
+          this.page.url = 'http://yoursite.com/2019/07/01/GloVe模型的原理与实现/';
+          this.page.identifier = '2019/07/01/GloVe模型的原理与实现/';
+          this.page.title = 'GloVe模型的原理与实现';
+        };
+        var d = document, s = d.createElement('script');
+        s.src = 'https://jozeelin.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', '' + +new Date());
+        (d.head || d.body).appendChild(s);
+      </script>
+    
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+  
+
+  
+
+</body>
+</html>

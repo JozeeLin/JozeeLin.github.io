@@ -1,0 +1,888 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="损失函数,梯度推导,softmax-cross-entropy,">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="softmax对于向量Z=(z_1,z_2,…,z_C)，计算它对应的softmax向量Y=(y_1,y_2,…,y_C):  y_c = \varsigma(Z)_c = \frac{e^{z_c}}{\sum_{d=1}^C e^{z_d}} ,c=1,2,...,C \tag{1}分母\sum_{d=1}^C e^{z_d}为归一化因子，使得\sum_{c=1}^C y_c = 1。 123">
+<meta name="keywords" content="损失函数,梯度推导,softmax-cross-entropy">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Softmax with cross-entropy derivative">
+<meta property="og:url" content="http://yoursite.com/2019/06/26/softmax-cross-entropy-derivative/index.html">
+<meta property="og:site_name" content="Jozee&#39;s技术博客">
+<meta property="og:description" content="softmax对于向量Z=(z_1,z_2,…,z_C)，计算它对应的softmax向量Y=(y_1,y_2,…,y_C):  y_c = \varsigma(Z)_c = \frac{e^{z_c}}{\sum_{d=1}^C e^{z_d}} ,c=1,2,...,C \tag{1}分母\sum_{d=1}^C e^{z_d}为归一化因子，使得\sum_{c=1}^C y_c = 1。 123">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2019-06-25T16:24:35.330Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Softmax with cross-entropy derivative">
+<meta name="twitter:description" content="softmax对于向量Z=(z_1,z_2,…,z_C)，计算它对应的softmax向量Y=(y_1,y_2,…,y_C):  y_c = \varsigma(Z)_c = \frac{e^{z_c}}{\sum_{d=1}^C e^{z_d}} ,c=1,2,...,C \tag{1}分母\sum_{d=1}^C e^{z_d}为归一化因子，使得\sum_{c=1}^C y_c = 1。 123">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2019/06/26/softmax-cross-entropy-derivative/">
+
+
+
+
+
+  <title>Softmax with cross-entropy derivative | Jozee's技术博客</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Jozee's技术博客</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/06/26/softmax-cross-entropy-derivative/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content>
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content>
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Softmax with cross-entropy derivative
+
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+
+          
+          
+          
+
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建于：2019-06-26 00:21:16" itemprop="dateCreated datePublished" datetime="2019-06-26T00:21:16+08:00">2019-06-26</time>
+            </span>
+          
+
+          
+
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/机器学习/" itemprop="url" rel="index"><span itemprop="name">机器学习</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            
+              
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+            
+                <span class="post-meta-item-text">post.comments_count：</span>
+                <a href="/2019/06/26/softmax-cross-entropy-derivative/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2019/06/26/softmax-cross-entropy-derivative/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="softmax"><a href="#softmax" class="headerlink" title="softmax"></a>softmax</h2><p>对于向量<script type="math/tex">Z=(z_1,z_2,…,z_C)</script>，计算它对应的softmax向量<script type="math/tex">Y=(y_1,y_2,…,y_C)</script>:</p>
+<script type="math/tex; mode=display">
+y_c = \varsigma(Z)_c = \frac{e^{z_c}}{\sum_{d=1}^C e^{z_d}} ,c=1,2,...,C \tag{1}</script><p>分母<script type="math/tex">\sum_{d=1}^C e^{z_d}</script>为归一化因子，使得<script type="math/tex">\sum_{c=1}^C y_c = 1</script>。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">softmax</span><span class="params">(z)</span>:</span></span><br><span class="line">  <span class="string">'''softmax function'''</span></span><br><span class="line">  <span class="keyword">return</span> np.exp(z)/np.sum(np.exp(z))</span><br></pre></td></tr></table></figure>
+<h3 id="softmax-的梯度"><a href="#softmax-的梯度" class="headerlink" title="softmax 的梯度"></a>softmax 的梯度</h3><p>求梯度<script type="math/tex">\frac{\partial{y_i}}{\partial{z_j}}</script></p>
+<p>令<script type="math/tex">\sum_C = \sum_{d=1}^C e^{z_d}</script>，那么对于公式(1)可简写成<script type="math/tex">y_c = \frac{e^{z_c}}{\sum_C}</script>。</p>
+<blockquote>
+<script type="math/tex; mode=display">(e^x)^{'} = e^x</script><script type="math/tex; mode=display">\left(\frac{1}{x}\right)^{'}= -\frac{1}{x^2}</script></blockquote>
+<p>当i=j时，</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+\frac{\partial{y_i}}{\partial{z_j}} = \frac{\partial{y_i}}{\partial{z_i}} &=\frac{\partial{ \frac{e^{z_i}}{\sum_C}}}{\partial{z_i}}\\
+&= e^{z_i}\frac{-e^{z_i}}{\sum_C^2}+\frac{e^{z_i}}{\sum_C}\\
+&= \frac{e^{z_i}\sum_C-e^{z_i}e^{z_i}}{\sum_C^2}\\
+&= \frac{e^{z_i}}{\sum_C}\frac{\sum_C-e^{z_i}}{\sum_C}\\
+&= \frac{e^{z_i}}{\sum_C}(1-\frac{e^{z_i}}{\sum_C})\\
+&= y_i(1-y_i)
+\end{aligned}\tag{2}</script><p>当i!=j时，</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+\frac{\partial{y_i}}{\partial{z_j}} &=\frac{\partial{ \frac{e^{z_i}}{\sum_C}}}{\partial{z_j}}\\
+&= e^{z_i}\frac{-e^{z_j}}{\sum_C^2}+\frac{0}{\sum_C}\\
+&= -\frac{e^{z_i}}{\sum_C}\frac{e^{z_j}}{\sum_C}\\
+&= -y_iy_j
+\end{aligned}\tag{3}</script><h2 id="cross-entropy-loss-function"><a href="#cross-entropy-loss-function" class="headerlink" title="cross-entropy loss function"></a>cross-entropy loss function</h2><h3 id="从最大似然估计推出交叉熵损失函数"><a href="#从最大似然估计推出交叉熵损失函数" class="headerlink" title="从最大似然估计推出交叉熵损失函数"></a>从最大似然估计推出交叉熵损失函数</h3><ul>
+<li><p>最大似然估计函数</p>
+<script type="math/tex; mode=display">
+\mathrm{argmax}_{\theta} \mathcal{L}(\theta|t,z) \tag{4}</script></li>
+<li><p>似然函数写成联合概率分布形式</p>
+<script type="math/tex; mode=display">
+P(t,z|\theta) = P(t|z,\theta)P(z|\theta) \tag{5}</script></li>
+<li><p>对于给定参数，式(5)可简化成</p>
+<script type="math/tex; mode=display">
+P(t|z) = \prod_{i=c}^C P(t_c|z)^{t_c} = \prod_{i=c}^C \varsigma(z)_c^{t_c} = \prod_{i=c}^C y_c^{t_c} \tag{6}</script></li>
+<li><p>那么，对数似然函数即可简化成:</p>
+<script type="math/tex; mode=display">
+-\log \mathcal{L}(\theta|t,z) =\xi(t,z)= -\log \prod_{i=c}^C y_c^{t_c} = \sum_{i=c}^C t_c.\log(y_c) \tag{7}</script></li>
+<li><p>对于多个样本，对应的对数似然函数为:</p>
+<script type="math/tex; mode=display">
+\xi(T,Y) = \sum_{i=1}^n \xi(t_i,y_i) = -\sum_{i=1}^n \sum_{c=1}^C t_{ic}\log(y_{ic}) \tag{8}</script></li>
+</ul>
+<h3 id="交叉熵的梯度"><a href="#交叉熵的梯度" class="headerlink" title="交叉熵的梯度"></a>交叉熵的梯度</h3><p>对公式(7)求关于z的梯度：</p>
+<blockquote>
+<p>以e为底的对数导数:<script type="math/tex">(\log x)^{'}=\frac{1}{x}</script></p>
+<p>对于t向量是one-hot向量，有<script type="math/tex">\sum_{j=1}^C t_j=1</script></p>
+</blockquote>
+<script type="math/tex; mode=display">
+\begin{aligned}
+\frac{\partial{\xi}}{\partial{z_i}} &= -\sum_{j=1}^C \frac{\partial t_j \log(y_j)}{\partial z_i} = -\sum_{j=1}^C t_j \frac{\partial\log(y_j)}{\partial{z_i}} = -\sum_{j=1}^C t_j\frac{1}{y_j}\frac{\partial{y_j}}{\partial{z_i}}\\
+&= -\frac{t_i}{y_i}\frac{\partial{y_j}}{\partial{z_i}} - \sum_{j\ne i}^C \frac{t_j}{y_j}\frac{\partial{y_j}}{\partial{z_i}}\\
+&= -\frac{t_i}{y_i}y_i(1-y_i) - \sum_{j\ne i}^C \frac{t_j}{y_j}(-y_jy_i)\\
+&= -t_i+t_iy_i+\sum_{j\ne i}^Ct_jy_i\\
+&= -t_i +\sum_{j=1}^Ct_jy_i\\
+&=-t_i+y_i\sum_{j=1}^C t_j\\
+&=y_i-t_i
+\end{aligned}\tag{9}</script><h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><ul>
+<li><a href="https://peterroelants.github.io/posts/cross-entropy-softmax/" target="_blank" rel="noopener">Softmax classification with cross-entropy</a></li>
+</ul>
+
+      
+    </div>
+
+    
+
+    
+      
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+        
+          
+        
+        <div class="post-tags">
+          
+            <a href="/tags/损失函数/" rel="tag"># 损失函数</a>
+          
+            <a href="/tags/梯度推导/" rel="tag"># 梯度推导</a>
+          
+            <a href="/tags/softmax-cross-entropy/" rel="tag"># softmax-cross-entropy</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/06/25/RCNN-for-Text-Classification/" rel="next" title="RCNN for Text Classification">
+                <i class="fa fa-chevron-left"></i> RCNN for Text Classification
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/06/26/LSTM模型结构分解/" rel="prev" title="LSTM模型结构分解">
+                LSTM模型结构分解 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+      <div id="disqus_thread">
+        <noscript>
+          Please enable JavaScript to view the
+          <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a>
+        </noscript>
+      </div>
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">jozee</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">25</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">3</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">30</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#softmax"><span class="nav-number">1.</span> <span class="nav-text">softmax</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#softmax-的梯度"><span class="nav-number">1.1.</span> <span class="nav-text">softmax 的梯度</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#cross-entropy-loss-function"><span class="nav-number">2.</span> <span class="nav-text">cross-entropy loss function</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#从最大似然估计推出交叉熵损失函数"><span class="nav-number">2.1.</span> <span class="nav-text">从最大似然估计推出交叉熵损失函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#交叉熵的梯度"><span class="nav-number">2.2.</span> <span class="nav-text">交叉熵的梯度</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#参考资料"><span class="nav-number">3.</span> <span class="nav-text">参考资料</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">jozee</span>
+
+  
+</div>
+<div class="busuanzi_count">
+    <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js">
+    </script>
+    <span> 本站访客数:<span id="busuanzi_value_site_uv"></span>人</span>
+    <span class="post-meta-divider">|</span>
+    <span>本站总访问量:<span id="busuanzi_value_site_pv"></span>次</span>
+</div>
+
+
+
+
+
+
+
+
+
+        
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+    
+      <script id="dsq-count-scr" src="https://jozeelin.disqus.com/count.js" async></script>
+    
+
+    
+      <script type="text/javascript">
+        var disqus_config = function () {
+          this.page.url = 'http://yoursite.com/2019/06/26/softmax-cross-entropy-derivative/';
+          this.page.identifier = '2019/06/26/softmax-cross-entropy-derivative/';
+          this.page.title = 'Softmax with cross-entropy derivative';
+        };
+        var d = document, s = d.createElement('script');
+        s.src = 'https://jozeelin.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', '' + +new Date());
+        (d.head || d.body).appendChild(s);
+      </script>
+    
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+  
+
+  
+
+</body>
+</html>

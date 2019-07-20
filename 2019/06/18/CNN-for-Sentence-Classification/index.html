@@ -1,0 +1,856 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="文本分类,CNN,">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="论文-Convolutional Neural Networks for Sentence Classification实现了原论文中的三种模式(这三种模式的区别在于embedding层的实现)：  CNN-non-static 使用pre-trained的word vector来初始化embedding层  CNN-static 使用pre-trained的word vector来直接把输入转化">
+<meta name="keywords" content="文本分类,CNN">
+<meta property="og:type" content="article">
+<meta property="og:title" content="CNN for Sentence Classification">
+<meta property="og:url" content="http://yoursite.com/2019/06/18/CNN-for-Sentence-Classification/index.html">
+<meta property="og:site_name" content="Jozee&#39;s技术博客">
+<meta property="og:description" content="论文-Convolutional Neural Networks for Sentence Classification实现了原论文中的三种模式(这三种模式的区别在于embedding层的实现)：  CNN-non-static 使用pre-trained的word vector来初始化embedding层  CNN-static 使用pre-trained的word vector来直接把输入转化">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://yoursite.com/2019/06/18/CNN-for-Sentence-Classification/image/cnn-non-static-model.png">
+<meta property="og:image" content="http://yoursite.com/2019/06/18/CNN-for-Sentence-Classification/image/cnn-non-static.png">
+<meta property="og:image" content="http://yoursite.com/2019/06/18/CNN-for-Sentence-Classification/image/cnn-static-model.png">
+<meta property="og:image" content="http://yoursite.com/2019/06/18/CNN-for-Sentence-Classification/image/cnn-static.png">
+<meta property="og:image" content="http://yoursite.com/2019/06/18/CNN-for-Sentence-Classification/image/cnn-rand-model.png">
+<meta property="og:image" content="http://yoursite.com/2019/06/18/CNN-for-Sentence-Classification/image/cnn-rand.png">
+<meta property="og:updated_time" content="2019-06-18T15:25:23.630Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="CNN for Sentence Classification">
+<meta name="twitter:description" content="论文-Convolutional Neural Networks for Sentence Classification实现了原论文中的三种模式(这三种模式的区别在于embedding层的实现)：  CNN-non-static 使用pre-trained的word vector来初始化embedding层  CNN-static 使用pre-trained的word vector来直接把输入转化">
+<meta name="twitter:image" content="http://yoursite.com/2019/06/18/CNN-for-Sentence-Classification/image/cnn-non-static-model.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2019/06/18/CNN-for-Sentence-Classification/">
+
+
+
+
+
+  <title>CNN for Sentence Classification | Jozee's技术博客</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Jozee's技术博客</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/06/18/CNN-for-Sentence-Classification/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content>
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content>
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">CNN for Sentence Classification
+
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+
+          
+          
+          
+
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建于：2019-06-18 20:37:44" itemprop="dateCreated datePublished" datetime="2019-06-18T20:37:44+08:00">2019-06-18</time>
+            </span>
+          
+
+          
+
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/NLP/" itemprop="url" rel="index"><span itemprop="name">NLP</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            
+              
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+            
+                <span class="post-meta-item-text">post.comments_count：</span>
+                <a href="/2019/06/18/CNN-for-Sentence-Classification/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2019/06/18/CNN-for-Sentence-Classification/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="论文-Convolutional-Neural-Networks-for-Sentence-Classification"><a href="#论文-Convolutional-Neural-Networks-for-Sentence-Classification" class="headerlink" title="论文-Convolutional Neural Networks for Sentence Classification"></a>论文-Convolutional Neural Networks for Sentence Classification</h2><p>实现了原论文中的三种模式(这三种模式的区别在于embedding层的实现)：</p>
+<ol>
+<li><p>CNN-non-static</p>
+<p>使用pre-trained的word vector来初始化embedding层</p>
+</li>
+<li><p>CNN-static</p>
+<p>使用pre-trained的word vector来直接把输入转化成稠密词向量的形式</p>
+</li>
+<li><p>CNN-rand</p>
+<p>随机初始化embedding层</p>
+</li>
+</ol>
+<h2 id="CNN-non-static"><a href="#CNN-non-static" class="headerlink" title="CNN-non-static"></a>CNN-non-static</h2><h3 id="模型结构"><a href="#模型结构" class="headerlink" title="模型结构"></a>模型结构</h3><p><img src="image/cnn-non-static-model.png" alt="cnn-non-static-model"></p>
+<h3 id="核心代码"><a href="#核心代码" class="headerlink" title="核心代码"></a>核心代码</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#coding:utf8</span></span><br><span class="line"><span class="keyword">from</span> keras.models <span class="keyword">import</span> Sequential,Model</span><br><span class="line"><span class="keyword">from</span> keras.layers <span class="keyword">import</span> Dense,Dropout,Flatten,Input,MaxPooling1D,GlobalMaxPooling1D,Convolution1D,Embedding</span><br><span class="line"><span class="keyword">from</span> keras <span class="keyword">import</span> initializers</span><br><span class="line"><span class="keyword">from</span> keras.layers.merge <span class="keyword">import</span> Concatenate</span><br><span class="line"><span class="keyword">from</span> keras.datasets <span class="keyword">import</span> imdb <span class="comment">#dataset</span></span><br><span class="line"><span class="keyword">from</span> keras.preprocessing <span class="keyword">import</span> sequence <span class="comment">#padding</span></span><br><span class="line"><span class="keyword">from</span> data_helper <span class="keyword">import</span> load_data</span><br><span class="line"><span class="keyword">from</span> w2v <span class="keyword">import</span> train_word2vec</span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line">np.random.seed(<span class="number">0</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment">#CNN-non-static</span></span><br><span class="line">embedding_dim = <span class="number">50</span></span><br><span class="line">filter_sizes = (<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>) <span class="comment">#根据论文中的超参数设置</span></span><br><span class="line"><span class="comment">#filter_sizes = (3,8)</span></span><br><span class="line">num_filters = <span class="number">10</span></span><br><span class="line">dropout_prob = (<span class="number">0.5</span>,<span class="number">0.8</span>)</span><br><span class="line">hidden_dims = <span class="number">50</span></span><br><span class="line"><span class="comment">#Training parameters</span></span><br><span class="line">batch_size = <span class="number">64</span></span><br><span class="line">num_epochs = <span class="number">10</span></span><br><span class="line"><span class="comment">#Preprocessing parameters</span></span><br><span class="line">sequence_length = <span class="number">400</span></span><br><span class="line">max_words = <span class="number">5000</span></span><br><span class="line"><span class="comment">#w2v parameters(see train_word2vec)</span></span><br><span class="line">min_word_count = <span class="number">1</span></span><br><span class="line">context = <span class="number">10</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#DataPreparation</span></span><br><span class="line">print(<span class="string">"Load data..."</span>)</span><br><span class="line">x_train,y_train,x_test,y_test,vocabulary_inv = load_data()</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> sequence_length!=x_test.shape[<span class="number">1</span>]:</span><br><span class="line">    print(<span class="string">"Adjusting sequence length for actual size"</span>)</span><br><span class="line">    sequence_length = x_test.shape[<span class="number">1</span>]</span><br><span class="line">print(<span class="string">"x_train shape:"</span>,x_train.shape)</span><br><span class="line">print(<span class="string">"x_test shape:"</span>,x_test.shape)</span><br><span class="line">print(<span class="string">"Vocabulary Size: &#123;:d&#125;"</span>.format(len(vocabulary_inv)))</span><br><span class="line"></span><br><span class="line"><span class="comment">#prepare embedding layer weights</span></span><br><span class="line">embedding_weights = train_word2vec(np.vstack((x_train,x_test)),vocabulary_inv,num_features=embedding_dim,min_word_count=min_word_count,context=context)</span><br><span class="line"></span><br><span class="line"><span class="comment">#input layer</span></span><br><span class="line">input_shape = (sequence_length,)</span><br><span class="line">model_input = Input(shape=input_shape)</span><br><span class="line"></span><br><span class="line"><span class="comment">#embedding layer,使用训练好的w2v模型来初始化embedding层</span></span><br><span class="line">weights = np.array([v <span class="keyword">for</span> v <span class="keyword">in</span> embedding_weights.values()])</span><br><span class="line">initializer = initializers.Constant(weights)</span><br><span class="line">z = Embedding(len(vocabulary_inv), embedding_dim,embeddings_initializer=initializer,input_length=sequence_length, name=<span class="string">'embedding'</span>)(model_input)</span><br><span class="line">z = Dropout(dropout_prob[<span class="number">0</span>])(z)</span><br><span class="line"></span><br><span class="line"><span class="comment">#Convolutional block</span></span><br><span class="line">conv_blocks = []</span><br><span class="line"><span class="keyword">for</span> sz <span class="keyword">in</span> filter_sizes:</span><br><span class="line">    conv = Convolution1D(filters=num_filters, kernel_size=sz,</span><br><span class="line">                        padding=<span class="string">"valid"</span>,activation=<span class="string">"relu"</span>,</span><br><span class="line">                        strides=<span class="number">1</span>)(z)</span><br><span class="line">    conv = MaxPooling1D(pool_size=<span class="number">2</span>)(conv)</span><br><span class="line">    <span class="comment">#conv = GlobalMaxPooling1D()(conv)</span></span><br><span class="line">    conv = Flatten()(conv)</span><br><span class="line">    conv_blocks.append(conv)</span><br><span class="line">z = Concatenate()(conv_blocks) <span class="keyword">if</span> len(conv_blocks)&gt;<span class="number">1</span> <span class="keyword">else</span> conv_blocks[<span class="number">0</span>]</span><br><span class="line">z = Dropout(dropout_prob[<span class="number">1</span>])(z)</span><br><span class="line"></span><br><span class="line"><span class="comment">#dense layer</span></span><br><span class="line">z = Dense(hidden_dims, activation=<span class="string">"relu"</span>)(z)</span><br><span class="line"><span class="comment">#output layer</span></span><br><span class="line">model_output = Dense(<span class="number">1</span>, activation=<span class="string">"sigmoid"</span>)(z)</span><br><span class="line"></span><br><span class="line">model = Model(model_input, model_output)</span><br><span class="line">model.compile(loss=<span class="string">'binary_crossentropy'</span>,optimizer=<span class="string">'adam'</span>,metrics=[<span class="string">'accuracy'</span>])</span><br><span class="line">print(model.summary())</span><br><span class="line"></span><br><span class="line"><span class="comment">#模型训练</span></span><br><span class="line">model.fit(x_train,y_train,batch_size=batch_size,epochs=num_epochs,validation_data=(x_test,y_test),verbose=<span class="number">2</span>)</span><br></pre></td></tr></table></figure>
+<h3 id="实验结果"><a href="#实验结果" class="headerlink" title="实验结果"></a>实验结果</h3><p><img src="image/cnn-non-static.png" alt="cnn-non-static"></p>
+<h2 id="CNN-static"><a href="#CNN-static" class="headerlink" title="CNN-static"></a>CNN-static</h2><h3 id="模型结构-1"><a href="#模型结构-1" class="headerlink" title="模型结构"></a>模型结构</h3><p><img src="image/cnn-static-model.png" alt="cnn-static-model"></p>
+<h3 id="核心代码-1"><a href="#核心代码-1" class="headerlink" title="核心代码"></a>核心代码</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#coding:utf8</span></span><br><span class="line"><span class="keyword">from</span> keras.models <span class="keyword">import</span> Sequential,Model</span><br><span class="line"><span class="keyword">from</span> keras.layers <span class="keyword">import</span> Dense,Dropout,Flatten,Input,MaxPooling1D,GlobalMaxPooling1D,Convolution1D,Embedding</span><br><span class="line"><span class="keyword">from</span> keras <span class="keyword">import</span> initializers</span><br><span class="line"><span class="keyword">from</span> keras.layers.merge <span class="keyword">import</span> Concatenate</span><br><span class="line"><span class="keyword">from</span> keras.datasets <span class="keyword">import</span> imdb <span class="comment">#dataset</span></span><br><span class="line"><span class="keyword">from</span> keras.preprocessing <span class="keyword">import</span> sequence <span class="comment">#padding</span></span><br><span class="line"><span class="keyword">from</span> data_helper <span class="keyword">import</span> load_data</span><br><span class="line"><span class="keyword">from</span> w2v <span class="keyword">import</span> train_word2vec</span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line">np.random.seed(<span class="number">0</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment">#CNN-static</span></span><br><span class="line">embedding_dim = <span class="number">50</span></span><br><span class="line">filter_sizes = (<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>)</span><br><span class="line">num_filters = <span class="number">10</span></span><br><span class="line">dropout_prob = (<span class="number">0.5</span>,<span class="number">0.8</span>)</span><br><span class="line">hidden_dims = <span class="number">50</span></span><br><span class="line"><span class="comment">#Training parameters</span></span><br><span class="line">batch_size = <span class="number">64</span></span><br><span class="line">num_epochs = <span class="number">10</span></span><br><span class="line"><span class="comment">#Preprocessing parameters</span></span><br><span class="line">sequence_length = <span class="number">400</span></span><br><span class="line">max_words = <span class="number">5000</span></span><br><span class="line"><span class="comment">#w2v paramters</span></span><br><span class="line">min_word_count = <span class="number">1</span></span><br><span class="line">context = <span class="number">10</span></span><br><span class="line"></span><br><span class="line">x_train,y_train,x_test,y_test,vocabulary_inv = load_data()</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> sequence_length!=x_test.shape[<span class="number">1</span>]:</span><br><span class="line">    print(<span class="string">"Adjusting sequence length for actual size"</span>)</span><br><span class="line">    sequence_length = x_test.shape[<span class="number">1</span>]</span><br><span class="line">print(<span class="string">"x_train shape:"</span>,x_train.shape)</span><br><span class="line">print(<span class="string">"x_test shape:"</span>,x_test.shape)</span><br><span class="line">print(<span class="string">"Vocabulary Size: &#123;:d&#125;"</span>.format(len(vocabulary_inv)))</span><br><span class="line"></span><br><span class="line"><span class="comment">#prepare embedding layer weights</span></span><br><span class="line">embedding_weights = train_word2vec(np.vstack((x_train,x_test)), vocabulary_inv, num_features=embedding_dim,min_word_count=min_word_count,context=context)</span><br><span class="line"></span><br><span class="line">x_train = np.stack([np.stack([embedding_weights[word] <span class="keyword">for</span> word <span class="keyword">in</span> sentence]) <span class="keyword">for</span> sentence <span class="keyword">in</span> x_train])</span><br><span class="line">x_test = np.stack([np.stack([embedding_weights[word] <span class="keyword">for</span> word <span class="keyword">in</span> sentence]) <span class="keyword">for</span> sentence <span class="keyword">in</span> x_test])</span><br><span class="line">print(<span class="string">"x_train static shape:"</span>, x_train.shape)</span><br><span class="line">print(<span class="string">"x_test static shape:"</span>,x_test.shape)</span><br><span class="line"></span><br><span class="line"><span class="comment">#input layer</span></span><br><span class="line">input_shape = (sequence_length,embedding_dim)</span><br><span class="line">model_input = Input(shape=input_shape)</span><br><span class="line">z = model_input</span><br><span class="line">z = Dropout(dropout_prob[<span class="number">0</span>])(z)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">#Convolutional block</span></span><br><span class="line">conv_blocks = []</span><br><span class="line"><span class="keyword">for</span> sz <span class="keyword">in</span> filter_sizes:</span><br><span class="line">    conv = Convolution1D(filters=num_filters, kernel_size=sz,</span><br><span class="line">                        padding=<span class="string">"valid"</span>,activation=<span class="string">"relu"</span>,</span><br><span class="line">                        strides=<span class="number">1</span>)(z)</span><br><span class="line">    conv = MaxPooling1D(pool_size=<span class="number">2</span>)(conv)</span><br><span class="line">    <span class="comment">#conv = GlobalMaxPooling1D()(conv)</span></span><br><span class="line">    conv = Flatten()(conv)</span><br><span class="line">    conv_blocks.append(conv)</span><br><span class="line">z = Concatenate()(conv_blocks) <span class="keyword">if</span> len(conv_blocks)&gt;<span class="number">1</span> <span class="keyword">else</span> conv_blocks[<span class="number">0</span>]</span><br><span class="line">z = Dropout(dropout_prob[<span class="number">1</span>])(z)</span><br><span class="line"></span><br><span class="line"><span class="comment">#dense layer</span></span><br><span class="line">z = Dense(hidden_dims, activation=<span class="string">"relu"</span>)(z)</span><br><span class="line"><span class="comment">#output layer</span></span><br><span class="line">model_output = Dense(<span class="number">1</span>, activation=<span class="string">"sigmoid"</span>)(z)</span><br><span class="line"></span><br><span class="line">model = Model(model_input, model_output)</span><br><span class="line">model.compile(loss=<span class="string">'binary_crossentropy'</span>,optimizer=<span class="string">'adam'</span>,metrics=[<span class="string">'accuracy'</span>])</span><br><span class="line">print(model.summary())</span><br><span class="line"></span><br><span class="line"><span class="comment">#模型训练</span></span><br><span class="line">model.fit(x_train,y_train,batch_size=batch_size,epochs=num_epochs,validation_data=(x_test,y_test),verbose=<span class="number">2</span>)</span><br></pre></td></tr></table></figure>
+<h3 id="实验结果-1"><a href="#实验结果-1" class="headerlink" title="实验结果"></a>实验结果</h3><p><img src="image/cnn-static.png" alt="cnn-static"></p>
+<h2 id="CNN-rand"><a href="#CNN-rand" class="headerlink" title="CNN-rand"></a>CNN-rand</h2><h3 id="模型结构-2"><a href="#模型结构-2" class="headerlink" title="模型结构"></a>模型结构</h3><p><img src="image/cnn-rand-model.png" alt="cnn-rand-model"></p>
+<h3 id="核心代码-2"><a href="#核心代码-2" class="headerlink" title="核心代码"></a>核心代码</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#coding:utf8</span></span><br><span class="line"><span class="keyword">from</span> keras.models <span class="keyword">import</span> Sequential,Model</span><br><span class="line"><span class="keyword">from</span> keras.layers <span class="keyword">import</span> Dense,Dropout,Flatten,Input,MaxPooling1D,GlobalMaxPooling1D,Convolution1D,Embedding</span><br><span class="line"><span class="keyword">from</span> keras <span class="keyword">import</span> initializers</span><br><span class="line"><span class="keyword">from</span> keras.layers.merge <span class="keyword">import</span> Concatenate</span><br><span class="line"><span class="keyword">from</span> keras.datasets <span class="keyword">import</span> imdb <span class="comment">#dataset</span></span><br><span class="line"><span class="keyword">from</span> keras.preprocessing <span class="keyword">import</span> sequence <span class="comment">#padding</span></span><br><span class="line"><span class="keyword">from</span> data_helper <span class="keyword">import</span> load_data</span><br><span class="line"><span class="keyword">from</span> w2v <span class="keyword">import</span> train_word2vec</span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line">np.random.seed(<span class="number">0</span>)</span><br><span class="line"></span><br><span class="line">embedding_dim = <span class="number">50</span></span><br><span class="line">filter_sizes = (<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>) <span class="comment">#根据论文中的超参数设置</span></span><br><span class="line">num_filters = <span class="number">10</span></span><br><span class="line">dropout_prob = (<span class="number">0.5</span>,<span class="number">0.8</span>)</span><br><span class="line">hidden_dims = <span class="number">50</span></span><br><span class="line"><span class="comment">#Training parameters</span></span><br><span class="line">batch_size = <span class="number">64</span></span><br><span class="line">num_epochs = <span class="number">10</span></span><br><span class="line"><span class="comment">#Preprocessing parameters</span></span><br><span class="line">sequence_length = <span class="number">400</span></span><br><span class="line">max_words = <span class="number">5000</span></span><br><span class="line"><span class="comment">#w2v parameters(see train_word2vec)</span></span><br><span class="line">min_word_count = <span class="number">1</span></span><br><span class="line">context = <span class="number">10</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#DataPreparation</span></span><br><span class="line">print(<span class="string">"Load data..."</span>)</span><br><span class="line">x_train,y_train,x_test,y_test,vocabulary_inv = load_data()</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> sequence_length!=x_test.shape[<span class="number">1</span>]:</span><br><span class="line">    print(<span class="string">"Adjusting sequence length for actual size"</span>)</span><br><span class="line">    sequence_length = x_test.shape[<span class="number">1</span>]</span><br><span class="line">print(<span class="string">"x_train shape:"</span>,x_train.shape)</span><br><span class="line">print(<span class="string">"x_test shape:"</span>,x_test.shape)</span><br><span class="line">print(<span class="string">"Vocabulary Size: &#123;:d&#125;"</span>.format(len(vocabulary_inv)))</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">#input layer</span></span><br><span class="line">input_shape = (sequence_length,)</span><br><span class="line">model_input = Input(shape=input_shape)</span><br><span class="line"></span><br><span class="line"><span class="comment">#embedding layer</span></span><br><span class="line">z = Embedding(len(vocabulary_inv), embedding_dim, input_length=sequence_length,name=<span class="string">"embedding"</span>)(model_input)</span><br><span class="line">z = Dropout(dropout_prob[<span class="number">0</span>])(z)</span><br><span class="line"></span><br><span class="line"><span class="comment">#Convolutional block</span></span><br><span class="line">conv_blocks = []</span><br><span class="line"><span class="keyword">for</span> sz <span class="keyword">in</span> filter_sizes:</span><br><span class="line">    conv = Convolution1D(filters=num_filters, kernel_size=sz,</span><br><span class="line">                        padding=<span class="string">"valid"</span>,activation=<span class="string">"relu"</span>,</span><br><span class="line">                        strides=<span class="number">1</span>)(z)</span><br><span class="line">    conv = MaxPooling1D(pool_size=<span class="number">2</span>)(conv)</span><br><span class="line">    <span class="comment">#conv = GlobalMaxPooling1D()(conv)</span></span><br><span class="line">    conv = Flatten()(conv)</span><br><span class="line">    conv_blocks.append(conv)</span><br><span class="line">z = Concatenate()(conv_blocks) <span class="keyword">if</span> len(conv_blocks)&gt;<span class="number">1</span> <span class="keyword">else</span> conv_blocks[<span class="number">0</span>]</span><br><span class="line">z = Dropout(dropout_prob[<span class="number">1</span>])(z)</span><br><span class="line"></span><br><span class="line"><span class="comment">#dense layer</span></span><br><span class="line">z = Dense(hidden_dims, activation=<span class="string">"relu"</span>)(z)</span><br><span class="line"><span class="comment">#output layer</span></span><br><span class="line">model_output = Dense(<span class="number">1</span>, activation=<span class="string">"sigmoid"</span>)(z)</span><br><span class="line"></span><br><span class="line">model = Model(model_input, model_output)</span><br><span class="line">model.compile(loss=<span class="string">'binary_crossentropy'</span>,optimizer=<span class="string">'adam'</span>,metrics=[<span class="string">'accuracy'</span>])</span><br><span class="line">print(model.summary())</span><br><span class="line"></span><br><span class="line"><span class="comment">#模型训练</span></span><br><span class="line">model.fit(x_train,y_train,batch_size=batch_size,epochs=num_epochs,validation_data=(x_test,y_test),verbose=<span class="number">2</span>)</span><br></pre></td></tr></table></figure>
+<h3 id="实验结果-2"><a href="#实验结果-2" class="headerlink" title="实验结果"></a>实验结果</h3><p><img src="image/cnn-rand.png" alt="cnn-rand"></p>
+
+      
+    </div>
+
+    
+
+    
+      
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+        
+          
+        
+        <div class="post-tags">
+          
+            <a href="/tags/文本分类/" rel="tag"># 文本分类</a>
+          
+            <a href="/tags/CNN/" rel="tag"># CNN</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/06/14/牛顿法和拟牛顿法/" rel="next" title="牛顿法和拟牛顿法">
+                <i class="fa fa-chevron-left"></i> 牛顿法和拟牛顿法
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/06/21/RNN-BPTT算法-in-Numpy/" rel="prev" title="RNN-BPTT算法 in Numpy">
+                RNN-BPTT算法 in Numpy <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+      <div id="disqus_thread">
+        <noscript>
+          Please enable JavaScript to view the
+          <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a>
+        </noscript>
+      </div>
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">jozee</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">25</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">3</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">30</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#论文-Convolutional-Neural-Networks-for-Sentence-Classification"><span class="nav-number">1.</span> <span class="nav-text">论文-Convolutional Neural Networks for Sentence Classification</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#CNN-non-static"><span class="nav-number">2.</span> <span class="nav-text">CNN-non-static</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#模型结构"><span class="nav-number">2.1.</span> <span class="nav-text">模型结构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#核心代码"><span class="nav-number">2.2.</span> <span class="nav-text">核心代码</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#实验结果"><span class="nav-number">2.3.</span> <span class="nav-text">实验结果</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#CNN-static"><span class="nav-number">3.</span> <span class="nav-text">CNN-static</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#模型结构-1"><span class="nav-number">3.1.</span> <span class="nav-text">模型结构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#核心代码-1"><span class="nav-number">3.2.</span> <span class="nav-text">核心代码</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#实验结果-1"><span class="nav-number">3.3.</span> <span class="nav-text">实验结果</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#CNN-rand"><span class="nav-number">4.</span> <span class="nav-text">CNN-rand</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#模型结构-2"><span class="nav-number">4.1.</span> <span class="nav-text">模型结构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#核心代码-2"><span class="nav-number">4.2.</span> <span class="nav-text">核心代码</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#实验结果-2"><span class="nav-number">4.3.</span> <span class="nav-text">实验结果</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">jozee</span>
+
+  
+</div>
+<div class="busuanzi_count">
+    <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js">
+    </script>
+    <span> 本站访客数:<span id="busuanzi_value_site_uv"></span>人</span>
+    <span class="post-meta-divider">|</span>
+    <span>本站总访问量:<span id="busuanzi_value_site_pv"></span>次</span>
+</div>
+
+
+
+
+
+
+
+
+
+        
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+    
+      <script id="dsq-count-scr" src="https://jozeelin.disqus.com/count.js" async></script>
+    
+
+    
+      <script type="text/javascript">
+        var disqus_config = function () {
+          this.page.url = 'http://yoursite.com/2019/06/18/CNN-for-Sentence-Classification/';
+          this.page.identifier = '2019/06/18/CNN-for-Sentence-Classification/';
+          this.page.title = 'CNN for Sentence Classification';
+        };
+        var d = document, s = d.createElement('script');
+        s.src = 'https://jozeelin.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', '' + +new Date());
+        (d.head || d.body).appendChild(s);
+      </script>
+    
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+  
+
+  
+
+</body>
+</html>
