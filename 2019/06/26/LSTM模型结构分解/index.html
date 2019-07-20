@@ -68,7 +68,7 @@
 
 
 
-  <meta name="keywords" content="入门,LSTM,">
+  <meta name="keywords" content="LSTM,入门,">
 
 
 
@@ -80,7 +80,7 @@
 
 
 <meta name="description" content="forget gate  f_t = \mathrm{sigmoid}(x_tU^f+h_{t-1}W^f) \tag{1}input gate  i_t = \mathrm{sigmoid}(x_tU^i+h_{t-1}W^i) \tag{2} \hat{c_t} = \mathrm{tanh}(x_tU^g+h_{t-1}W^g) \tag{3} \textrm{input_gate_out">
-<meta name="keywords" content="入门,LSTM">
+<meta name="keywords" content="LSTM,入门">
 <meta property="og:type" content="article">
 <meta property="og:title" content="LSTM模型结构分解">
 <meta property="og:url" content="http://yoursite.com/2019/06/26/LSTM模型结构分解/index.html">
@@ -268,8 +268,6 @@
   
   
 
-  
-
   <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
   
   
@@ -278,13 +276,13 @@
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/06/26/LSTM模型结构分解/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content>
+      <meta itemprop="name" content="jozee">
       <meta itemprop="description" content>
       <meta itemprop="image" content="/images/avatar.gif">
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content>
+      <meta itemprop="name" content="Jozee's技术博客">
     </span>
 
     
@@ -292,40 +290,33 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">LSTM模型结构分解
-
-              
-            
-          </h1>
+          <h1 class="post-title" itemprop="name headline">LSTM模型结构分解</h1>
         
 
         <div class="post-meta">
-
-          
-          
-          
-
-          
-            <span class="post-meta-item">
+          <span class="post-time">
+            
               <span class="post-meta-item-icon">
                 <i class="fa fa-calendar-o"></i>
               </span>
               
                 <span class="post-meta-item-text">发表于</span>
               
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-06-26T01:34:31+08:00">
+                2019-06-26
+              </time>
+            
 
-              
-                
-              
+            
 
-              <time title="创建于：2019-06-26 01:34:31" itemprop="dateCreated datePublished" datetime="2019-06-26T01:34:31+08:00">2019-06-26</time>
-            </span>
+            
+          </span>
+
           
-
-          
-
-          
-            <span class="post-meta-item">
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
               <span class="post-meta-item-icon">
                 <i class="fa fa-folder-o"></i>
               </span>
@@ -333,7 +324,11 @@
                 <span class="post-meta-item-text">分类于</span>
               
               
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/NLP/" itemprop="url" rel="index"><span itemprop="name">NLP</span></a></span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/NLP/" itemprop="url" rel="index">
+                    <span itemprop="name">NLP</span>
+                  </a>
+                </span>
 
                 
                 
@@ -343,14 +338,11 @@
 
           
             
-            
-              
-              <span class="post-meta-item">
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
                 <span class="post-meta-item-icon">
                   <i class="fa fa-comment-o"></i>
                 </span>
-            
-                <span class="post-meta-item-text">post.comments_count：</span>
                 <a href="/2019/06/26/LSTM模型结构分解/#comments" itemprop="discussionUrl">
                   <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2019/06/26/LSTM模型结构分解/" itemprop="commentCount"></span>
                 </a>
@@ -359,13 +351,14 @@
           
 
           
-          
+          <span id="busuanzi_container_page_pv">
+            <span class="post-meta-divider">|</span>
+            <span class="post-meta-item-icon">
+            <i class="fa fa-eye"></i>
+            </span>
+            阅读量: <span id="busuanzi_value_page_pv"></span>次
+          </span>
 
-          
-
-          
-
-          
           
 
           
@@ -426,36 +419,23 @@ c_t = c_{t-1}\odot f_t + \textrm{input_gate_output} \tag{7}</script><h2 id="实�
 
       
     </div>
-
-    
-
-    
-      
-    
-
     
     
     
 
     
 
-    
-      
-    
     
 
     
 
     <footer class="post-footer">
       
-        
-          
-        
         <div class="post-tags">
           
-            <a href="/tags/入门/" rel="tag"># 入门</a>
-          
             <a href="/tags/LSTM/" rel="tag"># LSTM</a>
+          
+            <a href="/tags/入门/" rel="tag"># 入门</a>
           
         </div>
       
