@@ -102,7 +102,7 @@
 <meta property="og:image" content="http://yoursite.com/2019/07/03/UCR-DTW和UCR-ED模型详解/image/ucr-lower-bound-1.png">
 <meta property="og:image" content="http://yoursite.com/2019/07/03/UCR-DTW和UCR-ED模型详解/image/random-walk.png">
 <meta property="og:image" content="http://yoursite.com/2019/07/03/UCR-DTW和UCR-ED模型详解/image/ucr-expiriment-2.png">
-<meta property="og:updated_time" content="2019-07-03T16:15:26.568Z">
+<meta property="og:updated_time" content="2019-07-24T07:37:39.253Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="UCR-DTW和UCR-ED模型详解">
 <meta name="twitter:description" content="Searching and mining trillions of time series subsequences under dynamic time warping– Rakthanmanon et al. SIGKDD 2012  在这篇论文中，作者主要是针对DTW算法提出一系列的优化策略。本论文提出的UCR-DTW模型可以在低配设备上实时地使用DTW算法在大规模数据集上进行高效的时间序">
@@ -390,17 +390,17 @@
 <p><a href="http://www.cs.ucr.edu/~eamonn/SIGKDD_trillion.pdf" target="_blank" rel="noopener">Searching and mining trillions of time series subsequences under dynamic time warping</a>– Rakthanmanon et al. <em>SIGKDD 2012</em></p>
 </blockquote>
 <p>在这篇论文中，作者主要是针对DTW算法提出一系列的优化策略。本论文提出的UCR-DTW模型可以在低配设备上实时地使用DTW算法在大规模数据集上进行高效的时间序列相似性搜索而无需对时间序列建立索引。</p>
-<h2 id="DTW-Dynamic-Time-Warping-及已知的优化策略"><a href="#DTW-Dynamic-Time-Warping-及已知的优化策略" class="headerlink" title="DTW(Dynamic Time Warping)及已知的优化策略"></a>DTW(Dynamic Time Warping)及已知的优化策略</h2><p>计算两个时间序列 Q和C之间的相似度，常用的度量方法是欧拉距离(ED)，计算公式如下图(1-1)所示：</p>
+<h2 id="DTW-Dynamic-Time-Warping-及已知的优化策略"><a href="#DTW-Dynamic-Time-Warping-及已知的优化策略" class="headerlink" title="DTW(Dynamic Time Warping)及已知的优化策略"></a>DTW(Dynamic Time Warping)及已知的优化策略</h2><p>计算两个时间序列 Q和C之间的相似度，常用的度量方法是欧式距离(ED)，计算公式如下图(1-1)所示：</p>
 <p><img src="image/ucr-ed-1.png" alt="ucr-ed-1"></p>
-<p>从上图可以看到欧拉距离的局限性：欧拉距离通过建立两个序列之间的一一对应关系，使得Q和C之间的波峰没有对齐，因此计算得到的序列相似度存在较大的偏差。DTW 算法则可以很好的解决这个问题。</p>
+<p>从上图可以看到欧式距离的局限性：欧式距离通过建立两个序列之间的一一对应关系，使得Q和C之间的波峰没有对齐，因此计算得到的序列相似度存在较大的偏差。DTW 算法则可以很好的解决这个问题。</p>
 <p>大部分情况下，两个序列整体上具有非常相似的形状，但是这些形状在时间轴上并不是对齐的。所以在计算两个序列的相似度之前，需要将其中一个(或者两个)序列在时间轴上进行warping，使得两个序列波峰更好的对齐。</p>
 <p>DTW就是实现这种warping的一种有效方法。换句话说，DTW算法通过找到两个序列之间的另外一种非一一对应的映射关系，这个映射关系也称为<strong>warping path</strong>。以上面的Q,C为例，得到的对应关系如下图(1-2)中的灰色线段所示:</p>
 <p><img src="image/ucr-dtw-1.png" alt="ucr-dtw-1"></p>
-<p>DTW算法的求解过程的直观理解为构建一个nxn的矩阵(此处假设Q和C的时间序列长度都为n，矩阵中的元素(i,j)表示序列Q的时间点<script type="math/tex">q_i</script> 和序列C的时间点<script type="math/tex">c_j</script>之间的欧拉距离）目标是在矩阵中找到一条从(0,0)到(n,n)的路径，使得路径上的所有元素之和最小。如下图(1-3)所示，红色标识的路径即为warping path：</p>
+<p>DTW算法的求解过程的直观理解为构建一个nxn的矩阵(此处假设Q和C的时间序列长度都为n，矩阵中的元素(i,j)表示序列Q的时间点<script type="math/tex">q_i</script> 和序列C的时间点<script type="math/tex">c_j</script>之间的欧式距离）目标是在矩阵中找到一条从(0,0)到(n,n)的路径，使得路径上的所有元素之和最小。如下图(1-3)所示，红色标识的路径即为warping path：</p>
 <p><img src="image/ucr-dtw-2.png" alt="ucr-dtw-2"></p>
 <p>图(1-2)和图(1-3)是等价的，都是表示了Q和C之间的映射关系。</p>
 <blockquote>
-<p>欧拉距离相当于DTW的特例，对应的warping path为从矩阵左下角到右上角的对角线。</p>
+<p>欧式距离相当于DTW的特例，对应的warping path为从矩阵左下角到右上角的对角线。</p>
 </blockquote>
 <p>目前已知的DTW顺序搜索的四种优化方法如下:</p>
 <ol>
@@ -439,7 +439,7 @@
 <h2 id="UCR-Suite-的优化策略"><a href="#UCR-Suite-的优化策略" class="headerlink" title="UCR Suite 的优化策略"></a>UCR Suite 的优化策略</h2><h3 id="相关概念及定义"><a href="#相关概念及定义" class="headerlink" title="相关概念及定义"></a>相关概念及定义</h3><p>定义1:时间序列T是一个有序列表：<script type="math/tex">T=t_1,t_2,\cdots,t_m</script>。然而源数据是一个很长的时间序列，我们最终需要把它与一个更短的子序列进行相似度比较。</p>
 <p>定义2: 子序列<script type="math/tex">T_{i,k}</script>是时间序列T中的一个子序列，它起始于<script type="math/tex">t_i</script>，长度为k，即<script type="math/tex">T_{i,k}=t_i,t_{i+1},\cdots,t_{i+k+1}</script>。<script type="math/tex">1\le i \le m-k+1</script>。</p>
 <p>这里，我们把<script type="math/tex">T_{i,k}</script>记为C，作为与query Q比较相似的候选子序列。令Q的长度为|Q|=n。</p>
-<p>定义3:Q和C之间的欧拉距离(|Q|=|C|)定义为 (公式1)：</p>
+<p>定义3:Q和C之间的欧式距离(|Q|=|C|)定义为 (公式1)：</p>
 <script type="math/tex; mode=display">
 ED(Q,C) = \sqrt{\sum_{i=1}^n (q_i-c_i)^2}</script><p>路径P的第t个元素定义为<script type="math/tex">p_t=(i,j)_t</script>，则我们可以把warping path表示为 (公式2)：</p>
 <script type="math/tex; mode=display">
