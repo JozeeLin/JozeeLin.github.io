@@ -1,0 +1,864 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Language Model,Word Embedding,">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="模型详解论文中分两个训练过程：  生成字符级别的embedding，根据字符级别的embedding来生成上下文无关的word embedding 使用bi-lstm语言模型生成上下文相关的word embedding  下面我们分别详细介绍这两个训练过程对应的模型： char cnn embedding参考论文：Character-Aware Neural Language Models  通过">
+<meta name="keywords" content="Language Model,Word Embedding">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ELMo模型详解及使用">
+<meta property="og:url" content="http://yoursite.com/2019/07/25/ELMo/index.html">
+<meta property="og:site_name" content="Jozee&#39;s技术博客">
+<meta property="og:description" content="模型详解论文中分两个训练过程：  生成字符级别的embedding，根据字符级别的embedding来生成上下文无关的word embedding 使用bi-lstm语言模型生成上下文相关的word embedding  下面我们分别详细介绍这两个训练过程对应的模型： char cnn embedding参考论文：Character-Aware Neural Language Models  通过">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://yoursite.com/2019/07/25/ELMo/image/char-cnn.png">
+<meta property="og:image" content="http://yoursite.com/2019/07/25/ELMo/image/elmo-combine-1.png">
+<meta property="og:updated_time" content="2019-07-25T11:44:13.497Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="ELMo模型详解及使用">
+<meta name="twitter:description" content="模型详解论文中分两个训练过程：  生成字符级别的embedding，根据字符级别的embedding来生成上下文无关的word embedding 使用bi-lstm语言模型生成上下文相关的word embedding  下面我们分别详细介绍这两个训练过程对应的模型： char cnn embedding参考论文：Character-Aware Neural Language Models  通过">
+<meta name="twitter:image" content="http://yoursite.com/2019/07/25/ELMo/image/char-cnn.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2019/07/25/ELMo/">
+
+
+
+
+
+  <title>ELMo模型详解及使用 | Jozee's技术博客</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Jozee's技术博客</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/07/25/ELMo/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="jozee">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Jozee's技术博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">ELMo模型详解及使用</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-07-25T19:41:15+08:00">
+                2019-07-25
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/NLP/" itemprop="url" rel="index">
+                    <span itemprop="name">NLP</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2019/07/25/ELMo/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2019/07/25/ELMo/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+          <span id="busuanzi_container_page_pv">
+            <span class="post-meta-divider">|</span>
+            <span class="post-meta-item-icon">
+            <i class="fa fa-eye"></i>
+            </span>
+            阅读量: <span id="busuanzi_value_page_pv"></span>次
+          </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="模型详解"><a href="#模型详解" class="headerlink" title="模型详解"></a>模型详解</h2><p>论文中分两个训练过程：</p>
+<ol>
+<li>生成字符级别的embedding，根据字符级别的embedding来生成上下文无关的word embedding</li>
+<li>使用bi-lstm语言模型生成上下文相关的word embedding</li>
+</ol>
+<p>下面我们分别详细介绍这两个训练过程对应的模型：</p>
+<h3 id="char-cnn-embedding"><a href="#char-cnn-embedding" class="headerlink" title="char cnn embedding"></a>char cnn embedding</h3><p>参考论文：<a href="https://www.aaai.org/ocs/index.php/AAAI/AAAI16/paper/viewFile/12489/12017" target="_blank" rel="noopener">Character-Aware Neural Language Models</a></p>
+<p><img src="image/char-cnn.png" alt="char-cnn"></p>
+<p>通过上图的CNN结构，得到了维度为2048的word embedding。</p>
+<p>在这个CNN结构上，还应用了其他trick，比如highway network，projection layer。</p>
+<ul>
+<li><p>highway network</p>
+<p>假设通过卷积层得到单词k的向量为<script type="math/tex">V^k</script>，highway network对应的function为，此处的g对应非线性激活函数，通常为relu，而<script type="math/tex">\sigma</script>为sigmoid函数：</p>
+<ol>
+<li><script type="math/tex; mode=display">t = \sigma(W_cV^k+b_c)</script></li>
+<li><script type="math/tex; mode=display">z = t \cdot g(W_tV^k+b_t)+(1-t)\cdot V^k</script></li>
+</ol>
+</li>
+<li><p>Projection layer</p>
+<p>projection layer就是把前面的词向量维度适配到bilstm语言模型要求的词向量维度大小。</p>
+</li>
+</ul>
+<h3 id="bilstm语言模型"><a href="#bilstm语言模型" class="headerlink" title="bilstm语言模型"></a>bilstm语言模型</h3><p>ELMo使用双层BiLSTM来训练语言模型，然后通过线性组合不同lstm层的word vectors, 得到最终的word embedding vectors。线性组合公式如下所示：</p>
+<script type="math/tex; mode=display">
+\textrm{ELMo}_k^{task} = E(R_k;\Theta^{task}) = \gamma^{task}\sum_{j=0}^L s_j^{task}h_{k,j}^{LM} \tag{1}</script><p>公式(1)的直观解释如下图所示：</p>
+<p><img src="image/elmo-combine-1.png" alt="elmo-combine-1"></p>
+<p>语言模型就是简单的两层bilstm语言模型，现在的重点是如何学习式(1)中的参数<script type="math/tex">s_j^{task}</script>以及<script type="math/tex">\gamma^{task}</script>。</p>
+<p>如何学习<script type="math/tex">s_j^{task}</script>以及<script type="math/tex">\gamma^{task}</script>？</p>
+<p>通过阅读代码来理解如何学习这些参数(<a href="https://github.com/allenai/bilm-tf/blob/master/bilm/elmo.py" target="_blank" rel="noopener">函数weight_layers</a>)：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">weight_layers</span><span class="params">(name, bilm_ops, l2_coef=None,</span></span></span><br><span class="line"><span class="function"><span class="params">                  use_top_only=False, do_layer_norm=False)</span>:</span></span><br><span class="line">    <span class="string">'''</span></span><br><span class="line"><span class="string">    Weight the layers of a biLM with trainable scalar weights to</span></span><br><span class="line"><span class="string">    compute ELMo representations.</span></span><br><span class="line"><span class="string">    For each output layer, this returns two ops.  The first computes</span></span><br><span class="line"><span class="string">        a layer specific weighted average of the biLM layers, and</span></span><br><span class="line"><span class="string">        the second the l2 regularizer loss term.</span></span><br><span class="line"><span class="string">    The regularization terms are also add to tf.GraphKeys.REGULARIZATION_LOSSES </span></span><br><span class="line"><span class="string">    Input:</span></span><br><span class="line"><span class="string">        name = a string prefix used for the trainable variable names不重要，可以是任意字符串</span></span><br><span class="line"><span class="string">        bilm_ops = This is the return value from BidirectionalLanguageModel(...)</span></span><br><span class="line"><span class="string">        l2_coef: the l2 regularization coefficient</span></span><br><span class="line"><span class="string">        use_top_only: if True, then only use the top layer.</span></span><br><span class="line"><span class="string">        do_layer_norm: if True, then apply layer normalization to each biLM</span></span><br><span class="line"><span class="string">            layer before normalizing</span></span><br><span class="line"><span class="string">    Output:</span></span><br><span class="line"><span class="string">        &#123;</span></span><br><span class="line"><span class="string">            'weighted_op': op to compute weighted average for output,</span></span><br><span class="line"><span class="string">            'regularization_op': op to compute regularization term</span></span><br><span class="line"><span class="string">        &#125;</span></span><br><span class="line"><span class="string">    '''</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">_l2_regularizer</span><span class="params">(weights)</span>:</span></span><br><span class="line">        <span class="keyword">if</span> l2_coef <span class="keyword">is</span> <span class="keyword">not</span> <span class="literal">None</span>:</span><br><span class="line">            <span class="keyword">return</span> l2_coef * tf.reduce_sum(tf.square(weights))</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            <span class="keyword">return</span> <span class="number">0.0</span></span><br><span class="line"></span><br><span class="line">    <span class="comment"># Get ops for computing LM embeddings and mask</span></span><br><span class="line">    lm_embeddings = bilm_ops[<span class="string">'lm_embeddings'</span>]</span><br><span class="line">    mask = bilm_ops[<span class="string">'mask'</span>]</span><br><span class="line"></span><br><span class="line">    n_lm_layers = int(lm_embeddings.get_shape()[<span class="number">1</span>]) <span class="comment">#一共多少层bilstm</span></span><br><span class="line">    lm_dim = int(lm_embeddings.get_shape()[<span class="number">3</span>]) <span class="comment">#word vector维度</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">with</span> tf.control_dependencies([lm_embeddings, mask]):</span><br><span class="line">        <span class="comment"># Cast the mask and broadcast for layer use.</span></span><br><span class="line">        mask_float = tf.cast(mask, <span class="string">'float32'</span>)</span><br><span class="line">        broadcast_mask = tf.expand_dims(mask_float, axis=<span class="number">-1</span>)</span><br><span class="line"></span><br><span class="line">        <span class="function"><span class="keyword">def</span> <span class="title">_do_ln</span><span class="params">(x)</span>:</span></span><br><span class="line">            <span class="comment"># do layer normalization excluding the mask</span></span><br><span class="line">            x_masked = x * broadcast_mask</span><br><span class="line">            N = tf.reduce_sum(mask_float) * lm_dim</span><br><span class="line">            mean = tf.reduce_sum(x_masked) / N</span><br><span class="line">            variance = tf.reduce_sum(((x_masked - mean) * broadcast_mask)**<span class="number">2</span></span><br><span class="line">                                    ) / N</span><br><span class="line">            <span class="keyword">return</span> tf.nn.batch_normalization(</span><br><span class="line">                x, mean, variance, <span class="literal">None</span>, <span class="literal">None</span>, <span class="number">1E-12</span></span><br><span class="line">            )</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> use_top_only:</span><br><span class="line">            layers = tf.split(lm_embeddings, n_lm_layers, axis=<span class="number">1</span>)</span><br><span class="line">            <span class="comment"># just the top layer</span></span><br><span class="line">            sum_pieces = tf.squeeze(layers[<span class="number">-1</span>], squeeze_dims=<span class="number">1</span>)</span><br><span class="line">            <span class="comment"># no regularization</span></span><br><span class="line">            reg = <span class="number">0.0</span></span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            W = tf.get_variable(</span><br><span class="line">                <span class="string">'&#123;&#125;_ELMo_W'</span>.format(name),</span><br><span class="line">                shape=(n_lm_layers, ),</span><br><span class="line">                initializer=tf.zeros_initializer,</span><br><span class="line">                regularizer=_l2_regularizer,</span><br><span class="line">                trainable=<span class="literal">True</span>,</span><br><span class="line">            )</span><br><span class="line"></span><br><span class="line">            <span class="comment"># normalize the weights</span></span><br><span class="line">            normed_weights = tf.split(</span><br><span class="line">                tf.nn.softmax(W + <span class="number">1.0</span> / n_lm_layers), n_lm_layers</span><br><span class="line">            )</span><br><span class="line">            <span class="comment"># split LM layers</span></span><br><span class="line">            layers = tf.split(lm_embeddings, n_lm_layers, axis=<span class="number">1</span>)</span><br><span class="line">    </span><br><span class="line">            <span class="comment"># compute the weighted, normalized LM activations</span></span><br><span class="line">            pieces = []</span><br><span class="line">            <span class="keyword">for</span> w, t <span class="keyword">in</span> zip(normed_weights, layers):</span><br><span class="line">                <span class="keyword">if</span> do_layer_norm:</span><br><span class="line">                    pieces.append(w * _do_ln(tf.squeeze(t, squeeze_dims=<span class="number">1</span>)))</span><br><span class="line">                <span class="keyword">else</span>:</span><br><span class="line">                    pieces.append(w * tf.squeeze(t, squeeze_dims=<span class="number">1</span>))</span><br><span class="line">            sum_pieces = tf.add_n(pieces)</span><br><span class="line">    </span><br><span class="line">            <span class="comment"># get the regularizer </span></span><br><span class="line">            reg = [</span><br><span class="line">                r <span class="keyword">for</span> r <span class="keyword">in</span> tf.get_collection(</span><br><span class="line">                                tf.GraphKeys.REGULARIZATION_LOSSES)</span><br><span class="line">                <span class="keyword">if</span> r.name.find(<span class="string">'&#123;&#125;_ELMo_W/'</span>.format(name)) &gt;= <span class="number">0</span></span><br><span class="line">            ]</span><br><span class="line">            <span class="keyword">if</span> len(reg) != <span class="number">1</span>:</span><br><span class="line">                <span class="keyword">raise</span> ValueError</span><br><span class="line"></span><br><span class="line">        <span class="comment"># scale the weighted sum by gamma</span></span><br><span class="line">        gamma = tf.get_variable(</span><br><span class="line">            <span class="string">'&#123;&#125;_ELMo_gamma'</span>.format(name),</span><br><span class="line">            shape=(<span class="number">1</span>, ),</span><br><span class="line">            initializer=tf.ones_initializer,</span><br><span class="line">            regularizer=<span class="literal">None</span>,</span><br><span class="line">            trainable=<span class="literal">True</span>,</span><br><span class="line">        )</span><br><span class="line">        weighted_lm_layers = sum_pieces * gamma</span><br><span class="line"></span><br><span class="line">        ret = &#123;<span class="string">'weighted_op'</span>: weighted_lm_layers, <span class="string">'regularization_op'</span>: reg&#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> ret</span><br></pre></td></tr></table></figure>
+<h2 id="三种使用方式"><a href="#三种使用方式" class="headerlink" title="三种使用方式"></a>三种使用方式</h2><ol>
+<li>Compute representations on the fly from raw text using character input. This is the most general method and will handle any input text. It is also the most computationally expensive.</li>
+<li>Precompute and cache the context independent token representations, then compute context dependent representations using the biLSTMs for input data. This method is less computationally expensive then #1, but is only applicable with a fixed, prescribed vocabulary.</li>
+<li>Precompute the representations for your entire dataset and save to a file.</li>
+</ol>
+<p>官方提供的tensorflow版本的elmo模型代码，结构如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">├── bilm                  // ELMo is implemented under this folder.</span><br><span class="line">│   ├── __init__.py</span><br><span class="line">│   ├── data.py             // Data Loading &amp; Batch Generation</span><br><span class="line">│   ├── elmo.py             // ``weight_layers`` for step (3).</span><br><span class="line">│   ├── model.py            // ``BidirectionalLanguageModel`` for step (3)</span><br><span class="line">│   └── training.py         // Model Definition (step (1) and (2)). </span><br><span class="line">│</span><br><span class="line">├── bin                   // CLI Scripts &amp; Config</span><br><span class="line">│   ├── dump_weights.py     // Dump weight file for AllenNLP.</span><br><span class="line">│   ├── restart.py          // For step (2).</span><br><span class="line">│   ├── run_test.py         // Check the perplexity on the heldout dataset.</span><br><span class="line">│   └── train_elmo.py       // For step (1).</span><br><span class="line">│</span><br><span class="line">...</span><br><span class="line">├── usage_cached.py         // usage_*.py are for step (3).</span><br><span class="line">├── usage_character.py</span><br><span class="line">└── usage_token.py</span><br></pre></td></tr></table></figure>
+<p>关于elmo的使用方式的更多细节，请参考:usage_xxx.py这三个文件即可。</p>
+<h2 id="使用示例"><a href="#使用示例" class="headerlink" title="使用示例"></a>使用示例</h2><p>github:<a href="https://github.com/JozeeLin/elmo-trainging-tutorial" target="_blank" rel="noopener">elmo-trainging-tutorial</a></p>
+<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><ul>
+<li><p><a href="https://www.mihaileric.com/posts/deep-contextualized-word-representations-elmo/" target="_blank" rel="noopener">BLOG-Deep Contextualized Word Representations with ELMo</a></p>
+</li>
+<li><p><a href="https://www.cnblogs.com/jiangxinyang/p/10235054.html" target="_blank" rel="noopener">文本分类实战（九）—— ELMO 预训练模型</a></p>
+</li>
+<li><p><a href="https://petrlorenc.github.io/ELMO/" target="_blank" rel="noopener">ELMo</a></p>
+</li>
+<li><p><a href="https://huntzhan.github.io/posts/nlp/elmo/" target="_blank" rel="noopener">Deep Dive The ELMo Implementation</a></p>
+</li>
+<li><p><a href="http://www.linzehui.me/2018/08/12/%E7%A2%8E%E7%89%87%E7%9F%A5%E8%AF%86/%E5%A6%82%E4%BD%95%E5%B0%86ELMo%E8%AF%8D%E5%90%91%E9%87%8F%E7%94%A8%E4%BA%8E%E4%B8%AD%E6%96%87/" target="_blank" rel="noopener">如何将ELMo词向量用于中文</a></p>
+</li>
+<li><p><a href="https://zhuanlan.zhihu.com/p/49271699" target="_blank" rel="noopener">从Word Embedding到Bert模型—自然语言处理中的预训练技术发展史</a></p>
+</li>
+<li><p><a href="https://www.slideshare.net/shuntaroy/a-review-of-deep-contextualized-word-representations-peters-2018" target="_blank" rel="noopener">https://www.slideshare.net/shuntaroy/a-review-of-deep-contextualized-word-representations-peters-2018</a></p>
+</li>
+</ul>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Language-Model/" rel="tag"># Language Model</a>
+          
+            <a href="/tags/Word-Embedding/" rel="tag"># Word Embedding</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/07/19/XGBoost/" rel="next" title="XGBoost论文解读">
+                <i class="fa fa-chevron-left"></i> XGBoost论文解读
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+      <div id="disqus_thread">
+        <noscript>
+          Please enable JavaScript to view the
+          <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a>
+        </noscript>
+      </div>
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">jozee</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">26</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">3</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">32</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#模型详解"><span class="nav-number">1.</span> <span class="nav-text">模型详解</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#char-cnn-embedding"><span class="nav-number">1.1.</span> <span class="nav-text">char cnn embedding</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#bilstm语言模型"><span class="nav-number">1.2.</span> <span class="nav-text">bilstm语言模型</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#三种使用方式"><span class="nav-number">2.</span> <span class="nav-text">三种使用方式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#使用示例"><span class="nav-number">3.</span> <span class="nav-text">使用示例</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#参考资料"><span class="nav-number">4.</span> <span class="nav-text">参考资料</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">jozee</span>
+
+  
+</div>
+<div class="busuanzi_count">
+    <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js">
+    </script>
+    <span> 本站访客数:<span id="busuanzi_value_site_uv"></span>人</span>
+    <span class="post-meta-divider">|</span>
+    <span>本站总访问量:<span id="busuanzi_value_site_pv"></span>次</span>
+</div>
+
+
+
+
+
+
+
+
+
+        
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+    
+      <script id="dsq-count-scr" src="https://jozeelin.disqus.com/count.js" async></script>
+    
+
+    
+      <script type="text/javascript">
+        var disqus_config = function () {
+          this.page.url = 'http://yoursite.com/2019/07/25/ELMo/';
+          this.page.identifier = '2019/07/25/ELMo/';
+          this.page.title = 'ELMo模型详解及使用';
+        };
+        var d = document, s = d.createElement('script');
+        s.src = 'https://jozeelin.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', '' + +new Date());
+        (d.head || d.body).appendChild(s);
+      </script>
+    
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+  
+
+  
+
+</body>
+</html>
