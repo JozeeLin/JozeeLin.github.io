@@ -68,7 +68,7 @@
 
 
 
-  <meta name="keywords" content="入门,LSTM,">
+  <meta name="keywords" content="文档相似度,WMD,EMD,">
 
 
 
@@ -79,28 +79,22 @@
 
 
 
-<meta name="description" content="forget gate  f_t = \mathrm{sigmoid}(x_tU^f+h_{t-1}W^f) \tag{1}input gate  i_t = \mathrm{sigmoid}(x_tU^i+h_{t-1}W^i) \tag{2} \hat{c_t} = \mathrm{tanh}(x_tU^g+h_{t-1}W^g) \tag{3} \textrm{input_gate_out">
-<meta name="keywords" content="入门,LSTM">
+<meta name="description" content="WMD为衡量文本相似度的方法。使用WMD来计算两个文本D1,D2之间的相似度，计算流程如下：  首先对两个文本去除停用词 使用归一化BOW(词袋模型)方法来分别表示D1,D2 使用word2vec embedding来表示D1,D2中的每个词 在D1中所有词travel到D2中所有词，对于每一个D1中的词，它与D2中的词语义比较相近的，那么可以全部移动或移动距离多一些(权重值)；对于语义差异较大，">
+<meta name="keywords" content="文档相似度,WMD,EMD">
 <meta property="og:type" content="article">
-<meta property="og:title" content="LSTM模型结构分解">
-<meta property="og:url" content="http://yoursite.com/2019/06/26/LSTM模型结构分解/index.html">
+<meta property="og:title" content="WMD算法详解">
+<meta property="og:url" content="http://yoursite.com/2019/07/26/WMD/index.html">
 <meta property="og:site_name" content="Jozee&#39;s技术博客">
-<meta property="og:description" content="forget gate  f_t = \mathrm{sigmoid}(x_tU^f+h_{t-1}W^f) \tag{1}input gate  i_t = \mathrm{sigmoid}(x_tU^i+h_{t-1}W^i) \tag{2} \hat{c_t} = \mathrm{tanh}(x_tU^g+h_{t-1}W^g) \tag{3} \textrm{input_gate_out">
+<meta property="og:description" content="WMD为衡量文本相似度的方法。使用WMD来计算两个文本D1,D2之间的相似度，计算流程如下：  首先对两个文本去除停用词 使用归一化BOW(词袋模型)方法来分别表示D1,D2 使用word2vec embedding来表示D1,D2中的每个词 在D1中所有词travel到D2中所有词，对于每一个D1中的词，它与D2中的词语义比较相近的，那么可以全部移动或移动距离多一些(权重值)；对于语义差异较大，">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:image" content="http://yoursite.com/2019/06/26/LSTM模型结构分解/image/lstm-1.png">
-<meta property="og:image" content="http://yoursite.com/2019/06/26/LSTM模型结构分解/image/forget-gate-lstm.gif">
-<meta property="og:image" content="http://yoursite.com/2019/06/26/LSTM模型结构分解/image/input-gate-lstm.gif">
-<meta property="og:image" content="http://yoursite.com/2019/06/26/LSTM模型结构分解/image/output-gate-lstm.gif">
-<meta property="og:image" content="http://yoursite.com/2019/06/26/LSTM模型结构分解/image/cell-state-lstm.gif">
-<meta property="og:image" content="http://yoursite.com/2019/06/26/LSTM模型结构分解/image/tanh-1.gif">
-<meta property="og:image" content="http://yoursite.com/2019/06/26/LSTM模型结构分解/image/tanh-2.gif">
-<meta property="og:image" content="http://yoursite.com/2019/06/26/LSTM模型结构分解/image/tanh-3.gif">
-<meta property="og:image" content="http://yoursite.com/2019/06/26/LSTM模型结构分解/image/sigmoid-1.gif">
-<meta property="og:updated_time" content="2019-06-26T04:57:40.588Z">
+<meta property="og:image" content="http://yoursite.com/2019/07/26/WMD/image/wmd-1.png">
+<meta property="og:image" content="http://yoursite.com/2019/07/26/WMD/image/wmd-2.png">
+<meta property="og:image" content="http://yoursite.com/2019/07/26/WMD/image/wmd-3.png">
+<meta property="og:updated_time" content="2019-07-26T11:36:53.663Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="LSTM模型结构分解">
-<meta name="twitter:description" content="forget gate  f_t = \mathrm{sigmoid}(x_tU^f+h_{t-1}W^f) \tag{1}input gate  i_t = \mathrm{sigmoid}(x_tU^i+h_{t-1}W^i) \tag{2} \hat{c_t} = \mathrm{tanh}(x_tU^g+h_{t-1}W^g) \tag{3} \textrm{input_gate_out">
-<meta name="twitter:image" content="http://yoursite.com/2019/06/26/LSTM模型结构分解/image/lstm-1.png">
+<meta name="twitter:title" content="WMD算法详解">
+<meta name="twitter:description" content="WMD为衡量文本相似度的方法。使用WMD来计算两个文本D1,D2之间的相似度，计算流程如下：  首先对两个文本去除停用词 使用归一化BOW(词袋模型)方法来分别表示D1,D2 使用word2vec embedding来表示D1,D2中的每个词 在D1中所有词travel到D2中所有词，对于每一个D1中的词，它与D2中的词语义比较相近的，那么可以全部移动或移动距离多一些(权重值)；对于语义差异较大，">
+<meta name="twitter:image" content="http://yoursite.com/2019/07/26/WMD/image/wmd-1.png">
 
 
 
@@ -130,13 +124,13 @@
 
 
 
-  <link rel="canonical" href="http://yoursite.com/2019/06/26/LSTM模型结构分解/">
+  <link rel="canonical" href="http://yoursite.com/2019/07/26/WMD/">
 
 
 
 
 
-  <title>LSTM模型结构分解 | Jozee's技术博客</title>
+  <title>WMD算法详解 | Jozee's技术博客</title>
   
 
 
@@ -273,7 +267,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/06/26/LSTM模型结构分解/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/07/26/WMD/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="jozee">
@@ -290,7 +284,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">LSTM模型结构分解</h1>
+          <h1 class="post-title" itemprop="name headline">WMD算法详解</h1>
         
 
         <div class="post-meta">
@@ -302,8 +296,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-06-26T01:34:31+08:00">
-                2019-06-26
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-07-26T19:24:12+08:00">
+                2019-07-26
               </time>
             
 
@@ -343,8 +337,8 @@
                 <span class="post-meta-item-icon">
                   <i class="fa fa-comment-o"></i>
                 </span>
-                <a href="/2019/06/26/LSTM模型结构分解/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2019/06/26/LSTM模型结构分解/" itemprop="commentCount"></span>
+                <a href="/2019/07/26/WMD/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2019/07/26/WMD/" itemprop="commentCount"></span>
                 </a>
               </span>
             
@@ -380,43 +374,79 @@
       
 
       
-        <p><img src="image/lstm-1.png" alt="lstm-1"></p>
-<h2 id="forget-gate"><a href="#forget-gate" class="headerlink" title="forget gate"></a>forget gate</h2><p><img src="image/forget-gate-lstm.gif" alt="forget-gate-lstm"></p>
+        <p>WMD为衡量文本相似度的方法。使用WMD来计算两个文本D1,D2之间的相似度，计算流程如下：</p>
+<ol>
+<li>首先对两个文本去除停用词</li>
+<li>使用归一化BOW(词袋模型)方法来分别表示D1,D2</li>
+<li>使用word2vec embedding来表示D1,D2中的每个词</li>
+<li>在D1中所有词travel到D2中所有词，对于每一个D1中的词，它与D2中的词语义比较相近的，那么可以全部移动或移动距离多一些(权重值)；对于语义差异较大，则移动距离少一点或者不移动。用词向量距离乘以移动距离就是两个词的转移代价。</li>
+<li>求全局的转移代价累加和最小值(D1中所有词全部转移到D2,D2中的所有词也全部转移到D1中)。</li>
+<li>这个全局转移代价累加和的最小值就是D1,D2的相似度。</li>
+</ol>
+<p>如下图所示，4个词对之间的词向量欧式距离的累加值就是document1和document2的相似度：</p>
+<p><img src="image/wmd-1.png" alt="wmd-1"></p>
+<h2 id="算法的数学描述"><a href="#算法的数学描述" class="headerlink" title="算法的数学描述"></a>算法的数学描述</h2><p>假设有一个预训练好的word2vec词向量矩阵<script type="math/tex">X \in \mathcal{R}^{d\times n}</script>，表示词典大小为n，词向量维度为d。</p>
+<p>如果词i在文本中出现的次数为<script type="math/tex">c_i</script> ，那么我们定义词i的归一化词频为:</p>
 <script type="math/tex; mode=display">
-f_t = \mathrm{sigmoid}(x_tU^f+h_{t-1}W^f) \tag{1}</script><h2 id="input-gate"><a href="#input-gate" class="headerlink" title="input gate"></a>input gate</h2><p><img src="image/input-gate-lstm.gif" alt="input-gate-lstm"></p>
+d_i = \frac{c_i}{\sum_{j=1}^n c_j} \tag{1}</script><p>另外词语距离的定义：词i与词j的欧式距离为：</p>
 <script type="math/tex; mode=display">
-i_t = \mathrm{sigmoid}(x_tU^i+h_{t-1}W^i) \tag{2}</script><script type="math/tex; mode=display">
-\hat{c_t} = \mathrm{tanh}(x_tU^g+h_{t-1}W^g) \tag{3}</script><script type="math/tex; mode=display">
-\textrm{input_gate_output} = i_t \odot \hat{c_t} \tag{4}</script><h2 id="output-gate"><a href="#output-gate" class="headerlink" title="output gate"></a>output gate</h2><p><img src="image/output-gate-lstm.gif" alt="output-gate-lstm"></p>
+c(i,j) = \|x_i-x_j\|_2 \tag{2}</script><p>令<script type="math/tex">\text{d}</script>和<script type="math/tex">\text{d}^{'}</script>表示分别表示要D1,D2两个文本的归一化词袋表示，<script type="math/tex">\text{d}</script>中的每个词i都可以全部或者部分转移到<script type="math/tex">\text{d}^{'}</script>的每个词。因此，定义一个稀疏的转移矩阵<script type="math/tex">T \in R^{n\times n}</script>，<script type="math/tex">T_{ij}</script> 表示d中的词i到<script type="math/tex">\mathrm{d}^{'}</script>中的词j的转移距离。<script type="math/tex">T_{ij} \ge 0</script>。</p>
+<p>那么，从d到<script type="math/tex">\mathrm{d}^{'}</script>的全局转移代价累加和表示为：<script type="math/tex">\sum_{ij} T_{ij}c(i,j)</script>。</p>
+<p>这里需要求出最小的全局转移代价累加和，所以把求最小化问题建模成线性规划问题：</p>
 <script type="math/tex; mode=display">
-o_t = \mathrm{sigmoid}(x_tU^o+h_{t-1}W^o) \tag{5}</script><script type="math/tex; mode=display">
-h_t = o_t \odot \mathrm{tanh}(c_t) \tag{6}</script><h2 id="cell-state"><a href="#cell-state" class="headerlink" title="cell state"></a>cell state</h2><p><img src="image/cell-state-lstm.gif" alt="cell-state-lstm"></p>
+\min_{T\ge 0} \sum_{i,j=1}^n T_{ij}c(i,j) \tag{3-1}</script><p>s.t.</p>
 <script type="math/tex; mode=display">
-c_t = c_{t-1}\odot f_t + \textrm{input_gate_output} \tag{7}</script><h2 id="实现"><a href="#实现" class="headerlink" title="实现"></a>实现</h2><p>(略)</p>
-<h2 id="其他"><a href="#其他" class="headerlink" title="其他"></a>其他</h2><h3 id="tanh-激活函数的作用"><a href="#tanh-激活函数的作用" class="headerlink" title="tanh 激活函数的作用"></a>tanh 激活函数的作用</h3><ul>
-<li><p>tanh squishes value between -1 and 1</p>
-<p><img src="image/tanh-1.gif" alt="tanh-1"></p>
-</li>
-<li><p>vector transformations without tanh</p>
-<p><img src="image/tanh-2.gif" alt="tanh-2"></p>
-</li>
-<li><p>vector transformations with tanh</p>
-<p><img src="image/tanh-3.gif" alt="tanh-3"></p>
-</li>
-</ul>
-<h3 id="sigmoid激活函数的作用"><a href="#sigmoid激活函数的作用" class="headerlink" title="sigmoid激活函数的作用"></a>sigmoid激活函数的作用</h3><blockquote>
-<p>当向量通过sigmoid激活函数后，可以使得输出保持在[0,1]之间的范围里，越接近0表示分量贡献越小，接近1表示分量贡献越大。起到mask的作用。</p>
-</blockquote>
+\sum_{j=1}^n T_{ij}=d_i \ , \forall i \in \{1,\cdots,n\} \tag{3-2}</script><script type="math/tex; mode=display">
+\sum_{i=1}^n T_{ij} = d^{'}_j \ , \forall j \in \{1,\cdots,n\} \tag{3-3}</script><p>WMD的计算过程可视化如下图所示：</p>
+<p><img src="image/wmd-2.png" alt="wmd-2"></p>
+<p>以上问题的线性规划问题是EMD算法中的一种特殊情况，具体求解过程可参考EMD算法。</p>
+<p>本论文采用了Fast-EMD论文中提出的求解方法：<a href="http://www.cs.huji.ac.il/~werman/Papers/ICCV2009.pdf" target="_blank" rel="noopener">Fast and Robust Earth Mover’s Distances</a></p>
+<p>时间复杂度为<script type="math/tex">O(p^3\log p)</script>，其中p为两个文本移除停用词和去重后词表的大小。</p>
+<h2 id="算法改进"><a href="#算法改进" class="headerlink" title="算法改进"></a>算法改进</h2><p>如果字典非常大，那么上述的求解方法的计算复杂度太高，我们可以通过使用low bound来减少问题的求解空间。从而提升计算效率。</p>
+<h3 id="WCD-low-bound-词心距离"><a href="#WCD-low-bound-词心距离" class="headerlink" title="WCD low bound(词心距离)"></a>WCD low bound(词心距离)</h3><p>根据三角不等式可得 ：</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+\sum_{i,j=1}^n T_{ij} c(i,j) &= \sum_{i,j=1}^n T_{ij}\|x_i-x_j^{'}\|_2 \\
+&= \sum_{i,j=1}^n \|T_{ij}(x_i-x_j^{'})\|_2 \\
+&\ge \|\sum_{i,j=1}^n T_{ij}(x_i-x_j^{'})\|_2 \\
+&=\|\sum_{i=1}^n(\sum_{j=1}^n T_{ij})x_i-\sum_{j=1}^n(\sum_{i=1}^n T_{ij})x_j^{'}\|_2\\
+&= \|\sum_{i=1}^n d_ix_i - \sum_{j=1}^n d_j^{'}x_j^{'}\|_2\\
+&= \|X\mathrm{d} - X\mathrm{d}^{'}\|_2
+\end{aligned} \tag{4}</script><p>WCD对应的式子为:<script type="math/tex">\|X\mathrm{d} - X\mathrm{d}^{'}\|_2</script>，<script type="math/tex">X\in R^{d\times n}</script>，因此对应的时间复杂度为O(dp)，d为词向量的维度。</p>
+<h3 id="RWMD-low-bound-松弛WMD距离"><a href="#RWMD-low-bound-松弛WMD距离" class="headerlink" title="RWMD low bound(松弛WMD距离)"></a>RWMD low bound(松弛WMD距离)</h3><p>尽管WCD的时间复杂度很低，但是边界过于宽松，无法很好的近似WMD。因此，这里使用更加tight的下界RWMD。RWMD需要计算两次，基于WMD目标函数，分别去掉两个约束条件中的一个，然后求解最小值，使用两个最小值中的最大值作为WMD的近似值。</p>
+<p>比如，去掉约束条件(3-3)，可得:</p>
+<script type="math/tex; mode=display">
+\min_{T\ge 0} \sum_{i,j=1}^n T_{ij}c(i,j)</script><p>s.t.</p>
+<script type="math/tex; mode=display">
+\sum_{j=1}^n T_{ij} = d_i \ , \forall i \in \{1,\cdots,n\}</script><p>这个问题的最优解是，对于文本D1中的一个词，找到另一文本D2中与之最相近的一个词，全部转移到这个词。即：</p>
+<script type="math/tex; mode=display">
+T_{ij}^{*} = \left\{ \begin{aligned}&d_i \ \mathrm{if \ j=\arg\min_jc(i,j)} \\ &0 \ \mathrm{otherwise}\end{aligned} \right .</script><p>使用<script type="math/tex">l_1(\mathrm{d},\mathrm{d^{'}})</script>和<script type="math/tex">l_2(\mathrm{d},\mathrm{d^{'}})</script>分别表示，去掉不同约束条件所计算得到的最小值，RWMD最终的最小值为:</p>
+<script type="math/tex; mode=display">
+l_r(\mathrm{d},\mathrm{d^{'}}) = \max(l_1(\mathrm{d},\mathrm{d^{'}}),l_2(\mathrm{d},\mathrm{d^{'}})) \tag{5}</script><p>这个的时间复杂度为<script type="math/tex">O(p^2)</script>。</p>
+<h3 id="剪枝"><a href="#剪枝" class="headerlink" title="剪枝"></a>剪枝</h3><p>接下来讨论如何使用上面的两种下界对WMD进行剪枝。</p>
 <ul>
-<li><p>Sigmoid squishes values between 0 and 1</p>
-<p><img src="image/sigmoid-1.gif" alt="sigmoid-1"></p>
-</li>
+<li>利用WCD计算出所有的距离，取topK</li>
+<li>计算topK文本的WMD值</li>
+<li>对于剩下的文本，计算RWMD值，如果RWMD比topK中的WMD最大的小，则替换topK中的WMD最大的文本，并计算它的WMD值，否则，剪枝。</li>
+</ul>
+<p>由于RWMD值与WMD值非常接近，因此对于剩下文本，几乎95%都是可以被剪枝的。</p>
+<p>在twitter/amazon这两个数据集上，随机抽取一些文本组成句对，将这些句对按WMD值进行升序排列，横坐标为句对编号，纵坐标为WCD,RWMD,WMD的值。从图中可以看出，WCD是非常宽松的下界，而RWMD则与WMD非常接近：</p>
+<p><img src="image/wmd-3.png" alt="wmd-3"></p>
+<h2 id="优缺点及改进"><a href="#优缺点及改进" class="headerlink" title="优缺点及改进"></a>优缺点及改进</h2><h3 id="优点"><a href="#优点" class="headerlink" title="优点"></a>优点</h3><ul>
+<li>不需要设置超参数</li>
+<li>无监督，不依赖标注数据，没有冷启动问题</li>
+<li>有全局最优解</li>
+<li>可人为干预词的重要性</li>
+</ul>
+<h3 id="缺点"><a href="#缺点" class="headerlink" title="缺点"></a>缺点</h3><ul>
+<li>词袋模型，没有保留语序信息(ngram)</li>
+<li>不能处理OOV问题(因为word2vec导致的，这里可以使用fasttext)</li>
+<li>处理否定词能力差(加入情感极性信息)</li>
+<li>处理领域同义词互斥词的能力偏差(一词多义,elmo?)</li>
 </ul>
 <h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><ul>
-<li><a href="https://towardsdatascience.com/illustrated-guide-to-lstms-and-gru-s-a-step-by-step-explanation-44e9eb85bf21" target="_blank" rel="noopener">Illustrated Guide to LSTM’s and GRU’s: A step by step explanation</a></li>
-<li><a href="http://www.wildml.com/2015/10/recurrent-neural-network-tutorial-part-4-implementing-a-grulstm-rnn-with-python-and-theano/" target="_blank" rel="noopener">Recurrent Neural Network Tutorial, Part 4 – Implementing a GRU/LSTM RNN with Python and Theano</a></li>
-<li><a href="https://towardsdatascience.com/animated-rnn-lstm-and-gru-ef124d06cf45" target="_blank" rel="noopener">Animated RNN, LSTM and GRU</a></li>
-<li><a href="https://blog.varunajayasiri.com/numpy_lstm.html" target="_blank" rel="noopener">Vanilla LSTM with numpy</a></li>
+<li><a href="https://supernan1994.github.io/nlp/wmd1.html" target="_blank" rel="noopener">深入理解WMD算法</a></li>
+<li><a href="https://www.aclweb.org/anthology/P14-1146" target="_blank" rel="noopener">Learning Sentiment-Specific Word Embedding<br>for Twitter Sentiment Classification</a></li>
 </ul>
 
       
@@ -435,9 +465,11 @@ c_t = c_{t-1}\odot f_t + \textrm{input_gate_output} \tag{7}</script><h2 id="实�
       
         <div class="post-tags">
           
-            <a href="/tags/入门/" rel="tag"># 入门</a>
+            <a href="/tags/文档相似度/" rel="tag"># 文档相似度</a>
           
-            <a href="/tags/LSTM/" rel="tag"># LSTM</a>
+            <a href="/tags/WMD/" rel="tag"># WMD</a>
+          
+            <a href="/tags/EMD/" rel="tag"># EMD</a>
           
         </div>
       
@@ -450,8 +482,8 @@ c_t = c_{t-1}\odot f_t + \textrm{input_gate_output} \tag{7}</script><h2 id="实�
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2019/06/26/softmax-cross-entropy-derivative/" rel="next" title="Softmax with cross-entropy derivative">
-                <i class="fa fa-chevron-left"></i> Softmax with cross-entropy derivative
+              <a href="/2019/07/25/ELMo/" rel="next" title="ELMo模型详解及使用">
+                <i class="fa fa-chevron-left"></i> ELMo模型详解及使用
               </a>
             
           </div>
@@ -459,10 +491,6 @@ c_t = c_{t-1}\odot f_t + \textrm{input_gate_output} \tag{7}</script><h2 id="实�
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2019/06/26/GRU模型结构分解/" rel="prev" title="GRU模型结构分解">
-                GRU模型结构分解 <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -604,7 +632,7 @@ c_t = c_{t-1}\odot f_t + \textrm{input_gate_output} \tag{7}</script><h2 id="实�
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#forget-gate"><span class="nav-number">1.</span> <span class="nav-text">forget gate</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#input-gate"><span class="nav-number">2.</span> <span class="nav-text">input gate</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#output-gate"><span class="nav-number">3.</span> <span class="nav-text">output gate</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#cell-state"><span class="nav-number">4.</span> <span class="nav-text">cell state</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#实现"><span class="nav-number">5.</span> <span class="nav-text">实现</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#其他"><span class="nav-number">6.</span> <span class="nav-text">其他</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#tanh-激活函数的作用"><span class="nav-number">6.1.</span> <span class="nav-text">tanh 激活函数的作用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#sigmoid激活函数的作用"><span class="nav-number">6.2.</span> <span class="nav-text">sigmoid激活函数的作用</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#参考资料"><span class="nav-number">7.</span> <span class="nav-text">参考资料</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#算法的数学描述"><span class="nav-number">1.</span> <span class="nav-text">算法的数学描述</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#算法改进"><span class="nav-number">2.</span> <span class="nav-text">算法改进</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#WCD-low-bound-词心距离"><span class="nav-number">2.1.</span> <span class="nav-text">WCD low bound(词心距离)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#RWMD-low-bound-松弛WMD距离"><span class="nav-number">2.2.</span> <span class="nav-text">RWMD low bound(松弛WMD距离)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#剪枝"><span class="nav-number">2.3.</span> <span class="nav-text">剪枝</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#优缺点及改进"><span class="nav-number">3.</span> <span class="nav-text">优缺点及改进</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#优点"><span class="nav-number">3.1.</span> <span class="nav-text">优点</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#缺点"><span class="nav-number">3.2.</span> <span class="nav-text">缺点</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#参考资料"><span class="nav-number">4.</span> <span class="nav-text">参考资料</span></a></li></ol></div>
             
 
           </div>
@@ -774,9 +802,9 @@ c_t = c_{t-1}\odot f_t + \textrm{input_gate_output} \tag{7}</script><h2 id="实�
     
       <script type="text/javascript">
         var disqus_config = function () {
-          this.page.url = 'http://yoursite.com/2019/06/26/LSTM模型结构分解/';
-          this.page.identifier = '2019/06/26/LSTM模型结构分解/';
-          this.page.title = 'LSTM模型结构分解';
+          this.page.url = 'http://yoursite.com/2019/07/26/WMD/';
+          this.page.identifier = '2019/07/26/WMD/';
+          this.page.title = 'WMD算法详解';
         };
         var d = document, s = d.createElement('script');
         s.src = 'https://jozeelin.disqus.com/embed.js';
