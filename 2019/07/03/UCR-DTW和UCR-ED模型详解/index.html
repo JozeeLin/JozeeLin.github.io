@@ -102,7 +102,7 @@
 <meta property="og:image" content="http://yoursite.com/2019/07/03/UCR-DTW和UCR-ED模型详解/image/ucr-lower-bound-1.png">
 <meta property="og:image" content="http://yoursite.com/2019/07/03/UCR-DTW和UCR-ED模型详解/image/random-walk.png">
 <meta property="og:image" content="http://yoursite.com/2019/07/03/UCR-DTW和UCR-ED模型详解/image/ucr-expiriment-2.png">
-<meta property="og:updated_time" content="2019-07-27T08:50:33.295Z">
+<meta property="og:updated_time" content="2019-07-27T08:53:31.947Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="UCR-DTW和UCR-ED模型详解">
 <meta name="twitter:description" content="Searching and mining trillions of time series subsequences under dynamic time warping– Rakthanmanon et al. SIGKDD 2012  在这篇论文中，作者主要是针对DTW算法提出一系列的优化策略。本论文提出的UCR-DTW模型可以在低配设备上实时地使用DTW算法在大规模数据集上进行高效的时间序">
@@ -474,8 +474,6 @@ P=p_1,p_2,\cdots,p_t,\cdots,p_T,n\le T\le 2n-1</script><h3 id="优化策略"><a 
 <p>因此，<script type="math/tex">LB_{\textrm{Keogh}}EC</script>策略是可选项，只有当<script type="math/tex">LB_{\textrm{Keogh}}EQ</script>剪枝效果不太理想的时候，可以“just-in-time” 的策略来使用<script type="math/tex">LB_{\textrm{Keogh}}EC</script>来辅助<script type="math/tex">LB_{\textrm{Keogh}}EQ</script>提高剪枝效率，从而大大降低空间开销。对于<script type="math/tex">LB_{\textrm{Keogh}}EC</script>的时间开销，可以通过剪枝来降低完整DTW的时间开销来抵消掉。对两种计算策略的直观理解如下图(1-9)所示：</p>
 <p><img src="image/ucr-LB-1.png" alt="ucr-LB-1"></p>
 </li>
-</ol>
-<ol>
 <li><p>Use cascading lower bounds</p>
 <p>目前存在很多种lower bound的计算方式。每一种lower bound都可以用于对DTW进行剪枝而且时间复杂度可估计。截止目前为止，至少有18种lower bound机制，作者把它们都实现了一遍，然后分别在50个不同的数据集上进行测试和对比，得到的结果如下图(1-10)所示：</p>
 <p><img src="image/ucr-lower-bound-1.png" alt="ucr-lower-bound-1"></p>
