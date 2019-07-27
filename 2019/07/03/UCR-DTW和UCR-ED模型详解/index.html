@@ -102,7 +102,7 @@
 <meta property="og:image" content="http://yoursite.com/2019/07/03/UCR-DTW和UCR-ED模型详解/image/ucr-lower-bound-1.png">
 <meta property="og:image" content="http://yoursite.com/2019/07/03/UCR-DTW和UCR-ED模型详解/image/random-walk.png">
 <meta property="og:image" content="http://yoursite.com/2019/07/03/UCR-DTW和UCR-ED模型详解/image/ucr-expiriment-2.png">
-<meta property="og:updated_time" content="2019-07-24T07:37:39.253Z">
+<meta property="og:updated_time" content="2019-07-27T08:50:33.295Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="UCR-DTW和UCR-ED模型详解">
 <meta name="twitter:description" content="Searching and mining trillions of time series subsequences under dynamic time warping– Rakthanmanon et al. SIGKDD 2012  在这篇论文中，作者主要是针对DTW算法提出一系列的优化策略。本论文提出的UCR-DTW模型可以在低配设备上实时地使用DTW算法在大规模数据集上进行高效的时间序">
@@ -408,16 +408,14 @@
 </li>
 <li><p>通过使用lower bounds来剪枝，因为lower bounds的计算时间复杂度都小于DTW的时间复杂度。比如：</p>
 <ol>
-<li><p><script type="math/tex">LB_{\textrm{Kim}}FL</script>的时间复杂度为O(1)</p>
+<li><p>LB_{\textrm{Kim}}FL$$的时间复杂度为O(1)</p>
 <p>本文在实现时，由于对时间序列进行标准化后，时间序列数据中的最大和最小值对于整个lower bound距离贡献较小，因此，去掉原来LB_kim算法(时间复杂度为O(n))中提取的四个特征点中的最大值和最小值，使得时间复杂度降为O(1)。但是，实现中为了使此策略发挥最大作用，作者还提取了第2,3和倒数第2,3个时间点，来进行级联剪枝。(详情参考算法实现lb_kim_hierarchy方法)</p>
 </li>
 <li><p><script type="math/tex">LB_{\textrm{Keogh}}</script>的时间复杂度为O(n)</p>
+<p><img src="image/ucr-lower-bound-2.png" alt="ucr-dtw-3"></p>
 </li>
 </ol>
 </li>
-</ol>
-<p>   <img src="image/ucr-lower-bound-2.png" alt="ucr-dtw-3"></p>
-<ol>
 <li><p>Early Abandoning of ED and <script type="math/tex">LB_{\textrm{Keogh}}</script></p>
 <blockquote>
 <p>基于这条优化策略，作者提出的Reorder early abandoning可以进一步降低计算成本。</p>
@@ -425,16 +423,14 @@
 <p>即在计算ED或者<script type="math/tex">LB_{\textrm{Keogh}}</script>的时候，如果当前的两个序列的时间点(1,k)(注：k&lt;=|Q|)之间的差值平方之和，大于当前两个序列最小距离值best-so-far，那么可以提前结束Q和C是否相似的判断。计算过程如下图(1-4)所示：</p>
 <p><img src="image/ucr-ed-2.png" alt="ucr-dtw-3"></p>
 </li>
-</ol>
-<ol>
 <li><p>Early Abandoning of DTW </p>
 <p>计算完整的<script type="math/tex">LB_{\textrm{Keogh}}</script>的值，仍然需要计算完整的DTW的值，我们可以通过利用部分的<script type="math/tex">LB_{\textrm{Keogh}}</script> 的值来减少DTW的计算量。</p>
 <p>比如，先从左到右计算时间点[1,k]的DTW值，然后在时间点[k+1,n]，复用前面计算好的<script type="math/tex">LB_{\textrm{Keogh}}</script> 值。最终得到的距离值依然为完整的DTW值的lower bound。这样的话，我们就可以使用stop early策略，每计算当前时间点的DTW值，就可以复用前面计算好的<script type="math/tex">LB_{\textrm{Keogh}}</script>来获得整个子序列的lower bound值。</p>
 <p>通过比较这个lower bound和当前最小距离值best-so-far进行比较，如果当前的lower bound值大于best-so-far，那么可以提前结束DTW的计算。这种方式的直观表示如下图(1-5)：</p>
 <p><img src="image/ucr-dtw-3.png" alt="ucr-dtw-3"></p>
-<p> 以上，介绍完了前人对DTW的四种优化方案。</p>
 </li>
 </ol>
+<p> 以上，介绍完了前人对DTW的四种优化方案。</p>
 <p>还有一种已知的提升DTW的计算速度的策略即使用多核计算资源。</p>
 <h2 id="UCR-Suite-的优化策略"><a href="#UCR-Suite-的优化策略" class="headerlink" title="UCR Suite 的优化策略"></a>UCR Suite 的优化策略</h2><h3 id="相关概念及定义"><a href="#相关概念及定义" class="headerlink" title="相关概念及定义"></a>相关概念及定义</h3><p>定义1:时间序列T是一个有序列表：<script type="math/tex">T=t_1,t_2,\cdots,t_m</script>。然而源数据是一个很长的时间序列，我们最终需要把它与一个更短的子序列进行相似度比较。</p>
 <p>定义2: 子序列<script type="math/tex">T_{i,k}</script>是时间序列T中的一个子序列，它起始于<script type="math/tex">t_i</script>，长度为k，即<script type="math/tex">T_{i,k}=t_i,t_{i+1},\cdots,t_{i+k+1}</script>。<script type="math/tex">1\le i \le m-k+1</script>。</p>
