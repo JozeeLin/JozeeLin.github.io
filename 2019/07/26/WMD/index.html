@@ -79,21 +79,21 @@
 
 
 
-<meta name="description" content="WMD为衡量文本相似度的方法。使用WMD来计算两个文本D1,D2之间的相似度，计算流程如下：  首先对两个文本去除停用词 使用归一化BOW(词袋模型)方法来分别表示D1,D2 使用word2vec embedding来表示D1,D2中的每个词 在D1中所有词travel到D2中所有词，对于每一个D1中的词，它与D2中的词语义比较相近的，那么可以全部移动或移动距离多一些(权重值)；对于语义差异较大，">
+<meta name="description" content="论文:From Word Embeddings To Document Distances WMD为衡量文本相似度的方法。使用WMD来计算两个文本D1,D2之间的相似度，计算流程如下：  首先对两个文本去除停用词 使用归一化BOW(词袋模型)方法来分别表示D1,D2 使用word2vec embedding来表示D1,D2中的每个词 在D1中所有词travel到D2中所有词，对于每一个D1中的词，">
 <meta name="keywords" content="文档相似度,WMD,EMD">
 <meta property="og:type" content="article">
 <meta property="og:title" content="WMD算法详解">
 <meta property="og:url" content="http://yoursite.com/2019/07/26/WMD/index.html">
 <meta property="og:site_name" content="Jozee&#39;s技术博客">
-<meta property="og:description" content="WMD为衡量文本相似度的方法。使用WMD来计算两个文本D1,D2之间的相似度，计算流程如下：  首先对两个文本去除停用词 使用归一化BOW(词袋模型)方法来分别表示D1,D2 使用word2vec embedding来表示D1,D2中的每个词 在D1中所有词travel到D2中所有词，对于每一个D1中的词，它与D2中的词语义比较相近的，那么可以全部移动或移动距离多一些(权重值)；对于语义差异较大，">
+<meta property="og:description" content="论文:From Word Embeddings To Document Distances WMD为衡量文本相似度的方法。使用WMD来计算两个文本D1,D2之间的相似度，计算流程如下：  首先对两个文本去除停用词 使用归一化BOW(词袋模型)方法来分别表示D1,D2 使用word2vec embedding来表示D1,D2中的每个词 在D1中所有词travel到D2中所有词，对于每一个D1中的词，">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="http://yoursite.com/2019/07/26/WMD/image/wmd-1.png">
 <meta property="og:image" content="http://yoursite.com/2019/07/26/WMD/image/wmd-2.png">
 <meta property="og:image" content="http://yoursite.com/2019/07/26/WMD/image/wmd-3.png">
-<meta property="og:updated_time" content="2019-07-26T11:36:53.663Z">
+<meta property="og:updated_time" content="2019-07-27T07:29:56.374Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="WMD算法详解">
-<meta name="twitter:description" content="WMD为衡量文本相似度的方法。使用WMD来计算两个文本D1,D2之间的相似度，计算流程如下：  首先对两个文本去除停用词 使用归一化BOW(词袋模型)方法来分别表示D1,D2 使用word2vec embedding来表示D1,D2中的每个词 在D1中所有词travel到D2中所有词，对于每一个D1中的词，它与D2中的词语义比较相近的，那么可以全部移动或移动距离多一些(权重值)；对于语义差异较大，">
+<meta name="twitter:description" content="论文:From Word Embeddings To Document Distances WMD为衡量文本相似度的方法。使用WMD来计算两个文本D1,D2之间的相似度，计算流程如下：  首先对两个文本去除停用词 使用归一化BOW(词袋模型)方法来分别表示D1,D2 使用word2vec embedding来表示D1,D2中的每个词 在D1中所有词travel到D2中所有词，对于每一个D1中的词，">
 <meta name="twitter:image" content="http://yoursite.com/2019/07/26/WMD/image/wmd-1.png">
 
 
@@ -374,7 +374,8 @@
       
 
       
-        <p>WMD为衡量文本相似度的方法。使用WMD来计算两个文本D1,D2之间的相似度，计算流程如下：</p>
+        <p>论文:<a href="http://proceedings.mlr.press/v37/kusnerb15.pdf" target="_blank" rel="noopener">From Word Embeddings To Document Distances</a></p>
+<p>WMD为衡量文本相似度的方法。使用WMD来计算两个文本D1,D2之间的相似度，计算流程如下：</p>
 <ol>
 <li>首先对两个文本去除停用词</li>
 <li>使用归一化BOW(词袋模型)方法来分别表示D1,D2</li>
@@ -447,6 +448,7 @@ l_r(\mathrm{d},\mathrm{d^{'}}) = \max(l_1(\mathrm{d},\mathrm{d^{'}}),l_2(\mathrm
 <h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><ul>
 <li><a href="https://supernan1994.github.io/nlp/wmd1.html" target="_blank" rel="noopener">深入理解WMD算法</a></li>
 <li><a href="https://www.aclweb.org/anthology/P14-1146" target="_blank" rel="noopener">Learning Sentiment-Specific Word Embedding<br>for Twitter Sentiment Classification</a></li>
+<li><a href="https://www.cs.cmu.edu/~efros/courses/AP06/Papers/rubner-jcviu-00.pdf" target="_blank" rel="noopener">The Earth Mover’s Distance as a Metric for Image Retrieval</a></li>
 </ul>
 
       
