@@ -1,0 +1,937 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="运输问题,线性规划,">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="如何以最低运输成本，将货物由来源地送至目的地。 问题建模典型范例：各工厂应分别运送多少数量至各配销中心，才能获得最低的总运输成本？  建立线性规划模型：  求得的最优解为：  运输问题的一般LP数学模型 \min Z = \sum_{i=1}^m \sum_{j=1}^n c_{ij}x_{ij} \tag{2-1}s.t.  \sum_{j=1}^n x_{ij} = s_i \ , i=1,2">
+<meta name="keywords" content="运输问题,线性规划">
+<meta property="og:type" content="article">
+<meta property="og:title" content="运输问题">
+<meta property="og:url" content="http://yoursite.com/2019/07/30/TransportationProblem/index.html">
+<meta property="og:site_name" content="Jozee&#39;s技术博客">
+<meta property="og:description" content="如何以最低运输成本，将货物由来源地送至目的地。 问题建模典型范例：各工厂应分别运送多少数量至各配销中心，才能获得最低的总运输成本？  建立线性规划模型：  求得的最优解为：  运输问题的一般LP数学模型 \min Z = \sum_{i=1}^m \sum_{j=1}^n c_{ij}x_{ij} \tag{2-1}s.t.  \sum_{j=1}^n x_{ij} = s_i \ , i=1,2">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://yoursite.com/2019/07/30/TransportationProblem/image/tp-1.png">
+<meta property="og:image" content="http://yoursite.com/2019/07/30/TransportationProblem/image/lp-1.png">
+<meta property="og:image" content="http://yoursite.com/2019/07/30/TransportationProblem/image/lp-solve-2.png">
+<meta property="og:image" content="http://yoursite.com/2019/07/30/TransportationProblem/image/tp-3.png">
+<meta property="og:image" content="http://yoursite.com/2019/07/30/TransportationProblem/image/tp-2.png">
+<meta property="og:image" content="http://yoursite.com/2019/07/30/TransportationProblem/image/3-13.png">
+<meta property="og:image" content="http://yoursite.com/2019/07/30/TransportationProblem/image/3-14.png">
+<meta property="og:image" content="http://yoursite.com/2019/07/30/TransportationProblem/image/3-15.png">
+<meta property="og:image" content="http://yoursite.com/2019/07/30/TransportationProblem/image/3-16.png">
+<meta property="og:image" content="http://yoursite.com/2019/07/30/TransportationProblem/image/3-17.png">
+<meta property="og:image" content="http://yoursite.com/2019/07/30/TransportationProblem/image/3-18.png">
+<meta property="og:image" content="http://yoursite.com/2019/07/30/TransportationProblem/image/3-19.png">
+<meta property="og:image" content="http://yoursite.com/2019/07/30/TransportationProblem/image/3-20.png">
+<meta property="og:updated_time" content="2019-07-30T07:36:29.189Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="运输问题">
+<meta name="twitter:description" content="如何以最低运输成本，将货物由来源地送至目的地。 问题建模典型范例：各工厂应分别运送多少数量至各配销中心，才能获得最低的总运输成本？  建立线性规划模型：  求得的最优解为：  运输问题的一般LP数学模型 \min Z = \sum_{i=1}^m \sum_{j=1}^n c_{ij}x_{ij} \tag{2-1}s.t.  \sum_{j=1}^n x_{ij} = s_i \ , i=1,2">
+<meta name="twitter:image" content="http://yoursite.com/2019/07/30/TransportationProblem/image/tp-1.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2019/07/30/TransportationProblem/">
+
+
+
+
+
+  <title>运输问题 | Jozee's技术博客</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Jozee's技术博客</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/07/30/TransportationProblem/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="jozee">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Jozee's技术博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">运输问题</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-07-30T15:31:03+08:00">
+                2019-07-30
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/运筹学/" itemprop="url" rel="index">
+                    <span itemprop="name">运筹学</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2019/07/30/TransportationProblem/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2019/07/30/TransportationProblem/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+          <span id="busuanzi_container_page_pv">
+            <span class="post-meta-divider">|</span>
+            <span class="post-meta-item-icon">
+            <i class="fa fa-eye"></i>
+            </span>
+            阅读量: <span id="busuanzi_value_page_pv"></span>次
+          </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>如何以最低运输成本，将货物由来源地送至目的地。</p>
+<h2 id="问题建模"><a href="#问题建模" class="headerlink" title="问题建模"></a>问题建模</h2><p><strong>典型范例</strong>：各工厂应分别运送多少数量至各配销中心，才能获得最低的总运输成本？</p>
+<p><img src="image/tp-1.png" alt="tp-1"></p>
+<p><strong>建立线性规划模型</strong>：</p>
+<p><img src="image/lp-1.png" alt="lp-1"></p>
+<p><strong>求得的最优解为</strong>：</p>
+<p><img src="image/lp-solve-2.png" alt="lp-solve-2"></p>
+<h2 id="运输问题的一般LP数学模型"><a href="#运输问题的一般LP数学模型" class="headerlink" title="运输问题的一般LP数学模型"></a>运输问题的一般LP数学模型</h2><script type="math/tex; mode=display">
+\min Z = \sum_{i=1}^m \sum_{j=1}^n c_{ij}x_{ij} \tag{2-1}</script><p>s.t.</p>
+<script type="math/tex; mode=display">
+\sum_{j=1}^n x_{ij} = s_i \ , i=1,2,\cdots,m \tag{2-2}</script><script type="math/tex; mode=display">
+\sum_{i=1}^m x_{ij} = d_j \ , j=1,2,\cdots,n \tag{2-3}</script><p>上式中的两个限制条件:</p>
+<ul>
+<li>(2-2)为供给限制条件，表示工厂i的供给量为<script type="math/tex">s_i</script></li>
+<li>(2-3)为需求限制条件，表示配销中心j的需求量为<script type="math/tex">d_j</script></li>
+</ul>
+<p>对于任何可以建模成以上数学模型的线性规划问题，都可以称之为运输问题。</p>
+<h2 id="模型假设及性质"><a href="#模型假设及性质" class="headerlink" title="模型假设及性质"></a>模型假设及性质</h2><ul>
+<li><p>运输问题基于两个假设条件：</p>
+<ul>
+<li><p>供给等于需求：</p>
+<script type="math/tex; mode=display">\sum_{i=1}^m s_i = \sum_{j=1}^n d_j</script><p>若不相等，则需要进行调整</p>
+</li>
+</ul>
+</li>
+</ul>
+<ul>
+<li><p>成本成比例性：</p>
+<p>运输成本=单位运输成本(<script type="math/tex">c_{ij}</script>)x运送数量(<script type="math/tex">x_{ij}</script>)</p>
+</li>
+</ul>
+<ul>
+<li><p>整数解性质</p>
+<p>虽然运输问题是线性规划问题，但是当所有<script type="math/tex">s_i</script>和<script type="math/tex">d_j</script>均为整数，不需要加上整数限制，该问题自动变成整数规划问题，从而得到整数解。</p>
+</li>
+</ul>
+<h2 id="产销不平衡情况的处理"><a href="#产销不平衡情况的处理" class="headerlink" title="产销不平衡情况的处理"></a>产销不平衡情况的处理</h2><h3 id="总供给大于总需求"><a href="#总供给大于总需求" class="headerlink" title="总供给大于总需求"></a>总供给大于总需求</h3><p>加上一个虚拟目的地或虚列</p>
+<script type="math/tex; mode=display">
+d_{n+1} = \sum_{i=1}^m s_i - \sum_{j=1}^n d_j \ , c_{i,n+1}=0,\forall i \tag{4-1}</script><h3 id="总供给小于总需求"><a href="#总供给小于总需求" class="headerlink" title="总供给小于总需求"></a>总供给小于总需求</h3><p>加上一个虚拟来源或虚行</p>
+<script type="math/tex; mode=display">
+s_{m+1} = \sum_{j=1}^n d_j-\sum_{i=1}^m s_i \ , c_{m+1,j}=0 \ , \forall j \tag{4-2}</script><h3 id="限制分配"><a href="#限制分配" class="headerlink" title="限制分配"></a>限制分配</h3><p><script type="math/tex">c_{ij}=0</script>：即来源i至目的地j没有适当的路径，或来源i所供给的货物并不符合目的地j的需要。</p>
+<p>让<script type="math/tex">c_{ij} = M</script>(对min问题，M表示一个无限大的值)，同时使<script type="math/tex">x_{ij}=0</script>。</p>
+<h3 id="需求存在上限和下限-意味着总需求大或等于总供给"><a href="#需求存在上限和下限-意味着总需求大或等于总供给" class="headerlink" title="需求存在上限和下限(意味着总需求大或等于总供给)"></a>需求存在上限和下限(意味着总需求大或等于总供给)</h3><p>需求经常分为两部分：</p>
+<ul>
+<li>一部分是必须满足的最低需求</li>
+<li>另一部分则是可额外多出的需求</li>
+</ul>
+<p>做法:在所增加的虚列中，相应的需求下限的单位成本为M，而让额外需求的单位成本为0。</p>
+<h2 id="举例"><a href="#举例" class="headerlink" title="举例"></a>举例</h2><h3 id="示例1-总供给大于总需求"><a href="#示例1-总供给大于总需求" class="headerlink" title="示例1(总供给大于总需求)"></a>示例1(总供给大于总需求)</h3><p>未来一年第1至4季需求35、50、80、20艘游艇，公司本身产能38艘/季；可外包给两家代工厂，成本增加3万元/艘；两家代工厂的合计产能20艘/季。公司可利用存货调节旺季的需求，存货成本1.5万/季/艘。</p>
+<p><strong>问题分析</strong>：</p>
+<p>对于上述问题，由于总供给为(38+20)*4 = 232，总需求为35+50+80+20=185；这种特殊情况属于总供给大于总需求的情况，需要增加虚行来进行调整。</p>
+<p>来源：</p>
+<ul>
+<li>公司本身第一季度的供给量-&gt;C1</li>
+<li>代工厂第一季度的供给量-&gt;T1</li>
+</ul>
+<p>目的地：</p>
+<ul>
+<li>季度1-&gt;W1，以此类推，虚行-&gt;W5</li>
+</ul>
+<p>单位运输成本:</p>
+<ul>
+<li>C1行W1列对应的单位运输成本：表示第一季度公司生产的游艇供给给第一季度的成本为0；</li>
+<li>C1行W2列对应的单位运输成本：表示第一季度公司生产的游艇供给给第二季度的成本为1.5，因为该存货存放1个季度的成本为1.5。</li>
+</ul>
+<p><img src="image/tp-3.png" alt="tp-3"></p>
+<h3 id="示例2-需求存在上限和下限"><a href="#示例2-需求存在上限和下限" class="headerlink" title="示例2(需求存在上限和下限)"></a>示例2(需求存在上限和下限)</h3><p><img src="image/tp-2.png" alt="tp-2"></p>
+<p>图中对于W2的需求上限，可以根据上面的示例限制条件求的，当满足其他所有目的地的需求量之后，剩下的供给量即为W2的需求上限:285-65-60-0 = 160。</p>
+<p>对应这个问题，相当于总需求大或等于总供给的情况，需要添加虚拟行来进行调整。</p>
+<p>对于目的地的需求上限和需求下限均非0，且不想等的情况下，需要对应的目的地使用两列来表示，其中一列的需求量为需求下限，另外一列的需求量为(需求上限-需求下限)。</p>
+<p>由于需求下限对应列的需求量可由正常的来源地供给，所以在虚拟列中它对应的单位运输成本为M(表示不需要)，而另一列表示可额外多出的需求量对应的单位运输成本为0(表示不存在)，该需求量有虚行对应的来源地供给。</p>
+<h2 id="运输问题中的解法"><a href="#运输问题中的解法" class="headerlink" title="运输问题中的解法"></a>运输问题中的解法</h2><h3 id="表上作业法-产销平衡"><a href="#表上作业法-产销平衡" class="headerlink" title="表上作业法(产销平衡)"></a>表上作业法(产销平衡)</h3><p>表上作业法是单纯形法在求解运输问题时的一种简化方法。这一方法的计算步骤如下所示：</p>
+<ol>
+<li><p>找出初始基可行解，即在产销平衡表上给出m+n-1个数字格</p>
+<p><strong>求解方法有西北角法、最小元素法、伏格尔法</strong></p>
+<ul>
+<li><p>西北角法(左上角法)</p>
+<p>每次选取的<script type="math/tex">x_{ij}</script>都是左上角的第一个元素，即有限安排运价表上编号最小的产地和销地之间的运输业务。该方法的特点是 <script type="math/tex">x_{ij}</script>选取方便，算法简单易实现。(具体方法看参考资料)</p>
+<p><strong>缺点：完全没有考虑运价问题！</strong></p>
+</li>
+<li><p>最小元素法</p>
+<p>就近供应，从单价中最小运价确定供应量，逐步次小，直至得到m+n-1个数字格</p>
+<p><img src="image/3-13.png" alt="3-13"></p>
+<p><img src="image/3-14.png" alt="3-14"></p>
+<p>第1次：从表3-13中找出最小运价为1，表示先将A2的产品供应给B1，于是更新产销平衡表：</p>
+<p><img src="image/3-15.png" alt="3-15"></p>
+<p>第2次：这时从除B1列之外的其他列中找出最小运价为2，则把A2剩下的货物供应给B3。于是更新产销平衡表：</p>
+<p><img src="image/3-16.png" alt="3-16"></p>
+<p>不断重复以上过程，最后得到的产销平衡表如下：</p>
+<p><img src="image/3-17.png" alt="3-17"></p>
+<p><strong>缺点：为了节省局部的运输费用，造成其它地方的运费增加</strong></p>
+</li>
+<li><p>伏格尔法</p>
+<p>第一步：首先在表3-13中分别计算出各行、各列的最小运费和次最小运费的差额，并填入该表的最右列和最下行：</p>
+<p><img src="image/3-18.png" alt="3-18"></p>
+<p>第二步：从行或列差额中选出最大者，选择它所在行或列中的最小元素。如上表所示，B2列是最大差额所在列，B2列中最小元素为4，因此可确定A3的产品应该优先供应B2的需要。因此产销供应表更新如下：</p>
+<p><img src="image/3-19.png" alt="3-19"></p>
+<p>划去表3-13中的B2列，对未划去的元素重复第一、二步，直到给出初始基可行解为止。最终求的的初始基可行解为：</p>
+<p><img src="image/3-20.png" alt="3-20"></p>
+</li>
+</ul>
+</li>
+</ol>
+<ol>
+<li><p>求各非基变量的检验数，即在表上计算空格(非基变量)的检验数，判别是否达到最优解。如果已是最优解，则停止计算，否则转入下一步。</p>
+<p><strong>求解方法有闭回路法、位势法</strong></p>
+</li>
+<li><p>确定换入变量和换出变量，找出新的基可行解(即在表上用闭回路法进行调整)</p>
+</li>
+<li><p>重复2、3，直到求出最优解为止。</p>
+</li>
+</ol>
+<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><ul>
+<li><a href="https://www.youtube.com/playlist?list=PLUm0dA6802wao5iSrkhnMDSLGu5bg_FtM" target="_blank" rel="noopener">youtube-Operations Research</a></li>
+<li><a href="https://www.youtube.com/watch?v=2BnaS3bjI-c" target="_blank" rel="noopener">運輸問題-西北角法</a></li>
+<li><a href="http://www.wytsg.org:88/reslib/400/070/050/010/080/030/020/110/xddl_14.htm" target="_blank" rel="noopener">运输问题的求解方法——表上作业法</a></li>
+</ul>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/运输问题/" rel="tag"># 运输问题</a>
+          
+            <a href="/tags/线性规划/" rel="tag"># 线性规划</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/07/26/WMD/" rel="next" title="WMD算法详解">
+                <i class="fa fa-chevron-left"></i> WMD算法详解
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+      <div id="disqus_thread">
+        <noscript>
+          Please enable JavaScript to view the
+          <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a>
+        </noscript>
+      </div>
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">jozee</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">28</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">4</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">37</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#问题建模"><span class="nav-number">1.</span> <span class="nav-text">问题建模</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#运输问题的一般LP数学模型"><span class="nav-number">2.</span> <span class="nav-text">运输问题的一般LP数学模型</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#模型假设及性质"><span class="nav-number">3.</span> <span class="nav-text">模型假设及性质</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#产销不平衡情况的处理"><span class="nav-number">4.</span> <span class="nav-text">产销不平衡情况的处理</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#总供给大于总需求"><span class="nav-number">4.1.</span> <span class="nav-text">总供给大于总需求</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#总供给小于总需求"><span class="nav-number">4.2.</span> <span class="nav-text">总供给小于总需求</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#限制分配"><span class="nav-number">4.3.</span> <span class="nav-text">限制分配</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#需求存在上限和下限-意味着总需求大或等于总供给"><span class="nav-number">4.4.</span> <span class="nav-text">需求存在上限和下限(意味着总需求大或等于总供给)</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#举例"><span class="nav-number">5.</span> <span class="nav-text">举例</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#示例1-总供给大于总需求"><span class="nav-number">5.1.</span> <span class="nav-text">示例1(总供给大于总需求)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#示例2-需求存在上限和下限"><span class="nav-number">5.2.</span> <span class="nav-text">示例2(需求存在上限和下限)</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#运输问题中的解法"><span class="nav-number">6.</span> <span class="nav-text">运输问题中的解法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#表上作业法-产销平衡"><span class="nav-number">6.1.</span> <span class="nav-text">表上作业法(产销平衡)</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#参考资料"><span class="nav-number">7.</span> <span class="nav-text">参考资料</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">jozee</span>
+
+  
+</div>
+<div class="busuanzi_count">
+    <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js">
+    </script>
+    <span> 本站访客数:<span id="busuanzi_value_site_uv"></span>人</span>
+    <span class="post-meta-divider">|</span>
+    <span>本站总访问量:<span id="busuanzi_value_site_pv"></span>次</span>
+</div>
+
+
+
+
+
+
+
+
+
+        
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+    
+      <script id="dsq-count-scr" src="https://jozeelin.disqus.com/count.js" async></script>
+    
+
+    
+      <script type="text/javascript">
+        var disqus_config = function () {
+          this.page.url = 'http://yoursite.com/2019/07/30/TransportationProblem/';
+          this.page.identifier = '2019/07/30/TransportationProblem/';
+          this.page.title = '运输问题';
+        };
+        var d = document, s = d.createElement('script');
+        s.src = 'https://jozeelin.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', '' + +new Date());
+        (d.head || d.body).appendChild(s);
+      </script>
+    
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+  
+
+  
+
+</body>
+</html>
