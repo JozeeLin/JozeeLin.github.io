@@ -1,0 +1,1099 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="线性规划 单纯形算法,">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="举例：政治家问题 假设你是一个政治家，试图赢得一场选举。选取包括三种不同类型的区域——市区、郊区、乡村。这些区域分别有10万、20万和50万个登记选民。为了有效控制选举局面，你希望在这三个选区中的每一个选区都赢得大多数的选票。你认识到，在某些区域，某些政策更能为你赢得选票。你的主要政策是修筑更多的道路、枪械管制、农业补贴以及增加公共运输的汽油税。根据你的竞选班子的研究，你可以估计通过在每项政策上花">
+<meta name="keywords" content="线性规划 单纯形算法">
+<meta property="og:type" content="article">
+<meta property="og:title" content="线性规划之单纯形算法">
+<meta property="og:url" content="http://yoursite.com/2019/08/01/LinearProgramming/index.html">
+<meta property="og:site_name" content="Jozee&#39;s技术博客">
+<meta property="og:description" content="举例：政治家问题 假设你是一个政治家，试图赢得一场选举。选取包括三种不同类型的区域——市区、郊区、乡村。这些区域分别有10万、20万和50万个登记选民。为了有效控制选举局面，你希望在这三个选区中的每一个选区都赢得大多数的选票。你认识到，在某些区域，某些政策更能为你赢得选票。你的主要政策是修筑更多的道路、枪械管制、农业补贴以及增加公共运输的汽油税。根据你的竞选班子的研究，你可以估计通过在每项政策上花">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://yoursite.com/Users/jozee/Desktop/%E7%BA%BF%E6%80%A7%E8%A7%84%E5%88%92/image/1-1.png">
+<meta property="og:image" content="http://yoursite.com/Users/jozee/Desktop/%E7%BA%BF%E6%80%A7%E8%A7%84%E5%88%92/image/pivot-1.png">
+<meta property="og:image" content="http://yoursite.com/Users/jozee/Desktop/%E7%BA%BF%E6%80%A7%E8%A7%84%E5%88%92/image/simplex-1.png">
+<meta property="og:image" content="http://yoursite.com/Users/jozee/Desktop/%E7%BA%BF%E6%80%A7%E8%A7%84%E5%88%92/image/unbound-1.png">
+<meta property="og:image" content="http://yoursite.com/Users/jozee/Desktop/%E7%BA%BF%E6%80%A7%E8%A7%84%E5%88%92/image/initialize-simplex.png">
+<meta property="og:updated_time" content="2019-08-01T07:12:06.907Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="线性规划之单纯形算法">
+<meta name="twitter:description" content="举例：政治家问题 假设你是一个政治家，试图赢得一场选举。选取包括三种不同类型的区域——市区、郊区、乡村。这些区域分别有10万、20万和50万个登记选民。为了有效控制选举局面，你希望在这三个选区中的每一个选区都赢得大多数的选票。你认识到，在某些区域，某些政策更能为你赢得选票。你的主要政策是修筑更多的道路、枪械管制、农业补贴以及增加公共运输的汽油税。根据你的竞选班子的研究，你可以估计通过在每项政策上花">
+<meta name="twitter:image" content="http://yoursite.com/Users/jozee/Desktop/%E7%BA%BF%E6%80%A7%E8%A7%84%E5%88%92/image/1-1.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2019/08/01/LinearProgramming/">
+
+
+
+
+
+  <title>线性规划之单纯形算法 | Jozee's技术博客</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Jozee's技术博客</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/08/01/LinearProgramming/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="jozee">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Jozee's技术博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">线性规划之单纯形算法</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-08-01T15:08:34+08:00">
+                2019-08-01
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/算法导论/" itemprop="url" rel="index">
+                    <span itemprop="name">算法导论</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2019/08/01/LinearProgramming/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2019/08/01/LinearProgramming/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+          <span id="busuanzi_container_page_pv">
+            <span class="post-meta-divider">|</span>
+            <span class="post-meta-item-icon">
+            <i class="fa fa-eye"></i>
+            </span>
+            阅读量: <span id="busuanzi_value_page_pv"></span>次
+          </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p><strong>举例：政治家问题</strong></p>
+<p>假设你是一个政治家，试图赢得一场选举。选取包括三种不同类型的区域——市区、郊区、乡村。这些区域分别有10万、20万和50万个登记选民。为了有效控制选举局面，你希望在这三个选区中的每一个选区都赢得大多数的选票。你认识到，在某些区域，某些政策更能为你赢得选票。你的主要政策是修筑更多的道路、枪械管制、农业补贴以及增加公共运输的汽油税。根据你的竞选班子的研究，你可以估计通过在每项政策上花费1000美元做广告，在每个居民区可以赢取或输掉多少选票。</p>
+<p>下图表格中，没想描述通过话费1000美元广告费支持某个特定政策，在市区、郊区或乡村可以赢得选民的千人数。负数项表示丢失的选民数。</p>
+<p>你的任务是计算你需要花费最少的钱，去赢得5万张市区选票、10万张郊区选票和25万张乡村选票。</p>
+<p>接下来，使用数学的语言来描述上述问题。首先引入4个变量，</p>
+<ul>
+<li><script type="math/tex">x_1</script>是支出在修筑道路广告上的千美元数</li>
+<li><script type="math/tex">x_2</script>是支出在枪械管制广告上的千美元数</li>
+<li><script type="math/tex">x_3</script>是支出在农业补贴广告上的千美元数</li>
+<li><script type="math/tex">x_4</script>是支出在汽油税广告上的千美元数</li>
+</ul>
+<p>将所有选区赢得大多数选票的条件，表示成：</p>
+<script type="math/tex; mode=display">
+-2x_1+8x_2+0x_3+10x_4 \ge 50 \tag{1-1}</script><script type="math/tex; mode=display">
+5x_1+2x_2+0x_3+0x_4 \ge 100 \tag{1-2}</script><script type="math/tex; mode=display">
+3x_1-5x_2+10x_3-2x_4 \ge 25 \tag{1-3}</script><p>变量<script type="math/tex">x_1,x_2,x_3,x_4</script>满足不等式(1-1)~(1-3)的任何一组值都是赢得足够数量的每种票数的一个策略。为了使花费尽量地小，即最小化广告费用。也就是说，最小化表达式:</p>
+<script type="math/tex; mode=display">
+x_1+x_2+x_3+x_4 \tag{1-4}</script><p>同时，4个变量都必须大或等于0。那么政治家问题的最终数学模型如下所示：</p>
+<script type="math/tex; mode=display">
+\min x_1+x_2+x_3+x_4</script><p>s.t.</p>
+<script type="math/tex; mode=display">
+-2x_1+8x_2+0x_3+10x_4 \ge 50 \\
+5x_1+2x_2+0x_3+0x_4 \ge 100\\
+3x_1-5x_2+10x_3-2x_4 \ge 25\\
+x_1,x_2,x_3,x_4 \ge 0</script><p>这个问题是一个线性规划问题。接下来详细介绍线性规划。</p>
+<h2 id="一般线性规划"><a href="#一般线性规划" class="headerlink" title="一般线性规划"></a>一般线性规划</h2><p>在一般线性规划的问题中，我们希望<strong>最优化</strong>一个满足<strong>一组线性不等式约束</strong>的<strong>线性函数</strong>。已知一组实数<script type="math/tex">a_1,a_2,\cdots,a_n</script>和一组变量<script type="math/tex">x_1,x_2,\cdots,x_n</script>，在这些变量上的一个线性函数f定义为：</p>
+<script type="math/tex; mode=display">
+f(x_1,x_2,\cdots,x_n) = a_1x_1+a_2x_2+\cdots+a_nx_n = \sum_{j=1}^n a_jx_j</script><p>如果b是一个实数，而f是一个线性函数，则等式：</p>
+<script type="math/tex; mode=display">
+f(x_1,x_2,\cdots,x_n) = b</script><p>是一个线性等式，而不等式</p>
+<script type="math/tex; mode=display">
+f(x_1,x_2,\cdots,x_n) \le b</script><p>或者</p>
+<script type="math/tex; mode=display">
+f(x_1,x_2,\cdots,x_n) \ge b</script><p>都是线性不等式。我们使用线性约束来表示线性等式或线性不等式。</p>
+<h2 id="线性规划概述"><a href="#线性规划概述" class="headerlink" title="线性规划概述"></a>线性规划概述</h2><p>为了描述线性规划的性质和算法，使用规范的形式来表示它们是很方便的。本章使用两种形式：标准型和松弛型。</p>
+<p>非正式的，在标准型中的线性规划是约束为线性不等式的线性函数的最大化，而松弛型的线性规划是约束为线性等式的线性函数的最大化。</p>
+<p>通常使用标准型来表示线性规划，但当描述单纯形算法的细节时，使用松弛形式比较方便。</p>
+<p>首先，考虑下面包含两个变量的线性规划：</p>
+<script type="math/tex; mode=display">
+\max x_1+x_2 \tag{3-1}</script><p>s.t.</p>
+<script type="math/tex; mode=display">
+4x_1-x_2 \le 8 \tag{3-2}</script><script type="math/tex; mode=display">
+2x_1+x_2 \le 10 \tag{3-3}</script><script type="math/tex; mode=display">
+5x_1-2x_2 \ge -2 \tag{3-4}</script><script type="math/tex; mode=display">
+x_1,x_2 \ge 0 \tag{3-5}</script><p> 则称满足所有约束式(3-2)~(3-5)的变量<script type="math/tex">x_1,x_2</script>的任何设定为线性规划的一个可行解。</p>
+<p>在<script type="math/tex">(x_1,x_2)</script>——笛卡尔坐标系统中画出这些约束的图形，如左下图a所示，可以看到可行解的集合(图形中阴影部分)在二维空间构成一个凸形区域。称这个凸形区域为可行区域。</p>
+<p><img src="/Users/jozee/Desktop/%E7%BA%BF%E6%80%A7%E8%A7%84%E5%88%92/image/1-1.png" alt="1-1"></p>
+<p>那么求解以上线性规划问题，在概念上，就是遍历可行区域中每一个点，求<script type="math/tex">x_1+x_2</script> 的值，最后使得<script type="math/tex">x_1+x_2</script>最大的那个点即为所求的点。但是，可行区域包含无限个数的点，所以以上的求解方法并不可取，我们希望找到更加有效可行的求解方法找到使得目标函数取最大值的点。</p>
+<p>在二维中，对于任意的z，<script type="math/tex">x_1+x_2=z</script>的点的集合是斜率为-1的一条直线，令z=0，则可画出一条经过原点(0,0)的斜率为-1的直线，如上图b所示。可以看到，直线与可行区域的交集点为(0,0)。</p>
+<p>更一般的，对任意的z，直线<script type="math/tex">x_1+x_2=z</script>与可行区域的交集是目标值为z的可行解的集合。上图b显示了直线<script type="math/tex">x_1+x_2=0,x_1+x_2=4,x_1+x_2=8</script>。</p>
+<p>因为可行区域是有界的，所以必定存在某个最大值z使得直线 <script type="math/tex">x_1+x_2=z</script> 和可行区域的交集非空，而这个交集或是一个顶点，或是一条线段。如果交集是一个顶点，那么只有一个最优解，而且它是一个顶点。如果交集是一条线段，那么线段上的每一点都有相同的目标值；特别地，线段的两个端点都是最优解。因为线段的每个端点都是一个顶点，所以在这个情况下最优解也在一个顶点上。</p>
+<p>更一般地，如果有n个变量，每个约束定义了n维空间中的一个半空间。这些半空间的交集形成的可行区域称作<strong>单纯形(simplex)</strong>。目标函数则称为一个超平面，而因为可行区域的凸性，如仍然有一个最优解在单纯形的一个顶点上取得。</p>
+<h2 id="标准型和松弛型"><a href="#标准型和松弛型" class="headerlink" title="标准型和松弛型"></a>标准型和松弛型</h2><h3 id="标准型"><a href="#标准型" class="headerlink" title="标准型"></a>标准型</h3><p>在标准型中，已知n个实数<script type="math/tex">c_1,c_2,\cdots,c_n</script>；m个实数<script type="math/tex">b_1,b_2,\cdots,b_m</script>；以及mn个实数<script type="math/tex">a_{ij}</script>，其中i=1,2,…,m，而j=1,2,…,n。</p>
+<script type="math/tex; mode=display">
+\max \sum_{j=1}^n c_j x_j \tag{4-1}</script><p>s.t.</p>
+<script type="math/tex; mode=display">
+\sum_{j=1}^n a_{ij}x_j \le b_i, i=1,2,\cdots,m \tag{4-2}</script><script type="math/tex; mode=display">
+x_j \ge 0,j=1,2,\cdots,n \tag{4-3}</script><p>如果构造一个mxn矩阵<script type="math/tex">A=(a_{ij})</script>，一个m维向量<script type="math/tex">\boldsymbol{b}=(b_i)</script>，一个n维向量<script type="math/tex">\boldsymbol{c} = (c_j)</script>以及一个n维向量<script type="math/tex">\boldsymbol{x}=(x_j)</script>，那么上面的标准型可写成：</p>
+<script type="math/tex; mode=display">
+\boldsymbol{c}^{\top}\boldsymbol{x} \tag{4-4}</script><p>s.t.</p>
+<script type="math/tex; mode=display">
+A\boldsymbol{x} \le \boldsymbol{b} \tag{4-5}</script><script type="math/tex; mode=display">
+\boldsymbol{x} \ge 0 \tag{4-6}</script><p>定义：</p>
+<p><strong>可行解</strong>：满足所有约束的解</p>
+<p><strong>不可行解</strong>：不满足至少一个约束的解</p>
+<p>可行解<script type="math/tex">\boldsymbol{\bar{x}}</script>对应的目标值为<script type="math/tex">\boldsymbol{c}^{\top}\boldsymbol{\bar{x}}</script>，在所有可行解中，目标值最大的一个可行解<script type="math/tex">\boldsymbol{\bar{x}}</script> 为<strong>最优解</strong>，其目标值称为<strong>最优目标值</strong></p>
+<p>如果一个线性规划没有可行解，则称此<strong>线性规划不可行</strong>，否则<strong>可行</strong>。</p>
+<h3 id="将线性规划转换为标准型"><a href="#将线性规划转换为标准型" class="headerlink" title="将线性规划转换为标准型"></a>将线性规划转换为标准型</h3><p>一个线性规划可能由于如下4个原因之一而不是标准型：</p>
+<ol>
+<li><p>目标函数可能是一个最小化，而不是最大化</p>
+<p>解决方案：简单的对目标函数中的系数取负即可。</p>
+</li>
+<li><p>可能有的变量不具有非负性约束</p>
+<p>假设某个变量<script type="math/tex">x_j</script>不具有非负性约束，则把<script type="math/tex">x_j</script>的每次出现都以<script type="math/tex">x_j^{'}-x_j^{''}</script>来替代，并增加非负性约束<script type="math/tex">x_{j}^{'} \ge0</script>和<script type="math/tex">x_j^{''} \ge 0</script>。然后把所有<script type="math/tex">x_j</script>都替换为<script type="math/tex">x_j^{'}-x_j^{''}</script>。比如，目标函数有一个项为<script type="math/tex">c_jx_j</script>，则将其替代为<script type="math/tex">c_jx_j^{'}-c_jx_j^{''}</script>。</p>
+</li>
+<li><p>可能有等式约束</p>
+<p>假设线性规划有一个等式约束<script type="math/tex">f(x_1,x_2,\cdots,x_n)=b</script>，因为当且仅当<script type="math/tex">x\ge y</script>和<script type="math/tex">x\le y</script>时x=y，所以可以将这个等式约束用一对不等式约束<script type="math/tex">f(x_1,x_2,\cdots,x_n)\le b</script>和<script type="math/tex">f(x_1,x_2,\cdots,x_n)\ge b</script>来代替。</p>
+</li>
+<li><p>可能有不等式约束，但不是<script type="math/tex">\le</script>，而是<script type="math/tex">\ge</script>。</p>
+<p>通过将<script type="math/tex">\ge</script>的约束乘以-1来把它们转换成<script type="math/tex">\le</script>的约束</p>
+</li>
+</ol>
+<p>举例：如果有线性规划：</p>
+<script type="math/tex; mode=display">
+\min -2x_1+3x_2</script><p>s.t.</p>
+<script type="math/tex; mode=display">
+x_1+x_2 = 7 \\
+x_1-2x_2 \le 4\\
+x_1 \ge 0</script><p>应用以上的转换准则，把它转换成标准型(此处的<script type="math/tex">x_2</script>与上式中的<script type="math/tex">x_2</script>不等价，转换过程请参照课本)：</p>
+<script type="math/tex; mode=display">
+\max 2x_1-3x_2+3x_3 \tag{4-7}</script><p>s.t.</p>
+<script type="math/tex; mode=display">
+x_1 + x_2 -x_3 \le 7 \tag{4-8}</script><script type="math/tex; mode=display">
+-x_1-x_2+x_3 \le -7 \tag{4-9}</script><script type="math/tex; mode=display">
+x_1-2x_2+2x_3 \le 4 \tag{4-9}</script><script type="math/tex; mode=display">
+x_1,x_2,x_3 \ge 0 \tag{4-10}</script><h3 id="将线性规划转换为松弛型"><a href="#将线性规划转换为松弛型" class="headerlink" title="将线性规划转换为松弛型"></a>将线性规划转换为松弛型</h3><p>为了利用单纯形算法高效地求解线性规划，将它转换成不等式约束都是非负约束，而剩下的约束都是等式约束的形式。令</p>
+<script type="math/tex; mode=display">
+\sum_{j=1}^n a_{ij}x_j \le b_i \tag{4-11}</script><p>是一个不等式约束。引入一个新的变量s，并重写不等式(4-7)为两个约束：</p>
+<script type="math/tex; mode=display">
+x_{n+1} = b_i - \sum_{j=1}^n a_{ij}x_j \tag{4-12}</script><script type="math/tex; mode=display">
+x_{n+1} \ge 0 \tag{4-13}</script><p>称<script type="math/tex">x_{n+1}</script>是一个松弛变量(slack variable)，因为它度量了式4-7左边和右边之间的松弛或差别。</p>
+<p>在松弛型中，除了非负约束外，所有约束都是等式约束，而且每个变量都具有非负约束。把每个等式约束写成其中一个变量在等式左边，而其余变量在等式右边的形式。同时，等式右边都有相同的变量集合，这些变量也是出现在目标函数中的仅有的变量。</p>
+<p>等式左边的变量称为<strong>基本变量</strong>，等式右边的变量称为<strong>非基本变量</strong>。</p>
+<p>把标准型式(4-7)~(4-10)写成松弛型：</p>
+<script type="math/tex; mode=display">
+\max 2x_1-3x_2+3x_3 \tag{4-14}</script><p>s.t.</p>
+<script type="math/tex; mode=display">
+x_4 = 7-x_1-x_2+x_3 \tag{4-15}</script><script type="math/tex; mode=display">
+x_5 = -7+x_1+x_2-x_3 \tag{4-16}</script><script type="math/tex; mode=display">
+x_6 = 4-x_1+2x_2-2x_3 \tag{4-17}</script><script type="math/tex; mode=display">
+x_1,x_2,x_3,x_4,x_5,x_6 \ge 0 \tag{4-18}</script><p>使用变量z来表示目标函数的值，使用如下的形式来表示式(4-14)~(4-18)松弛型：</p>
+<script type="math/tex; mode=display">
+z = 2x_1-3x_2+3x_3 \tag{4-19}</script><script type="math/tex; mode=display">
+x_4 = 7-x_1-x_2+x_3 \tag{4-20}</script><script type="math/tex; mode=display">
+x_5 = -7+x_1+x_2-x_3 \tag{4-21}</script><script type="math/tex; mode=display">
+x_6 = 4-x_1+2x_2-2x_3 \tag{4-22}</script><h3 id="松弛型"><a href="#松弛型" class="headerlink" title="松弛型"></a>松弛型</h3><p>用N来表示非基本变量的下标的集合，用B来表示基本变量下标的集合。总有<script type="math/tex">|N|=n,|B|=m</script>，以及<script type="math/tex">N\cup B = \{1,2,\cdots,n+m\}</script>。等式左边的变量被B的元素索引，等式右边的变量被N的元素索引。和标准型一样，用<script type="math/tex">b_i,c_j</script>和<script type="math/tex">a_{ij}</script>来表示常项和系数。使用v来表示目标函数的自由常数项。因此松弛型的元组表示形式为(N,B,A,b,c,v)：</p>
+<script type="math/tex; mode=display">
+z = v+\sum_{j\in N} c_j x_j</script><script type="math/tex; mode=display">
+x_i = b_i -\sum_{j\in N} a_{ij}x_j\ , \ i \in B</script><p>其中，所有的变量x受非负约束。</p>
+<h2 id="单纯形算法"><a href="#单纯形算法" class="headerlink" title="单纯形算法"></a>单纯形算法</h2><h3 id="举例"><a href="#举例" class="headerlink" title="举例"></a>举例</h3><script type="math/tex; mode=display">
+\max 3x_1+x_2+2x_3 \tag{5-1}</script><p>s.t.</p>
+<script type="math/tex; mode=display">
+x_1+x_2+3x_3 \le 30 \tag{5-2}</script><script type="math/tex; mode=display">
+2x_1 + 2x_2 +5x_3 \le 24 \tag{5-3}</script><script type="math/tex; mode=display">
+4x_1+x_2+2x_3 \le 36 \tag{5-4}</script><script type="math/tex; mode=display">
+x_1,x_2,x_3 \ge 0 \tag{5-5}</script><p>将上式转换成松弛型：</p>
+<script type="math/tex; mode=display">
+z = 3x_1+x_2+2x_3 \tag{5-6}</script><script type="math/tex; mode=display">
+x_4 = 30-x_1-x_2-3x_3 \tag{5-7}</script><script type="math/tex; mode=display">
+x_5 = 24-2x_1-2x_2-5x_3 \tag{5-8}</script><script type="math/tex; mode=display">
+x_6 = 36-4x_1-x_2-2x_3 \tag{5-9}</script><ol>
+<li><p>把等式右边的非基本变量设为0，计算等式左边基本变量的值，得到基本解为<script type="math/tex">(\bar{x_1},\bar{x_2},\cdots,\bar{x_6})=(0,0,0,30,24,36)</script>；其目标值为z=0。</p>
+</li>
+<li><p>考虑增加<script type="math/tex">x_1</script>的值，当增加<script type="math/tex">x_1</script>时，<script type="math/tex">x_4,x_5,x_6</script> 的值随之减小。因为对每个变量有一个非负的约束，所以不能允许它们之中的任何一个变成负值。</p>
+<p>如果<script type="math/tex">x_1</script>增加到30以上，<script type="math/tex">x_4</script> 变成负数，分别增加到12和9以上，<script type="math/tex">x_5,x_6</script> 也成了负数；由此可见式(5-9)是最紧的约束，<script type="math/tex">x_1</script>的增加幅度最先收到它的限制，因此我们互换<script type="math/tex">x_1</script>和<script type="math/tex">x_6</script>的角色：</p>
+<script type="math/tex; mode=display">
+x_1 = 9-\frac{x_2}{4}-\frac{x_3}{2}-\frac{x_6}{4} \tag{5-10}</script><p>那么重写线性规划为如下形式：</p>
+<script type="math/tex; mode=display">
+z = 27+\frac{x_2}{4}+\frac{x_3}{2}-\frac{3x_6}{4} \tag{5-11}</script><script type="math/tex; mode=display">
+x_1 = 9-\frac{x_2}{4}-\frac{x_3}{2}-\frac{x_6}{4} \tag{5-12}</script><script type="math/tex; mode=display">
+x_4 = 21-\frac{3x_2}{4}-\frac{5x_3}{2}+\frac{x_6}{4} \tag{5-13}</script><script type="math/tex; mode=display">
+x_5 = 6-\frac{3x_2}{2}-4x_3+\frac{x_6}{2} \tag{5-14}</script><p>这种操作称为主元(Pivot)。如上所示，一个主元操作选取一个非基本变量<script type="math/tex">x_e</script>(称为换入变量)和一个基本变量<script type="math/tex">x_l</script>(称为换出变量)，然后交换二者的角色。</p>
+<p>执行步骤1，计算重写的线性规划的可行解：(9,0,0,21,6,0)，目标值为27。</p>
+</li>
+</ol>
+<p><strong>不断地选取目标函数中系数为整数的非基本变量作为换入变量，重复迭代步骤1和步骤2，直到所有非基本变量在目标函数中的系数均为负数</strong>。</p>
+<p>此时，得到的线性规划为:</p>
+<script type="math/tex; mode=display">
+z = 28-\frac{x_3}{6}-\frac{x_5}{6}-\frac{2x_6}{3} \tag{5-15}</script><script type="math/tex; mode=display">
+x_1 = 8+\frac{x_3}{6}+\frac{x_5}{6}-\frac{x_6}{3} \tag{5-16}</script><script type="math/tex; mode=display">
+x_2 = 4-\frac{8x_3}{3}-\frac{2x_5}{3}+\frac{x_6}{3} \tag{5-17}</script><script type="math/tex; mode=display">
+x_4 = 18-\frac{x_3}{2}+\frac{x_5}{2} \tag{5-18}</script><p>这时，执行步骤1，计算得到的目标值即为最优值。</p>
+<h3 id="主元-pivot"><a href="#主元-pivot" class="headerlink" title="主元(pivot)"></a>主元(pivot)</h3><p>现在我们来制定主元的过程。过程PIVOT以一个松弛型为输入，给定元组(N,B,A,b,c,v)，换出变量<script type="math/tex">x_l</script>的下标l，以及换入变量<script type="math/tex">x_e</script>的下标e。它返回描述新松弛型的元组<script type="math/tex">(\hat{N},\hat{B},\hat{A},\hat{b},\hat{c},\hat{v})</script>：</p>
+<p><img src="/Users/jozee/Desktop/%E7%BA%BF%E6%80%A7%E8%A7%84%E5%88%92/image/pivot-1.png" alt="pivot-1"></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"></span><br><span class="line"><span class="comment">#pivot 代码实现</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">pivot</span><span class="params">(N,B,A,b,c,v,l,e)</span>:</span></span><br><span class="line">  <span class="string">"""</span></span><br><span class="line"><span class="string">  N,B: set</span></span><br><span class="line"><span class="string">  A: numpy matric</span></span><br><span class="line"><span class="string">  b,c: numpy array</span></span><br><span class="line"><span class="string">  v,l,e: scalar</span></span><br><span class="line"><span class="string">  """</span></span><br><span class="line">  new_N = np.zeros_like(N,dtype=np.float32)</span><br><span class="line">  new_B = np.zeros_like(B,dtype=np.float32)</span><br><span class="line">  new_A = np.zeros_like(A,dtype=np.float32)</span><br><span class="line">  new_b = np.zeros_like(b,dtype=np.float32)</span><br><span class="line">  new_c = np.zeros_like(c,dtype=np.float32)</span><br><span class="line">  new_v = np.zeros_like(v,dtype=np.float32)</span><br><span class="line">  new_l = np.zeros_like(l,dtype=np.float32)</span><br><span class="line">  new_e = np.zeros_like(e,dtype=np.float32)</span><br><span class="line"></span><br><span class="line">  <span class="comment">#compute the coefficients of the equation for new basic variable x_e</span></span><br><span class="line">  <span class="string">"""</span></span><br><span class="line"><span class="string">  重写有x_l在左边的等式，来让x_e在等式左边，以计算x_e新的等式的系数</span></span><br><span class="line"><span class="string">  """</span></span><br><span class="line">  new_b[e] = float(b[l])/A[l][e]</span><br><span class="line">  <span class="keyword">for</span> j <span class="keyword">in</span> N:</span><br><span class="line">    <span class="keyword">if</span> j==e:</span><br><span class="line">      <span class="keyword">continue</span></span><br><span class="line">    new_A[e][j] = float(A[l][j])/A[l][e]</span><br><span class="line">  new_A[e][l] = <span class="number">1.0</span>/A[l][e]</span><br><span class="line"></span><br><span class="line">  <span class="comment">#compute the coefficients of the remaining constraints</span></span><br><span class="line">  <span class="string">"""</span></span><br><span class="line"><span class="string">  用x_e的新等式的右边替换所有的x_e变量</span></span><br><span class="line"><span class="string">  """</span></span><br><span class="line">  <span class="keyword">for</span> i <span class="keyword">in</span> B:</span><br><span class="line">    <span class="keyword">if</span> i==l:</span><br><span class="line">      <span class="keyword">continue</span></span><br><span class="line">    new_b[i] = b[i]-A[i][e]*new_b[e]</span><br><span class="line">    <span class="keyword">for</span> j <span class="keyword">in</span> N:</span><br><span class="line">      <span class="keyword">if</span> j==e:</span><br><span class="line">        <span class="keyword">continue</span></span><br><span class="line">      new_A[i][j] = A[i][j]-A[i][e]*new_A[e][j]</span><br><span class="line">    new_A[i][l] = -A[i][e]*new_A[e][l]</span><br><span class="line"></span><br><span class="line">  <span class="comment">#compute the objective function</span></span><br><span class="line">  <span class="string">"""</span></span><br><span class="line"><span class="string">  对目标函数进行相同的替换</span></span><br><span class="line"><span class="string">  """</span></span><br><span class="line">  new_v = v+c[e]*new_b[e]</span><br><span class="line">  <span class="keyword">for</span> j <span class="keyword">in</span> N:</span><br><span class="line">    <span class="keyword">if</span> j==e:</span><br><span class="line">      <span class="keyword">continue</span></span><br><span class="line">    new_c[j] = c[j]-c[e]*new_A[e][j]</span><br><span class="line">  new_c[l] = -c[e]*new_A[e][l]</span><br><span class="line"></span><br><span class="line">  <span class="comment">#compute new sets of basic and nonbasic variables</span></span><br><span class="line">  <span class="string">"""</span></span><br><span class="line"><span class="string">  更新非基本变量和基本变量的集合</span></span><br><span class="line"><span class="string">  """</span></span><br><span class="line">  N.difference_update(set([e]))</span><br><span class="line">  N.add(l)</span><br><span class="line">  B.difference_update(set([l]))</span><br><span class="line">  B.add(e)</span><br><span class="line">  new_N = N</span><br><span class="line">  new_B = B</span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> (new_N,new_B,new_A,new_b,new_c,new_v)</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">'__main__'</span>:</span><br><span class="line">    A = np.array([[<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>],[<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>],[<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>],[<span class="number">1</span>,<span class="number">1</span>,<span class="number">3</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>],[<span class="number">2</span>,<span class="number">2</span>,<span class="number">5</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>],[<span class="number">4</span>,<span class="number">1</span>,<span class="number">2</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>]])</span><br><span class="line">    b = np.array([<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">30</span>,<span class="number">24</span>,<span class="number">36</span>])</span><br><span class="line">    c = np.array([<span class="number">3</span>,<span class="number">1</span>,<span class="number">2</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>])</span><br><span class="line">    v = <span class="number">0</span></span><br><span class="line">    N = set([<span class="number">0</span>,<span class="number">1</span>,<span class="number">2</span>])</span><br><span class="line">    B = set([<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>])</span><br><span class="line"></span><br><span class="line">    N,B,A,b,c,v = pivot(N,B,A,b,c,v,<span class="number">5</span>,<span class="number">0</span>)</span><br><span class="line">    print(N,B)</span><br><span class="line">    print(A)</span><br><span class="line">    print(b)</span><br><span class="line">    print(c)</span><br><span class="line">    print(v)</span><br><span class="line">    N,B,A,b,c,v = pivot(N,B,A,b,c,v,<span class="number">4</span>,<span class="number">2</span>)</span><br><span class="line">    print(<span class="string">"#"</span>*<span class="number">50</span>)</span><br><span class="line">    print(N,B)</span><br><span class="line">    print(A)</span><br><span class="line">    print(b)</span><br><span class="line">    print(c)</span><br><span class="line">    print(v)</span><br><span class="line">    N,B,A,b,c,v = pivot(N,B,A,b,c,v,<span class="number">2</span>,<span class="number">1</span>)</span><br><span class="line">    print(<span class="string">"#"</span>*<span class="number">50</span>)</span><br><span class="line">    print(N,B)</span><br><span class="line">    print(A)</span><br><span class="line">    print(b)</span><br><span class="line">    print(c)</span><br><span class="line">    print(v)</span><br></pre></td></tr></table></figure>
+<h3 id="标准单纯形算法"><a href="#标准单纯形算法" class="headerlink" title="标准单纯形算法"></a>标准单纯形算法</h3><blockquote>
+<p>对于使用单纯形算法求解线性规划问题，还需要解决以下几个问题：</p>
+<ol>
+<li>如何确定一个线性规划是不是可行的？ </li>
+<li>如果线性规划是可行的，但初始基本解是不可行的，该怎么做？</li>
+<li>应如何确定一个线性规划是无界的？</li>
+<li>应如何选择换入变量和换出变量？</li>
+</ol>
+<p>问题1、2将在《初始基本可行解》章节来讨论；下面先来讨论问题3、4。</p>
+</blockquote>
+<p>求解一个线性规划问题，首先需要判断该问题是否是可行的，如果可行，如何找出一个初始基本解可行的松弛型。因此，假设有一个程序INITIALIZE<em>SIMPLEX(A,b,c)，输入为一个标准型的线性规划，即一个mxn矩阵$$A=(a</em>{ij})<script type="math/tex">，一个m维的向量</script>\boldsymbol{b}=(b<em>i)<script type="math/tex">，一个n维的向量</script>\boldsymbol{c}=(c</em>{ij})$$。如果问题不可行，则返回一个消息说明线性规划不可行，然后终止。</p>
+<p>以下算法以一个标准型的线性规划作为输入。返回一个n维向量<script type="math/tex">\bar{\boldsymbol{x}} = (\bar{x}_j)</script>。伪代码如下所示：</p>
+<p><img src="/Users/jozee/Desktop/%E7%BA%BF%E6%80%A7%E8%A7%84%E5%88%92/image/simplex-1.png" alt="simplex-1"></p>
+<p>以上伪代码的解释如下：</p>
+<ul>
+<li>在第1行，调用INITIALIZE-SIMPLEX(A,b,c)，要么确定这个线性规划是不可行的，要么返回一个初始基本解可行的松弛型。</li>
+<li>while循环的终止条件为：目标函数中所有的系数都是负值</li>
+<li>第3行，选择一个在目标函数中系数为正值的变量<script type="math/tex">x_e</script>作为换入变量。（当有多个系数为正值的变量时，如何进行选择的策略，后续再介绍）</li>
+<li>第4～8行，检查每个约束，然后挑选出最严格限制<script type="math/tex">x_e</script>能增加的数量而又不违反任何的非负约束的那个约束。从而与这个约束相关联的基本变量<script type="math/tex">x_l</script>。</li>
+<li>第9～11行，如果没有一个约束限制换入变量能够增加的量，则在第10行返回“无界”。否则，在第11行通过调用PIVOT(N,B,A,b,c,v,l,e)子过程来互换换入变量和换出变量的角色。</li>
+<li>第12～15行，通过把所有的非基本变量设为0以及把每个基本变量<script type="math/tex">\bar{x}_i</script>设为<script type="math/tex">b_i</script>，来计算初始线性规划变量<script type="math/tex">\bar{x} = (\bar{x}_1,\bar{x}_2,\cdots,\bar{x}_n)</script>的一个解。</li>
+<li>第16行，返回初始线性规划变量的计算值。</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#2~11行的实现</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">solver</span><span class="params">(N,B,A,b,c,v)</span>:</span></span><br><span class="line">  <span class="string">"""</span></span><br><span class="line"><span class="string">  return:</span></span><br><span class="line"><span class="string">      result:unbound,or,0</span></span><br><span class="line"><span class="string">  """</span></span><br><span class="line">  <span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">    e = <span class="number">-1</span></span><br><span class="line">    <span class="keyword">for</span> j <span class="keyword">in</span> N:</span><br><span class="line">      <span class="keyword">if</span> c[j]&gt;<span class="number">0</span>:</span><br><span class="line">          e = j</span><br><span class="line">          <span class="keyword">break</span></span><br><span class="line">    <span class="keyword">if</span> e==<span class="number">-1</span>:</span><br><span class="line">      <span class="keyword">break</span></span><br><span class="line">    l = <span class="number">-1</span></span><br><span class="line">    min_i = float(<span class="string">'inf'</span>)</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> B:</span><br><span class="line">      <span class="keyword">if</span> A[i][e]&gt;<span class="number">0</span>:</span><br><span class="line">        delta_i = float(b[i])/A[i][e]</span><br><span class="line">      <span class="keyword">else</span>:</span><br><span class="line">          delta_i = float(<span class="string">'inf'</span>)</span><br><span class="line">      <span class="keyword">if</span> delta_i&lt;min_i:</span><br><span class="line">        min_i = delta_i</span><br><span class="line">        l = i</span><br><span class="line">    <span class="keyword">if</span> min_i==float(<span class="string">'inf'</span>):</span><br><span class="line">      print(N,B)</span><br><span class="line">      print(<span class="string">'A:'</span>,A)</span><br><span class="line">      print(<span class="string">'b:'</span>,b)</span><br><span class="line">      print(<span class="string">'c:'</span>,c)</span><br><span class="line">      print(<span class="string">'v:'</span>,v)</span><br><span class="line">      <span class="keyword">return</span> (<span class="string">'unbounded'</span>,N,B,A,b,c,v)</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">      N,B,A,b,c,v = pivot(N,B,A,b,c,v,l,e)</span><br><span class="line">      <span class="comment">#if v==0.0:</span></span><br><span class="line">      <span class="comment">#    break</span></span><br><span class="line">  print(N,B)</span><br><span class="line">  print(<span class="string">'A:'</span>,A)</span><br><span class="line">  print(<span class="string">'b:'</span>,b)</span><br><span class="line">  print(<span class="string">'c:'</span>,c)</span><br><span class="line">  print(<span class="string">'v:'</span>,v)</span><br><span class="line">  <span class="keyword">return</span> (v,N,B,A,b,c,v)</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">SIMPLEX</span><span class="params">(A,b,c)</span>:</span></span><br><span class="line">    <span class="string">"""</span></span><br><span class="line"><span class="string">    flag:-1,线性规划不可行</span></span><br><span class="line"><span class="string">    flag:0,返回初始线性规划的松弛型</span></span><br><span class="line"><span class="string">    """</span></span><br><span class="line">    flag,N,B,A,b,c,v = INITIALIZE_SIMPLEX(A,b,c)</span><br><span class="line">    print(N,B)</span><br><span class="line">    print(<span class="string">'A:'</span>,A)</span><br><span class="line">    print(<span class="string">'b:'</span>,b)</span><br><span class="line">    print(<span class="string">'c:'</span>,c)</span><br><span class="line">    print(<span class="string">'v:'</span>,v)</span><br><span class="line">    print(<span class="string">"hello world"</span>)</span><br><span class="line">    result = np.zeros(len(N),dtype=np.float32)</span><br><span class="line">    <span class="keyword">if</span> flag==<span class="number">-1</span>:</span><br><span class="line">        <span class="keyword">return</span> (<span class="string">'infeasible'</span>,result)</span><br><span class="line">    print(N,B)</span><br><span class="line">    print(<span class="string">'A:'</span>,A)</span><br><span class="line">    print(<span class="string">"b:"</span>,b)</span><br><span class="line">    print(<span class="string">'c:'</span>,c)</span><br><span class="line">    print(<span class="string">'v:'</span>,v)</span><br><span class="line">    flag,N,B,A,b,c,v = solver(N,B,A,b,c,v)</span><br><span class="line">    <span class="keyword">if</span> flag == <span class="string">'unbounded'</span>:</span><br><span class="line">        <span class="keyword">return</span> (<span class="string">'unbounded'</span>,result)</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> range(len(N)):</span><br><span class="line">        <span class="keyword">if</span> i <span class="keyword">in</span> B:</span><br><span class="line">            result[i] = b[i]</span><br><span class="line">    <span class="keyword">return</span> (<span class="string">'solved'</span>,result)</span><br></pre></td></tr></table></figure>
+<h3 id="无界"><a href="#无界" class="headerlink" title="无界"></a>无界</h3><p>举例说明：</p>
+<p>对于以下的线性规划：</p>
+<script type="math/tex; mode=display">
+\min -x_1-x_2</script><p>s.t.</p>
+<script type="math/tex; mode=display">
+x_1-x_2 \le 1 \\
+-x_1+x_2 \le 1\\
+x_1,x_2 \ge 0</script><p>画出区域为:</p>
+<p><img src="/Users/jozee/Desktop/%E7%BA%BF%E6%80%A7%E8%A7%84%E5%88%92/image/unbound-1.png" alt="unbound-1"></p>
+<p>通过上图可以看出约束条件给出的可行区域是无限的，同时目标函数在该可行域上可以无限增大。</p>
+<p>上述线性规划的松弛型为：</p>
+<script type="math/tex; mode=display">
+z = -x_1-x_2 \\
+x_3 = 1-x_1+x_2\\
+x_4 = 1+x_1-x_2</script><p>选择<script type="math/tex">x_1</script>为换入变量，<script type="math/tex">x_3</script>为换出变量，有：</p>
+<script type="math/tex; mode=display">
+z = -1-2x_2+x_3 \\
+x_1 = 1+x_2-x_3 \\
+x_4 = 2-x_3</script><p>接着，<script type="math/tex">x_2</script>为换入变量，使得目标值变小，但是发现对于<script type="math/tex">x_2</script>没有任何的约束，也就是说，<script type="math/tex">x_2</script>可以无限大，所以这是没有边界的情况。</p>
+<h3 id="退化"><a href="#退化" class="headerlink" title="退化"></a>退化</h3><p>在旋转的过程中，如果在相邻的两次迭代中，松弛型相同，则表示单纯形算法发生了循环，它会使得单纯形算法不终止，陷入死循环中。</p>
+<p>我们可以采用多种策略来避免退化，其中最常用的策略为Bland规则：通过总是选择具有最小下标的变量来打破这种相等的局面 。</p>
+<h2 id="对偶性"><a href="#对偶性" class="headerlink" title="对偶性"></a>对偶性</h2><blockquote>
+<p>对偶性是个非常重要的性质。在一个最优化问题中，一个对偶问题的识别几乎总是伴随着一个多项式时间算法的发现。对偶性也可以用来证明某个解是最优解。</p>
+</blockquote>
+<p>已知一个目标是最大化的线性规划问题，如何制定一个最小化的对偶线性规划问题，且最优值与原始线性规划的相同。在表示对偶线性规划时，称原始线性规划为primal。</p>
+<p>给定一个标准型的primal线性规划，如式(4-4)~(4-6)所示，定义其对偶线性规划为:</p>
+<script type="math/tex; mode=display">
+\min b_iy_i \tag{6-1}</script><p>s.t.</p>
+<script type="math/tex; mode=display">
+\sum_{i=1}^m a_{ij}y_i \ge c_j \ , j=1,2,\cdots,n \tag{6-2}</script><script type="math/tex; mode=display">
+y_i \ge 0 \ , i=1,2,\cdots,m \tag{6-3}</script><p>为了构造对偶问题，</p>
+<ol>
+<li>将最大化改成最小化</li>
+<li>将约束右边的与目标函数的系数的角色互换，即<script type="math/tex">c_j</script>与<script type="math/tex">b_i</script>对换</li>
+<li>将<script type="math/tex">\le</script>号改成<script type="math/tex">\ge</script>号</li>
+</ol>
+<p>在primal问题的m个约束中，每一个在对偶问题中都有一个对应的变量 <script type="math/tex">y_i</script>；在对偶问题的n个约束中，每一个在primal问题中都有一个对应的变量<script type="math/tex">x_j</script>。</p>
+<h3 id="举例-1"><a href="#举例-1" class="headerlink" title="举例"></a>举例</h3><p>式(5-1)~(5-5)给出的primal线性规划的对偶问题为：</p>
+<script type="math/tex; mode=display">
+\min 30y_1+24y_2+36y_3 \tag{6-4}</script><p>s.t.</p>
+<script type="math/tex; mode=display">
+y_1+2y_2+4y_3 \ge 3 \tag{6-5}</script><script type="math/tex; mode=display">
+y_1+2y_2+y_3 \ge 1 \tag{6-6}</script><script type="math/tex; mode=display">
+3y_1+5y_2+2y_3 \ge 2 \tag{6-7}</script><script type="math/tex; mode=display">
+y_1,y_2,y_3\ge 0 \tag{6-8}</script><p>从<strong>弱对偶性</strong>开始，它表示primal线性规划问题的任意可行解的数值不大于对偶问题的任意可行解的值。</p>
+<p><strong>引理6-1(线性规划弱对偶性)</strong> 令<script type="math/tex">\bar{x}</script>表示式(4-4)~(4-6)中的primal线性规划的任意一个可行解，令<script type="math/tex">\bar{y}</script>表示式(6-1)~(6-3)中的对偶问题的任意一个可行解。则</p>
+<script type="math/tex; mode=display">
+\sum_{j=1}^n c_j \bar{x}_j \le \sum_{i=1}^m b_i \bar{y}_i</script><p><strong>证明:</strong></p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+\sum_{j=1}^n c_j \bar{x}_j &\le \sum_{j=1}^n \left(\sum_{i=1}^m a_{ij}\bar{y}_i\right)\bar{x}_j (见式(6-2))\\
+&=\sum_{i=1}^m \left(\sum_{j=1}^n a_{ij}\bar{x}_j\right)\bar{y}_i \\
+&\le \sum_{i=1}^m b_i \bar{y}_i (见式(4-5))
+\end{aligned}</script><p><strong>推论6-2</strong>:令<script type="math/tex">\bar{x}</script>表示primal线性规划(A,b,c)的一个可行解，且令<script type="math/tex">\bar{y}</script>表示相应的对偶问题的一个可行解。如果：</p>
+<script type="math/tex; mode=display">
+\sum_{j=1}^n c_j \bar{x}_j = \sum_{i=1}^m b_i \bar{y}_i</script><p>则<script type="math/tex">\bar{x}</script>和<script type="math/tex">\bar{y}</script>分别是primal线性规划和对偶线性规划的最优解。</p>
+<p><strong>证明：</strong>根据引理6-1，愿问题的可行解的目标值不会超过对偶问题的可行解的目标值。primal线性规划问题是一个最大化问题，而对偶线性规划是一个最小化问题。因此，如果可行解<script type="math/tex">\bar{x}</script>和<script type="math/tex">\bar{y}</script>有相同的目标值，那么没有一个可以被改进。</p>
+<p>primal目标函数的系数的负值是对偶变量的值。更准确的说，假设primal问题的最偶一个松弛型为：</p>
+<script type="math/tex; mode=display">
+z = v^{'} = \sum_{j\in N} c^{'}_jx_j</script><script type="math/tex; mode=display">
+x_i = b_i^{'} - \sum_{j\in N} a^{'}_{ij}x_j \ , i\in B</script><p>则一个最优对偶解为：</p>
+<script type="math/tex; mode=display">
+\bar{y}_i = \left\{\begin{aligned}&-c_{n+i}^{'} \ 若(n+i)\in N \\ & 0 \ 其他情况\end{aligned}\right. \tag{6-9}</script><p>所以，式(6-4)~(6-8)定义的对偶线性规划的一个最优解是<script type="math/tex">\bar{y}_1=0</script>，<script type="math/tex">\bar{y}_2 = -c_5^{'} = 1/6</script>，以及<script type="math/tex">\bar{y}_3 = -c_6^{'} = 2/3</script>。求对偶目标函数的值式(6-4)，得到目标值为(30*0+24*(1/6)+36*(2/3) = 28)。</p>
+<p>通过以上的实际例子以及引理6-1,证实了primal问题的目标值缺失等于对偶问题的目标值。</p>
+<p><strong>定理6-3(线性规划对偶性)</strong> 假设SIMPLEX在原线性规划(A,b,c)上返回<script type="math/tex">\bar{x} = (\bar{x}_1,\bar{x}_2,\cdots,\bar{x}_n)</script>。令N和B表示最终松弛型的非基本变量和基本变量的集合，令<script type="math/tex">c^{'}</script>表示最终松弛型中的系数，令<script type="math/tex">\bar{y} = (\bar{y}_1,\bar{y}_2,\cdots,\bar{y}_m)</script>由式(6-9)定义。则<script type="math/tex">\bar{x}</script>是primal线性规划的一个最优解，<script type="math/tex">\bar{y}</script>是对偶线性规划的一个最优解，而且：</p>
+<script type="math/tex; mode=display">
+\sum_{j=1}^n c_j \bar{x}_j = \sum_{i=1}^m b_i \bar{y}_i \tag{6-10}</script><p><strong>证明</strong>：见（算法导论）</p>
+<p><strong>定理6-4(线性规划对偶性)</strong>假设SIMPLEX在primal线性规划(A,b,c)上返回值<script type="math/tex">\bar{x} = (\bar{x}_1,\bar{x}_2,\cdots,\bar{x}_n)</script>。令N和B表示最终松弛型的非基本变量和基本变量的集合，令<script type="math/tex">c^{'}</script>表示最终松弛型中的系数，令<script type="math/tex">\bar{y} = (\bar{y}_1,\bar{y}_2,\cdots,\bar{y}_m)</script>为对偶线性规划的解。则<script type="math/tex">\bar{x}</script>是primal线性规划的一个最优解，<script type="math/tex">\bar{y}</script>是对偶线性规划的一个最优解，而且：</p>
+<script type="math/tex; mode=display">
+\sum_{j=1}^n c_j \bar{x}_j = \sum_{i=1}^m b_i \bar{y}_i</script><h2 id="初始基本可行解"><a href="#初始基本可行解" class="headerlink" title="初始基本可行解"></a>初始基本可行解</h2><p>如何测试一个线性规划是否是可行的，如果是，如何产生一个基本解可行的松弛型。</p>
+<h3 id="找出一个初始解"><a href="#找出一个初始解" class="headerlink" title="找出一个初始解"></a>找出一个初始解</h3><p><strong>一个线性规划可能是可行的，但是初始基本解可能不是可行的。</strong>例如，考虑下列的线性规划：</p>
+<script type="math/tex; mode=display">
+\max 2x_1-x_2</script><p>s.t.</p>
+<script type="math/tex; mode=display">
+2x_1-x_2 \le 2\\
+x_1 - 5x_2 \le -4 \\
+x_1,x_2 \ge 0</script><p>如果将这个线性规划转换成松弛型，基本解将设<script type="math/tex">x_1=0,x_2=0</script>，这个解不能使得约束条件成立，因此它不是一个可行解。</p>
+<p>INITIALIZE-SIMPLEX的伪代码如下所示：</p>
+<p><img src="/Users/jozee/Desktop/%E7%BA%BF%E6%80%A7%E8%A7%84%E5%88%92/image/initialize-simplex.png" alt="initialize-simplex"></p>
+<p>以上伪代码的解释如下：</p>
+<ol>
+<li><p>第1～3行，隐含地测试L的初始松弛型的基本解，而它由:N={1,2,…,n}；B={n+1,n+2,…,n+m}；对于所有<script type="math/tex">i \in B</script>,<script type="math/tex">\bar{x}_i = b_i</script>；以及对于所有<script type="math/tex">j\in N,\bar{x}_j = 0</script>。如果这个解是可行的，则返回这个松弛型</p>
+</li>
+<li><p>第4行，构造辅助线性规划<script type="math/tex">L_{aux}</script></p>
+</li>
+<li><p>第6行，l设置为转换成松弛型后最小的<script type="math/tex">b_i</script>的下标。因为L的初始基本解是不可行的，所以<script type="math/tex">L_{aux}</script>的松弛型的初始基本解也不是可行的。</p>
+</li>
+<li><p>第8行，执行PIVOT调用，以<script type="math/tex">x_0</script> 为换入变量，<script type="math/tex">x_l</script>为换出变量</p>
+</li>
+<li><p>第9行，PIVOT调用产生的基本解是可行的，现在有一个基本解可行的松弛型，返回给SIMPLEX</p>
+</li>
+<li><p>第10行，重复调用SIMPLEX2~11 行，来求解辅助线性规划</p>
+</li>
+<li><p>第11～13行，根据第10行返回的辅助线性规划的解：</p>
+<p>如果找到了一个目标值为0的<script type="math/tex">L_{aux}</script> 的最优解，那么在12行中为L构造一个基本解可行的松弛型：即从约束中删除所有<script type="math/tex">x_0</script>的项，并且恢复L的初始目标函数。<strong>初始目标函数可能同时包含基本变量和非基本变量，因此，在这个目标函数中，将每个基本变量用其关联的约束的右边来替换</strong>。</p>
+<p>如果初始线性规划L是不可行的，那么在13行中返回这一信息。</p>
+</li>
+</ol>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">INITIALIZE_SIMPLEX</span><span class="params">(A,b,c)</span>:</span></span><br><span class="line">  m = np.count_nonzero(b)</span><br><span class="line">  n = len(b)-m</span><br><span class="line">  old_N = set(np.nonzero(c)[<span class="number">0</span>]) <span class="comment">#保存原目标函数</span></span><br><span class="line">  old_c = deepcopy(c)</span><br><span class="line"></span><br><span class="line">  k = np.argmin(b)</span><br><span class="line">  print(b[k])</span><br><span class="line">  <span class="keyword">if</span> b[k]&gt;=<span class="number">0</span>:</span><br><span class="line">    <span class="keyword">return</span> (<span class="number">0</span>,set(range(n)),set(range(n+<span class="number">1</span>,m+n)),A,b,c,<span class="number">0</span>)<span class="comment">#存在初始基本可行解</span></span><br><span class="line">  <span class="comment">#构建辅助线性规划</span></span><br><span class="line">  new_row = np.zeros(m+n)[np.newaxis,:]</span><br><span class="line">  A = np.vstack((new_row,A))</span><br><span class="line">  new_col = np.array([<span class="number">0</span>]*(n+<span class="number">1</span>)+[<span class="number">-1</span>]*m).reshape(n+m+<span class="number">1</span>,<span class="number">-1</span>)</span><br><span class="line">  A = np.hstack((new_col,A))</span><br><span class="line">  b = np.insert(b,<span class="number">0</span>,<span class="number">0</span>)</span><br><span class="line">  c = np.zeros_like(c)</span><br><span class="line">  c = np.insert(c,<span class="number">0</span>,<span class="number">-1</span>)</span><br><span class="line">  N = set(range(n+<span class="number">1</span>))</span><br><span class="line">  B = set(range(n+<span class="number">1</span>,m+n+<span class="number">1</span>))</span><br><span class="line">  v = <span class="number">0</span></span><br><span class="line">  l = n<span class="number">-1</span>+k</span><br><span class="line">  print(N,B)</span><br><span class="line">  print(<span class="string">'A:'</span>,A)</span><br><span class="line">  print(<span class="string">'b:'</span>,b)</span><br><span class="line">  print(<span class="string">'c:'</span>,c)</span><br><span class="line">  print(<span class="string">'v:'</span>,v)</span><br><span class="line">  print(l)</span><br><span class="line">  N,B,A,b,c,v = pivot(N,B,A,b,c,v,l,<span class="number">0</span>)</span><br><span class="line">  result = <span class="string">'outbound'</span></span><br><span class="line">  <span class="keyword">while</span> result!=<span class="number">0.0</span>:</span><br><span class="line">    result,N,B,A,b,c,v = solver(N,B,A,b,c,v)</span><br><span class="line">    <span class="keyword">if</span> result==<span class="string">'outbound'</span>:</span><br><span class="line">        <span class="keyword">break</span></span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span> result==<span class="number">0.0</span>:</span><br><span class="line">    <span class="comment">#return the final slack form with x0 removed</span></span><br><span class="line">    c = deepcopy(old_c)</span><br><span class="line">    <span class="keyword">for</span> e <span class="keyword">in</span> old_N:</span><br><span class="line">      <span class="keyword">if</span> e <span class="keyword">in</span> B:</span><br><span class="line">        v = v+old_c[e]*b[e]</span><br><span class="line">        c[e] = <span class="number">0.0</span></span><br><span class="line">        <span class="keyword">for</span> j <span class="keyword">in</span> N:</span><br><span class="line">          <span class="keyword">if</span> j==e:</span><br><span class="line">            <span class="keyword">continue</span></span><br><span class="line">          c[j] = old_c[j]-old_c[e]*A[e][j]</span><br><span class="line">    N.remove(<span class="number">0</span>)</span><br><span class="line">    N = set(np.array(list(N))<span class="number">-1</span>)</span><br><span class="line">    B = set(np.array(list(B))<span class="number">-1</span>)</span><br><span class="line">    print(<span class="string">"!"</span>*<span class="number">50</span>)</span><br><span class="line">    <span class="keyword">return</span> (<span class="number">0</span>,N,B,A,b,c,v)</span><br><span class="line">  <span class="keyword">else</span>:</span><br><span class="line">    <span class="keyword">return</span> (<span class="number">-1</span>,N,B,A,b,c,v) <span class="comment">#infeasible</span></span><br></pre></td></tr></table></figure>
+<h2 id="单纯形算法代码实现"><a href="#单纯形算法代码实现" class="headerlink" title="单纯形算法代码实现"></a>单纯形算法代码实现</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br><span class="line">180</span><br><span class="line">181</span><br><span class="line">182</span><br><span class="line">183</span><br><span class="line">184</span><br><span class="line">185</span><br><span class="line">186</span><br><span class="line">187</span><br><span class="line">188</span><br><span class="line">189</span><br><span class="line">190</span><br><span class="line">191</span><br><span class="line">192</span><br><span class="line">193</span><br><span class="line">194</span><br><span class="line">195</span><br><span class="line">196</span><br><span class="line">197</span><br><span class="line">198</span><br><span class="line">199</span><br><span class="line">200</span><br><span class="line">201</span><br><span class="line">202</span><br><span class="line">203</span><br><span class="line">204</span><br><span class="line">205</span><br><span class="line">206</span><br><span class="line">207</span><br><span class="line">208</span><br><span class="line">209</span><br><span class="line">210</span><br><span class="line">211</span><br><span class="line">212</span><br><span class="line">213</span><br><span class="line">214</span><br><span class="line">215</span><br><span class="line">216</span><br><span class="line">217</span><br><span class="line">218</span><br><span class="line">219</span><br><span class="line">220</span><br><span class="line">221</span><br><span class="line">222</span><br><span class="line">223</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">from</span> copy <span class="keyword">import</span> deepcopy</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">log</span><span class="params">(func)</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">wrapper</span><span class="params">(*args)</span>:</span></span><br><span class="line">      print(<span class="string">"^"</span>*<span class="number">20</span>,<span class="string">'begin:'</span>,func.__name__,<span class="string">"^"</span>*<span class="number">20</span>)</span><br><span class="line">      result = func(*args)</span><br><span class="line">      print(<span class="string">"^"</span>*<span class="number">20</span>,<span class="string">'end:'</span>,func.__name__,<span class="string">"^"</span>*<span class="number">20</span>)</span><br><span class="line">      <span class="keyword">return</span> result</span><br><span class="line">    <span class="keyword">return</span> wrapper</span><br><span class="line"></span><br><span class="line"><span class="comment">#pivot 代码实现</span></span><br><span class="line"><span class="meta">@log</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">pivot</span><span class="params">(N,B,A,b,c,v,l,e)</span>:</span></span><br><span class="line">  <span class="string">"""</span></span><br><span class="line"><span class="string">  N,B: set</span></span><br><span class="line"><span class="string">  A: numpy matric</span></span><br><span class="line"><span class="string">  b,c: numpy array</span></span><br><span class="line"><span class="string">  v,l,e: scalar</span></span><br><span class="line"><span class="string">  """</span></span><br><span class="line">  new_A = np.zeros_like(A,dtype=np.float32)</span><br><span class="line">  new_b = np.zeros_like(b,dtype=np.float32)</span><br><span class="line">  new_c = np.zeros_like(c,dtype=np.float32)</span><br><span class="line">  new_v = np.zeros_like(v,dtype=np.float32)</span><br><span class="line">  new_l = np.zeros_like(l,dtype=np.float32)</span><br><span class="line">  new_e = np.zeros_like(e,dtype=np.float32)</span><br><span class="line"></span><br><span class="line">  <span class="comment">#compute the coefficients of the equation for new basic variable x_e</span></span><br><span class="line">  <span class="string">"""</span></span><br><span class="line"><span class="string">  重写有x_l在左边的等式，来让x_e在等式左边，以计算x_e新的等式的系数</span></span><br><span class="line"><span class="string">  """</span></span><br><span class="line">  new_b[e] = float(b[l])/A[l][e]</span><br><span class="line">  <span class="keyword">for</span> j <span class="keyword">in</span> N:</span><br><span class="line">    <span class="keyword">if</span> j==e:</span><br><span class="line">      <span class="keyword">continue</span></span><br><span class="line">    new_A[e][j] = float(A[l][j])/A[l][e]</span><br><span class="line">  new_A[e][l] = <span class="number">1.0</span>/A[l][e]</span><br><span class="line"></span><br><span class="line">  <span class="comment">#compute the coefficients of the remaining constraints</span></span><br><span class="line">  <span class="string">"""</span></span><br><span class="line"><span class="string">  用x_e的新等式的右边替换所有的x_e变量</span></span><br><span class="line"><span class="string">  """</span></span><br><span class="line">  <span class="keyword">for</span> i <span class="keyword">in</span> B:</span><br><span class="line">    <span class="keyword">if</span> i==l:</span><br><span class="line">      <span class="keyword">continue</span></span><br><span class="line">    new_b[i] = b[i]-A[i][e]*new_b[e]</span><br><span class="line">    <span class="keyword">for</span> j <span class="keyword">in</span> N:</span><br><span class="line">      <span class="keyword">if</span> j==e:</span><br><span class="line">        <span class="keyword">continue</span></span><br><span class="line">      new_A[i][j] = A[i][j]-A[i][e]*new_A[e][j]</span><br><span class="line">    new_A[i][l] = -A[i][e]*new_A[e][l]</span><br><span class="line"></span><br><span class="line">  <span class="comment">#compute the objective function</span></span><br><span class="line">  <span class="string">"""</span></span><br><span class="line"><span class="string">  对目标函数进行相同的替换</span></span><br><span class="line"><span class="string">  """</span></span><br><span class="line">  new_v = v+c[e]*new_b[e]</span><br><span class="line">  <span class="keyword">for</span> j <span class="keyword">in</span> N:</span><br><span class="line">    <span class="keyword">if</span> j==e:</span><br><span class="line">      <span class="keyword">continue</span></span><br><span class="line">    new_c[j] = c[j]-c[e]*new_A[e][j]</span><br><span class="line">  new_c[l] = -c[e]*new_A[e][l]</span><br><span class="line"></span><br><span class="line">  <span class="comment">#compute new sets of basic and nonbasic variables</span></span><br><span class="line">  <span class="string">"""</span></span><br><span class="line"><span class="string">  更新非基本变量和基本变量的集合</span></span><br><span class="line"><span class="string">  """</span></span><br><span class="line">  N.difference_update(set([e]))</span><br><span class="line">  N.add(l)</span><br><span class="line">  B.difference_update(set([l]))</span><br><span class="line">  B.add(e)</span><br><span class="line">  new_N = N</span><br><span class="line">  new_B = B</span><br><span class="line">  print(new_N,new_B)</span><br><span class="line">  print(<span class="string">'A:'</span>,new_A)</span><br><span class="line">  print(<span class="string">'b:'</span>,new_b)</span><br><span class="line">  print(<span class="string">'c:'</span>,new_c)</span><br><span class="line">  print(<span class="string">'v:'</span>,new_v)</span><br><span class="line">  <span class="keyword">return</span> (new_N,new_B,new_A,new_b,new_c,new_v)</span><br><span class="line"></span><br><span class="line"><span class="meta">@log</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">solver</span><span class="params">(N,B,A,b,c,v)</span>:</span></span><br><span class="line">  <span class="string">"""</span></span><br><span class="line"><span class="string">  return:</span></span><br><span class="line"><span class="string">      result:unbound,or,0</span></span><br><span class="line"><span class="string">  """</span></span><br><span class="line">  <span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">    e = <span class="number">-1</span></span><br><span class="line">    <span class="keyword">for</span> j <span class="keyword">in</span> N:</span><br><span class="line">      <span class="keyword">if</span> c[j]&gt;<span class="number">0</span>:</span><br><span class="line">          e = j</span><br><span class="line">          <span class="keyword">break</span></span><br><span class="line">    <span class="keyword">if</span> e==<span class="number">-1</span>:</span><br><span class="line">      <span class="keyword">break</span></span><br><span class="line">    l = <span class="number">-1</span></span><br><span class="line">    min_i = float(<span class="string">'inf'</span>)</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> B:</span><br><span class="line">      <span class="keyword">if</span> A[i][e]&gt;<span class="number">0</span>:</span><br><span class="line">        delta_i = float(b[i])/A[i][e]</span><br><span class="line">      <span class="keyword">else</span>:</span><br><span class="line">          delta_i = float(<span class="string">'inf'</span>)</span><br><span class="line">      <span class="keyword">if</span> delta_i&lt;min_i:</span><br><span class="line">        min_i = delta_i</span><br><span class="line">        l = i</span><br><span class="line">    <span class="keyword">if</span> min_i==float(<span class="string">'inf'</span>):</span><br><span class="line">      print(N,B)</span><br><span class="line">      print(<span class="string">'A:'</span>,A)</span><br><span class="line">      print(<span class="string">'b:'</span>,b)</span><br><span class="line">      print(<span class="string">'c:'</span>,c)</span><br><span class="line">      print(<span class="string">'v:'</span>,v)</span><br><span class="line">      <span class="keyword">return</span> (<span class="string">'unbounded'</span>,N,B,A,b,c,v)</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">      N,B,A,b,c,v = pivot(N,B,A,b,c,v,l,e)</span><br><span class="line">      <span class="comment">#if v==0.0:</span></span><br><span class="line">      <span class="comment">#    break</span></span><br><span class="line">  print(N,B)</span><br><span class="line">  print(<span class="string">'A:'</span>,A)</span><br><span class="line">  print(<span class="string">'b:'</span>,b)</span><br><span class="line">  print(<span class="string">'c:'</span>,c)</span><br><span class="line">  print(<span class="string">'v:'</span>,v)</span><br><span class="line">  <span class="keyword">return</span> (v,N,B,A,b,c,v)</span><br><span class="line"></span><br><span class="line"><span class="meta">@log</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">INITIALIZE_SIMPLEX</span><span class="params">(A,b,c)</span>:</span></span><br><span class="line">  m = np.count_nonzero(b)</span><br><span class="line">  n = len(b)-m</span><br><span class="line">  old_N = set(np.nonzero(c)[<span class="number">0</span>]) <span class="comment">#保存原目标函数</span></span><br><span class="line">  old_c = deepcopy(c)</span><br><span class="line"></span><br><span class="line">  k = np.argmin(b)</span><br><span class="line">  print(b[k])</span><br><span class="line">  <span class="keyword">if</span> b[k]&gt;=<span class="number">0</span>:</span><br><span class="line">    <span class="keyword">return</span> (<span class="number">0</span>,set(range(n)),set(range(n+<span class="number">1</span>,m+n)),A,b,c,<span class="number">0</span>)<span class="comment">#存在初始基本可行解</span></span><br><span class="line">  <span class="comment">#构建辅助线性规划</span></span><br><span class="line">  new_row = np.zeros(m+n)[np.newaxis,:]</span><br><span class="line">  A = np.vstack((new_row,A))</span><br><span class="line">  new_col = np.array([<span class="number">0</span>]*(n+<span class="number">1</span>)+[<span class="number">-1</span>]*m).reshape(n+m+<span class="number">1</span>,<span class="number">-1</span>)</span><br><span class="line">  A = np.hstack((new_col,A))</span><br><span class="line">  b = np.insert(b,<span class="number">0</span>,<span class="number">0</span>)</span><br><span class="line">  c = np.zeros_like(c)</span><br><span class="line">  c = np.insert(c,<span class="number">0</span>,<span class="number">-1</span>)</span><br><span class="line">  N = set(range(n+<span class="number">1</span>))</span><br><span class="line">  B = set(range(n+<span class="number">1</span>,m+n+<span class="number">1</span>))</span><br><span class="line">  v = <span class="number">0</span></span><br><span class="line">  l = n<span class="number">-1</span>+k</span><br><span class="line">  print(N,B)</span><br><span class="line">  print(<span class="string">'A:'</span>,A)</span><br><span class="line">  print(<span class="string">'b:'</span>,b)</span><br><span class="line">  print(<span class="string">'c:'</span>,c)</span><br><span class="line">  print(<span class="string">'v:'</span>,v)</span><br><span class="line">  print(l)</span><br><span class="line">  N,B,A,b,c,v = pivot(N,B,A,b,c,v,l,<span class="number">0</span>)</span><br><span class="line">  result = <span class="string">'outbound'</span></span><br><span class="line">  <span class="keyword">while</span> result!=<span class="number">0.0</span>:</span><br><span class="line">    result,N,B,A,b,c,v = solver(N,B,A,b,c,v)</span><br><span class="line">    <span class="keyword">if</span> result==<span class="string">'outbound'</span>:</span><br><span class="line">        <span class="keyword">break</span></span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span> result==<span class="number">0.0</span>:</span><br><span class="line">    <span class="comment">#return the final slack form with x0 removed</span></span><br><span class="line">    c = deepcopy(old_c)</span><br><span class="line">    <span class="keyword">for</span> e <span class="keyword">in</span> old_N:</span><br><span class="line">      <span class="keyword">if</span> e <span class="keyword">in</span> B:</span><br><span class="line">        v = v+old_c[e]*b[e]</span><br><span class="line">        c[e] = <span class="number">0.0</span></span><br><span class="line">        <span class="keyword">for</span> j <span class="keyword">in</span> N:</span><br><span class="line">          <span class="keyword">if</span> j==e:</span><br><span class="line">            <span class="keyword">continue</span></span><br><span class="line">          c[j] = old_c[j]-old_c[e]*A[e][j]</span><br><span class="line">    N.remove(<span class="number">0</span>)</span><br><span class="line">    N = set(np.array(list(N))<span class="number">-1</span>)</span><br><span class="line">    B = set(np.array(list(B))<span class="number">-1</span>)</span><br><span class="line">    print(<span class="string">"!"</span>*<span class="number">50</span>)</span><br><span class="line">    <span class="keyword">return</span> (<span class="number">0</span>,N,B,A,b,c,v)</span><br><span class="line">  <span class="keyword">else</span>:</span><br><span class="line">    <span class="keyword">return</span> (<span class="number">-1</span>,N,B,A,b,c,v) <span class="comment">#infeasible</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#@log</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">SIMPLEX</span><span class="params">(A,b,c)</span>:</span></span><br><span class="line">    <span class="string">"""</span></span><br><span class="line"><span class="string">    flag:-1,线性规划不可行</span></span><br><span class="line"><span class="string">    flag:0,返回初始线性规划的松弛型</span></span><br><span class="line"><span class="string">    """</span></span><br><span class="line">    flag,N,B,A,b,c,v = INITIALIZE_SIMPLEX(A,b,c)</span><br><span class="line">    print(N,B)</span><br><span class="line">    print(<span class="string">'A:'</span>,A)</span><br><span class="line">    print(<span class="string">'b:'</span>,b)</span><br><span class="line">    print(<span class="string">'c:'</span>,c)</span><br><span class="line">    print(<span class="string">'v:'</span>,v)</span><br><span class="line">    print(<span class="string">"hello world"</span>)</span><br><span class="line">    result = np.zeros(len(N),dtype=np.float32)</span><br><span class="line">    <span class="keyword">if</span> flag==<span class="number">-1</span>:</span><br><span class="line">        <span class="keyword">return</span> (<span class="string">'infeasible'</span>,result)</span><br><span class="line">    print(N,B)</span><br><span class="line">    print(<span class="string">'A:'</span>,A)</span><br><span class="line">    print(<span class="string">"b:"</span>,b)</span><br><span class="line">    print(<span class="string">'c:'</span>,c)</span><br><span class="line">    print(<span class="string">'v:'</span>,v)</span><br><span class="line">    flag,N,B,A,b,c,v = solver(N,B,A,b,c,v)</span><br><span class="line">    <span class="keyword">if</span> flag == <span class="string">'unbounded'</span>:</span><br><span class="line">        <span class="keyword">return</span> (<span class="string">'unbounded'</span>,result)</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> range(len(N)):</span><br><span class="line">        <span class="keyword">if</span> i <span class="keyword">in</span> B:</span><br><span class="line">            result[i] = b[i]</span><br><span class="line">    <span class="keyword">return</span> (<span class="string">'solved'</span>,result)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">'__main__'</span>:</span><br><span class="line">    <span class="comment">####################示例1:使用辅助线性规划####################</span></span><br><span class="line"><span class="comment">#    A = np.array([[0,0,0,0],[0,0,0,0],[2,-1,0,0],[1,-5,0,0]])</span></span><br><span class="line"><span class="comment">#    b = np.array([0,0,2,-4])</span></span><br><span class="line"><span class="comment">#    c = np.array([2,-1,0,0])</span></span><br><span class="line"><span class="comment">#    flag,result = SIMPLEX(A,b,c)</span></span><br><span class="line"><span class="comment">#    print(flag)</span></span><br><span class="line"><span class="comment">#    print(result)</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">####################初始基本解可行####################</span></span><br><span class="line">    A = np.array([[<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>],[<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>],[<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>],[<span class="number">1</span>,<span class="number">1</span>,<span class="number">3</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>],[<span class="number">2</span>,<span class="number">2</span>,<span class="number">5</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>],[<span class="number">4</span>,<span class="number">1</span>,<span class="number">2</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>]])</span><br><span class="line">    b = np.array([<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">30</span>,<span class="number">24</span>,<span class="number">36</span>])</span><br><span class="line">    c = np.array([<span class="number">3</span>,<span class="number">1</span>,<span class="number">2</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>])</span><br><span class="line">    flag,result = SIMPLEX(A,b,c)</span><br><span class="line">    print(flag)</span><br><span class="line">    print(result)</span><br></pre></td></tr></table></figure>
+<h2 id="从几何角度看单纯形算法"><a href="#从几何角度看单纯形算法" class="headerlink" title="从几何角度看单纯形算法"></a>从几何角度看单纯形算法</h2><p>后续再加。可参考《参考资料-2》</p>
+<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><ol>
+<li><p>算法导论-线性规划</p>
+</li>
+<li><p><a href="https://www.hrwhisper.me/introduction-to-simplex-algorithm/" target="_blank" rel="noopener">线性规划-单纯形算法详解</a></p>
+</li>
+<li><p>pivot在很多地方也翻译成<strong>旋转</strong></p>
+</li>
+</ol>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/线性规划-单纯形算法/" rel="tag"># 线性规划 单纯形算法</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/07/30/TransportationProblem/" rel="next" title="运输问题">
+                <i class="fa fa-chevron-left"></i> 运输问题
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+      <div id="disqus_thread">
+        <noscript>
+          Please enable JavaScript to view the
+          <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a>
+        </noscript>
+      </div>
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">jozee</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">29</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">5</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">38</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#一般线性规划"><span class="nav-number">1.</span> <span class="nav-text">一般线性规划</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#线性规划概述"><span class="nav-number">2.</span> <span class="nav-text">线性规划概述</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#标准型和松弛型"><span class="nav-number">3.</span> <span class="nav-text">标准型和松弛型</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#标准型"><span class="nav-number">3.1.</span> <span class="nav-text">标准型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#将线性规划转换为标准型"><span class="nav-number">3.2.</span> <span class="nav-text">将线性规划转换为标准型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#将线性规划转换为松弛型"><span class="nav-number">3.3.</span> <span class="nav-text">将线性规划转换为松弛型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#松弛型"><span class="nav-number">3.4.</span> <span class="nav-text">松弛型</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#单纯形算法"><span class="nav-number">4.</span> <span class="nav-text">单纯形算法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#举例"><span class="nav-number">4.1.</span> <span class="nav-text">举例</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#主元-pivot"><span class="nav-number">4.2.</span> <span class="nav-text">主元(pivot)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#标准单纯形算法"><span class="nav-number">4.3.</span> <span class="nav-text">标准单纯形算法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#无界"><span class="nav-number">4.4.</span> <span class="nav-text">无界</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#退化"><span class="nav-number">4.5.</span> <span class="nav-text">退化</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#对偶性"><span class="nav-number">5.</span> <span class="nav-text">对偶性</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#举例-1"><span class="nav-number">5.1.</span> <span class="nav-text">举例</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#初始基本可行解"><span class="nav-number">6.</span> <span class="nav-text">初始基本可行解</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#找出一个初始解"><span class="nav-number">6.1.</span> <span class="nav-text">找出一个初始解</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#单纯形算法代码实现"><span class="nav-number">7.</span> <span class="nav-text">单纯形算法代码实现</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#从几何角度看单纯形算法"><span class="nav-number">8.</span> <span class="nav-text">从几何角度看单纯形算法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#参考资料"><span class="nav-number">9.</span> <span class="nav-text">参考资料</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">jozee</span>
+
+  
+</div>
+<div class="busuanzi_count">
+    <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js">
+    </script>
+    <span> 本站访客数:<span id="busuanzi_value_site_uv"></span>人</span>
+    <span class="post-meta-divider">|</span>
+    <span>本站总访问量:<span id="busuanzi_value_site_pv"></span>次</span>
+</div>
+
+
+
+
+
+
+
+
+
+        
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+    
+      <script id="dsq-count-scr" src="https://jozeelin.disqus.com/count.js" async></script>
+    
+
+    
+      <script type="text/javascript">
+        var disqus_config = function () {
+          this.page.url = 'http://yoursite.com/2019/08/01/LinearProgramming/';
+          this.page.identifier = '2019/08/01/LinearProgramming/';
+          this.page.title = '线性规划之单纯形算法';
+        };
+        var d = document, s = d.createElement('script');
+        s.src = 'https://jozeelin.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', '' + +new Date());
+        (d.head || d.body).appendChild(s);
+      </script>
+    
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+  
+
+  
+
+</body>
+</html>
