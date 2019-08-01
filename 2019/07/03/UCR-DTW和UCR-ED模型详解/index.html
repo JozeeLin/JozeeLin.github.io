@@ -87,30 +87,30 @@
 <meta name="keywords" content="DTW 动态规划 相似度度量">
 <meta property="og:type" content="article">
 <meta property="og:title" content="UCR-DTW和UCR-ED模型详解">
-<meta property="og:url" content="http://yoursite.com/2019/07/03/UCR-DTW和UCR-ED模型详解/index.html">
+<meta property="og:url" content="https://jozeelin.github.io/2019/07/03/UCR-DTW和UCR-ED模型详解/index.html">
 <meta property="og:site_name" content="Jozee&#39;s技术博客">
 <meta property="og:description" content="Searching and mining trillions of time series subsequences under dynamic time warping– Rakthanmanon et al. SIGKDD 2012  在这篇论文中，作者主要是针对DTW算法提出一系列的优化策略。本论文提出的UCR-DTW模型可以在低配设备上实时地使用DTW算法在大规模数据集上进行高效的时间序">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:image" content="http://yoursite.com/2019/07/03/UCR-DTW和UCR-ED模型详解/image/ucr-ed-1.png">
-<meta property="og:image" content="http://yoursite.com/2019/07/03/UCR-DTW和UCR-ED模型详解/image/ucr-dtw-1.png">
-<meta property="og:image" content="http://yoursite.com/2019/07/03/UCR-DTW和UCR-ED模型详解/image/ucr-dtw-2.png">
-<meta property="og:image" content="http://yoursite.com/2019/07/03/UCR-DTW和UCR-ED模型详解/image/ucr-lower-bound-2.png">
-<meta property="og:image" content="http://yoursite.com/2019/07/03/UCR-DTW和UCR-ED模型详解/image/ucr-ed-2.png">
-<meta property="og:image" content="http://yoursite.com/2019/07/03/UCR-DTW和UCR-ED模型详解/image/ucr-dtw-3.png">
-<meta property="og:image" content="http://yoursite.com/2019/07/03/UCR-DTW和UCR-ED模型详解/image/ucr-normalization-1.png">
-<meta property="og:image" content="http://yoursite.com/2019/07/03/UCR-DTW和UCR-ED模型详解/image/ucr-normalization-2.png">
-<meta property="og:image" content="http://yoursite.com/2019/07/03/UCR-DTW和UCR-ED模型详解/image/ucr-normalization-3.png">
-<meta property="og:image" content="http://yoursite.com/2019/07/03/UCR-DTW和UCR-ED模型详解/image/ucr-normalization-4.png">
-<meta property="og:image" content="http://yoursite.com/2019/07/03/UCR-DTW和UCR-ED模型详解/image/ucr-order-1.png">
-<meta property="og:image" content="http://yoursite.com/2019/07/03/UCR-DTW和UCR-ED模型详解/image/ucr-LB-1.png">
-<meta property="og:image" content="http://yoursite.com/2019/07/03/UCR-DTW和UCR-ED模型详解/image/ucr-lower-bound-1.png">
-<meta property="og:image" content="http://yoursite.com/2019/07/03/UCR-DTW和UCR-ED模型详解/image/random-walk.png">
-<meta property="og:image" content="http://yoursite.com/2019/07/03/UCR-DTW和UCR-ED模型详解/image/ucr-expiriment-2.png">
+<meta property="og:image" content="https://jozeelin.github.io/2019/07/03/UCR-DTW和UCR-ED模型详解/image/ucr-ed-1.png">
+<meta property="og:image" content="https://jozeelin.github.io/2019/07/03/UCR-DTW和UCR-ED模型详解/image/ucr-dtw-1.png">
+<meta property="og:image" content="https://jozeelin.github.io/2019/07/03/UCR-DTW和UCR-ED模型详解/image/ucr-dtw-2.png">
+<meta property="og:image" content="https://jozeelin.github.io/2019/07/03/UCR-DTW和UCR-ED模型详解/image/ucr-lower-bound-2.png">
+<meta property="og:image" content="https://jozeelin.github.io/2019/07/03/UCR-DTW和UCR-ED模型详解/image/ucr-ed-2.png">
+<meta property="og:image" content="https://jozeelin.github.io/2019/07/03/UCR-DTW和UCR-ED模型详解/image/ucr-dtw-3.png">
+<meta property="og:image" content="https://jozeelin.github.io/2019/07/03/UCR-DTW和UCR-ED模型详解/image/ucr-normalization-1.png">
+<meta property="og:image" content="https://jozeelin.github.io/2019/07/03/UCR-DTW和UCR-ED模型详解/image/ucr-normalization-2.png">
+<meta property="og:image" content="https://jozeelin.github.io/2019/07/03/UCR-DTW和UCR-ED模型详解/image/ucr-normalization-3.png">
+<meta property="og:image" content="https://jozeelin.github.io/2019/07/03/UCR-DTW和UCR-ED模型详解/image/ucr-normalization-4.png">
+<meta property="og:image" content="https://jozeelin.github.io/2019/07/03/UCR-DTW和UCR-ED模型详解/image/ucr-order-1.png">
+<meta property="og:image" content="https://jozeelin.github.io/2019/07/03/UCR-DTW和UCR-ED模型详解/image/ucr-LB-1.png">
+<meta property="og:image" content="https://jozeelin.github.io/2019/07/03/UCR-DTW和UCR-ED模型详解/image/ucr-lower-bound-1.png">
+<meta property="og:image" content="https://jozeelin.github.io/2019/07/03/UCR-DTW和UCR-ED模型详解/image/random-walk.png">
+<meta property="og:image" content="https://jozeelin.github.io/2019/07/03/UCR-DTW和UCR-ED模型详解/image/ucr-expiriment-2.png">
 <meta property="og:updated_time" content="2019-07-27T08:53:31.947Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="UCR-DTW和UCR-ED模型详解">
 <meta name="twitter:description" content="Searching and mining trillions of time series subsequences under dynamic time warping– Rakthanmanon et al. SIGKDD 2012  在这篇论文中，作者主要是针对DTW算法提出一系列的优化策略。本论文提出的UCR-DTW模型可以在低配设备上实时地使用DTW算法在大规模数据集上进行高效的时间序">
-<meta name="twitter:image" content="http://yoursite.com/2019/07/03/UCR-DTW和UCR-ED模型详解/image/ucr-ed-1.png">
+<meta name="twitter:image" content="https://jozeelin.github.io/2019/07/03/UCR-DTW和UCR-ED模型详解/image/ucr-ed-1.png">
 
 
 
@@ -140,7 +140,7 @@
 
 
 
-  <link rel="canonical" href="http://yoursite.com/2019/07/03/UCR-DTW和UCR-ED模型详解/">
+  <link rel="canonical" href="https://jozeelin.github.io/2019/07/03/UCR-DTW和UCR-ED模型详解/">
 
 
 
@@ -283,7 +283,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/07/03/UCR-DTW和UCR-ED模型详解/">
+    <link itemprop="mainEntityOfPage" href="https://jozeelin.github.io/2019/07/03/UCR-DTW和UCR-ED模型详解/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="jozee">
@@ -871,7 +871,7 @@ P=p_1,p_2,\cdots,p_t,\cdots,p_T,n\le T\le 2n-1</script><h3 id="优化策略"><a 
     
       <script type="text/javascript">
         var disqus_config = function () {
-          this.page.url = 'http://yoursite.com/2019/07/03/UCR-DTW和UCR-ED模型详解/';
+          this.page.url = 'https://jozeelin.github.io/2019/07/03/UCR-DTW和UCR-ED模型详解/';
           this.page.identifier = '2019/07/03/UCR-DTW和UCR-ED模型详解/';
           this.page.title = 'UCR-DTW和UCR-ED模型详解';
         };

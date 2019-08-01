@@ -87,33 +87,33 @@
 <meta name="keywords" content="XGBoost,Ensemble,Gradient Boosting">
 <meta property="og:type" content="article">
 <meta property="og:title" content="XGBoost论文解读">
-<meta property="og:url" content="http://yoursite.com/2019/07/19/XGBoost/index.html">
+<meta property="og:url" content="https://jozeelin.github.io/2019/07/19/XGBoost/index.html">
 <meta property="og:site_name" content="Jozee&#39;s技术博客">
 <meta property="og:description" content="论文：XGBoost: A Scalable Tree Boosting System 1.1 决策树决策树学习本质上是从训练数据集中归纳出一组分类规则。 学习过程通常包含3个步骤：  特征选择(评估标准：信息增益，信息增益比，基尼指数，平方误差) 决策树的生成算法(ID3,C4.5,CART) 决策树的修剪(前剪枝early stop,后剪枝相当于regularization)  这里使用ID3">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:image" content="http://yoursite.com/2019/07/19/XGBoost/image/dt-1-data.png">
-<meta property="og:image" content="http://yoursite.com/2019/07/19/XGBoost/image/dt-id3.png">
-<meta property="og:image" content="http://yoursite.com/2019/07/19/XGBoost/image/xgboost-qx.png">
-<meta property="og:image" content="http://yoursite.com/2019/07/19/XGBoost/image/xgboost-predict.png">
-<meta property="og:image" content="http://yoursite.com/2019/07/19/XGBoost/image/xgboost-complexity.png">
-<meta property="og:image" content="http://yoursite.com/2019/07/19/XGBoost/image/xgboost-gain.png">
-<meta property="og:image" content="http://yoursite.com/2019/07/19/XGBoost/image/xgboost-exact.png">
-<meta property="og:image" content="http://yoursite.com/2019/07/19/XGBoost/image/xgboost-split.png">
-<meta property="og:image" content="http://yoursite.com/2019/07/19/XGBoost/image/xgboost-approximate.png">
-<meta property="og:image" content="http://yoursite.com/2019/07/19/XGBoost/image/xgboost-quantile-split.png">
-<meta property="og:image" content="http://yoursite.com/2019/07/19/XGBoost/image/xgboost-approximate-split-2.png">
-<meta property="og:image" content="http://yoursite.com/2019/07/19/XGBoost/image/xgboost-split-1.png">
-<meta property="og:image" content="http://yoursite.com/2019/07/19/XGBoost/image/xgboost-split-quantile.png">
-<meta property="og:image" content="http://yoursite.com/2019/07/19/XGBoost/image/xgboost-sparsity.png">
-<meta property="og:image" content="http://yoursite.com/2019/07/19/XGBoost/image/xgboost-block.png">
-<meta property="og:image" content="http://yoursite.com/2019/07/19/XGBoost/image/xgboost-cache-1.png">
-<meta property="og:image" content="http://yoursite.com/2019/07/19/XGBoost/image/xgboost-cache-2.png">
-<meta property="og:image" content="http://yoursite.com/2019/07/19/XGBoost/image/xgboost-cache-3.png">
+<meta property="og:image" content="https://jozeelin.github.io/2019/07/19/XGBoost/image/dt-1-data.png">
+<meta property="og:image" content="https://jozeelin.github.io/2019/07/19/XGBoost/image/dt-id3.png">
+<meta property="og:image" content="https://jozeelin.github.io/2019/07/19/XGBoost/image/xgboost-qx.png">
+<meta property="og:image" content="https://jozeelin.github.io/2019/07/19/XGBoost/image/xgboost-predict.png">
+<meta property="og:image" content="https://jozeelin.github.io/2019/07/19/XGBoost/image/xgboost-complexity.png">
+<meta property="og:image" content="https://jozeelin.github.io/2019/07/19/XGBoost/image/xgboost-gain.png">
+<meta property="og:image" content="https://jozeelin.github.io/2019/07/19/XGBoost/image/xgboost-exact.png">
+<meta property="og:image" content="https://jozeelin.github.io/2019/07/19/XGBoost/image/xgboost-split.png">
+<meta property="og:image" content="https://jozeelin.github.io/2019/07/19/XGBoost/image/xgboost-approximate.png">
+<meta property="og:image" content="https://jozeelin.github.io/2019/07/19/XGBoost/image/xgboost-quantile-split.png">
+<meta property="og:image" content="https://jozeelin.github.io/2019/07/19/XGBoost/image/xgboost-approximate-split-2.png">
+<meta property="og:image" content="https://jozeelin.github.io/2019/07/19/XGBoost/image/xgboost-split-1.png">
+<meta property="og:image" content="https://jozeelin.github.io/2019/07/19/XGBoost/image/xgboost-split-quantile.png">
+<meta property="og:image" content="https://jozeelin.github.io/2019/07/19/XGBoost/image/xgboost-sparsity.png">
+<meta property="og:image" content="https://jozeelin.github.io/2019/07/19/XGBoost/image/xgboost-block.png">
+<meta property="og:image" content="https://jozeelin.github.io/2019/07/19/XGBoost/image/xgboost-cache-1.png">
+<meta property="og:image" content="https://jozeelin.github.io/2019/07/19/XGBoost/image/xgboost-cache-2.png">
+<meta property="og:image" content="https://jozeelin.github.io/2019/07/19/XGBoost/image/xgboost-cache-3.png">
 <meta property="og:updated_time" content="2019-07-19T06:27:04.730Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="XGBoost论文解读">
 <meta name="twitter:description" content="论文：XGBoost: A Scalable Tree Boosting System 1.1 决策树决策树学习本质上是从训练数据集中归纳出一组分类规则。 学习过程通常包含3个步骤：  特征选择(评估标准：信息增益，信息增益比，基尼指数，平方误差) 决策树的生成算法(ID3,C4.5,CART) 决策树的修剪(前剪枝early stop,后剪枝相当于regularization)  这里使用ID3">
-<meta name="twitter:image" content="http://yoursite.com/2019/07/19/XGBoost/image/dt-1-data.png">
+<meta name="twitter:image" content="https://jozeelin.github.io/2019/07/19/XGBoost/image/dt-1-data.png">
 
 
 
@@ -143,7 +143,7 @@
 
 
 
-  <link rel="canonical" href="http://yoursite.com/2019/07/19/XGBoost/">
+  <link rel="canonical" href="https://jozeelin.github.io/2019/07/19/XGBoost/">
 
 
 
@@ -286,7 +286,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/07/19/XGBoost/">
+    <link itemprop="mainEntityOfPage" href="https://jozeelin.github.io/2019/07/19/XGBoost/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="jozee">
@@ -1141,7 +1141,7 @@ r_k(z) = \frac{1}{\sum_{(x,h)\in\mathcal{D}_k}h} \sum_{(x,h)\in \mathcal{D}_k,x<
     
       <script type="text/javascript">
         var disqus_config = function () {
-          this.page.url = 'http://yoursite.com/2019/07/19/XGBoost/';
+          this.page.url = 'https://jozeelin.github.io/2019/07/19/XGBoost/';
           this.page.identifier = '2019/07/19/XGBoost/';
           this.page.title = 'XGBoost论文解读';
         };
