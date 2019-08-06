@@ -92,7 +92,7 @@
 <meta property="og:description" content="EM算法是一种迭代算法。用于含有隐变量(hidden variable)的概率模型参数的极大似然估计，或极大后验概率估计。 EM算法每次迭代由两步组成:  E步，求期望 M步，求极大  因此，EM算法也称为期望极大算法。 本章首先叙述EM算法，然后讨论算法的收敛性，接着介绍EM算法中的高斯混合模型的学习，最后叙述EM算法的推广——GEM算法。 12.1 EM算法的引入概率模型有时既含有观测变量，又">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="https://jozeelin.github.io/2019/06/14/EM算法及其推广/image/ch12-1.png">
-<meta property="og:updated_time" content="2019-07-04T09:18:13.237Z">
+<meta property="og:updated_time" content="2019-08-06T10:37:16.125Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="EM算法及其推广">
 <meta name="twitter:description" content="EM算法是一种迭代算法。用于含有隐变量(hidden variable)的概率模型参数的极大似然估计，或极大后验概率估计。 EM算法每次迭代由两步组成:  E步，求期望 M步，求极大  因此，EM算法也称为期望极大算法。 本章首先叙述EM算法，然后讨论算法的收敛性，接着介绍EM算法中的高斯混合模型的学习，最后叙述EM算法的推广——GEM算法。 12.1 EM算法的引入概率模型有时既含有观测变量，又">
@@ -426,7 +426,7 @@ L(\theta)-L(\theta^{(i)}) = \log \left(\sum_Z P(Y|Z,\theta)P(Z|\theta)\right)-\l
 <p><strong>Jensen不等式：</strong><script type="math/tex">\log \sum_j \lambda_j y_j \ge \sum_j \lambda_j \log y_j</script>，其中<script type="math/tex">\lambda_j \ge 0</script>，<script type="math/tex">\sum_j \lambda_j = 1</script>。</p>
 </blockquote>
 <script type="math/tex; mode=display">
-\begin{aligned}L(\theta)-L(\theta^{(i)}) &= \log \left(\sum_Z P(Y|Z,\theta^{(i)})\frac{P(Y|Z,\theta)P(Z|\theta)}{P(Y|Z,\theta^{(i)})}\right)-\log P(Y|\theta^{(i)}) \\ &\ge \sum_Z P(Z|Y,\theta^{(i)})\log \frac{P(Y|Z,\theta)P(Z|\theta)}{P(Z|Y,\theta^{(i)})}-\log P(Y|\theta^{(i)}) \\ &= \sum_Z P(Z|Y,\theta^{(i)}) \log \frac{P(Y|Z,\theta)P(Z|\theta)}{P(Z|Y,\theta^{(i)})P(Y|\theta^{(i)})}\end{aligned}</script><p>令</p>
+\begin{aligned}L(\theta)-L(\theta^{(i)}) &= \log \left(\sum_Z P(Z|Y,\theta^{(i)})\frac{P(Y|Z,\theta)P(Z|\theta)}{P(Z|Y,\theta^{(i)})}\right)-\log P(Y|\theta^{(i)}) \\ &\ge \sum_Z P(Z|Y,\theta^{(i)})\log \frac{P(Y|Z,\theta)P(Z|\theta)}{P(Z|Y,\theta^{(i)})}-\log P(Y|\theta^{(i)}) \\ &= \sum_Z P(Z|Y,\theta^{(i)}) \log \frac{P(Y|Z,\theta)P(Z|\theta)}{P(Z|Y,\theta^{(i)})P(Y|\theta^{(i)})}\end{aligned}</script><p>令</p>
 <script type="math/tex; mode=display">
 B(\theta,\theta^{(i)}) \hat{=} L(\theta^{(i)})+\sum_Z P(Z|Y,\theta^{(i)}) \log \frac{P(Y|Z,\theta)P(Z|\theta)}{P(Z|Y,\theta^{(i)})P(Y|\theta^{(i)})} \ (12.5)</script><p>则</p>
 <script type="math/tex; mode=display">
