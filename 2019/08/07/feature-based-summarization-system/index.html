@@ -1,0 +1,898 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+  <meta name="google-site-verification" content="iejSa-LmOb9d1GguAcEsQNUsQviccOieHkuG1c1E2YI">
+
+
+
+  <meta name="msvalidate.01" content="83768A52AE58ADF203609FEF9C55FF47">
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="KDD,reviews mining,">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="论文：Mining and Summarizing Customer Reviews 这篇论文的主要工作就是从用户评论中提取出产品特征以及关于该产品特征的相关观点信息。 大概的流程就是：获取评论数据，然后对这些评论数据句子进行词性标注(POS)，保留所有的名词/名词短语，将出现次数比较多的名词/名词短语作为候选产品特征，利用一定的剪枝规则，从候选产品特征中得到有效的产品特征。利用这些特征去查找它们">
+<meta name="keywords" content="KDD,reviews mining">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Feature-based summarization system">
+<meta property="og:url" content="https://jozeelin.github.io/2019/08/07/feature-based-summarization-system/index.html">
+<meta property="og:site_name" content="Jozee&#39;s技术博客">
+<meta property="og:description" content="论文：Mining and Summarizing Customer Reviews 这篇论文的主要工作就是从用户评论中提取出产品特征以及关于该产品特征的相关观点信息。 大概的流程就是：获取评论数据，然后对这些评论数据句子进行词性标注(POS)，保留所有的名词/名词短语，将出现次数比较多的名词/名词短语作为候选产品特征，利用一定的剪枝规则，从候选产品特征中得到有效的产品特征。利用这些特征去查找它们">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://jozeelin.github.io/2019/08/07/feature-based-summarization-system/image/an-example.png?lastModify=1565164031">
+<meta property="og:image" content="https://jozeelin.github.io/2019/08/07/feature-based-summarization-system/image/fbs-1.png?lastModify=1565164031">
+<meta property="og:image" content="https://jozeelin.github.io/2019/08/07/feature-based-summarization-system/image/pos.png?lastModify=1565164031">
+<meta property="og:image" content="https://jozeelin.github.io/2019/08/07/feature-based-summarization-system/image/compact-phrase.png?lastModify=1565164031">
+<meta property="og:image" content="https://jozeelin.github.io/2019/08/07/feature-based-summarization-system/image/p-support.png?lastModify=1565164031">
+<meta property="og:image" content="https://jozeelin.github.io/2019/08/07/feature-based-summarization-system/image/opinion-word-extraction.png?lastModify=1565164031">
+<meta property="og:image" content="https://jozeelin.github.io/2019/08/07/feature-based-summarization-system/image/bipolar-cluster.png?lastModify=1565164031">
+<meta property="og:image" content="https://jozeelin.github.io/2019/08/07/feature-based-summarization-system/image/orientation-search.png?lastModify=1565164031">
+<meta property="og:image" content="https://jozeelin.github.io/2019/08/07/feature-based-summarization-system/image/infrequent-feature-extraction.png?lastModify=1565164031">
+<meta property="og:image" content="https://jozeelin.github.io/2019/08/07/feature-based-summarization-system/image/orientations-opinion-sentences.png?lastModify=1565164031">
+<meta property="og:image" content="https://jozeelin.github.io/2019/08/07/feature-based-summarization-system/image/summary.png?lastModify=1565164031">
+<meta property="og:updated_time" content="2019-08-07T07:49:21.739Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Feature-based summarization system">
+<meta name="twitter:description" content="论文：Mining and Summarizing Customer Reviews 这篇论文的主要工作就是从用户评论中提取出产品特征以及关于该产品特征的相关观点信息。 大概的流程就是：获取评论数据，然后对这些评论数据句子进行词性标注(POS)，保留所有的名词/名词短语，将出现次数比较多的名词/名词短语作为候选产品特征，利用一定的剪枝规则，从候选产品特征中得到有效的产品特征。利用这些特征去查找它们">
+<meta name="twitter:image" content="https://jozeelin.github.io/2019/08/07/feature-based-summarization-system/image/an-example.png?lastModify=1565164031">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://jozeelin.github.io/2019/08/07/feature-based-summarization-system/">
+
+
+
+
+
+  <title>Feature-based summarization system | Jozee's技术博客</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Jozee's技术博客</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://jozeelin.github.io/2019/08/07/feature-based-summarization-system/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="jozee">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Jozee's技术博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Feature-based summarization system</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-08-07T15:44:41+08:00">
+                2019-08-07
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/NLP/" itemprop="url" rel="index">
+                    <span itemprop="name">NLP</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2019/08/07/feature-based-summarization-system/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2019/08/07/feature-based-summarization-system/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+          <span id="busuanzi_container_page_pv">
+            <span class="post-meta-divider">|</span>
+            <span class="post-meta-item-icon">
+            <i class="fa fa-eye"></i>
+            </span>
+            阅读量: <span id="busuanzi_value_page_pv"></span>次
+          </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>论文：<a href="https://www.cs.uic.edu/~liub/publications/kdd04-revSummary.pdf" target="_blank" rel="noopener">Mining and Summarizing Customer Reviews</a></p>
+<p>这篇论文的主要工作就是从用户评论中提取出产品特征以及关于该产品特征的相关观点信息。</p>
+<p>大概的流程就是：获取评论数据，然后对这些评论数据句子进行词性标注(POS)，保留所有的名词/名词短语，将出现次数比较多的名词/名词短语作为候选产品特征，利用一定的剪枝规则，从候选产品特征中得到有效的产品特征。利用这些特征去查找它们对应的形容词即(观点词语)。然后利用这些观点词语来找到那些低频产品特征(这些特征是潜在消费者或者产品生产厂家比较关心的产品特征)。然后根据前面提取出来的信息来对这些信息所在的句子进行语义极性判断。最后整理，输出以下形式的结果：</p>
+<p><img src="image/an-example.png?lastModify=1565164031" alt="img"></p>
+<h2 id="FBS-system-框架概览"><a href="#FBS-system-框架概览" class="headerlink" title="FBS system 框架概览"></a>FBS system 框架概览</h2><p><img src="image/fbs-1.png?lastModify=1565164031" alt="img"></p>
+<p>如图所示，把产品名字与它所有的评论url条目输入到<strong>Crawl Reviews</strong>模块中，把爬取到的评论数据到<strong>Review Database</strong>中；</p>
+<p>从这些评论数据中提取用户频繁评论的产品特征，利用这些产品特征来提取出对应的观点词语，接着使用WordNet来识别这些观点词语的语义极性；使用这些观点词语来识别那些少见的产品特征；</p>
+<p>最后使用以上提取出来的观点和产品信息生成最终的产品观点摘要。</p>
+<p>接下来，对以上的各个模块涉及到的技术进行详细说明。</p>
+<h2 id="词性标注POS"><a href="#词性标注POS" class="headerlink" title="词性标注POS"></a>词性标注POS</h2><p>产品特征通常是名词或者名词短语。我们通过使用<a href="http://www.infogistics.com/textanalysis.html" target="_blank" rel="noopener">NLProcessor linguistic parser</a>，把产品的每个评论按照句子切分，然后对句子中的每个词语进行词性标注。这个语言处理器最终输出是xml格式的结果。如下图所示：</p>
+<p><img src="image/pos.png?lastModify=1565164031" alt="img"></p>
+<p>比如，<w c="NN">表示一个名词，<ng>表示一个名词词组或名词短语。把标注完的句子保存在评论数据库中。</ng></w></p>
+<p>把数据库中标注完的句子中那些名词和名词短语读取出来，每个句子包含的所有名词和名词短语放在同一行，存放到一个transaction文件中。接下来，我们可以对这个文件中的词语，进行一些预处理操作，比如去除停用词，词干提取，<a href="http://t.cn/AiYd7Unk" target="_blank" rel="noopener">模糊匹配</a>。</p>
+<h2 id="高频特征识别"><a href="#高频特征识别" class="headerlink" title="高频特征识别"></a>高频特征识别</h2><p>如何识别出评论中设计到的产品特征？举相机产品的例子，</p>
+<p>“the pictures are very clear”</p>
+<p>这句评论中，用户非常满意相机拍出来相片的画质，那么picture就是这句评论中提及的产品特征，这个产品特征是在评论中显示提及的。再看一些比较难以处理的评论，</p>
+<p>“While light, it will not easily fit in pockets.”</p>
+<p>这个评论中，用户谈论的是相机的大小(size)，但是size这个词并没有在评论中出现，因此不能直接从原评论句子中提取出对应的产品特征。(这里的情况，本论文不做处理)</p>
+<p>在这一个组件中，我们主要是提取出那些在评论中以名词或者名词短语的形式显式提及的产品特征。在这里，我们重点在找到那些多个用户同时评论的产品特征，这里使用<strong>关联规则</strong>1 ，在这里就是找到那些通过在不同的评论句子中同时出现的名词或名词短语作为产品特征。</p>
+<p>这里使用了作者在98年发在KDD上的文章提出的CBA方法(该方法基于<a href="http://www.vldb.org/conf/1994/P487.PDF" target="_blank" rel="noopener">association mining</a>论文中的Apriori alogithm)，把上一个组件生成的transaction文件作为输入，运行<a href="http://aaai.org/Papers/KDD/1998/KDD98-012.pdf" target="_blank" rel="noopener">关联性挖掘算法CBA</a>，从而得到高频名词词语/词组作为候选产品特征。(关于高频的定义是对于那些在至少1%个评论句子中出现的词语/词组)。</p>
+<blockquote>
+<p>apriori算法主要分两个步骤：</p>
+<ol>
+<li>利用迭代的方式找出频繁集合</li>
+<li>找出集合中各个元素的关联</li>
+</ol>
+<p>这里，作者只是找出频繁集，并没有进行关联分析。</p>
+</blockquote>
+<p>接下来，还需要经过两个步骤，从候选产品特征中剔除掉那些不能作为产品特征的词语/词组。</p>
+<h3 id="基于紧密度的剪枝"><a href="#基于紧密度的剪枝" class="headerlink" title="基于紧密度的剪枝"></a>基于紧密度的剪枝</h3><p>前面使用关联规则生成高频产品特征集合的时候，并没有考虑词的位置信息。在自然语言中，按照一定次序出现的短语才是有意义的。所以，我们需要把那些距离比较远的feature phase剔除。关于feature phrase的定义如下：</p>
+<p><img src="image/compact-phrase.png?lastModify=1565164031" alt="img"></p>
+<p>第一个定义说明：在包含特征短语f的句子s中，f中任意两个相邻的词在句子s中的间隔不超过3，那么认为f是compact的。</p>
+<p>第二个定义说明：在m个包含f的句子中，如果f是compact的，同时至少出现2次，那么f就是紧密的特征短语。</p>
+<p>通过这一步骤，得到了紧密的特征短语。</p>
+<p>具体的剪枝规则，请参考<a href="#">Mining Opinion Features in Customer Reviews</a></p>
+<h3 id="冗余特征剪枝"><a href="#冗余特征剪枝" class="headerlink" title="冗余特征剪枝"></a>冗余特征剪枝</h3><p>这一步骤用于处理那些单个词语的候选产品特征，主要是移除冗余特征。这里使用p-support(pure-support)来判断一个候选特征是否是冗余特征。</p>
+<p><img src="image/p-support.png?lastModify=1565164031" alt="img"></p>
+<p>对于特征ftr，它的p-support就是包含特征ftr，而不包含其它候选特征短语的句子的数量。我们设定一个最小p-support阈值，剔除掉p-support值小于最小p-support阈值或者该特征是短语形式的产品特征子集。在本论文中，设定这个阈值为3。</p>
+<p>例如：{相机}与{相机、品质}，若评论句子集合中存在至少三个句子只包含”相机”，而没有包含”品质”，才会保留”相机”这个产品特征，否则移除。</p>
+<p>请参考<a href="#">Mining Opinion Features in Customer Reviews</a>获取更多细节信息。</p>
+<h2 id="观点词语的提取"><a href="#观点词语的提取" class="headerlink" title="观点词语的提取"></a>观点词语的提取</h2><blockquote>
+<p>opinion sentence的定义：至少包含一个产品特征的句子。</p>
+<p>比如，”非常好”这样的句子就不能作为opinion sentence。</p>
+</blockquote>
+<p>这个组件的功能就是从opinion sentence句子中提取形容词(观点词语)。提取观点词语的方法如下所示：</p>
+<p><img src="image/opinion-word-extraction.png?lastModify=1565164031" alt="img"></p>
+<p>对句子中的每个高频特征，提取出与它相邻的形容词作为<strong>有效观点词语</strong>。</p>
+<p>举例说明：”the strap is horrible and gets in the way of parts of the camera you need access to.”</p>
+<p>在上面句子中，horrible 是对strap的有效观点词语，有效观点词语就是我们需要提取的观点词语。</p>
+<h2 id="观点词语的极性识别"><a href="#观点词语的极性识别" class="headerlink" title="观点词语的极性识别"></a>观点词语的极性识别</h2><p>本论文中提出一种可以根据观点词语在wordnet词典中的同义词集和反义词集来识别观点词语的语义极性(positive/negative)。在wordnet中，形容词以bipolar cluster的结构进行存储，具体如下图所示：</p>
+<p><img src="image/bipolar-cluster.png?lastModify=1565164031" alt="img"></p>
+<p>上图为fast/slow集群，该集群由两部分组成，左边部分为fast以及它的同义词组成的satellite synsets；右边部分为slow以及它的同义词组成的satellite synsets。</p>
+<p>通常情况下，同义词对应的语义极性也是相同的，而反义词对应的语义极性正好与原词语的语义极性相反。因此，我们可以利用这点，来对观点词语的语义极性进行预测，即如果已知观点词语的同义词或反义词的语义极性，那么就可以推测出该观点词语的语义极性。</p>
+<p>我们使用的策略是，使用一组种子形容词，这些形容词的语义极性已知，接着，利用wordnet来预测所有观点词语的语义极性。然后把语义极性已知的观点词语追加到种子形容词中。因此，在处理过程中，种子形容词列表是在不断的被更新的。具体的处理流程如下图所示：</p>
+<p><img src="image/orientation-search.png?lastModify=1565164031" alt="img"></p>
+<h2 id="低频特征识别"><a href="#低频特征识别" class="headerlink" title="低频特征识别"></a>低频特征识别</h2><p>有些产品特征虽然出现频率很低，但是有可能会被潜在的顾客和生产厂家感兴趣的产品特征。提取低频特征的流程如下所示：</p>
+<p><img src="image/infrequent-feature-extraction.png?lastModify=1565164031" alt="img"></p>
+<p>在某些句子中，只包含观点词语，而没有高频特征，这时，可以把距离观点词语最近的名词/名词短语作为低频特征。</p>
+<h2 id="Opinion-sentences的极性预测"><a href="#Opinion-sentences的极性预测" class="headerlink" title="Opinion sentences的极性预测"></a>Opinion sentences的极性预测</h2><p><img src="image/orientations-opinion-sentences.png?lastModify=1565164031" alt="img"></p>
+<p>根据句子中的观点词语的语义极性，使用多数投票的方式来预测句子的语义极性。</p>
+<h2 id="Summary生成"><a href="#Summary生成" class="headerlink" title="Summary生成"></a>Summary生成</h2><p>生成最后的summary包含以下两个步骤：</p>
+<ul>
+<li><p>根据产品特征的出现频率进行排序(相同频率的短语形式的特证和单个词特征，通常把短语形式的特征排在前面)</p>
+</li>
+<li><p>对于每个产品特征，把它对应的opinion sentences根据句子的语义极性，划分成positive和negative两大类。分别统计每个类别中句子的数量。</p>
+</li>
+</ul>
+<p>对于特征”picture”，经过以上两个步骤的处理，最终得到该特征对应的summary结果：</p>
+<p><img src="image/summary.png?lastModify=1565164031" alt="img"></p>
+<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><p>[<strong>1</strong>]    <a href="http://t.cn/AiTUCnSq" target="_blank" rel="noopener">http://t.cn/AiTUCnSq</a></p>
+<ul>
+<li><a href="https://www.nltk.org/_modules/nltk/corpus/reader/reviews.html" target="_blank" rel="noopener">Source code for nltk.corpus.reader.reviews</a></li>
+<li><a href="https://blog.csdn.net/VictoriaW/article/details/51461808" target="_blank" rel="noopener">CSDN-Mining and Summarizing Customer Reviews (Hu 2004)</a></li>
+<li><a href="http://www.kimschouten.com/papers/hu-liu-2004/" target="_blank" rel="noopener">Paper Discussion: Hu &amp; Liu (2004)</a></li>
+<li><a href="https://medium.com/@ddoo8059/paper分享-mining-opinion-features-in-customer-reviews-80255e4ab93e" target="_blank" rel="noopener">Paper分享: Mining Opinion Features in Customer Reviews</a></li>
+</ul>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/KDD/" rel="tag"># KDD</a>
+          
+            <a href="/tags/reviews-mining/" rel="tag"># reviews mining</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/08/01/LinearProgramming/" rel="next" title="线性规划之单纯形算法">
+                <i class="fa fa-chevron-left"></i> 线性规划之单纯形算法
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+      <div id="disqus_thread">
+        <noscript>
+          Please enable JavaScript to view the
+          <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a>
+        </noscript>
+      </div>
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">jozee</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">30</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">5</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">40</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#FBS-system-框架概览"><span class="nav-number">1.</span> <span class="nav-text">FBS system 框架概览</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#词性标注POS"><span class="nav-number">2.</span> <span class="nav-text">词性标注POS</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#高频特征识别"><span class="nav-number">3.</span> <span class="nav-text">高频特征识别</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#基于紧密度的剪枝"><span class="nav-number">3.1.</span> <span class="nav-text">基于紧密度的剪枝</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#冗余特征剪枝"><span class="nav-number">3.2.</span> <span class="nav-text">冗余特征剪枝</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#观点词语的提取"><span class="nav-number">4.</span> <span class="nav-text">观点词语的提取</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#观点词语的极性识别"><span class="nav-number">5.</span> <span class="nav-text">观点词语的极性识别</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#低频特征识别"><span class="nav-number">6.</span> <span class="nav-text">低频特征识别</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Opinion-sentences的极性预测"><span class="nav-number">7.</span> <span class="nav-text">Opinion sentences的极性预测</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Summary生成"><span class="nav-number">8.</span> <span class="nav-text">Summary生成</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#参考资料"><span class="nav-number">9.</span> <span class="nav-text">参考资料</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">jozee</span>
+
+  
+</div>
+<div class="busuanzi_count">
+    <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js">
+    </script>
+    <span> 本站访客数:<span id="busuanzi_value_site_uv"></span>人</span>
+    <span class="post-meta-divider">|</span>
+    <span>本站总访问量:<span id="busuanzi_value_site_pv"></span>次</span>
+</div>
+
+
+
+
+
+
+
+
+
+        
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+    
+      <script id="dsq-count-scr" src="https://jozeelin.disqus.com/count.js" async></script>
+    
+
+    
+      <script type="text/javascript">
+        var disqus_config = function () {
+          this.page.url = 'https://jozeelin.github.io/2019/08/07/feature-based-summarization-system/';
+          this.page.identifier = '2019/08/07/feature-based-summarization-system/';
+          this.page.title = 'Feature-based summarization system';
+        };
+        var d = document, s = d.createElement('script');
+        s.src = 'https://jozeelin.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', '' + +new Date());
+        (d.head || d.body).appendChild(s);
+      </script>
+    
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+  
+
+  
+
+</body>
+</html>
