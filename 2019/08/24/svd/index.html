@@ -91,10 +91,12 @@
 <meta property="og:site_name" content="Jozee&#39;s技术博客">
 <meta property="og:description" content="奇异值分解(SVD)是一种矩阵因子分解方法，是线性代数的概念。 任意一个mxn矩阵，都可以表示为三个矩阵的乘积(因子分解)形式，分别是m阶正交矩阵、由降序排列的非负的对角线元素组成的mxn矩形对角矩阵和n阶正交矩阵，称为该矩阵的奇异值分解。 矩阵的奇异值分解一定存在，但不唯一。奇异值分解可以看作是矩阵数据压缩的一种方法，即用因子分解的方式近似的表示原始矩阵，这种近似是在平方损失意义下的最优近似。">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2019-08-24T15:30:42.599Z">
+<meta property="og:image" content="https://jozeelin.github.io/Users/jozee/Desktop/lihang/15/image/15-1.jpg">
+<meta property="og:updated_time" content="2019-08-24T15:35:46.122Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="奇异值分解SVD">
 <meta name="twitter:description" content="奇异值分解(SVD)是一种矩阵因子分解方法，是线性代数的概念。 任意一个mxn矩阵，都可以表示为三个矩阵的乘积(因子分解)形式，分别是m阶正交矩阵、由降序排列的非负的对角线元素组成的mxn矩形对角矩阵和n阶正交矩阵，称为该矩阵的奇异值分解。 矩阵的奇异值分解一定存在，但不唯一。奇异值分解可以看作是矩阵数据压缩的一种方法，即用因子分解的方式近似的表示原始矩阵，这种近似是在平方损失意义下的最优近似。">
+<meta name="twitter:image" content="https://jozeelin.github.io/Users/jozee/Desktop/lihang/15/image/15-1.jpg">
 
 
 
@@ -312,7 +314,7 @@
               
                 <span class="post-meta-item-text">更新于&#58;</span>
               
-              <time title="更新于" itemprop="dateModified" datetime="2019-08-24T23:30:42+08:00">
+              <time title="更新于" itemprop="dateModified" datetime="2019-08-24T23:35:46+08:00">
                 2019-08-24
               </time>
             
@@ -395,56 +397,55 @@ A = U \Sigma V^{\top} \tag{15-1}</script><p>其中U是m阶正交矩阵，V是n�
 <script type="math/tex; mode=display">
 UU^{\top} = I</script><script type="math/tex; mode=display">
 VV^{\top} = I</script><script type="math/tex; mode=display">
-\Sigma = \mathrm{diag}(\sigma_1,\sigma_2,\dots,\sigma_p) \ , \sigma_1\ge \sigma_2 \ge \dots \ge \sigma_p \ge 0 \ , p=\min(m,n)</script><script type="math/tex; mode=display">U\Sigma V^{\top}$$称为矩阵A的奇异值分解(SVD)，$$\sigma_i$$称为矩阵A的奇异值，U的列向量称为左奇异向量，V的列向量称为右奇异向量。
-
-> **注意：**奇异值分解不要求矩阵A是方阵，事实上矩阵的奇异值分解可以看作是方阵的对角化的推广。
-
-**任意给定一个实矩阵，其奇异值分解是否一定存在呢？答案是肯定的，下面的奇异值分解的基本定理给予保证**。
-
-**定理15.1(奇异值分解基本定理)** 若A为一mxn实矩阵，$$A\in R^{mxn}$$，则A的奇异值分解存在：</script><p>A = U\Sigma V^{\top} \tag{15-2}</p>
+\Sigma = \mathrm{diag}(\sigma_1,\sigma_2,\dots,\sigma_p) \ , \sigma_1\ge \sigma_2 \ge \dots \ge \sigma_p \ge 0 \ , p=\min(m,n)</script><p>其中，<script type="math/tex">U\Sigma V^{\top}</script>称为矩阵A的奇异值分解(SVD)，<script type="math/tex">\sigma_i</script>称为矩阵A的奇异值，U的列向量称为左奇异向量，V的列向量称为右奇异向量。</p>
+<blockquote>
+<p><strong>注意：</strong>奇异值分解不要求矩阵A是方阵，事实上矩阵的奇异值分解可以看作是方阵的对角化的推广。</p>
+</blockquote>
+<p><strong>任意给定一个实矩阵，其奇异值分解是否一定存在呢？答案是肯定的，下面的奇异值分解的基本定理给予保证</strong>。</p>
+<p><strong>定理15.1(奇异值分解基本定理)</strong> 若A为一mxn实矩阵，<script type="math/tex">A\in R^{mxn}</script>，则A的奇异值分解存在：</p>
 <script type="math/tex; mode=display">
-其中U是m阶正交矩阵，V是n阶正交矩阵，$$\Sigma$$是mxn矩阵对角矩阵，其对角线元素非负，且按降序排列。
-
-**证明**：(构造性证明)，对给定的矩阵A，构造出其奇异值分解的各个矩阵。为了方便，不妨假设$$m\ge n$$，如果$$m<n$$证明仍然成立。证明分三步完整：
-
-1. 确定V和$$\Sigma</script><p>   首先，构造n阶正交实矩阵V和mxn矩形对角实矩阵<script type="math/tex">\Sigma</script>。矩阵A是mxn实矩阵，则矩阵<script type="math/tex">A^{\top}A</script>是n阶实对称矩阵。因而<script type="math/tex">A^{\top}A</script>的特征值都是实数，并且存在一个n阶正交实矩阵V实现<script type="math/tex">A^{\top}A</script>的对角化，使得<script type="math/tex">V^{\top}(A^{\top}A)V = \varLambda</script>成立，其中<script type="math/tex">\varLambda</script>是n阶对角矩阵，其对角线元素由<script type="math/tex">A^{\top}A</script>的特征值组成。而且，<script type="math/tex">A^{\top}A</script>的特征值都是非负的。</p>
-<p>   事实上，令 <script type="math/tex">\lambda</script>是<script type="math/tex">A^{\top}A</script>的一个特征值，x是对应的特征向量，则：</p>
+A = U\Sigma V^{\top} \tag{15-2}</script><p>其中U是m阶正交矩阵，V是n阶正交矩阵，<script type="math/tex">\Sigma</script>是mxn矩阵对角矩阵，其对角线元素非负，且按降序排列。</p>
+<p><strong>证明</strong>：(构造性证明)，对给定的矩阵A，构造出其奇异值分解的各个矩阵。为了方便，不妨假设<script type="math/tex">m\ge n</script>，如果<script type="math/tex">m<n</script>证明仍然成立。证明分三步完整：</p>
+<ol>
+<li><p>确定V和<script type="math/tex">\Sigma</script></p>
+<p>首先，构造n阶正交实矩阵V和mxn矩形对角实矩阵<script type="math/tex">\Sigma</script>。矩阵A是mxn实矩阵，则矩阵<script type="math/tex">A^{\top}A</script>是n阶实对称矩阵。因而<script type="math/tex">A^{\top}A</script>的特征值都是实数，并且存在一个n阶正交实矩阵V实现<script type="math/tex">A^{\top}A</script>的对角化，使得<script type="math/tex">V^{\top}(A^{\top}A)V = \varLambda</script>成立，其中<script type="math/tex">\varLambda</script>是n阶对角矩阵，其对角线元素由<script type="math/tex">A^{\top}A</script>的特征值组成。而且，<script type="math/tex">A^{\top}A</script>的特征值都是非负的。</p>
+<p>事实上，令 <script type="math/tex">\lambda</script>是<script type="math/tex">A^{\top}A</script>的一个特征值，x是对应的特征向量，则：</p>
 <script type="math/tex; mode=display">
-   \|Ax\|^2 = x^{\top}A^{\top}Ax = \lambda x^{\top}x = \lambda \|x\|^2</script><p>   于是，</p>
+\|Ax\|^2 = x^{\top}A^{\top}Ax = \lambda x^{\top}x = \lambda \|x\|^2</script><p>于是，</p>
 <script type="math/tex; mode=display">
-   \lambda = \frac{\|Ax\|^2}{\|x\|^2} \ge 0 \tag{15-3}</script><p>   可以假设正交矩阵V的列的排列使得对应的特征值形成降序排列：</p>
+\lambda = \frac{\|Ax\|^2}{\|x\|^2} \ge 0 \tag{15-3}</script><p>可以假设正交矩阵V的列的排列使得对应的特征值形成降序排列：</p>
 <script type="math/tex; mode=display">
-   \lambda_1\ge \lambda_2\ge\dots \ge \lambda_n \ge 0</script><p>   计算特征值的平方根(实际就是矩阵A的奇异值)</p>
+\lambda_1\ge \lambda_2\ge\dots \ge \lambda_n \ge 0</script><p>计算特征值的平方根(实际就是矩阵A的奇异值)</p>
 <script type="math/tex; mode=display">
-   \sigma_j = \sqrt{\lambda_j} \ , j=1,2,\dots,n</script><p>   设矩阵A的秩是r，rank(A)=r，则矩阵<script type="math/tex">A^{\top}A</script>的秩也是r。由于<script type="math/tex">A^{\top}A</script>是对称矩阵，它的秩等于正的特征值的个数，所以：</p>
+\sigma_j = \sqrt{\lambda_j} \ , j=1,2,\dots,n</script><p>设矩阵A的秩是r，rank(A)=r，则矩阵<script type="math/tex">A^{\top}A</script>的秩也是r。由于<script type="math/tex">A^{\top}A</script>是对称矩阵，它的秩等于正的特征值的个数，所以：</p>
 <script type="math/tex; mode=display">
-   \lambda_1\ge\lambda_2\ge \dots \ge \lambda_r > 0\ , \lambda_{r+1}=\lambda_{r+2}=\dots=\lambda_n=0\tag{15-4}</script><p>   对应地有:</p>
+\lambda_1\ge\lambda_2\ge \dots \ge \lambda_r > 0\ , \lambda_{r+1}=\lambda_{r+2}=\dots=\lambda_n=0\tag{15-4}</script><p>对应地有:</p>
 <script type="math/tex; mode=display">
-   \sigma_1\ge\sigma_2\ge\dots \ge\sigma_r >0 \ , \sigma_{r+1}=\sigma_{r+2}=\dots=\sigma_n=0 \tag{15-5}</script><p>   令：</p>
+\sigma_1\ge\sigma_2\ge\dots \ge\sigma_r >0 \ , \sigma_{r+1}=\sigma_{r+2}=\dots=\sigma_n=0 \tag{15-5}</script><p>令：</p>
 <script type="math/tex; mode=display">
-   V_1 = [v_1,v_2,\dots,v_r],V_2=[v_{r+1},v_{r+2},\dots,v_{n}]</script><p>   其中，<script type="math/tex">v_1,\dots,v_r</script><strong>为<script type="math/tex">A^{\top}A</script>的正特征值对应的特征向量</strong>，<script type="math/tex">v_{r+1},\dots,v_n</script><strong>为0特征值对应的特征向量</strong>，则：</p>
+V_1 = [v_1,v_2,\dots,v_r],V_2=[v_{r+1},v_{r+2},\dots,v_{n}]</script><p>其中，<script type="math/tex">v_1,\dots,v_r</script><strong>为<script type="math/tex">A^{\top}A</script>的正特征值对应的特征向量</strong>，<script type="math/tex">v_{r+1},\dots,v_n</script><strong>为0特征值对应的特征向量</strong>，则：</p>
 <script type="math/tex; mode=display">
-   V = [V_1, V_2] \tag{15-6}</script><p>   令</p>
+V = [V_1, V_2] \tag{15-6}</script><p>令</p>
 <script type="math/tex; mode=display">
-   \Sigma_1 = \begin{bmatrix}
-      \sigma_1 & \\
-      & \sigma_2 \\
-      & & \ddots \\
-      & & & \sigma_r
-   \end{bmatrix}</script><p>   则<script type="math/tex">\Sigma_1</script>是一个r阶对角矩阵，其对角线元素为按降序排列的正的<script type="math/tex">\sigma_1,\dots,\sigma_r</script>，于是mxn矩阵对角矩阵<script type="math/tex">\Sigma</script>可以表示为：</p>
+\Sigma_1 = \begin{bmatrix}
+   \sigma_1 & \\
+   & \sigma_2 \\
+   & & \ddots \\
+   & & & \sigma_r
+\end{bmatrix}</script><p>则<script type="math/tex">\Sigma_1</script>是一个r阶对角矩阵，其对角线元素为按降序排列的正的<script type="math/tex">\sigma_1,\dots,\sigma_r</script>，于是mxn矩阵对角矩阵<script type="math/tex">\Sigma</script>可以表示为：</p>
 <script type="math/tex; mode=display">
-   \Sigma = \begin{bmatrix}
-      \Sigma_1 & 0 \\
-      0&0
-   \end{bmatrix} \tag{15-7}</script><p>   这就是<strong>矩阵A的奇异值分解中的mxn矩形对角矩阵<script type="math/tex">\Sigma</script>。</strong></p>
-<p>   在式(15.6)中，<script type="math/tex">V_2</script>的列向量是<script type="math/tex">A^{\top}A</script>对应于特征值为0的特征向量。因此</p>
+\Sigma = \begin{bmatrix}
+   \Sigma_1 & 0 \\
+   0&0
+\end{bmatrix} \tag{15-7}</script><p>这就是<strong>矩阵A的奇异值分解中的mxn矩形对角矩阵<script type="math/tex">\Sigma</script>。</strong></p>
+<p>在式(15.6)中，<script type="math/tex">V_2</script>的列向量是<script type="math/tex">A^{\top}A</script>对应于特征值为0的特征向量。因此</p>
 <script type="math/tex; mode=display">
-   A^{\top}Av_j = 0 \ , j=r+1,\dots,n \tag{15-8}</script><p>   于是，<script type="math/tex">V_2</script>的列向量构成了<script type="math/tex">A^{\top}A</script>的零空间<script type="math/tex">N(A^{\top}A)</script>，而<script type="math/tex">N(A^{\top}A) = N(A)</script>。所以<strong><script type="math/tex">V_2</script>的列向量构成A的零空间的一组标准正交基</strong>。因此，</p>
+A^{\top}Av_j = 0 \ , j=r+1,\dots,n \tag{15-8}</script><p>于是，<script type="math/tex">V_2</script>的列向量构成了<script type="math/tex">A^{\top}A</script>的零空间<script type="math/tex">N(A^{\top}A)</script>，而<script type="math/tex">N(A^{\top}A) = N(A)</script>。所以<strong><script type="math/tex">V_2</script>的列向量构成A的零空间的一组标准正交基</strong>。因此，</p>
 <script type="math/tex; mode=display">
-   AV_2 = 0 \tag{15-9}</script><p>   由于V是正交矩阵，由式(15.6)可得：</p>
+AV_2 = 0 \tag{15-9}</script><p>由于V是正交矩阵，由式(15.6)可得：</p>
 <script type="math/tex; mode=display">
-   I = VV^{\top}=V_1 V_1^{\top}+V_2V_2^{\top} \tag{15-10}</script><script type="math/tex; mode=display">
-   A = AI = AV_1V_1^{\top}+AV_2V_2^{\top} = AV_1V_1^{\top} \tag{15-11}</script><ol>
+I = VV^{\top}=V_1 V_1^{\top}+V_2V_2^{\top} \tag{15-10}</script><script type="math/tex; mode=display">
+A = AI = AV_1V_1^{\top}+AV_2V_2^{\top} = AV_1V_1^{\top} \tag{15-11}</script></li>
 <li><p>确定U</p>
 <p>构造m阶正交矩阵U。</p>
 <p>令</p>
@@ -489,93 +490,73 @@ U\Sigma V^{\top} &= [U_1,U_2] \begin{bmatrix}
 <p><strong>截断奇异值分解</strong>是比原始矩阵低秩的奇异值分解。</p>
 <h4 id="紧奇异值分解"><a href="#紧奇异值分解" class="headerlink" title="紧奇异值分解"></a>紧奇异值分解</h4><p><strong>定义15.2</strong> 设有mxn实矩阵A，其秩为rank(A)=r，<script type="math/tex">r\le\min(m,n)</script>，则称<script type="math/tex">U_r\Sigma_r V_r^{\top}</script>为A的紧奇异值分解，即</p>
 <script type="math/tex; mode=display">
-A = U_r\Sigma_rV_r^{\top} \tag{15-18}</script><p>其中<script type="math/tex">U_r</script>是mxr矩阵，<script type="math/tex">V_r\sube R^{n\times r}</script>，<script type="math/tex">\Sigma_r</script>是r阶对角矩阵；矩阵<script type="math/tex">U_r</script>由完全奇异值分解中U的前r列、矩阵<script type="math/tex">V_r</script>由V的前r列、矩阵<script type="math/tex">\Sigma_r</script>由<script type="math/tex">\Sigma</script>的前r个对角线元素得到。紧奇异值分解的对角矩阵<script type="math/tex">\Sigma_r</script>的秩与原始矩阵A的秩相等。</p>
+A = U_r\Sigma_rV_r^{\top} \tag{15-18}</script><p>其中<script type="math/tex">U_r</script>是mxr矩阵，<script type="math/tex">V_r \subseteq R^{n\times r}</script>，<script type="math/tex">\Sigma_r</script>是r阶对角矩阵；矩阵<script type="math/tex">U_r</script>由完全奇异值分解中U的前r列、矩阵<script type="math/tex">V_r</script>由V的前r列、矩阵<script type="math/tex">\Sigma_r</script>由<script type="math/tex">\Sigma</script>的前r个对角线元素得到。紧奇异值分解的对角矩阵<script type="math/tex">\Sigma_r</script>的秩与原始矩阵A的秩相等。</p>
 <h4 id="截断奇异值分解"><a href="#截断奇异值分解" class="headerlink" title="截断奇异值分解"></a>截断奇异值分解</h4><p>在矩阵的奇异值分解中，只取最大的k个奇异值(k&lt;r,r为矩阵的秩)对应的部分，就得到矩阵的阶段奇异值分解。实际应用中提到矩阵的奇异值分解时，通常指截断奇异值分解。</p>
 <p><strong>定义15.3</strong> 设 A为mxn实矩阵，其秩rank(A) = r, 且0&lt;k&lt;r，则称<script type="math/tex">U_k\Sigma_k V_k^{\top}</script>为矩阵A的截断奇异值分解：</p>
 <script type="math/tex; mode=display">
 A \approx U_k\Sigma_kV_k^{\top} \tag{15-19}</script><p>其中 <script type="math/tex">U_k</script> 是mxk矩阵，<script type="math/tex">V_k</script>是nxk矩阵，<script type="math/tex">\Sigma_k</script>是k阶对角矩阵；矩阵<script type="math/tex">U_k</script>由完全奇异值分解中U的前k列，矩阵<script type="math/tex">V_k</script>由V的前k列、矩阵<script type="math/tex">\Sigma_k</script> 由<script type="math/tex">\Sigma</script>的前k个对角线元素得到。对角矩阵<script type="math/tex">\Sigma_k</script>的秩比原始矩阵A的秩低。</p>
 <h3 id="几何解释"><a href="#几何解释" class="headerlink" title="几何解释"></a>几何解释</h3><p>从线性变换的角度理解奇异值分解，mxn矩阵A表示从n维空间<script type="math/tex">R^n</script>到m维空间<script type="math/tex">R^m</script>的一个线性变换，</p>
 <script type="math/tex; mode=display">
-T:x \rightarrow Ax</script><script type="math/tex; mode=display">x\in R^n,Ax \in R^m$$，x和Ax分别是各自空间的向量。
-
-线性变换可以分解为三个简单的变换：
-
-- 一个坐标系的旋转或反射变换
-- 一个坐标轴的缩放变换
-- 另一个坐标系的旋转和反射变换
-
-对矩阵A进行奇异值分解，得到$$A = U\Sigma V^{\top}$$，V和U都是正交矩阵，所以：
-
-V的列向量$$v_1,v_2,\dots,v_n$$构成$$R^n$$空间的一组标准正交基，表示$$R^n$$中的正交坐标系的旋转或反射变换；
-
-U的列向量$$u_1,u_2,\dots,u_m$$构成$$R^m$$空间的一组标准正交基，表示$$R^m$$中的正交坐标系的旋转或反射变换；
-
-$$\Sigma$$的对角元素$$\sigma_1,\sigma_2,\dots,\sigma_n$$是一组非负实数，表示$$R^n$$中的原始正交坐标系坐标轴的$$\sigma_1,\sigma_2,\dots,\sigma_n$$倍的缩放变换。
-
-任意一个向量$$x \in R^n$$，经过基于$$A = U\Sigma V^{\top}$$的线性变换，等价于经过坐标系的旋转或反射变换$$V^{\top}$$，坐标轴的缩放变换$$\Sigma$$，以及坐标系的旋转或反射变换U，，得到向量$$Ax \in R^m$$，如下图所示：
-
-![15-1](/Users/jozee/Desktop/lihang/15/image/15-1.jpg)
-
-上图中，原始空间的标准正交基(红色和黄色)，经过坐标系的旋转变换$$V^{\top}$$、坐标轴的缩放变换 $$\Sigma$$(黑色$$\sigma_1,\sigma_2$$)、坐标系的旋转变换U，得到和经过线性变换A等价的结果。
-
-### 主要性质
-
-1. 设矩阵A的奇异值分解为$$A = U\Sigma V^{\top}$$，则以下关系成立：</script><p>   A^{\top}A = (U\Sigma V^{\top})^{\top}(U\Sigma V^{\top})=V(\Sigma^{\top}\Sigma)V^{\top} \tag{15-20}</p>
+T:x \rightarrow Ax</script><p>其中，<script type="math/tex">x\in R^n,Ax \in R^m</script>，x和Ax分别是各自空间的向量。</p>
+<p>线性变换可以分解为三个简单的变换：</p>
+<ul>
+<li>一个坐标系的旋转或反射变换</li>
+<li>一个坐标轴的缩放变换</li>
+<li>另一个坐标系的旋转和反射变换</li>
+</ul>
+<p>对矩阵A进行奇异值分解，得到<script type="math/tex">A = U\Sigma V^{\top}</script>，V和U都是正交矩阵，所以：</p>
+<p>V的列向量<script type="math/tex">v_1,v_2,\dots,v_n</script>构成<script type="math/tex">R^n</script>空间的一组标准正交基，表示<script type="math/tex">R^n</script>中的正交坐标系的旋转或反射变换；</p>
+<p>U的列向量<script type="math/tex">u_1,u_2,\dots,u_m</script>构成<script type="math/tex">R^m</script>空间的一组标准正交基，表示<script type="math/tex">R^m</script>中的正交坐标系的旋转或反射变换；</p>
+<p>其中，<script type="math/tex">\Sigma</script>的对角元素<script type="math/tex">\sigma_1,\sigma_2,\dots,\sigma_n</script>是一组非负实数，表示<script type="math/tex">R^n</script>中的原始正交坐标系坐标轴的<script type="math/tex">\sigma_1,\sigma_2,\dots,\sigma_n</script>倍的缩放变换。</p>
+<p>任意一个向量<script type="math/tex">x \in R^n</script>，经过基于<script type="math/tex">A = U\Sigma V^{\top}</script>的线性变换，等价于经过坐标系的旋转或反射变换<script type="math/tex">V^{\top}</script>，坐标轴的缩放变换<script type="math/tex">\Sigma</script>，以及坐标系的旋转或反射变换U，，得到向量<script type="math/tex">Ax \in R^m</script>，如下图所示：</p>
+<p><img src="/Users/jozee/Desktop/lihang/15/image/15-1.jpg" alt="15-1"></p>
+<p>上图中，原始空间的标准正交基(红色和黄色)，经过坐标系的旋转变换<script type="math/tex">V^{\top}</script>、坐标轴的缩放变换 <script type="math/tex">\Sigma</script>(黑色<script type="math/tex">\sigma_1,\sigma_2</script>)、坐标系的旋转变换U，得到和经过线性变换A等价的结果。</p>
+<h3 id="主要性质"><a href="#主要性质" class="headerlink" title="主要性质"></a>主要性质</h3><ol>
+<li><p>设矩阵A的奇异值分解为<script type="math/tex">A = U\Sigma V^{\top}</script>，则以下关系成立：</p>
 <script type="math/tex; mode=display">
-</script><p>   AA^{\top} = (U\Sigma V^{\top})(U\Sigma V^{\top})^{\top}=U(\Sigma\Sigma^{\top})U^{\top} \tag{15-21}</p>
+A^{\top}A = (U\Sigma V^{\top})^{\top}(U\Sigma V^{\top})=V(\Sigma^{\top}\Sigma)V^{\top} \tag{15-20}</script><script type="math/tex; mode=display">
+AA^{\top} = (U\Sigma V^{\top})(U\Sigma V^{\top})^{\top}=U(\Sigma\Sigma^{\top})U^{\top} \tag{15-21}</script><p>也就是说，矩阵<script type="math/tex">A^{\top}A</script>和<script type="math/tex">AA^{\top}</script>的特征分解存在，且可以由矩阵A的奇异值分解的矩阵表示。V的列向量是<script type="math/tex">A^{\top}A</script>的特征向量，U的列向量是<script type="math/tex">AA^{\top}</script>的特征向量，<script type="math/tex">\Sigma</script>的奇异值是<script type="math/tex">A^{\top}A</script>和<script type="math/tex">AA^{\top}</script>的特征值的平方根。</p>
+</li>
+<li><p>在矩阵A的奇异值分解中，奇异值、左奇异向量和右奇异向量之间存在对应关系。</p>
+<p>由<script type="math/tex">A=U\Sigma V^{\top}</script>易知：</p>
 <script type="math/tex; mode=display">
-
-   也就是说，矩阵$$A^{\top}A$$和$$AA^{\top}$$的特征分解存在，且可以由矩阵A的奇异值分解的矩阵表示。V的列向量是$$A^{\top}A$$的特征向量，U的列向量是$$AA^{\top}$$的特征向量，$$\Sigma$$的奇异值是$$A^{\top}A$$和$$AA^{\top}$$的特征值的平方根。
-
-2. 在矩阵A的奇异值分解中，奇异值、左奇异向量和右奇异向量之间存在对应关系。
-
-   由$$A=U\Sigma V^{\top}$$易知：</script><p>   AV = U\Sigma</p>
+AV = U\Sigma</script><p>比较这一等式的两端的第j列，得到：</p>
 <script type="math/tex; mode=display">
-   比较这一等式的两端的第j列，得到：</script><p>   Av_j = \sigma_j u_j \ , j=1,2,\dots,n \tag{15-22}</p>
+Av_j = \sigma_j u_j \ , j=1,2,\dots,n \tag{15-22}</script><p>这是矩阵A的右奇异向量和奇异值、左奇异向量的关系。</p>
+<p>类似地，由</p>
 <script type="math/tex; mode=display">
-   这是矩阵A的右奇异向量和奇异值、左奇异向量的关系。
-
-   类似地，由</script><p>   A^{\top}U = V \Sigma^{\top}</p>
+A^{\top}U = V \Sigma^{\top}</script><p>得到</p>
 <script type="math/tex; mode=display">
-   得到</script><p>   A^{\top}u_j = \sigma_j u_j \ , j=1,2,\dots,n \tag{15-23}</p>
+A^{\top}u_j = \sigma_j u_j \ , j=1,2,\dots,n \tag{15-23}</script><script type="math/tex; mode=display">
+A^{\top} u_j = 0 , j=n+1,n+2,\dots,m \tag{15-24}</script><p> 这是矩阵A的左奇异向量和奇异值、左奇异向量的关系。</p>
+</li>
+<li><p>矩阵A的奇异分解中，奇异值<script type="math/tex">\sigma_1, \sigma_2,\dots,\sigma_n</script>是唯一的，而矩阵U和V 不是唯一的。</p>
+</li>
+<li><p>矩阵A和<script type="math/tex">\Sigma</script>的秩相等，等于正奇异值<script type="math/tex">\sigma_i</script>的个数r(包括重复的奇异值)。</p>
+</li>
+<li><p>矩阵A的r个右奇异向量<script type="math/tex">v_1,v_2,\dots,v_r</script>构成<script type="math/tex">A^{\top}</script>的值域<script type="math/tex">R(A^{\top})</script>的一组标准正交基。</p>
+<p>因为矩阵<script type="math/tex">A^{\top}</script>是从<script type="math/tex">R^m</script>映射到<script type="math/tex">R^n</script>的线性变换，则<script type="math/tex">A^{\top}</script>的值域<script type="math/tex">R(A^{\top})</script>和<script type="math/tex">A^{\top}</script>的列空间是相同的，<script type="math/tex">v_1,v_2,\dots,v_r</script> 是<script type="math/tex">A^{\top}</script>的一组标准正交基，因而也是<script type="math/tex">R(A^{\top})</script>的一组标准正交基。</p>
+</li>
+<li><p>矩阵A的n-r个右奇异向量<script type="math/tex">v_{r+1},v_{r+2},\dots,v_{n}</script>构成A的零空间N(A)的一组标准正交基。</p>
+</li>
+<li><p>矩阵A的r个左奇异向量<script type="math/tex">u_1,u_2,\dots,u_r</script>构成值域R(A)的一组标准正交基。</p>
+</li>
+<li><p>矩阵A的m-r个左奇异向量<script type="math/tex">u_{r+1},u_{r+2},\dots,u_m</script>构成<script type="math/tex">A^{\top}</script>的零空间<script type="math/tex">N(A^{\top})</script>的i一组标准正交基。</p>
+</li>
+</ol>
+<h2 id="奇异值分解的计算"><a href="#奇异值分解的计算" class="headerlink" title="奇异值分解的计算"></a>奇异值分解的计算</h2><p>矩阵A的奇异值分解可以通过求对称矩阵<script type="math/tex">A^{\top}A</script>的特征值和特征向量得到。<script type="math/tex">A^{\top}A</script>的特征向量构成正交矩阵V的列；<script type="math/tex">A^{\top}A</script>的特征值<script type="math/tex">\lambda_j</script>的平方根为奇异值<script type="math/tex">\sigma_i</script>，即</p>
 <script type="math/tex; mode=display">
-</script><p>   A^{\top} u_j = 0 , j=n+1,n+2,\dots,m \tag{15-24}</p>
-<script type="math/tex; mode=display">
-
-    这是矩阵A的左奇异向量和奇异值、左奇异向量的关系。
-
-3. 矩阵A的奇异分解中，奇异值$$\sigma_1, \sigma_2,\dots,\sigma_n$$是唯一的，而矩阵U和V 不是唯一的。
-
-4. 矩阵A和$$\Sigma$$的秩相等，等于正奇异值$$\sigma_i$$的个数r(包括重复的奇异值)。
-
-5. 矩阵A的r个右奇异向量$$v_1,v_2,\dots,v_r$$构成$$A^{\top}$$的值域$$R(A^{\top})$$的一组标准正交基。
-
-   因为矩阵$$A^{\top}$$是从$$R^m$$映射到$$R^n$$的线性变换，则$$A^{\top}$$的值域$$R(A^{\top})$$和$$A^{\top}$$的列空间是相同的，$$v_1,v_2,\dots,v_r$$ 是$$A^{\top}$$的一组标准正交基，因而也是$$R(A^{\top})$$的一组标准正交基。
-
-6. 矩阵A的n-r个右奇异向量$$v_{r+1},v_{r+2},\dots,v_{n}$$构成A的零空间N(A)的一组标准正交基。
-
-7. 矩阵A的r个左奇异向量$$u_1,u_2,\dots,u_r$$构成值域R(A)的一组标准正交基。
-
-8. 矩阵A的m-r个左奇异向量$$u_{r+1},u_{r+2},\dots,u_m$$构成$$A^{\top}$$的零空间$$N(A^{\top})$$的i一组标准正交基。
-
-
-
-## 奇异值分解的计算
-
-矩阵A的奇异值分解可以通过求对称矩阵$$A^{\top}A$$的特征值和特征向量得到。$$A^{\top}A$$的特征向量构成正交矩阵V的列；$$A^{\top}A$$的特征值$$\lambda_j$$的平方根为奇异值$$\sigma_i$$，即</script><p>\sigma_j = \sqrt{\lambda_j} \ , j=1,2,\dots,n</p>
-<script type="math/tex; mode=display">
- 对其由大到小排列作为对角线元素，构成对角矩阵$$\Sigma$$；求正奇异值对应的左奇异向量，再求扩充的$$A^{\top}$$的标准正交基，构成正交矩阵U的列。从而得到A的奇异值分解$$A=U\Sigma V^{\top}$$。
-
-给定mxn矩阵A，可以按照上面的叙述写出矩阵奇异值分解的计算过程：
-
-1. 首先，求$$A^{\top}A$$的特征值和特征向量
-
-   计算对称矩阵$$W = A^{\top}A</script><p>   求解特征方程</p>
-<script type="math/tex; mode=display">
-   (W-\lambda I)x = 0</script><p>   得到特征值<script type="math/tex">\lambda_i</script>，并将特征值由大到小排列：</p>
-<script type="math/tex; mode=display">
-   \lambda_1\ge \lambda_2\ge\dots \ge \lambda_n \ge 0</script><p>   将特征值<script type="math/tex">\lambda_i(i=1,2,\dots,n)</script>代入特征方程求得对应的特征向量。</p>
+\sigma_j = \sqrt{\lambda_j} \ , j=1,2,\dots,n</script><p> 对其由大到小排列作为对角线元素，构成对角矩阵<script type="math/tex">\Sigma</script>；求正奇异值对应的左奇异向量，再求扩充的<script type="math/tex">A^{\top}</script>的标准正交基，构成正交矩阵U的列。从而得到A的奇异值分解<script type="math/tex">A=U\Sigma V^{\top}</script>。</p>
+<p>给定mxn矩阵A，可以按照上面的叙述写出矩阵奇异值分解的计算过程：</p>
 <ol>
+<li><p>首先，求<script type="math/tex">A^{\top}A</script>的特征值和特征向量</p>
+<p>计算对称矩阵<script type="math/tex">W = A^{\top}A</script></p>
+<p>求解特征方程</p>
+<script type="math/tex; mode=display">
+(W-\lambda I)x = 0</script><p>得到特征值<script type="math/tex">\lambda_i</script>，并将特征值由大到小排列：</p>
+<script type="math/tex; mode=display">
+\lambda_1\ge \lambda_2\ge\dots \ge \lambda_n \ge 0</script><p>将特征值<script type="math/tex">\lambda_i(i=1,2,\dots,n)</script>代入特征方程求得对应的特征向量。</p>
+</li>
 <li><p>求n阶正交矩阵V</p>
 <p>将特征向量单位化，得到单位特征向量<script type="math/tex">v_1,\dots,v_n</script>，构成n阶正交矩阵V:</p>
 <script type="math/tex; mode=display">
@@ -926,7 +907,7 @@ A_k = \sigma_1u_1v_1^{\top}+\sigma_2u_2v_2^{\top}+\dots+\sigma_ku_kv_k^{\top}</s
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#奇异值分解的定义与性质"><span class="nav-number">1.</span> <span class="nav-text">奇异值分解的定义与性质</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#定义与定理"><span class="nav-number">1.1.</span> <span class="nav-text">定义与定理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#紧奇异值分解与截断奇异值分解"><span class="nav-number">1.2.</span> <span class="nav-text">紧奇异值分解与截断奇异值分解</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#紧奇异值分解"><span class="nav-number">1.2.1.</span> <span class="nav-text">紧奇异值分解</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#截断奇异值分解"><span class="nav-number">1.2.2.</span> <span class="nav-text">截断奇异值分解</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#几何解释"><span class="nav-number">1.3.</span> <span class="nav-text">几何解释</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#奇异值分解与矩阵近似"><span class="nav-number">2.</span> <span class="nav-text">奇异值分解与矩阵近似</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#弗罗贝尼乌斯范数"><span class="nav-number">2.1.</span> <span class="nav-text">弗罗贝尼乌斯范数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#矩阵的最优近似"><span class="nav-number">2.2.</span> <span class="nav-text">矩阵的最优近似</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#矩阵的外积展开式"><span class="nav-number">2.3.</span> <span class="nav-text">矩阵的外积展开式</span></a></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#奇异值分解的定义与性质"><span class="nav-number">1.</span> <span class="nav-text">奇异值分解的定义与性质</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#定义与定理"><span class="nav-number">1.1.</span> <span class="nav-text">定义与定理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#紧奇异值分解与截断奇异值分解"><span class="nav-number">1.2.</span> <span class="nav-text">紧奇异值分解与截断奇异值分解</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#紧奇异值分解"><span class="nav-number">1.2.1.</span> <span class="nav-text">紧奇异值分解</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#截断奇异值分解"><span class="nav-number">1.2.2.</span> <span class="nav-text">截断奇异值分解</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#几何解释"><span class="nav-number">1.3.</span> <span class="nav-text">几何解释</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#主要性质"><span class="nav-number">1.4.</span> <span class="nav-text">主要性质</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#奇异值分解的计算"><span class="nav-number">2.</span> <span class="nav-text">奇异值分解的计算</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#奇异值分解与矩阵近似"><span class="nav-number">3.</span> <span class="nav-text">奇异值分解与矩阵近似</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#弗罗贝尼乌斯范数"><span class="nav-number">3.1.</span> <span class="nav-text">弗罗贝尼乌斯范数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#矩阵的最优近似"><span class="nav-number">3.2.</span> <span class="nav-text">矩阵的最优近似</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#矩阵的外积展开式"><span class="nav-number">3.3.</span> <span class="nav-text">矩阵的外积展开式</span></a></li></ol></li></ol></div>
             
 
           </div>
