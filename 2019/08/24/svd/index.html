@@ -1,0 +1,1180 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+  <meta name="google-site-verification" content="iejSa-LmOb9d1GguAcEsQNUsQviccOieHkuG1c1E2YI">
+
+
+
+  <meta name="msvalidate.01" content="83768A52AE58ADF203609FEF9C55FF47">
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="奇异值分解,SVD,">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="奇异值分解(SVD)是一种矩阵因子分解方法，是线性代数的概念。 任意一个mxn矩阵，都可以表示为三个矩阵的乘积(因子分解)形式，分别是m阶正交矩阵、由降序排列的非负的对角线元素组成的mxn矩形对角矩阵和n阶正交矩阵，称为该矩阵的奇异值分解。 矩阵的奇异值分解一定存在，但不唯一。奇异值分解可以看作是矩阵数据压缩的一种方法，即用因子分解的方式近似的表示原始矩阵，这种近似是在平方损失意义下的最优近似。">
+<meta name="keywords" content="奇异值分解,SVD">
+<meta property="og:type" content="article">
+<meta property="og:title" content="奇异值分解SVD">
+<meta property="og:url" content="https://jozeelin.github.io/2019/08/24/svd/index.html">
+<meta property="og:site_name" content="Jozee&#39;s技术博客">
+<meta property="og:description" content="奇异值分解(SVD)是一种矩阵因子分解方法，是线性代数的概念。 任意一个mxn矩阵，都可以表示为三个矩阵的乘积(因子分解)形式，分别是m阶正交矩阵、由降序排列的非负的对角线元素组成的mxn矩形对角矩阵和n阶正交矩阵，称为该矩阵的奇异值分解。 矩阵的奇异值分解一定存在，但不唯一。奇异值分解可以看作是矩阵数据压缩的一种方法，即用因子分解的方式近似的表示原始矩阵，这种近似是在平方损失意义下的最优近似。">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2019-08-24T15:30:42.599Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="奇异值分解SVD">
+<meta name="twitter:description" content="奇异值分解(SVD)是一种矩阵因子分解方法，是线性代数的概念。 任意一个mxn矩阵，都可以表示为三个矩阵的乘积(因子分解)形式，分别是m阶正交矩阵、由降序排列的非负的对角线元素组成的mxn矩形对角矩阵和n阶正交矩阵，称为该矩阵的奇异值分解。 矩阵的奇异值分解一定存在，但不唯一。奇异值分解可以看作是矩阵数据压缩的一种方法，即用因子分解的方式近似的表示原始矩阵，这种近似是在平方损失意义下的最优近似。">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://jozeelin.github.io/2019/08/24/svd/">
+
+
+
+
+
+  <title>奇异值分解SVD | Jozee's技术博客</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Jozee's技术博客</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://jozeelin.github.io/2019/08/24/svd/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="jozee">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Jozee's技术博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">奇异值分解SVD</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-08-24T23:29:03+08:00">
+                2019-08-24
+              </time>
+            
+
+            
+              <span class="post-meta-divider">|</span>
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-check-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">更新于&#58;</span>
+              
+              <time title="更新于" itemprop="dateModified" datetime="2019-08-24T23:30:42+08:00">
+                2019-08-24
+              </time>
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/机器学习/" itemprop="url" rel="index">
+                    <span itemprop="name">机器学习</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2019/08/24/svd/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2019/08/24/svd/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+          <span id="busuanzi_container_page_pv">
+            <span class="post-meta-divider">|</span>
+            <span class="post-meta-item-icon">
+            <i class="fa fa-eye"></i>
+            </span>
+            阅读量: <span id="busuanzi_value_page_pv"></span>次
+          </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>奇异值分解(SVD)是一种矩阵因子分解方法，是线性代数的概念。</p>
+<p>任意一个mxn矩阵，都可以表示为三个矩阵的乘积(因子分解)形式，分别是m阶正交矩阵、由降序排列的非负的对角线元素组成的mxn矩形对角矩阵和n阶正交矩阵，称为该矩阵的奇异值分解。</p>
+<p>矩阵的奇异值分解一定存在，<strong>但不唯一</strong>。奇异值分解可以看作是<strong>矩阵数据压缩</strong>的一种方法，即用因子分解的方式近似的表示原始矩阵，这种近似是在平方损失意义下的最优近似。</p>
+<h2 id="奇异值分解的定义与性质"><a href="#奇异值分解的定义与性质" class="headerlink" title="奇异值分解的定义与性质"></a>奇异值分解的定义与性质</h2><h3 id="定义与定理"><a href="#定义与定理" class="headerlink" title="定义与定理"></a>定义与定理</h3><p><strong>定义15.1(奇异值分解)</strong>矩阵的奇异值分解是指，将一个非零的mxn实矩阵A,<script type="math/tex">A\in R^{m\times n}</script>，表示为以下三个实矩阵乘积形式的运算，即进行矩阵的因子分解:</p>
+<script type="math/tex; mode=display">
+A = U \Sigma V^{\top} \tag{15-1}</script><p>其中U是m阶正交矩阵，V是n阶正交矩阵，<script type="math/tex">\Sigma</script>是由降序排列的非负的对角线元素组成的mxn矩形对角矩阵，满足：</p>
+<script type="math/tex; mode=display">
+UU^{\top} = I</script><script type="math/tex; mode=display">
+VV^{\top} = I</script><script type="math/tex; mode=display">
+\Sigma = \mathrm{diag}(\sigma_1,\sigma_2,\dots,\sigma_p) \ , \sigma_1\ge \sigma_2 \ge \dots \ge \sigma_p \ge 0 \ , p=\min(m,n)</script><script type="math/tex; mode=display">U\Sigma V^{\top}$$称为矩阵A的奇异值分解(SVD)，$$\sigma_i$$称为矩阵A的奇异值，U的列向量称为左奇异向量，V的列向量称为右奇异向量。
+
+> **注意：**奇异值分解不要求矩阵A是方阵，事实上矩阵的奇异值分解可以看作是方阵的对角化的推广。
+
+**任意给定一个实矩阵，其奇异值分解是否一定存在呢？答案是肯定的，下面的奇异值分解的基本定理给予保证**。
+
+**定理15.1(奇异值分解基本定理)** 若A为一mxn实矩阵，$$A\in R^{mxn}$$，则A的奇异值分解存在：</script><p>A = U\Sigma V^{\top} \tag{15-2}</p>
+<script type="math/tex; mode=display">
+其中U是m阶正交矩阵，V是n阶正交矩阵，$$\Sigma$$是mxn矩阵对角矩阵，其对角线元素非负，且按降序排列。
+
+**证明**：(构造性证明)，对给定的矩阵A，构造出其奇异值分解的各个矩阵。为了方便，不妨假设$$m\ge n$$，如果$$m<n$$证明仍然成立。证明分三步完整：
+
+1. 确定V和$$\Sigma</script><p>   首先，构造n阶正交实矩阵V和mxn矩形对角实矩阵<script type="math/tex">\Sigma</script>。矩阵A是mxn实矩阵，则矩阵<script type="math/tex">A^{\top}A</script>是n阶实对称矩阵。因而<script type="math/tex">A^{\top}A</script>的特征值都是实数，并且存在一个n阶正交实矩阵V实现<script type="math/tex">A^{\top}A</script>的对角化，使得<script type="math/tex">V^{\top}(A^{\top}A)V = \varLambda</script>成立，其中<script type="math/tex">\varLambda</script>是n阶对角矩阵，其对角线元素由<script type="math/tex">A^{\top}A</script>的特征值组成。而且，<script type="math/tex">A^{\top}A</script>的特征值都是非负的。</p>
+<p>   事实上，令 <script type="math/tex">\lambda</script>是<script type="math/tex">A^{\top}A</script>的一个特征值，x是对应的特征向量，则：</p>
+<script type="math/tex; mode=display">
+   \|Ax\|^2 = x^{\top}A^{\top}Ax = \lambda x^{\top}x = \lambda \|x\|^2</script><p>   于是，</p>
+<script type="math/tex; mode=display">
+   \lambda = \frac{\|Ax\|^2}{\|x\|^2} \ge 0 \tag{15-3}</script><p>   可以假设正交矩阵V的列的排列使得对应的特征值形成降序排列：</p>
+<script type="math/tex; mode=display">
+   \lambda_1\ge \lambda_2\ge\dots \ge \lambda_n \ge 0</script><p>   计算特征值的平方根(实际就是矩阵A的奇异值)</p>
+<script type="math/tex; mode=display">
+   \sigma_j = \sqrt{\lambda_j} \ , j=1,2,\dots,n</script><p>   设矩阵A的秩是r，rank(A)=r，则矩阵<script type="math/tex">A^{\top}A</script>的秩也是r。由于<script type="math/tex">A^{\top}A</script>是对称矩阵，它的秩等于正的特征值的个数，所以：</p>
+<script type="math/tex; mode=display">
+   \lambda_1\ge\lambda_2\ge \dots \ge \lambda_r > 0\ , \lambda_{r+1}=\lambda_{r+2}=\dots=\lambda_n=0\tag{15-4}</script><p>   对应地有:</p>
+<script type="math/tex; mode=display">
+   \sigma_1\ge\sigma_2\ge\dots \ge\sigma_r >0 \ , \sigma_{r+1}=\sigma_{r+2}=\dots=\sigma_n=0 \tag{15-5}</script><p>   令：</p>
+<script type="math/tex; mode=display">
+   V_1 = [v_1,v_2,\dots,v_r],V_2=[v_{r+1},v_{r+2},\dots,v_{n}]</script><p>   其中，<script type="math/tex">v_1,\dots,v_r</script><strong>为<script type="math/tex">A^{\top}A</script>的正特征值对应的特征向量</strong>，<script type="math/tex">v_{r+1},\dots,v_n</script><strong>为0特征值对应的特征向量</strong>，则：</p>
+<script type="math/tex; mode=display">
+   V = [V_1, V_2] \tag{15-6}</script><p>   令</p>
+<script type="math/tex; mode=display">
+   \Sigma_1 = \begin{bmatrix}
+      \sigma_1 & \\
+      & \sigma_2 \\
+      & & \ddots \\
+      & & & \sigma_r
+   \end{bmatrix}</script><p>   则<script type="math/tex">\Sigma_1</script>是一个r阶对角矩阵，其对角线元素为按降序排列的正的<script type="math/tex">\sigma_1,\dots,\sigma_r</script>，于是mxn矩阵对角矩阵<script type="math/tex">\Sigma</script>可以表示为：</p>
+<script type="math/tex; mode=display">
+   \Sigma = \begin{bmatrix}
+      \Sigma_1 & 0 \\
+      0&0
+   \end{bmatrix} \tag{15-7}</script><p>   这就是<strong>矩阵A的奇异值分解中的mxn矩形对角矩阵<script type="math/tex">\Sigma</script>。</strong></p>
+<p>   在式(15.6)中，<script type="math/tex">V_2</script>的列向量是<script type="math/tex">A^{\top}A</script>对应于特征值为0的特征向量。因此</p>
+<script type="math/tex; mode=display">
+   A^{\top}Av_j = 0 \ , j=r+1,\dots,n \tag{15-8}</script><p>   于是，<script type="math/tex">V_2</script>的列向量构成了<script type="math/tex">A^{\top}A</script>的零空间<script type="math/tex">N(A^{\top}A)</script>，而<script type="math/tex">N(A^{\top}A) = N(A)</script>。所以<strong><script type="math/tex">V_2</script>的列向量构成A的零空间的一组标准正交基</strong>。因此，</p>
+<script type="math/tex; mode=display">
+   AV_2 = 0 \tag{15-9}</script><p>   由于V是正交矩阵，由式(15.6)可得：</p>
+<script type="math/tex; mode=display">
+   I = VV^{\top}=V_1 V_1^{\top}+V_2V_2^{\top} \tag{15-10}</script><script type="math/tex; mode=display">
+   A = AI = AV_1V_1^{\top}+AV_2V_2^{\top} = AV_1V_1^{\top} \tag{15-11}</script><ol>
+<li><p>确定U</p>
+<p>构造m阶正交矩阵U。</p>
+<p>令</p>
+<script type="math/tex; mode=display">
+u_j = \frac{1}{\sigma_j}Av_j \ , j=1,2,\dots,r \tag{15-12}</script><script type="math/tex; mode=display">
+U_1 = [u_1,u_2,\dots,u_r] \tag{15-13}</script><p>则有</p>
+<script type="math/tex; mode=display">
+AV_1 = U_1\Sigma_1 \tag{15-14}</script><p>对于<script type="math/tex">U_1</script>的列向量构成了一组标准正交基，因为：</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+u_i^{\top}u_j &= (\frac{1}{\sigma_i}v_i^{\top}A^{\top})(\frac{1}{\sigma_j}v_j^{\top}A^{\top})\\
+&= \frac{1}{\sigma_i\sigma_j}v_i^{\top}(A^{\top}Av_j)\\
+&=\frac{\sigma_j}{\sigma_i}v_i^{\top}v_j\\
+&= \delta_{ij}
+\end{aligned} \tag{15-15}</script><p>由式(15-12)和式(15-15)可知，<script type="math/tex">u_1,u_2,\dots,u_r</script>构成A的列空间的一组标准正交基，列空间的维数为r。</p>
+<p>如果将A看作是从<script type="math/tex">R^n</script>到<script type="math/tex">R^m</script>的线性变换，则A的列空间和A的值域<script type="math/tex">R(A)</script>是相同的。因此<script type="math/tex">u_1,u_2,\dots,u_r</script>也是R(A)的一组标准正交基。</p>
+<p>若<script type="math/tex">R(A)^{\bot}</script>表示R(A)的正交补，则有R(A)的维数为r，<script type="math/tex">R(A)^{\bot}</script>的维数为m-r，两者的维数之和等于m。而且有<script type="math/tex">R(A)^{\bot}=N(A^{\top})</script>成立。</p>
+<p>令<script type="math/tex">\{u_{r+1},u_{r+2},\dots,u_{m}\}</script>为<script type="math/tex">N(A^{\top})</script>的一组标准正交基，并令</p>
+<script type="math/tex; mode=display">
+U_2 = [u_{r+1},u_{r+2},\dots,u_m]</script><script type="math/tex; mode=display">
+U = [U_1,U_2] \tag{15-16}</script><p>则<script type="math/tex">u_1,u_2,\dots,u_m</script>构成了<script type="math/tex">R^m</script>的一组标准正交基。因此，<strong>U是m阶正交矩阵，这就是矩阵A的奇异值分解中的m阶正交矩阵</strong>。</p>
+</li>
+<li><p>证明<script type="math/tex">U\Sigma V^{\top}=A</script></p>
+<p>由式(15-6)、式(15-7)、式(15-11)、式(15-14)和式(15-16)得</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+U\Sigma V^{\top} &= [U_1,U_2] \begin{bmatrix}
+   \Sigma_1 & 0 \\
+   0&0
+\end{bmatrix} \begin{bmatrix}
+   V_1^{\top} \\
+   V_2^{\top}
+\end{bmatrix}\\
+&= U_1\Sigma_1V_1^{\top}\\
+&= AV_1V_1^{\top}\\
+&= A
+\end{aligned} \tag{15-17}</script></li>
+</ol>
+<p>至此，证明了矩阵A存在奇异值分解。</p>
+<h3 id="紧奇异值分解与截断奇异值分解"><a href="#紧奇异值分解与截断奇异值分解" class="headerlink" title="紧奇异值分解与截断奇异值分解"></a>紧奇异值分解与截断奇异值分解</h3><p>定理15.1给出的奇异值分解<script type="math/tex">A = U\Sigma V^{\top}</script> 又称为<strong>矩阵的完全奇异值分解</strong>。实际常用的是奇异值分解的紧凑形式和截断形式。</p>
+<p><strong>紧奇异值分解</strong>是与原始矩阵等秩的奇异值分解。</p>
+<p><strong>截断奇异值分解</strong>是比原始矩阵低秩的奇异值分解。</p>
+<h4 id="紧奇异值分解"><a href="#紧奇异值分解" class="headerlink" title="紧奇异值分解"></a>紧奇异值分解</h4><p><strong>定义15.2</strong> 设有mxn实矩阵A，其秩为rank(A)=r，<script type="math/tex">r\le\min(m,n)</script>，则称<script type="math/tex">U_r\Sigma_r V_r^{\top}</script>为A的紧奇异值分解，即</p>
+<script type="math/tex; mode=display">
+A = U_r\Sigma_rV_r^{\top} \tag{15-18}</script><p>其中<script type="math/tex">U_r</script>是mxr矩阵，<script type="math/tex">V_r\sube R^{n\times r}</script>，<script type="math/tex">\Sigma_r</script>是r阶对角矩阵；矩阵<script type="math/tex">U_r</script>由完全奇异值分解中U的前r列、矩阵<script type="math/tex">V_r</script>由V的前r列、矩阵<script type="math/tex">\Sigma_r</script>由<script type="math/tex">\Sigma</script>的前r个对角线元素得到。紧奇异值分解的对角矩阵<script type="math/tex">\Sigma_r</script>的秩与原始矩阵A的秩相等。</p>
+<h4 id="截断奇异值分解"><a href="#截断奇异值分解" class="headerlink" title="截断奇异值分解"></a>截断奇异值分解</h4><p>在矩阵的奇异值分解中，只取最大的k个奇异值(k&lt;r,r为矩阵的秩)对应的部分，就得到矩阵的阶段奇异值分解。实际应用中提到矩阵的奇异值分解时，通常指截断奇异值分解。</p>
+<p><strong>定义15.3</strong> 设 A为mxn实矩阵，其秩rank(A) = r, 且0&lt;k&lt;r，则称<script type="math/tex">U_k\Sigma_k V_k^{\top}</script>为矩阵A的截断奇异值分解：</p>
+<script type="math/tex; mode=display">
+A \approx U_k\Sigma_kV_k^{\top} \tag{15-19}</script><p>其中 <script type="math/tex">U_k</script> 是mxk矩阵，<script type="math/tex">V_k</script>是nxk矩阵，<script type="math/tex">\Sigma_k</script>是k阶对角矩阵；矩阵<script type="math/tex">U_k</script>由完全奇异值分解中U的前k列，矩阵<script type="math/tex">V_k</script>由V的前k列、矩阵<script type="math/tex">\Sigma_k</script> 由<script type="math/tex">\Sigma</script>的前k个对角线元素得到。对角矩阵<script type="math/tex">\Sigma_k</script>的秩比原始矩阵A的秩低。</p>
+<h3 id="几何解释"><a href="#几何解释" class="headerlink" title="几何解释"></a>几何解释</h3><p>从线性变换的角度理解奇异值分解，mxn矩阵A表示从n维空间<script type="math/tex">R^n</script>到m维空间<script type="math/tex">R^m</script>的一个线性变换，</p>
+<script type="math/tex; mode=display">
+T:x \rightarrow Ax</script><script type="math/tex; mode=display">x\in R^n,Ax \in R^m$$，x和Ax分别是各自空间的向量。
+
+线性变换可以分解为三个简单的变换：
+
+- 一个坐标系的旋转或反射变换
+- 一个坐标轴的缩放变换
+- 另一个坐标系的旋转和反射变换
+
+对矩阵A进行奇异值分解，得到$$A = U\Sigma V^{\top}$$，V和U都是正交矩阵，所以：
+
+V的列向量$$v_1,v_2,\dots,v_n$$构成$$R^n$$空间的一组标准正交基，表示$$R^n$$中的正交坐标系的旋转或反射变换；
+
+U的列向量$$u_1,u_2,\dots,u_m$$构成$$R^m$$空间的一组标准正交基，表示$$R^m$$中的正交坐标系的旋转或反射变换；
+
+$$\Sigma$$的对角元素$$\sigma_1,\sigma_2,\dots,\sigma_n$$是一组非负实数，表示$$R^n$$中的原始正交坐标系坐标轴的$$\sigma_1,\sigma_2,\dots,\sigma_n$$倍的缩放变换。
+
+任意一个向量$$x \in R^n$$，经过基于$$A = U\Sigma V^{\top}$$的线性变换，等价于经过坐标系的旋转或反射变换$$V^{\top}$$，坐标轴的缩放变换$$\Sigma$$，以及坐标系的旋转或反射变换U，，得到向量$$Ax \in R^m$$，如下图所示：
+
+![15-1](/Users/jozee/Desktop/lihang/15/image/15-1.jpg)
+
+上图中，原始空间的标准正交基(红色和黄色)，经过坐标系的旋转变换$$V^{\top}$$、坐标轴的缩放变换 $$\Sigma$$(黑色$$\sigma_1,\sigma_2$$)、坐标系的旋转变换U，得到和经过线性变换A等价的结果。
+
+### 主要性质
+
+1. 设矩阵A的奇异值分解为$$A = U\Sigma V^{\top}$$，则以下关系成立：</script><p>   A^{\top}A = (U\Sigma V^{\top})^{\top}(U\Sigma V^{\top})=V(\Sigma^{\top}\Sigma)V^{\top} \tag{15-20}</p>
+<script type="math/tex; mode=display">
+</script><p>   AA^{\top} = (U\Sigma V^{\top})(U\Sigma V^{\top})^{\top}=U(\Sigma\Sigma^{\top})U^{\top} \tag{15-21}</p>
+<script type="math/tex; mode=display">
+
+   也就是说，矩阵$$A^{\top}A$$和$$AA^{\top}$$的特征分解存在，且可以由矩阵A的奇异值分解的矩阵表示。V的列向量是$$A^{\top}A$$的特征向量，U的列向量是$$AA^{\top}$$的特征向量，$$\Sigma$$的奇异值是$$A^{\top}A$$和$$AA^{\top}$$的特征值的平方根。
+
+2. 在矩阵A的奇异值分解中，奇异值、左奇异向量和右奇异向量之间存在对应关系。
+
+   由$$A=U\Sigma V^{\top}$$易知：</script><p>   AV = U\Sigma</p>
+<script type="math/tex; mode=display">
+   比较这一等式的两端的第j列，得到：</script><p>   Av_j = \sigma_j u_j \ , j=1,2,\dots,n \tag{15-22}</p>
+<script type="math/tex; mode=display">
+   这是矩阵A的右奇异向量和奇异值、左奇异向量的关系。
+
+   类似地，由</script><p>   A^{\top}U = V \Sigma^{\top}</p>
+<script type="math/tex; mode=display">
+   得到</script><p>   A^{\top}u_j = \sigma_j u_j \ , j=1,2,\dots,n \tag{15-23}</p>
+<script type="math/tex; mode=display">
+</script><p>   A^{\top} u_j = 0 , j=n+1,n+2,\dots,m \tag{15-24}</p>
+<script type="math/tex; mode=display">
+
+    这是矩阵A的左奇异向量和奇异值、左奇异向量的关系。
+
+3. 矩阵A的奇异分解中，奇异值$$\sigma_1, \sigma_2,\dots,\sigma_n$$是唯一的，而矩阵U和V 不是唯一的。
+
+4. 矩阵A和$$\Sigma$$的秩相等，等于正奇异值$$\sigma_i$$的个数r(包括重复的奇异值)。
+
+5. 矩阵A的r个右奇异向量$$v_1,v_2,\dots,v_r$$构成$$A^{\top}$$的值域$$R(A^{\top})$$的一组标准正交基。
+
+   因为矩阵$$A^{\top}$$是从$$R^m$$映射到$$R^n$$的线性变换，则$$A^{\top}$$的值域$$R(A^{\top})$$和$$A^{\top}$$的列空间是相同的，$$v_1,v_2,\dots,v_r$$ 是$$A^{\top}$$的一组标准正交基，因而也是$$R(A^{\top})$$的一组标准正交基。
+
+6. 矩阵A的n-r个右奇异向量$$v_{r+1},v_{r+2},\dots,v_{n}$$构成A的零空间N(A)的一组标准正交基。
+
+7. 矩阵A的r个左奇异向量$$u_1,u_2,\dots,u_r$$构成值域R(A)的一组标准正交基。
+
+8. 矩阵A的m-r个左奇异向量$$u_{r+1},u_{r+2},\dots,u_m$$构成$$A^{\top}$$的零空间$$N(A^{\top})$$的i一组标准正交基。
+
+
+
+## 奇异值分解的计算
+
+矩阵A的奇异值分解可以通过求对称矩阵$$A^{\top}A$$的特征值和特征向量得到。$$A^{\top}A$$的特征向量构成正交矩阵V的列；$$A^{\top}A$$的特征值$$\lambda_j$$的平方根为奇异值$$\sigma_i$$，即</script><p>\sigma_j = \sqrt{\lambda_j} \ , j=1,2,\dots,n</p>
+<script type="math/tex; mode=display">
+ 对其由大到小排列作为对角线元素，构成对角矩阵$$\Sigma$$；求正奇异值对应的左奇异向量，再求扩充的$$A^{\top}$$的标准正交基，构成正交矩阵U的列。从而得到A的奇异值分解$$A=U\Sigma V^{\top}$$。
+
+给定mxn矩阵A，可以按照上面的叙述写出矩阵奇异值分解的计算过程：
+
+1. 首先，求$$A^{\top}A$$的特征值和特征向量
+
+   计算对称矩阵$$W = A^{\top}A</script><p>   求解特征方程</p>
+<script type="math/tex; mode=display">
+   (W-\lambda I)x = 0</script><p>   得到特征值<script type="math/tex">\lambda_i</script>，并将特征值由大到小排列：</p>
+<script type="math/tex; mode=display">
+   \lambda_1\ge \lambda_2\ge\dots \ge \lambda_n \ge 0</script><p>   将特征值<script type="math/tex">\lambda_i(i=1,2,\dots,n)</script>代入特征方程求得对应的特征向量。</p>
+<ol>
+<li><p>求n阶正交矩阵V</p>
+<p>将特征向量单位化，得到单位特征向量<script type="math/tex">v_1,\dots,v_n</script>，构成n阶正交矩阵V:</p>
+<script type="math/tex; mode=display">
+V = [v_1,v_2,\dots,v_n]</script></li>
+<li><p>求mxn对角矩阵<script type="math/tex">\Sigma</script></p>
+<p>计算A的奇异值</p>
+<script type="math/tex; mode=display">
+\sigma_i = \sqrt{\lambda_i} \ , i=1,2,\dots,n</script><p>构造mxn矩形对角矩阵<script type="math/tex">\Sigma</script>，主对角线元素是奇异值，其余元素是零，</p>
+<script type="math/tex; mode=display">
+\Sigma = \mathrm{diag} (\sigma_1, \sigma_2,\dots,\sigma_n)</script></li>
+<li><p>求m阶正交矩阵U</p>
+<p>对A的前r个正奇异值，令</p>
+<script type="math/tex; mode=display">
+u_j = \frac{1}{\sigma_j} Av_j \ , j=1,2,\dots,r</script><p>得到</p>
+<script type="math/tex; mode=display">
+U_1 = [u_1,u_2,\dots,u_r]</script><p>求<script type="math/tex">A^{\top}</script>的零空间的一组标准正交基<script type="math/tex">\{u_{r+1},u_{r+2},\dots,u_m\}</script>，令</p>
+<script type="math/tex; mode=display">
+U_2 = [u_{r+1},u_{r+2},\dots,u_m]</script><p>并令</p>
+<script type="math/tex; mode=display">
+U = [U_1,U_2]</script></li>
+<li><p>得到奇异值分解</p>
+<script type="math/tex; mode=display">
+A = U\Sigma V^{\top}</script></li>
+</ol>
+<h2 id="奇异值分解与矩阵近似"><a href="#奇异值分解与矩阵近似" class="headerlink" title="奇异值分解与矩阵近似"></a>奇异值分解与矩阵近似</h2><h3 id="弗罗贝尼乌斯范数"><a href="#弗罗贝尼乌斯范数" class="headerlink" title="弗罗贝尼乌斯范数"></a>弗罗贝尼乌斯范数</h3><p>奇异值分解也是一种矩阵近似的方法，这个近似是在弗罗贝尼乌斯范数(Frobenius norm)意义下的近似。<strong>矩阵的佛罗贝尼乌斯范数是向量的<script type="math/tex">L_2</script>范数的直接推广</strong>，对应着机器学习中的平方损失函数。</p>
+<p><strong>定义 15.4(弗罗贝尼乌斯范数)</strong> 设矩阵<script type="math/tex">A \in R^{m\times n}</script>，<script type="math/tex">A = [a_{ij}]_{m\times n}</script>，定义矩阵A的弗罗贝尼乌斯范数为：</p>
+<script type="math/tex; mode=display">
+\|A\|_F = \left(\sum_{i=1}^m \sum_{j=1}^n (a_{ij})^2\right)^{\frac{1}{2}} \tag{15-25}</script><p><strong>引理15-1</strong> 设矩阵<script type="math/tex">A \in R^{m\times n}</script>， A的奇异值分解为<script type="math/tex">U\Sigma V^{\top}</script>，其中<script type="math/tex">\Sigma = \mathrm{diag}(\sigma_1,\sigma_2,\dots,\sigma_n)</script>，则</p>
+<script type="math/tex; mode=display">
+\|A\|_F = (\sigma_1^2+\sigma_2^2+\dots+\sigma_n^2)^{\frac{1}{2}} \tag{15-26}</script><p><strong>证明：</strong>一般的，若Q是m阶正交矩阵，则有</p>
+<script type="math/tex; mode=display">
+\|QA\|_F = \|A\|_F \tag{15-27}</script><p>因为</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+\|QA\|_F^2 &= \|Qa_1,Qa_2,\dots,Qa_n)\|^2_F \\
+&= \sum_{i=1}^n\|Qa_i\|_2^2 = \sum_{i=1}^n\|a_i\|_2^2 = \|A\|_F^2
+\end{aligned}</script><p>同样，若P是n阶正交矩阵，则有：</p>
+<script type="math/tex; mode=display">
+\|AP^{\top}\|_F = \|A\|_F \tag{15-28}</script><p>故</p>
+<script type="math/tex; mode=display">
+\|A\|_F = \|U\Sigma V^{\top}\|_F = \|\Sigma\|_F \tag{15-29}</script><p>即</p>
+<script type="math/tex; mode=display">
+\|A\|_F = (\sigma_1^2+\sigma_2^2+\dots+\sigma_n^2)^{\frac{1}{2}} \tag{15-30}</script><h3 id="矩阵的最优近似"><a href="#矩阵的最优近似" class="headerlink" title="矩阵的最优近似"></a>矩阵的最优近似</h3><p><strong>奇异值分解是在平方损失(佛罗贝尼乌斯范数)意义下对矩阵的最优近似，即数据压缩？</strong></p>
+<p><strong>定理15.2</strong> 设矩阵<script type="math/tex">A \in R^{m\times n}</script>，矩阵的秩rank(A) = r，并设<script type="math/tex">\mathcal{M}</script>为<script type="math/tex">R^{m\times n}</script>中所有秩不超过k的矩阵集合，0&lt;k&lt;r，则存在一个秩为k的矩阵 <script type="math/tex">X \in \mathcal{M}</script>，使得</p>
+<script type="math/tex; mode=display">
+\|A-X\|_F = \min_{S\in \mathcal{M}}\|A-S\|_F \tag{15-31}</script><p>称矩阵X为矩阵A在<script type="math/tex">L_2</script>范数意义下的最优近似。</p>
+<p><strong>定理15.3</strong> 设矩阵<script type="math/tex">A \in R^{m\times n}</script>，矩阵的秩rank(A)=r, 有奇异值分解<script type="math/tex">A = U\Sigma V^{\top}</script>，并设<script type="math/tex">\mathcal{M}</script> 为<script type="math/tex">R^{m\times n}</script>中所有秩不超过k的矩阵的集合，0&lt;k&lt;r，若秩为k的矩阵<script type="math/tex">X \in \mathcal{M}</script>满足：</p>
+<script type="math/tex; mode=display">
+\|A-X\|_F = \min_{S\in \mathcal{M}}\|A-S\|_F \tag{15-32}</script><p>则</p>
+<script type="math/tex; mode=display">
+\|A-X\|_F = (\sigma_{k+1}^2+\sigma_{k+2}^2+\dots+\sigma_n^2)^{\frac{1}{2}} \tag{15-33}</script><p>特别地，若<script type="math/tex">A^{'} = U \Sigma^{'}V^{\top}</script>，其中</p>
+<script type="math/tex; mode=display">
+\Sigma^{'}= \begin{bmatrix}
+   \Sigma_k & 0 \\
+   0&0
+\end{bmatrix}</script><p>则，</p>
+<script type="math/tex; mode=display">
+\|A-A^{'}\|_F = (\sigma_{k+1}^2+\sigma_{k+2}^2+\dots+\sigma_n^2)^{\frac{1}{2}} = \min_{S\in \mathcal{M}}\|A-S\|_F  \tag{15-34}</script><p><strong>证明：</strong>令<script type="math/tex">X \in \mathcal{M}</script>为满足式(15-32)的一个矩阵。由于</p>
+<script type="math/tex; mode=display">
+\|A-X\|_F \le \|A-A^{'}\|_F = (\sigma_{k+1}^2+\sigma_{k+2}^2+\dots+\sigma_n^2)^{\frac{1}{2}} \tag{15-35}</script><p>下面证明：</p>
+<script type="math/tex; mode=display">
+\|A-X\|_F \ge (\sigma_{k+1}^2+\sigma_{k+2}^2+\dots+\sigma_n^2)^{\frac{1}{2}}</script><p>于是式(15-33)成立。</p>
+<p>设X的奇异值分解为<script type="math/tex">Q\Omega P^{\top}</script>,其中</p>
+<script type="math/tex; mode=display">
+\Omega = \begin{bmatrix}
+   \Omega_k & 0 \\
+   0&0
+\end{bmatrix}</script><p>令矩阵<script type="math/tex">B=Q^{\top}AP</script>，则<script type="math/tex">A = QBP^{\top}</script>。因此得到</p>
+<script type="math/tex; mode=display">
+\|A-X\|_F = \|Q(B-\Omega)P^{\top}\|_F = \|B-\Omega\|_F \tag{15-36}</script><p>用<script type="math/tex">\Omega</script>分块方法对B分块，</p>
+<script type="math/tex; mode=display">
+B = \begin{bmatrix}
+   B_{11} & B_{12} \\
+   B_{21}&B_{22}
+\end{bmatrix}</script><p>其中<script type="math/tex">B_{11}</script>是kxk子矩阵，<script type="math/tex">B_{12}</script>是kx(n-k)子矩阵，<script type="math/tex">B_{21}</script>是(m-k)xk子矩阵，<script type="math/tex">B_{22}</script>是(m-k)x(n-k)子矩阵。可得：</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+\|A-X\|^2_F &= \|B-\Omega\|_F^2 \\
+&= \|B_{11}-\Omega_k\|^2_F+\|B_{12}\|_F^2+\|B_{21}\|^2_F+\|B_{22}\|_F^2
+\end{aligned} \tag{15-37}</script><p><strong>现证<script type="math/tex">B_{12}=0,B_{21}=0</script>。</strong></p>
+<p><strong>反证法：</strong>若<script type="math/tex">B_{12}\ne 0</script>，令</p>
+<script type="math/tex; mode=display">
+Y = Q \begin{bmatrix}
+   B_{11} & B_{12} \\
+   0&0
+\end{bmatrix}P^{\top}</script><p>则<script type="math/tex">Y\in \mathcal{M}</script>，且：</p>
+<script type="math/tex; mode=display">
+\|A-Y\|_F^2=\|B_{21}\|_F^2 +\|B_{22}\|_F^2 < \|A-X\|_F^2 \tag{15-38}</script><p>这与X的定义式(15-35)矛盾，证明了<script type="math/tex">B_{12}=0</script>。同样可证<script type="math/tex">B_{21}=0</script>，于是</p>
+<script type="math/tex; mode=display">
+\|A-X\|_F^2 = \|B_{11}-\Omega_k\|^2_F+\|B_{22}\|_F^2 \tag{15-39}</script><p><strong>再证<script type="math/tex">B_{11}=\Omega_k</script>。</strong></p>
+<p>令</p>
+<script type="math/tex; mode=display">
+Z = Q \begin{bmatrix}
+   B_{11} & 0 \\
+   0&0
+\end{bmatrix}P^{\top}</script><p>则<script type="math/tex">Z \in \mathcal{M}</script>，且</p>
+<script type="math/tex; mode=display">
+\|A-Z\|_F^2 = \|B_{22}\|_F^2 \le \|B_{11}-\Omega_k\|^2_F+\|B_{22}\|_F^2 =\|A-X\|_F^2 \tag{15-40}</script><p>由式(15-35)知，<script type="math/tex">\|B_{11}-\Omega_k\|^2_F=0</script>，即<script type="math/tex">B_{11}=\Omega_k</script>。</p>
+<p><strong>最后看<script type="math/tex">B_{22}</script>。</strong></p>
+<p>若(m-k)x(n-k)子矩阵<script type="math/tex">B_{22}</script>有奇异值分解<script type="math/tex">U_1\varLambda V_1^{\top}</script>，则</p>
+<script type="math/tex; mode=display">
+\|A-X\|_F^2 = \|B_{22}\|_F^2 = \|\varLambda\|_F \tag{15-41}</script><p><strong>证明<script type="math/tex">\varLambda</script>的对角线元素为A的奇异值。</strong></p>
+<p>为此，令</p>
+<script type="math/tex; mode=display">
+U_2 = \begin{bmatrix}
+   I_k & 0 \\
+   0&U_1
+\end{bmatrix}</script><script type="math/tex; mode=display">
+V_2 = \begin{bmatrix}
+   I_k & 0 \\
+   0&V_1
+\end{bmatrix}</script><p>其中<script type="math/tex">I_k</script>是k阶单位矩阵，<script type="math/tex">U_2,V_2</script>的分块与B的分块一致。注意到B及<script type="math/tex">B_{22}</script>的奇异值分解，即得</p>
+<script type="math/tex; mode=display">
+U_2^{\top}Q^{\top}APV_2 = \begin{bmatrix}
+   \Omega_k & 0 \\
+   0&\varLambda
+\end{bmatrix} \tag{15-42}</script><script type="math/tex; mode=display">
+A = (QU_2) \begin{bmatrix}
+   \Omega_k & 0 \\
+   0&\varLambda
+\end{bmatrix} (PV_2)^{\top} \tag{15-43}</script><p>由此可知<script type="math/tex">\varLambda</script>的对角线元素为A的奇异值。故有</p>
+<script type="math/tex; mode=display">
+\|A-X\|_F = \|\varLambda\|_F \ge (\sigma_{k+1}^2+\sigma_{k+2}^2+\dots+\sigma_n^2)^{\frac{1}{2}} \tag{15-44}</script><p>于是证明了：</p>
+<script type="math/tex; mode=display">
+\|A-X\|_F = (\sigma_{k+1}^2+\sigma_{k+2}^2+\dots+\sigma_n^2)^{\frac{1}{2}} =\|A-A^{'}\|_F</script><p>定理15.3表明，在秩不超过k的mxn矩阵的集合中，存在矩阵A的<script type="math/tex">L_2</script>范数意义下的最优近似矩阵X。<script type="math/tex">A^{'} = U\Sigma^{'} V^{\top}</script>是达到最优值的一个矩阵。</p>
+<blockquote>
+<p>事实上，紧奇异值分解式在<script type="math/tex">L_2</script>范数意义下的<strong>无损压缩</strong>；</p>
+<p>截断奇异值分解是<strong>有损压缩</strong>。截断奇异值分解得到的矩阵的秩为k，通常远小于原始矩阵的秩r，所以是由低秩矩阵实现了对原始矩阵的压缩。</p>
+</blockquote>
+<h3 id="矩阵的外积展开式"><a href="#矩阵的外积展开式" class="headerlink" title="矩阵的外积展开式"></a>矩阵的外积展开式</h3><p>利用外积展开式对矩阵A进行近似。<strong>矩阵A的奇异值分解<script type="math/tex">U\Sigma V^{\top}</script>也可以由外积形式表示。</strong></p>
+<p>事实上，若将A的奇异值分解看成矩阵<script type="math/tex">U\Sigma</script>和<script type="math/tex">V^{\top}</script>的乘积，将<script type="math/tex">U\Sigma</script>按列向量分块，将<script type="math/tex">V^{\top}</script>按行向量分块，即得：</p>
+<script type="math/tex; mode=display">
+U\Sigma = [\sigma_1u_1,\sigma_2u_2,\dots,\sigma_nu_n]</script><script type="math/tex; mode=display">
+V^{\top} = \begin{bmatrix}
+   v_1^{\top} \\
+   v_2^{\top}\\
+   \vdots\\
+   v_n^{\top}
+\end{bmatrix}</script><p>则</p>
+<script type="math/tex; mode=display">
+A = \sigma_1u_1v_1^{\top}+\sigma_2u_2v_2^{\top}+\dots+\sigma_nu_nv_n^{\top} \tag{15-45}</script><p>式(15-45)称为矩阵A的外积展开式，其中<script type="math/tex">u_kv_k^{\top}</script>为mxn矩阵，是列向量<script type="math/tex">u_k</script>和行向量<script type="math/tex">v_k^{\top}</script>的外积，其第i行第j列元素为<script type="math/tex">u_k</script>的第i个元素与<script type="math/tex">v_k^{\top}</script>的第j个元素的乘积，即</p>
+<script type="math/tex; mode=display">
+u_iv_j^{\top} = \begin{bmatrix}
+   u_{1i}^{\top} \\
+   u_{2i}^{\top}\\
+   \vdots\\
+   u_{mi}^{\top}
+\end{bmatrix} \begin{bmatrix}
+   v_{1j}&v_{2j}&\dots&v_{nj}
+\end{bmatrix} = \begin{bmatrix}
+   u_{1i}v_{1j}&u_{1i}v_{2j}&\dots&u_{1i}v_{nj}\\
+   u_{2i}v_{1j}&u_{2i}v_{2j}&\dots&u_{2i}v_{nj}\\
+   \vdots&\vdots&&\vdots\\
+   u_{mi}v_{1j}&u_{mi}v_{2j}&\dots&u_{mi}v_{nj}
+\end{bmatrix}</script><p>A的外积展开式也可以写成下面的形式：</p>
+<script type="math/tex; mode=display">
+A = \sum_{k=1}^n A_k = \sum_{k=1}^n \sigma_k u_k v_k^{\top}\tag{15-46}</script><p>其中<script type="math/tex">A_k = \sigma_ku_k v_k^{\top}</script>是mxn矩阵。式(15-46)将矩阵A分解为矩阵的有序加权和。</p>
+<p>由矩阵A的外积展开式知，若A的秩为n，则</p>
+<script type="math/tex; mode=display">
+A = \sigma_1u_1v_1^{\top}+\sigma_2u_2v_2^{\top}+\dots+\sigma_nu_nv_n^{\top} \tag{15-47}</script><p>设矩阵</p>
+<script type="math/tex; mode=display">
+A_{n-1} = \sigma_1u_1v_1^{\top}+\sigma_2u_2v_2^{\top}+\dots+\sigma_{n-1}u_{n-1}v_{n-1}^{\top}</script><p>则<script type="math/tex">A_{n-1}</script>的秩为n-1，并且<script type="math/tex">A_{n-1}</script>是秩为n-1矩阵在<script type="math/tex">L_2</script>范数意义下A的最优近似矩阵。</p>
+<p>以此类推，一般的，设矩阵：</p>
+<script type="math/tex; mode=display">
+A_k = \sigma_1u_1v_1^{\top}+\sigma_2u_2v_2^{\top}+\dots+\sigma_ku_kv_k^{\top}</script><p>则<script type="math/tex">A_k</script>的秩为k，并且<script type="math/tex">A_k</script>是秩为k的矩阵在<script type="math/tex">L_2</script>范数意义下A的最优近似矩阵。<strong>矩阵<script type="math/tex">A_k</script>就是A的截断奇异值分解</strong>。</p>
+<blockquote>
+<p>由于通常奇异值<script type="math/tex">\sigma_i</script>递减很快，所以k取值很小时，<script type="math/tex">A_k</script>也可以对A有很好的近似。</p>
+</blockquote>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/奇异值分解/" rel="tag"># 奇异值分解</a>
+          
+            <a href="/tags/SVD/" rel="tag"># SVD</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/08/24/kmeans-hierarchical-cluster/" rel="next" title="k-means和层次聚类算法">
+                <i class="fa fa-chevron-left"></i> k-means和层次聚类算法
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+      <div id="disqus_thread">
+        <noscript>
+          Please enable JavaScript to view the
+          <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a>
+        </noscript>
+      </div>
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">jozee</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">34</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">5</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">70</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#奇异值分解的定义与性质"><span class="nav-number">1.</span> <span class="nav-text">奇异值分解的定义与性质</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#定义与定理"><span class="nav-number">1.1.</span> <span class="nav-text">定义与定理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#紧奇异值分解与截断奇异值分解"><span class="nav-number">1.2.</span> <span class="nav-text">紧奇异值分解与截断奇异值分解</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#紧奇异值分解"><span class="nav-number">1.2.1.</span> <span class="nav-text">紧奇异值分解</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#截断奇异值分解"><span class="nav-number">1.2.2.</span> <span class="nav-text">截断奇异值分解</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#几何解释"><span class="nav-number">1.3.</span> <span class="nav-text">几何解释</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#奇异值分解与矩阵近似"><span class="nav-number">2.</span> <span class="nav-text">奇异值分解与矩阵近似</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#弗罗贝尼乌斯范数"><span class="nav-number">2.1.</span> <span class="nav-text">弗罗贝尼乌斯范数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#矩阵的最优近似"><span class="nav-number">2.2.</span> <span class="nav-text">矩阵的最优近似</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#矩阵的外积展开式"><span class="nav-number">2.3.</span> <span class="nav-text">矩阵的外积展开式</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">jozee</span>
+
+  
+</div>
+<div class="busuanzi_count">
+    <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js">
+    </script>
+    <span> 本站访客数:<span id="busuanzi_value_site_uv"></span>人</span>
+    <span class="post-meta-divider">|</span>
+    <span>本站总访问量:<span id="busuanzi_value_site_pv"></span>次</span>
+</div>
+
+
+
+
+
+
+
+
+
+        
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+    
+      <script id="dsq-count-scr" src="https://jozeelin.disqus.com/count.js" async></script>
+    
+
+    
+      <script type="text/javascript">
+        var disqus_config = function () {
+          this.page.url = 'https://jozeelin.github.io/2019/08/24/svd/';
+          this.page.identifier = '2019/08/24/svd/';
+          this.page.title = '奇异值分解SVD';
+        };
+        var d = document, s = d.createElement('script');
+        s.src = 'https://jozeelin.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', '' + +new Date());
+        (d.head || d.body).appendChild(s);
+      </script>
+    
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+  
+
+  
+
+</body>
+</html>
