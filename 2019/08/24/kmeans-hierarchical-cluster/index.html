@@ -1,0 +1,1039 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+  <meta name="google-site-verification" content="iejSa-LmOb9d1GguAcEsQNUsQviccOieHkuG1c1E2YI">
+
+
+
+  <meta name="msvalidate.01" content="83768A52AE58ADF203609FEF9C55FF47">
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="k-means,层次聚类,无监督学习,">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="本章介绍两种最常用的聚类算法：层次聚类和k均值聚类。 层次聚类又有聚合(自下而上)和分裂(自上而下)两种方法。聚合法(自下而上)开始将每个样本各自分到一个类；之后将相距最近的两类合并，建立一个新的类，重复此操作直到满足停止条件；得到层次化的类别。分裂法(自上而下)开始将所有样本分到一个类；之后将已有类中相聚最远的样本分到两个新的类，重复此操作直到满足停止条件；得到层次化的类别。 k均值聚类是基于中">
+<meta name="keywords" content="k-means,层次聚类,无监督学习">
+<meta property="og:type" content="article">
+<meta property="og:title" content="k-means和层次聚类算法">
+<meta property="og:url" content="https://jozeelin.github.io/2019/08/24/kmeans-hierarchical-cluster/index.html">
+<meta property="og:site_name" content="Jozee&#39;s技术博客">
+<meta property="og:description" content="本章介绍两种最常用的聚类算法：层次聚类和k均值聚类。 层次聚类又有聚合(自下而上)和分裂(自上而下)两种方法。聚合法(自下而上)开始将每个样本各自分到一个类；之后将相距最近的两类合并，建立一个新的类，重复此操作直到满足停止条件；得到层次化的类别。分裂法(自上而下)开始将所有样本分到一个类；之后将已有类中相聚最远的样本分到两个新的类，重复此操作直到满足停止条件；得到层次化的类别。 k均值聚类是基于中">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://jozeelin.github.io/2019/08/24/kmeans-hierarchical-cluster/image/14-1.png">
+<meta property="og:image" content="https://jozeelin.github.io/2019/08/24/kmeans-hierarchical-cluster/image/14-2.png">
+<meta property="og:updated_time" content="2019-08-24T11:02:04.746Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="k-means和层次聚类算法">
+<meta name="twitter:description" content="本章介绍两种最常用的聚类算法：层次聚类和k均值聚类。 层次聚类又有聚合(自下而上)和分裂(自上而下)两种方法。聚合法(自下而上)开始将每个样本各自分到一个类；之后将相距最近的两类合并，建立一个新的类，重复此操作直到满足停止条件；得到层次化的类别。分裂法(自上而下)开始将所有样本分到一个类；之后将已有类中相聚最远的样本分到两个新的类，重复此操作直到满足停止条件；得到层次化的类别。 k均值聚类是基于中">
+<meta name="twitter:image" content="https://jozeelin.github.io/2019/08/24/kmeans-hierarchical-cluster/image/14-1.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://jozeelin.github.io/2019/08/24/kmeans-hierarchical-cluster/">
+
+
+
+
+
+  <title>k-means和层次聚类算法 | Jozee's技术博客</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Jozee's技术博客</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://jozeelin.github.io/2019/08/24/kmeans-hierarchical-cluster/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="jozee">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Jozee's技术博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">k-means和层次聚类算法</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-08-24T18:59:44+08:00">
+                2019-08-24
+              </time>
+            
+
+            
+              <span class="post-meta-divider">|</span>
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-check-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">更新于&#58;</span>
+              
+              <time title="更新于" itemprop="dateModified" datetime="2019-08-24T19:02:04+08:00">
+                2019-08-24
+              </time>
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/机器学习/" itemprop="url" rel="index">
+                    <span itemprop="name">机器学习</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2019/08/24/kmeans-hierarchical-cluster/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2019/08/24/kmeans-hierarchical-cluster/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+          <span id="busuanzi_container_page_pv">
+            <span class="post-meta-divider">|</span>
+            <span class="post-meta-item-icon">
+            <i class="fa fa-eye"></i>
+            </span>
+            阅读量: <span id="busuanzi_value_page_pv"></span>次
+          </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>本章介绍两种最常用的聚类算法：层次聚类和k均值聚类。</p>
+<p><strong>层次聚类</strong>又有聚合(自下而上)和分裂(自上而下)两种方法。<strong>聚合法(自下而上)</strong>开始将每个样本各自分到一个类；之后将相距最近的两类合并，建立一个新的类，重复此操作直到满足停止条件；得到层次化的类别。<strong>分裂法(自上而下)</strong>开始将所有样本分到一个类；之后将已有类中相聚最远的样本分到两个新的类，重复此操作直到满足停止条件；得到层次化的类别。</p>
+<p><strong>k均值聚类</strong>是基于中心的聚类方法，通过迭代，将样本分到k个类中，使得每个样本与其所属类的中心或均值最近；得到k个“平坦的”、非层次化的类别，构成对空间的划分。k均值聚类的算法1967年由MacQueen提出。</p>
+<h2 id="聚类的基本概念"><a href="#聚类的基本概念" class="headerlink" title="聚类的基本概念"></a>聚类的基本概念</h2><p>本节介绍聚类的基本概念，包括样本之间的距离或相似度，类或簇，类与类之间的距离。</p>
+<h3 id="相似度或距离"><a href="#相似度或距离" class="headerlink" title="相似度或距离"></a>相似度或距离</h3><p>聚类的对象是观测数据，或样本集合。假设有n个样本，每个样本由m个属性的特征向量组成。样本集合可以用矩阵X表示：</p>
+<script type="math/tex; mode=display">
+X = [x_{ij}]_{m\times n} \tag{14.1}</script><p>i表示第i个样本，j表示第j个特征。</p>
+<p>聚类的核心概念是相似度或距离，有多种相似度或距离的定义。因为<strong>相似度直接影响聚类的结果，所以其选择是聚类的根本问题</strong>。具体哪种相似度更适合取决于应用问题的特性。</p>
+<h4 id="闵可夫斯基距离"><a href="#闵可夫斯基距离" class="headerlink" title="闵可夫斯基距离"></a>闵可夫斯基距离</h4><p>在聚类中，可以将样本集合看作是向量空间中点的集合，以该空间的距离表示样本之间的相似度。闵可夫斯基距离(Minkowski distance)越大相似度越小，距离越小相似度越大。</p>
+<p><strong>定义14.1</strong> 给定样本集合X,X是m维实数向量空间<script type="math/tex">R^m</script>中点的集合，其中<script type="math/tex">x_i,x_j\in X,x_i=(x_{1i},x_{2i},\dots,x_{mi})^{\top},x_j = (x_{ij},x_{2j},\dots,x_{mj})^{\top}</script>，样本<script type="math/tex">x_i</script>与样本<script type="math/tex">x_j</script>的闵可夫斯基距离定义为:</p>
+<script type="math/tex; mode=display">
+D_{ij} = \left(\sum_{k=1}^m |x_{ki}-x_{kj}|^{p}\right)^{\frac{1}{p}} \tag{14-2}</script><p>这里<script type="math/tex">p\ge 1</script>。当p=2时，称为欧式距离，即</p>
+<script type="math/tex; mode=display">
+d_{ij} = \left(\sum_{k=1}^m |x_{ki}-x_{kj}|^{2}\right)^{\frac{1}{2}} \tag{14-3}</script><p>当p=1时，称为曼哈顿距离(Manhattan distance)，即</p>
+<script type="math/tex; mode=display">
+d_{ij} = \sum_{k=1}^m |x_{ki}-x_{kj}| \tag{14-4}</script><p>当p=<script type="math/tex">\infty</script>时，称为切比雪夫距离(Chebyshev distance)，取各个坐标值差的绝对值的最大值，即</p>
+<script type="math/tex; mode=display">
+d_{ij} = \max_k |x_{ki}-x_{kj}| \tag{14-5}</script><h4 id="马氏距离"><a href="#马氏距离" class="headerlink" title="马氏距离"></a>马氏距离</h4><p>马氏距离(Mahalanobis distance)，也是另一种常用的相似度，考虑各个分量(特征)之间的相关性并与各个分量的尺度无关。马氏距离距离越大相似度越小，距离越小相似度越大。</p>
+<p><strong>定义14.2</strong>给定一个样本集合X,<script type="math/tex">X=(x_{ij})_{m\times n}</script>，其协方差矩阵记作S，样本<script type="math/tex">x_i</script>与样本<script type="math/tex">x_j</script> 之间的马氏距离<script type="math/tex">d_{ij}</script>定义为：</p>
+<script type="math/tex; mode=display">
+d_{ij} = [(x_i-x_j)^{\top}S^{-1}(x_i-x_j)]^{\frac{1}{2}} \tag{14-6}</script><p>其中，<script type="math/tex">x_i,x_j\in X,x_i=(x_{1i},x_{2i},\dots,x_{mi})^{\top},x_j = (x_{ij},x_{2j},\dots,x_{mj})^{\top}</script>。</p>
+<p>当S为单位距离时，即样本数据的各个分量相互独立且各个分量的方差为1时，由式(14-6)知，马氏距离就是欧氏距离，所以马氏距离时欧氏距离的推广。</p>
+<h4 id="相关系数"><a href="#相关系数" class="headerlink" title="相关系数"></a>相关系数</h4><p>样本之间的相似度也可以用相关系数来表示。相关系数的绝对值越接近于1，表示样本越相近；越接近0，表示样本越不相似。</p>
+<p><strong>定义14.3</strong>样本<script type="math/tex">x_i</script>与样本<script type="math/tex">x_j</script>之间的相关系数定义为：</p>
+<script type="math/tex; mode=display">
+r_{ij} = \frac{\sum_{k=1}^m(x_{ki}-\bar{x}_i)(x_{kj}-\bar{x}_j)}{\left[\sum_{k=1}^m(x_{ki}-\bar{x}_i)^2\sum_{k=1}^m(x_{kj}-\bar{x}_j)^2\right]^{\frac{1}{2}}} \tag{14-8}</script><p> 其中，<script type="math/tex">\bar{x_i} = \frac{1}{m}\sum_{k=1}^m x_{ki},\bar{x_j} = \frac{1}{m}\sum_{k=1}^m x_{kj}</script>。</p>
+<h4 id="夹角余弦"><a href="#夹角余弦" class="headerlink" title="夹角余弦"></a>夹角余弦</h4><p>样本之间的相似度也可以用cosine来表示。cosine越接近于1，表示样本越相似；越接近于0，表示样本越不相似。</p>
+<p><strong>定义14.4</strong> 样本<script type="math/tex">x_i</script>与样本<script type="math/tex">x_j</script>之间的cosine定义为</p>
+<script type="math/tex; mode=display">
+s_{ij} = \frac{\sum_{k=1}^m x_{ki}x_{kj}}{\left[\sum_{k=1}^m x_{ki}^2\sum_{k=1}^m x_{kj}^2\right]^{\frac{1}{2}}} \tag{14-9}</script><h4 id="结论"><a href="#结论" class="headerlink" title="结论"></a>结论</h4><p>由上述定义看出，用距离度量相似度时，距离越小样本越相似；用相关系数时，相关系数越大样本越相似。注意不同相似度度量得到的结果并不一定一致。请参照图14.1：</p>
+<p><img src="image/14-1.png" alt="14-1"></p>
+<p>从上图可以看出，如果从距离的角度看，A和B比A和C更相似；但从相关系数的角度看，A和C比A和B更相似。所以，进行聚类时，选择合适的距离或相似度非常重要。</p>
+<h3 id="类或簇"><a href="#类或簇" class="headerlink" title="类或簇"></a>类或簇</h3><p>通过聚类得到的类或簇，本质是样本的子集。</p>
+<p>如果一个聚类方法假定一个样本只能属于一个类，或类的交集为空集，那么该方法称为硬聚类方法。</p>
+<p>如果一个样本可以属于多个类，或类的交集不为空集，那么该方法称为软聚类方法。</p>
+<p>本章只考虑硬聚类方法。</p>
+<p>用G表示类或簇，用<script type="math/tex">x_i,x_j</script>表示类中的样本，用<script type="math/tex">n_G</script>表示G中样本的个数，用<script type="math/tex">d_{ij}</script>表示样本<script type="math/tex">x_i</script>与样本<script type="math/tex">x_j</script>之间的距离。类或簇有多种定义，下面给出几个常见定义：</p>
+<p><strong>定义14.5</strong> 设T为给定的正数，若集合G中任意两个样本<script type="math/tex">x_i,x_j</script>，有：</p>
+<script type="math/tex; mode=display">
+d_{ij} \le T</script><p>则称 G为一个类或簇。</p>
+<p><strong>定义14.6</strong> 设T为给定的正数，若对集合G的任意样本<script type="math/tex">x_i</script>，一定存在G中的另一个样本<script type="math/tex">x_j</script>，使得</p>
+<script type="math/tex; mode=display">
+d_{ij}\le T</script><p>则称G为一个类或簇。</p>
+<p><strong>定义14.7</strong>设T为给定的正数，若对集合G中任意一个样本<script type="math/tex">x_i</script>，G中的另一个样本<script type="math/tex">x_j</script>满足：</p>
+<script type="math/tex; mode=display">
+\frac{1}{n_G-1} \sum_{x_j\in G}d_{ij}\le T</script><p>其中<script type="math/tex">n_G</script>为G中样本的个数，则称G为一个类或簇。</p>
+<p><strong>定义14.8</strong> 设T和V为给定的两个正数，如果集合G中任意两个样本<script type="math/tex">x_i,x_j</script>的距离<script type="math/tex">d_{ij}</script>满足：</p>
+<script type="math/tex; mode=display">
+\frac{1}{n_G(n_G-1)} \sum_{x_i \in G} \sum_{x_j \in G} d_{ij} \le T , d_{ij} \le V</script><p>则称G为一个类或簇。</p>
+<p>以上四个定义，第一个定义最常用，并且由他可以推出其它三个定义。</p>
+<p>类的特征可以通过不同角度来刻画，常用的特征有下面三种：</p>
+<ol>
+<li><p>类的均值<script type="math/tex">\bar{x}_G</script>，又称为类的中心</p>
+<script type="math/tex; mode=display">
+\bar{x}_G = \frac{1}{n_G}\sum_{i=1}^{n_G} x_i \tag{14.10}</script><p>式中<script type="math/tex">n_G</script>是类G的样本个数。</p>
+</li>
+<li><p>类的直径diameter<script type="math/tex">D_G</script></p>
+<p>类的直径<script type="math/tex">D_G</script>是类中任意两个样本之间的最大距离，即</p>
+<script type="math/tex; mode=display">
+D_G = \max_{x_i,x_j\in G} d_{ij} \tag{14.11}</script></li>
+<li><p>类的样本散布矩阵(scatter matrix)<script type="math/tex">A_G</script>与样本协方差矩阵<script type="math/tex">S_G</script></p>
+<p>类的样本散布矩阵<script type="math/tex">A_G</script>为</p>
+<script type="math/tex; mode=display">
+A_G = \sum_{i=1}^{n_G}(x_i-\bar{x}_G)(x_i-\bar{x}_G)^{\top} \tag{14-12}</script><p>样本协方差矩阵<script type="math/tex">S_G</script>为</p>
+<script type="math/tex; mode=display">
+S_G = \frac{1}{m-1}A_G = \frac{1}{m-1} \sum_{i=1}^{n_G}(x_i-\bar{x}_G)(x_i-\bar{x}_G)^{\top} \tag{14-13}</script><p>其中m为样本的维数(特征个数)。</p>
+</li>
+</ol>
+<h3 id="类与类之间的距离"><a href="#类与类之间的距离" class="headerlink" title="类与类之间的距离"></a>类与类之间的距离</h3><p>考虑类<script type="math/tex">G_p</script>与类<script type="math/tex">G_q</script>之间的距离<script type="math/tex">D(p,q)</script>，也称为连接(linkage)。类与类之间的距离也有多种定义。</p>
+<p>设类<script type="math/tex">G_p</script>包含<script type="math/tex">n_p</script>个样本，<script type="math/tex">G_q</script>包含<script type="math/tex">n_q</script>个样本，分别用<script type="math/tex">\bar{x}_p</script>和<script type="math/tex">\bar{x}_q</script>表示<script type="math/tex">G_p</script>和<script type="math/tex">G_q</script>的均值，即类的中心。</p>
+<ol>
+<li><p>最短距离或单连接</p>
+<p>定义类<script type="math/tex">G_p</script>的样本与<script type="math/tex">G_q</script>的样本之间的最短距离为两类之间的距离：</p>
+<script type="math/tex; mode=display">
+D_{pq} = \min \{d_{ij}|x_i \in G_p,x_j \in G_q\} \tag{14-14}</script></li>
+<li><p>最长距离或完全连接</p>
+<p>定义类<script type="math/tex">G_p</script>的样本与<script type="math/tex">G_q</script>的样本之间的最长距离为两类之间的距离：</p>
+<script type="math/tex; mode=display">
+D_{pq} = \max \{d_{ij}|x_i\in G_p,x_j\in G_q\} \tag{14-15}</script></li>
+<li><p>中心距离</p>
+<p>定义类<script type="math/tex">G_p</script>与类<script type="math/tex">G_q</script>的中心<script type="math/tex">\bar{x}_p</script>与<script type="math/tex">\bar{x}_q</script>之间的距离为两类之间的距离：</p>
+<script type="math/tex; mode=display">
+D_{pq} = d_{\bar{x}_p\bar{x}_q} \tag{14-16}</script></li>
+<li><p>平均距离</p>
+<p>定义类<script type="math/tex">G_p</script>与类<script type="math/tex">G_q</script>的任意两个样本之间距离的平均值为两类之间的距离：</p>
+<script type="math/tex; mode=display">
+D_{pq} = \frac{1}{n_pn_q} \sum_{x_i \in G_p} \sum_{x_j \in G_q} d_{ij} \tag{14.17}</script></li>
+</ol>
+<h2 id="层次聚类"><a href="#层次聚类" class="headerlink" title="层次聚类"></a>层次聚类</h2><p>层次聚类假设类别之间存在层次结构，将样本聚到层次化的类中。<strong>层次聚类又有聚合(agglomerative)或自下而上(bottom-up)聚类、分裂(divisive)或自上而下(top-down)聚类两种方法</strong>。它属于硬聚类。</p>
+<p><strong>聚合聚类</strong>开始将每个样本各自分到一个类；之后将相距最近的两类合并，建立一个新的类，重复此操作直到满足停止条件；得到层次化的类别。</p>
+<p><strong>分裂聚类</strong>开始将所有样本分到一个类；之后将已有类别中相距最远的样本分到两个新的类，重复此操作直到满足停止条件；得到层次化的类别。</p>
+<p>此处只介绍聚合聚类。</p>
+<p>聚合聚类需要预先确定三个要素：</p>
+<ol>
+<li><p>距离或相似度</p>
+<blockquote>
+<p>可以是马氏距离、相关系数、cosine等。</p>
+</blockquote>
+</li>
+<li><p>合并规则</p>
+<blockquote>
+<p>类间距离最小、类间距离可以是最短距离、最长距离、中心距离等。</p>
+</blockquote>
+</li>
+<li><p>停止条件</p>
+<blockquote>
+<p>类的个数达到阈值(极端情况下类的个数为1)、类的直径超过阈值。</p>
+</blockquote>
+</li>
+</ol>
+<p>如果采用欧氏距离为样本之间距离；类间距离最小为合并规则，其中最短距离为类间距离；类的个数为1，为停止条件：</p>
+<p><strong>算法14.1(聚合聚类算法)</strong></p>
+<p>输入: n个样本组成的样本集合及样本之间的距离</p>
+<p>输出：对样本集合的一个层次化聚类</p>
+<ol>
+<li>计算n个样本俩俩之间的欧氏距离<script type="math/tex">\{d_{ij}\}</script>，记作矩阵<script type="math/tex">D = [d_{ij}]_{n\times n}</script>。</li>
+<li>构造n个类，每个类只包含一个样本。</li>
+<li>合并类间距离最小的两个类，其中最短距离为类间距离，构建一个新类</li>
+<li>计算新类与当前各类的距离。若类的个数为1，终止计算，否则回到步(3)</li>
+</ol>
+<p>聚合层次聚类算法的复杂度为<script type="math/tex">O(n^3m)</script>，其中m为样本维度，n是样本个数。</p>
+<h3 id="聚合聚类算法代码实现"><a href="#聚合聚类算法代码实现" class="headerlink" title="聚合聚类算法代码实现"></a>聚合聚类算法代码实现</h3><h2 id="k均值聚类"><a href="#k均值聚类" class="headerlink" title="k均值聚类"></a>k均值聚类</h2><p>k均值聚类是基于样本集合划分的聚类算法。</p>
+<p>k均值聚类将样本集合划分为k个子集，构成k个类，将n个样本分到k个类中，每个样本到其所属类的中心的距离最小。它属于硬聚类算法。</p>
+<h3 id="模型"><a href="#模型" class="headerlink" title="模型"></a>模型</h3><p>给定n个样本的集合<script type="math/tex">X = \{x_1,x_2,\dots,x_n\}</script>，每个样本由一个特征向量表示，特征向量的维度是m。k均值聚类的目标是将n个样本分到k个不同的类或簇中，这里假设k&lt;n。k个类<script type="math/tex">G_1,G_2,\dots,G_k</script>形成对样本集合X的划分，其中<script type="math/tex">G_i\bigcap G_j=\varnothing,\bigcup_{i=1}^k G_i=X</script>。用C表示划分，一个划分对应着一个聚类结果。</p>
+<p>划分C是一个多对一的函数。事实上，如果把每个样本用一个整数<script type="math/tex">i\in \{1,2,\dots,n\}</script>表示，每个类也用一个整数<script type="math/tex">l \in \{1,2,\dots,k\}</script>表示，那么划分或者聚类可以用函数<script type="math/tex">l=C(i)</script>表示，其中<script type="math/tex">i \in \{1,2,\dots,n\},l\in \{1,2,\dots,k\}</script>。所有k均值聚类的模型是一个从样本到类的函数。</p>
+<h3 id="策略"><a href="#策略" class="headerlink" title="策略"></a>策略</h3><p>k均值聚类归结为样本集合X的划分，或者从样本到类的函数的选择问题。k均值聚类的策略是通过损失函数的最小化选取最优的划分或函数<script type="math/tex">C^*</script>。</p>
+<p>首先，采用欧氏距离平方作为样本之间的距离度量<script type="math/tex">d(x_i,x_j)</script>：</p>
+<script type="math/tex; mode=display">
+d(x_i,x_j) = \sum_{k=1}^m (x_{ki}-x_{kj})^2 = \|x_i-x_j\|^2 \tag{14-18}</script><p>然后，定义样本与其所属类的中心之间的距离的总和为损失函数，即</p>
+<script type="math/tex; mode=display">
+W(C) = \sum_{l=1}^k\sum_{C(i)=l} \|x_i-\bar{x}_l\|^2 \tag{14-19}</script><p>式中<script type="math/tex">\bar{x}_l = (\bar{x}_{1l},\bar{x}_{2l},\dots,\bar{x}_{ml})^{\top}</script>是第l个类的均值或中心，<script type="math/tex">n_l = \sum_{i=1}^n I(C(i)=l)</script>，I(C(i)=l)是指示函数，取值为1或0.函数W(C)也称为能量，表示相同类中的样本相似的程度。</p>
+<blockquote>
+<p>应用EM算法，可以引入一个隐变量<script type="math/tex">Z \in \{1,2,\dots,k\}</script>。那么式(14-19)可写成：</p>
+<script type="math/tex; mode=display">
+\sum_{i=1}^n \sum_{l=1}^k z_{il} \|x_i-\bar{x}_l\|^2 , Z_i = (z_{i1},z_{i2},\dots,z_{ik})</script><p>此处的<script type="math/tex">Z_i</script>表示样本i属于各个类别的情况:</p>
+<script type="math/tex; mode=display">
+z_{il} = \left\{\begin{aligned}&1,样本x_i属于类别l \\ &0,其它\end{aligned} \right.</script><p>所有<script type="math/tex">P(Z_i = 1) = (1,0,..,0)</script>。</p>
+</blockquote>
+<p>k均值聚类就是求解最优化问题：</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+C^{*} &= \arg\max_C W(C)\\
+&= \arg\max_C \sum_{l=1}^k \sum_{C(i)=l}\|x_i-\bar{x}_l\|^2
+\end{aligned}\tag{14-20}</script><p>相似 的样本被聚到同类时，损失函数最小。但是，这是一个<strong>组合优化问题</strong>，n个样本分到k类，所有可能分法的数目是：</p>
+<script type="math/tex; mode=display">
+S(n,k) = \frac{1}{k!}\sum_{l=1}^k(-1)^{k-l}\begin{pmatrix}k \\ l\end{pmatrix}k^n \tag{14-21}</script><p>这是np hard问题。使用迭代的方法求解。</p>
+<h3 id="算法"><a href="#算法" class="headerlink" title="算法"></a>算法</h3><p>k均值聚类的算法是一个迭代的过程，每次迭代包括两个步骤。</p>
+<p>首先，选择k个类的中心，将样本逐个指派到与其最近的中心的类中，得到一个聚类结果；</p>
+<p>然后，更新每个类的样本的均值，作为类的新的中心；</p>
+<p>重复以上步骤，直到收敛为止。</p>
+<p>具体过程如下：</p>
+<p>首先，对于给定的中心值<script type="math/tex">(m_1,m_2,\dots,m_k)</script>，求一个划分C，使得目标函数极小化：</p>
+<script type="math/tex; mode=display">
+\min_C \sum_{l=1}^k \sum_{C(i)=l}\|x_i-m_l\|^2 \tag{14-22}</script><p>求解结果，将每个样本划分到与其距离最近的中心<script type="math/tex">m_l</script>的类<script type="math/tex">C_l</script>中。</p>
+<blockquote>
+<p>就是说，<strong>在类中心确定的情况下</strong>，将每个样本分到一个类中，使样本和其所属类的中心之间的距离总和最小。</p>
+</blockquote>
+<p>然后，对给定的划分C，再求各个类的中心<script type="math/tex">(m_1,m_2,\dots,m_k)</script>，使得目标函数极小化:</p>
+<script type="math/tex; mode=display">
+\min_{m_1,\dots,m_k} \sum_{l=1}^k \sum_{C(i)=l} \|x_i-m_l\|^2</script><blockquote>
+<p>就是说，<strong>在划分确定的情况下</strong>，使样本和其所属类的中心之间的距离总和最小。</p>
+</blockquote>
+<p>求解结果，对于每个包含<script type="math/tex">n_l</script>个样本的类<script type="math/tex">G_l</script>，更新其均值<script type="math/tex">m_l</script>：</p>
+<script type="math/tex; mode=display">
+m_l = \frac{1}{n_l}\sum_{C(i)=l}x_i , l=1,\dots,k</script><p>重复以上两个步骤，直到划分不再改变，得到聚类结果。</p>
+<p><strong>算法14.2(k均值聚类算法)</strong></p>
+<p>输入：n个样本的集合X</p>
+<p>输出：样本集合的聚类<script type="math/tex">C^*</script></p>
+<ol>
+<li>初始化。令t=0，随机选择k个样本点作为初始聚类中心<script type="math/tex">m^{(0)}=(m_1^{(0)},m_2^{(0)},\dots,m_k^{(0)})</script>。</li>
+<li>对样本进行聚类。对固定的类中心<script type="math/tex">m^{(t)}=(m_1^{(t)},m_2^{(t)},\dots,m_k^{(t)})</script>。其中<script type="math/tex">m_l^{(t)}</script>为类<script type="math/tex">G_l</script>的中心，计算每个样本到类中心的距离，将每个样本划分到与其最近的中心的类中，构成聚类结果<script type="math/tex">C^{(t)}</script>。</li>
+<li>计算新的类中心。对聚类结果<script type="math/tex">C^{(t)}</script>，计算当前各个类中的样本的均值，作为新的类中心<script type="math/tex">m^{(t+1)}=(m_1^{(t+1)},m_2^{(t+1)},\dots,m_k^{(t+1)})</script>。</li>
+<li>如果迭代收敛或符合停止条件，输出<script type="math/tex">C^* = C^{(t)}</script>。否则，令t=t+1，返回步骤2</li>
+</ol>
+<p><strong>k均值聚类算法的复杂度是O(mnk)，其中m是特征维度，n为样本数，k为类别数</strong>。</p>
+<h3 id="算法特性"><a href="#算法特性" class="headerlink" title="算法特性"></a>算法特性</h3><ul>
+<li><p>总体特点</p>
+<ul>
+<li>基于划分的聚类方法</li>
+<li>类别k需事先设定</li>
+<li>以欧氏距离平方表示样本之间的距离</li>
+<li>以中心或样本的均值表示类别</li>
+<li>以样本和所属类的中心之间的距离的总和为最优化的目标函数</li>
+<li>平坦的、非层次化的</li>
+<li>迭代算法，不能保证全局最优</li>
+</ul>
+</li>
+<li><p>收敛性</p>
+<ul>
+<li>启发式方法</li>
+<li>不保证全局最优</li>
+<li>初始中心的选择会直接影响聚类结果</li>
+</ul>
+</li>
+<li><p>初始中心的选择</p>
+<ul>
+<li>用层次聚类对样本进行聚类，得到k个类别时停止。然后从每个类中选取一个与中心距离最近的点</li>
+</ul>
+</li>
+<li><p>类别数k的选择</p>
+<ul>
+<li>通过聚类结果的质量来选择最优的k值</li>
+<li>聚类结果的质量可以用类的平均直径来衡量；一般的，类别数变小时，平均直径会增加，类别数变大超过某个值以后，平均直径会不变，而这个值正是最优k值。</li>
+<li>使用二分查找，快速定位最优k值。</li>
+</ul>
+<p><img src="image/14-2.png" alt="14-2"></p>
+</li>
+</ul>
+<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><ul>
+<li><a href="https://www.ibm.com/developerworks/cn/analytics/library/ba-1607-clustering-algorithm/index.html" target="_blank" rel="noopener">聚类分析经典算法讲解及实现</a></li>
+<li></li>
+</ul>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/k-means/" rel="tag"># k-means</a>
+          
+            <a href="/tags/层次聚类/" rel="tag"># 层次聚类</a>
+          
+            <a href="/tags/无监督学习/" rel="tag"># 无监督学习</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/08/24/KL-and-Dirichlet/" rel="next" title="KL散度与狄利克雷分布的性质">
+                <i class="fa fa-chevron-left"></i> KL散度与狄利克雷分布的性质
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+      <div id="disqus_thread">
+        <noscript>
+          Please enable JavaScript to view the
+          <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a>
+        </noscript>
+      </div>
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">jozee</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">33</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">5</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">68</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#聚类的基本概念"><span class="nav-number">1.</span> <span class="nav-text">聚类的基本概念</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#相似度或距离"><span class="nav-number">1.1.</span> <span class="nav-text">相似度或距离</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#闵可夫斯基距离"><span class="nav-number">1.1.1.</span> <span class="nav-text">闵可夫斯基距离</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#马氏距离"><span class="nav-number">1.1.2.</span> <span class="nav-text">马氏距离</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#相关系数"><span class="nav-number">1.1.3.</span> <span class="nav-text">相关系数</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#夹角余弦"><span class="nav-number">1.1.4.</span> <span class="nav-text">夹角余弦</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#结论"><span class="nav-number">1.1.5.</span> <span class="nav-text">结论</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#类或簇"><span class="nav-number">1.2.</span> <span class="nav-text">类或簇</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#类与类之间的距离"><span class="nav-number">1.3.</span> <span class="nav-text">类与类之间的距离</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#层次聚类"><span class="nav-number">2.</span> <span class="nav-text">层次聚类</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#聚合聚类算法代码实现"><span class="nav-number">2.1.</span> <span class="nav-text">聚合聚类算法代码实现</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#k均值聚类"><span class="nav-number">3.</span> <span class="nav-text">k均值聚类</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#模型"><span class="nav-number">3.1.</span> <span class="nav-text">模型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#策略"><span class="nav-number">3.2.</span> <span class="nav-text">策略</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#算法"><span class="nav-number">3.3.</span> <span class="nav-text">算法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#算法特性"><span class="nav-number">3.4.</span> <span class="nav-text">算法特性</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#参考资料"><span class="nav-number">4.</span> <span class="nav-text">参考资料</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">jozee</span>
+
+  
+</div>
+<div class="busuanzi_count">
+    <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js">
+    </script>
+    <span> 本站访客数:<span id="busuanzi_value_site_uv"></span>人</span>
+    <span class="post-meta-divider">|</span>
+    <span>本站总访问量:<span id="busuanzi_value_site_pv"></span>次</span>
+</div>
+
+
+
+
+
+
+
+
+
+        
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+    
+      <script id="dsq-count-scr" src="https://jozeelin.disqus.com/count.js" async></script>
+    
+
+    
+      <script type="text/javascript">
+        var disqus_config = function () {
+          this.page.url = 'https://jozeelin.github.io/2019/08/24/kmeans-hierarchical-cluster/';
+          this.page.identifier = '2019/08/24/kmeans-hierarchical-cluster/';
+          this.page.title = 'k-means和层次聚类算法';
+        };
+        var d = document, s = d.createElement('script');
+        s.src = 'https://jozeelin.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', '' + +new Date());
+        (d.head || d.body).appendChild(s);
+      </script>
+    
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+  
+
+  
+
+</body>
+</html>
