@@ -91,7 +91,7 @@
 <meta property="og:site_name" content="Jozee&#39;s技术博客">
 <meta property="og:description" content="KL散度的定义KL散度是描述两个概率分布Q(x)和P(x)相似度的一种度量，记作D(Q\|P)。对离散随机变量，KL散度定义为：  D(Q\|P) = \sum_i Q(i) \log \frac{Q(i)}{P(i)} \tag{1-1}对连续随机变量，KL散度定义为:  D(Q\|P) = \int Q(x) \log \frac{Q(x)}{P(x)}dx \tag{1-2}KL散度具有如下">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2019-08-24T10:50:55.646Z">
+<meta property="og:updated_time" content="2019-08-24T11:04:59.856Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="KL散度与狄利克雷分布的性质">
 <meta name="twitter:description" content="KL散度的定义KL散度是描述两个概率分布Q(x)和P(x)相似度的一种度量，记作D(Q\|P)。对离散随机变量，KL散度定义为：  D(Q\|P) = \sum_i Q(i) \log \frac{Q(i)}{P(i)} \tag{1-1}对连续随机变量，KL散度定义为:  D(Q\|P) = \int Q(x) \log \frac{Q(x)}{P(x)}dx \tag{1-2}KL散度具有如下">
@@ -312,7 +312,7 @@
               
                 <span class="post-meta-item-text">更新于&#58;</span>
               
-              <time title="更新于" itemprop="dateModified" datetime="2019-08-24T18:50:55+08:00">
+              <time title="更新于" itemprop="dateModified" datetime="2019-08-24T19:04:59+08:00">
                 2019-08-24
               </time>
             
@@ -392,12 +392,17 @@ D(Q\|P) = \sum_i Q(i) \log \frac{Q(i)}{P(i)} \tag{1-1}</script><p>对连续随�
 <script type="math/tex; mode=display">
 D(Q\|P) = \int Q(x) \log \frac{Q(x)}{P(x)}dx \tag{1-2}</script><p><strong>KL散度具有如下性质</strong>：</p>
 <ol>
-<li><script type="math/tex; mode=display">D(Q\|P)\ge 0$$，当且仅当Q=P时，等式成立。
-
-**证明：**利用jenden不等式</script><p>\begin{aligned}<br>-D(Q|P) &amp;= \int Q(x) \log \frac{P(x)}{Q(x)}dx\<br>&amp; \le \log\int Q(x)\frac{P(x)}{Q(x)}dx\<br>&amp;= \log \int P(x) dx = 0<br>\end{aligned}\tag{1-3}<br>$$</p>
+<li><p><script type="math/tex">D(Q\|P)\ge 0</script>，当且仅当Q=P时，等式成立。</p>
+<p>证明：利用jenden不等式</p>
 </li>
-<li><p>KL散度是非对称的，即不满足三角不等式，不是严格意义上的距离度量。</p>
-</li>
+</ol>
+<script type="math/tex; mode=display">
+   \begin{aligned}
+   -D(Q\|P) &= \int Q(x) \log \frac{P(x)}{Q(x)}dx\\
+   & \le \log\int Q(x)\frac{P(x)}{Q(x)}dx\\
+   &= \log \int P(x) dx = 0
+   \end{aligned}\tag{1-3}</script><ol>
+<li>KL散度是非对称的，即不满足三角不等式，不是严格意义上的距离度量。</li>
 </ol>
 <h2 id="狄利克雷分布"><a href="#狄利克雷分布" class="headerlink" title="狄利克雷分布"></a>狄利克雷分布</h2><p>设随机变量<script type="math/tex">\theta</script>服从狄利克雷分布<script type="math/tex">\theta \sim \mathrm{Dir}(\theta|\alpha)</script>，利用<strong>指数分布族性质</strong>，求<strong>函数<script type="math/tex">\log \theta</script>的关于狄利克雷分布的数学期望<script type="math/tex">E[\log \theta]</script>。</strong></p>
 <h3 id="指数分布族"><a href="#指数分布族" class="headerlink" title="指数分布族"></a>指数分布族</h3><p>指数分布族是指概率分布密度可以写成如下形式的概率分布集合：</p>

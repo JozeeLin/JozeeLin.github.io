@@ -2,6 +2,13 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>https://jozeelin.github.io/2019/08/24/KL-and-Dirichlet/</loc>
+    
+    <lastmod>2019-08-24T11:04:59.856Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>https://jozeelin.github.io/2019/08/24/kmeans-hierarchical-cluster/</loc>
     
     <lastmod>2019-08-24T11:02:04.746Z</lastmod>
@@ -96,13 +103,6 @@
     <loc>https://jozeelin.github.io/2019/06/14/%E6%8F%90%E5%8D%87%E6%96%B9%E6%B3%95/</loc>
     
     <lastmod>2019-08-24T10:51:48.777Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>https://jozeelin.github.io/2019/08/24/KL-and-Dirichlet/</loc>
-    
-    <lastmod>2019-08-24T10:50:55.646Z</lastmod>
     
   </url>
   
