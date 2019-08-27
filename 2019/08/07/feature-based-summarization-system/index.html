@@ -102,7 +102,7 @@
 <meta property="og:image" content="https://jozeelin.github.io/2019/08/07/feature-based-summarization-system/image/infrequent-feature-extraction.png?lastModify=1565164031">
 <meta property="og:image" content="https://jozeelin.github.io/2019/08/07/feature-based-summarization-system/image/orientations-opinion-sentences.png?lastModify=1565164031">
 <meta property="og:image" content="https://jozeelin.github.io/2019/08/07/feature-based-summarization-system/image/summary.png?lastModify=1565164031">
-<meta property="og:updated_time" content="2019-08-25T06:10:52.970Z">
+<meta property="og:updated_time" content="2019-08-27T13:56:53.425Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Feature-based summarization system">
 <meta name="twitter:description" content="论文：Mining and Summarizing Customer Reviews 这篇论文的主要工作就是从用户评论中提取出产品特征以及关于该产品特征的相关观点信息。 大概的流程就是：获取评论数据，然后对这些评论数据句子进行词性标注(POS)，保留所有的名词/名词短语，将出现次数比较多的名词/名词短语作为候选产品特征，利用一定的剪枝规则，从候选产品特征中得到有效的产品特征。利用这些特征去查找它们">
@@ -324,8 +324,8 @@
               
                 <span class="post-meta-item-text">更新于&#58;</span>
               
-              <time title="更新于" itemprop="dateModified" datetime="2019-08-25T14:10:52+08:00">
-                2019-08-25
+              <time title="更新于" itemprop="dateModified" datetime="2019-08-27T21:56:53+08:00">
+                2019-08-27
               </time>
             
           </span>
@@ -440,7 +440,7 @@
 <p>例如：{相机}与{相机、品质}，若评论句子集合中存在至少三个句子只包含”相机”，而没有包含”品质”，才会保留”相机”这个产品特征，否则移除。</p>
 <p>请参考<a href="#">Mining Opinion Features in Customer Reviews</a>获取更多细节信息。</p>
 <h2 id="观点词语的提取"><a href="#观点词语的提取" class="headerlink" title="观点词语的提取"></a>观点词语的提取</h2><blockquote>
-<p>opinion sentence的定义：至少包含一个产品特征的句子。</p>
+<p>opinion sentence的定义：至少包含一个产品特征和观点词语的句子。</p>
 <p>比如，”非常好”这样的句子就不能作为opinion sentence。</p>
 </blockquote>
 <p>这个组件的功能就是从opinion sentence句子中提取形容词(观点词语)。提取观点词语的方法如下所示：</p>
