@@ -93,7 +93,7 @@
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="https://jozeelin.github.io/2019/08/28/pca/image/16-1.png">
 <meta property="og:image" content="https://jozeelin.github.io/2019/08/28/pca/image/16-2.png">
-<meta property="og:updated_time" content="2019-08-28T12:57:14.942Z">
+<meta property="og:updated_time" content="2019-08-28T13:00:32.292Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="PCA主成分分析">
 <meta name="twitter:description" content="主成分分析(PCA)是一种常用的无监督学习方法，这一方法利用正交变换把由线性相关变量表示的观测数据转换为少数几个由线性无关变量表示的数据，线性无关的变量称为主成分。 主成分的个数通常小于原始变量的个数，所以主成分分析属于降维方法。 主成分分析主要用于发现数据中的基本结构，即数据中变量之间的关系。 总体主成分分析基本想法主成分分析中，  首先对给定数据进行规范化，使得数据每一变量的平均值为0，方差为">
@@ -315,7 +315,7 @@
               
                 <span class="post-meta-item-text">更新于&#58;</span>
               
-              <time title="更新于" itemprop="dateModified" datetime="2019-08-28T20:57:14+08:00">
+              <time title="更新于" itemprop="dateModified" datetime="2019-08-28T21:00:32+08:00">
                 2019-08-28
               </time>
             
@@ -508,12 +508,18 @@ y_k = \alpha_k^{\top}\boldsymbol{x} = \alpha_{1k}x_1+\alpha_{2k}x_2+\dots+\alpha
 \mathrm{var}(\alpha_k^{\top}\boldsymbol{x}) = \alpha_k^{\top}\Sigma \alpha_k = \lambda_k \ , k=1,2,\dots,m \tag{16-12}</script><p>定理证毕。</p>
 <p><strong>推论16.1</strong> m维随机变量<script type="math/tex">\boldsymbol{y} = (y_1,y_2,\dots,y_m)^{\top}</script>的分量依次是<script type="math/tex">\boldsymbol{x}</script> 的第一主成分到第m主成分的充要条件是：</p>
 <ol>
-<li><script type="math/tex; mode=display">\boldsymbol{y} = A^{\top}\boldsymbol{x}$$，A为正交矩阵</script><p>A = \begin{bmatrix}<br>   \alpha<em>{11} &amp; \alpha</em>{12}&amp;\dots&amp;\alpha<em>{1m} \<br>   \alpha</em>{21}&amp;\alpha<em>{22}&amp;\dots&amp;\alpha</em>{2m}\<br>   \vdots&amp;\vdots&amp;&amp;\vdots\<br>   \alpha<em>{m1}&amp;\alpha</em>{m2}&amp;\dots&amp;\alpha_{mm}<br>\end{bmatrix}<br>$$</p>
-</li>
-<li><script type="math/tex; mode=display">\boldsymbol{y}$$的协方差矩阵为对角矩阵</script><p>\mathrm{cov}(\boldsymbol{y}) = \mathrm{diag}(\lambda_1,\lambda_2,\dots,\lambda_m)</p>
+<li><p>令<script type="math/tex">\boldsymbol{y} = A^{\top}\boldsymbol{x}</script>，A为正交矩阵</p>
 <script type="math/tex; mode=display">
-</script><p>\lambda_1\ge\lambda_2\ge\dots\ge\lambda_m<br>$$</p>
-<p>其中<script type="math/tex">\lambda_k</script>是<script type="math/tex">\Sigma</script>的第k个特征值，<script type="math/tex">\alpha_k</script>是对应的单位特征向量，k=1,2,…,m。</p>
+A = \begin{bmatrix}
+   \alpha_{11} & \alpha_{12}&\dots&\alpha_{1m} \\
+   \alpha_{21}&\alpha_{22}&\dots&\alpha_{2m}\\
+   \vdots&\vdots&&\vdots\\
+   \alpha_{m1}&\alpha_{m2}&\dots&\alpha_{mm}
+\end{bmatrix}</script></li>
+<li><p>其中<script type="math/tex">\boldsymbol{y}</script>的协方差矩阵为对角矩阵</p>
+<script type="math/tex; mode=display">
+\mathrm{cov}(\boldsymbol{y}) = \mathrm{diag}(\lambda_1,\lambda_2,\dots,\lambda_m)</script><script type="math/tex; mode=display">
+\lambda_1\ge\lambda_2\ge\dots\ge\lambda_m</script><p>其中<script type="math/tex">\lambda_k</script>是<script type="math/tex">\Sigma</script>的第k个特征值，<script type="math/tex">\alpha_k</script>是对应的单位特征向量，k=1,2,…,m。</p>
 </li>
 </ol>
 <p>以上证明中，<script type="math/tex">\lambda_k</script>是<script type="math/tex">\Sigma</script>的第k个特征值，<script type="math/tex">\alpha_k</script>是对应的单位特征向量，即</p>
@@ -740,7 +746,7 @@ S_X = X^{'^{\top}}X^{'} \tag{16-53}</script><p>主成分分析归结于求协方
 <ol>
 <li><p>构造新的nxm矩阵</p>
 <script type="math/tex; mode=display">
-X^{'} = \frac{1}{\sqrt{n-1}}X^{\top}</script><p><script type="math/tex">X^{'}</script>每一列的均值为零。</p>
+X^{'} = \frac{1}{\sqrt{n-1}}X^{\top}</script><p>且<script type="math/tex">X^{'}</script>每一列的均值为零。</p>
 </li>
 <li><p>对矩阵<script type="math/tex">X^{'}</script>进行截断奇异值分解，得到：</p>
 <script type="math/tex; mode=display">
