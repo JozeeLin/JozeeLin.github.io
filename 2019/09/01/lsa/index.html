@@ -93,7 +93,7 @@
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="https://jozeelin.github.io/2019/09/01/lsa/image/17-1.png">
 <meta property="og:image" content="https://jozeelin.github.io/2019/09/01/lsa/image/17-2.png">
-<meta property="og:updated_time" content="2019-09-01T13:08:33.067Z">
+<meta property="og:updated_time" content="2019-09-01T13:11:56.074Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="潜在语义分析">
 <meta name="twitter:description" content="潜在语义分析(latent semantic analysis,LSA)是一种无监督学习方法，主要用于文本的话题分析，其特点是通过矩阵分解发现文本与单词之间的基于话题的语义关系。 潜在语义分析使用的是非概率的话题分析模型。具体地，将文本集合表示为单词-文本矩阵，对单词-文本矩阵进行奇异值分解，从而得到话题向量空间，以及文本在话题向量空间的表示。 非负矩阵分解(non-negative matrix">
@@ -315,7 +315,7 @@
               
                 <span class="post-meta-item-text">更新于&#58;</span>
               
-              <time title="更新于" itemprop="dateModified" datetime="2019-09-01T21:08:33+08:00">
+              <time title="更新于" itemprop="dateModified" datetime="2019-09-01T21:11:56+08:00">
                 2019-09-01
               </time>
             
@@ -595,10 +595,8 @@ H_{lj} = H_{lj}\frac{(W^{\top}X)_{lj}}{(W^{\top}WH)_{lj}} \ , l=1,2,\dots,k;j=1,
 <p>输入：单词-文本矩阵<script type="math/tex">X\ge0</script>，文本集合的话题个数k，最大迭代次数t；</p>
 <p>输出：话题矩阵W，文本表示矩阵H.</p>
 <ol>
-<li><p>初始化</p>
-<script type="math/tex; mode=display">W\ge0$$，并对W的每一列数据归一化
-
-$$H\ge0</script></li>
+<li><p>初始化，<script type="math/tex">W\ge0</script>，并对W的每一列数据归一化，<script type="math/tex">H\ge0</script></p>
+</li>
 <li><p>迭代</p>
 <p>对迭代次数由1到t执行下列步骤：</p>
 <p>a)更新W的元素，对l从1到k，i从1到m按式(17-33)更新<script type="math/tex">W_{il}</script>；</p>
