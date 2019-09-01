@@ -96,7 +96,7 @@
 <meta property="og:image" content="https://jozeelin.github.io/2019/09/01/plsa/image/18-3.png">
 <meta property="og:image" content="https://jozeelin.github.io/2019/09/01/plsa/image/18-4.png">
 <meta property="og:image" content="https://jozeelin.github.io/2019/09/01/plsa/image/18-5.png">
-<meta property="og:updated_time" content="2019-09-01T13:15:57.548Z">
+<meta property="og:updated_time" content="2019-09-01T13:20:47.805Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="概率潜在语义分析">
 <meta name="twitter:description" content="概率潜在语义分析(probabilistic latent semantic analysis,PLSA)，也称概率潜在语义索引(PLSI)，是一种利用概率生成模型对文本集合进行话题分析的无监督学习方法。 模型的最大特点是用隐变量表示话题。整个模型表示文本生成话题，话题生成单词，从而得到单词-文本共现矩阵的过程。这里自然而然的就可以想到使用EM算法求解这类问题了。 假设每个文本由一个话题分布决定，">
@@ -318,7 +318,7 @@
               
                 <span class="post-meta-item-text">更新于&#58;</span>
               
-              <time title="更新于" itemprop="dateModified" datetime="2019-09-01T21:15:57+08:00">
+              <time title="更新于" itemprop="dateModified" datetime="2019-09-01T21:20:47+08:00">
                 2019-09-01
               </time>
             
@@ -457,7 +457,7 @@ P(w|d) = \sum_z P(z|d)P(w|z) \tag{18-7}</script><p>这里概率分布P(w|z)表�
 <p>概率分布P(w|z)也存在于M维空间中的(M-1)单纯形之中。</p>
 <p>如果有K个话题，那么就有K个概率分布<script type="math/tex">P(w|z_k) \ , k=1,2,\dots,K</script>，由(M-1)单纯形上的K个点表示。以这K个点为顶点，构成一个(K-1)单纯形，称为<strong>话题单纯形</strong>。</p>
 <p>话题单纯形是单词单纯形的子单纯形。</p>
-<p>从式(18-7)可知，**生成模型中文本的分布P(w|d)可以由K个话题的分布<script type="math/tex">P(w|z_k) \ , k=1,\dots,K</script>的线性组合表示，文本对应的点就在K个话题的点构成的(K-1)话题单纯形中。</p>
+<p>从式(18-7)可知，<strong>生成模型中文本的分布P(w|d)可以由K个话题的分布<script type="math/tex">P(w|z_k) \ , k=1,\dots,K</script>的线性组合表示，文本对应的点就在K个话题的点构成的(K-1)话题单纯形中</strong>。</p>
 <h4 id="与潜在语义分析的关系"><a href="#与潜在语义分析的关系" class="headerlink" title="与潜在语义分析的关系"></a>与潜在语义分析的关系</h4><p>概率潜在语义分析模型(共现模型)可以在潜在语义分析的框架下描述。</p>
 <p>下图显示潜在语义分析，对单词-文本矩阵进行奇异值分解得到<script type="math/tex">X = U\Sigma V^{\top}</script>：</p>
 <p><img src="image/18-5.png" alt="18-5"></p>
@@ -488,44 +488,38 @@ L &= \sum_{i=1}^M \sum_{j=1}^N n(w_i,d_j)\log P(w_i,d_j)\\
 Q =\sum_{k=1}^K \left\{\sum_{j=1}^N n(d_j) \left[\log P(d_j)+\sum_{i=1}^M \frac{n(w_i,d_j)}{n(d_j)}\log  P(w_i|z_k)P(z_k|d_j) \right]\right\} P(z_k|w_i,d_j)\tag{18-10}</script><p>式中<script type="math/tex">n(d_j) = \sum_{i=1}^M n(w_i,d_j)</script>表示文本<script type="math/tex">d_j</script>中的单词个数，<script type="math/tex">n(w_i,d_j)</script>表示单词<script type="math/tex">w_i</script>在文本<script type="math/tex">d_j</script>中出现的频数。条件概率分布<script type="math/tex">P(z_k|w_i,d_j)</script>代表不完全数据，是已知变量(<strong>需要给出一个初始值</strong>)。条件概率分布<script type="math/tex">P(w_i|z_k)</script>和<script type="math/tex">P(z_k|d_j)</script>的乘积代表完全数据，是未知变量。</p>
 <p>由于<script type="math/tex">P(d_j)</script>可以直接从数据中统计得到，因此这里只考了<script type="math/tex">P(w_i|z_k)</script>，<script type="math/tex">P(z_k|d_j)</script>的估计，可将Q函数简化为函数<script type="math/tex">Q^{'}</script>。</p>
 <script type="math/tex; mode=display">
-Q^{'} = \sum_{i=1}^M \sum_{j=1}^N n(w_i,d_j) \sum_{k=1}^K P(z_k|w_i,d_j)\log \left[P(w_i|z_k)P(z_k|d_j)\right] \tag{18-11}</script><script type="math/tex; mode=display">Q^{'}$$函数中的$$P(z_k|w_i,d_j)$$可以根据贝叶斯公式计算：</script><p>P(z<em>k|w_i,d_j) = \frac{P(w_i|z_k)P(z_k|d_j)}{\sum</em>{k=1}^K P(w_i|z_k)P(z_k|d_j)} \tag{18-12}</p>
+Q^{'} = \sum_{i=1}^M \sum_{j=1}^N n(w_i,d_j) \sum_{k=1}^K P(z_k|w_i,d_j)\log \left[P(w_i|z_k)P(z_k|d_j)\right] \tag{18-11}</script><p>对于<script type="math/tex">Q^{'}</script>函数中的<script type="math/tex">P(z_k|w_i,d_j)</script>可以根据贝叶斯公式计算：</p>
 <script type="math/tex; mode=display">
-其中$$P(z_k|d_j)$$和$$P(w_i|z_k)$$由上一步迭代得到。
-
-**M步：极大化Q函数**
-
-通过约束最优化求解Q函数的极大值，这时$$P(z_k|d_j)$$和$$P(w_i|z_k)$$是变量。因为变量$$P(w_i|z_k)$$，$$P(z_k|d_j)$$形成概率分布，满足约束条件：</script><p>\sum_{i=1}^M P(w_i|z_k) = 1 \ , k=1,2,\dots,K</p>
+P(z_k|w_i,d_j) = \frac{P(w_i|z_k)P(z_k|d_j)}{\sum_{k=1}^K P(w_i|z_k)P(z_k|d_j)} \tag{18-12}</script><p>其中<script type="math/tex">P(z_k|d_j)</script>和<script type="math/tex">P(w_i|z_k)</script>由上一步迭代得到。</p>
+<p><strong>M步：极大化Q函数</strong></p>
+<p>通过约束最优化求解Q函数的极大值，这时<script type="math/tex">P(z_k|d_j)</script>和<script type="math/tex">P(w_i|z_k)</script>是变量。因为变量<script type="math/tex">P(w_i|z_k)</script>，<script type="math/tex">P(z_k|d_j)</script>形成概率分布，满足约束条件：</p>
 <script type="math/tex; mode=display">
-</script><p>\sum_{k=1}^K P(z_k|d_j) = 1 \ , j = 1,2,\dots,N</p>
+\sum_{i=1}^M P(w_i|z_k) = 1 \ , k=1,2,\dots,K</script><script type="math/tex; mode=display">
+\sum_{k=1}^K P(z_k|d_j) = 1 \ , j = 1,2,\dots,N</script><p>应用拉格朗日法，引入拉格朗日乘子<script type="math/tex">\tau_k</script>和<script type="math/tex">\rho_j</script>，定义拉格朗日函数<script type="math/tex">\varLambda</script>：</p>
 <script type="math/tex; mode=display">
-
-应用拉格朗日法，引入拉格朗日乘子$$\tau_k$$和$$\rho_j$$，定义拉格朗日函数$$\varLambda$$：</script><p>\varLambda = Q^{‘} + \sum<em>{k=1}^K \tau_k\left(1-\sum</em>{i=1}^M P(w<em>i|z_k)\right)+\sum</em>{j=1}^N \rho<em>j \left(1- \sum</em>{k=1}^KP(z_k|d_j)\right)</p>
+\varLambda = Q^{'} + \sum_{k=1}^K \tau_k\left(1-\sum_{i=1}^M P(w_i|z_k)\right)+\sum_{j=1}^N \rho_j \left(1- \sum_{k=1}^KP(z_k|d_j)\right)</script><p>将拉格朗日函数<script type="math/tex">\varLambda</script>分别对<script type="math/tex">P(w_i|z_k)</script>和<script type="math/tex">P(z_k|d_j)</script>求偏导数，并令其为0，从而得到：</p>
 <script type="math/tex; mode=display">
-将拉格朗日函数$$\varLambda$$分别对$$P(w_i|z_k)$$和$$P(z_k|d_j)$$求偏导数，并令其为0，从而得到：</script><p>\sum<em>{j=1}^N\frac{n(w_i,d_j)P(z_k|w_i,d_j)}{P(w_i|z_k)} - \tau_k = 0 \rArr \left[\sum</em>{j=1}^N n(w_i,d_j)P(z_k|w_i,d_j)\right]-\tau_k P(w_i|z_k) = 0 \<br>i=1,2,\dots,M \ ; k=1,2,\dots,K</p>
+\sum_{j=1}^N\frac{n(w_i,d_j)P(z_k|w_i,d_j)}{P(w_i|z_k)} - \tau_k = 0 \rArr \left[\sum_{j=1}^N n(w_i,d_j)P(z_k|w_i,d_j)\right]-\tau_k P(w_i|z_k) = 0 \\
+i=1,2,\dots,M \ ; k=1,2,\dots,K</script><p>同理的，</p>
 <script type="math/tex; mode=display">
-同理的，</script><p>\left[\sum_{i=1}^M n(w_i,d_j)P(z_k|w_i,d_j)\right]-\rho_jP(z_k|d_j) = 0\<br>j=1,2,\dots,N \ ; k=1,2,\dots,K</p>
+\left[\sum_{i=1}^M n(w_i,d_j)P(z_k|w_i,d_j)\right]-\rho_jP(z_k|d_j) = 0\\
+j=1,2,\dots,N \ ; k=1,2,\dots,K</script><p>解方程组得到M步的参数估计公式：</p>
 <script type="math/tex; mode=display">
-解方程组得到M步的参数估计公式：</script><p>P(w<em>i|z_k) = \frac{\sum</em>{j=1}^N n(w<em>i,d_j)P(z_k|w_i,d_j)}{\sum</em>{m=1}^M\sum_{j=1}^N n(w_m,d_j)P(z_k|w_m,d_j)} \tag{18-13}</p>
+P(w_i|z_k) = \frac{\sum_{j=1}^N n(w_i,d_j)P(z_k|w_i,d_j)}{\sum_{m=1}^M\sum_{j=1}^N n(w_m,d_j)P(z_k|w_m,d_j)} \tag{18-13}</script><script type="math/tex; mode=display">
+P(z_k|d_j) = \frac{\sum_{i=1}^M n(w_i,d_j)P(z_k|w_i,d_j)}{n(d_j)} \tag{18-14}</script><p><strong>算法18.1(概率潜在语义模型参数估计的EM算法)</strong></p>
+<p>输入：设单词集合<script type="math/tex">W=\{w_1,w_2,\dots,w_M\}</script>，其中M是单词个数；文本(指标)集合<script type="math/tex">D=\{d_1,d_2,\dots,d_N\}</script>，其中N是文本个数；话题集合<script type="math/tex">Z=\{z_1,z_2,\dots,z_K\}</script>，其中K是预先设定的话题个数。给定单词-文本共现数据<script type="math/tex">T=\{n(w_i,d_i)\} \ , i=1,2,\dots,M \ , j=1,2,\dots,N</script>。</p>
+<p>输出：<script type="math/tex">P(w_i|z_k)</script>和<script type="math/tex">P(z_k|d_j)</script>。</p>
+<ol>
+<li><p>设置参数<script type="math/tex">P(w_i|z_k)</script>和<script type="math/tex">P(z_k|d_j)</script>的初始值。</p>
+</li>
+<li><p>迭代执行以下E步，M步，直到收敛为止：</p>
+<p>E步：</p>
 <script type="math/tex; mode=display">
-</script><p>P(z<em>k|d_j) = \frac{\sum</em>{i=1}^M n(w_i,d_j)P(z_k|w_i,d_j)}{n(d_j)} \tag{18-14}</p>
+P(z_k|w_i,d_j) = \frac{P(w_i|z_k)P(z_k|d_j)}{\sum_{k=1}^K P(w_i|z_k)P(z_k|d_j)}</script><p>M步：</p>
 <script type="math/tex; mode=display">
-
-**算法18.1(概率潜在语义模型参数估计的EM算法)**
-
-输入：设单词集合$$W=\{w_1,w_2,\dots,w_M\}$$，其中M是单词个数；文本(指标)集合$$D=\{d_1,d_2,\dots,d_N\}$$，其中N是文本个数；话题集合$$Z=\{z_1,z_2,\dots,z_K\}$$，其中K是预先设定的话题个数。给定单词-文本共现数据$$T=\{n(w_i,d_i)\} \ , i=1,2,\dots,M \ , j=1,2,\dots,N$$。
-
-输出：$$P(w_i|z_k)$$和$$P(z_k|d_j)$$。
-
-1. 设置参数$$P(w_i|z_k)$$和$$P(z_k|d_j)$$的初始值。
-
-2. 迭代执行以下E步，M步，直到收敛为止：
-
-   E步：</script><p>   P(z<em>k|w_i,d_j) = \frac{P(w_i|z_k)P(z_k|d_j)}{\sum</em>{k=1}^K P(w_i|z_k)P(z_k|d_j)}</p>
-<script type="math/tex; mode=display">
-   M步：</script><p>   P(w<em>i|z_k) = \frac{\sum</em>{j=1}^N n(w<em>i,d_j)P(z_k|w_i,d_j)}{\sum</em>{m=1}^M\sum_{j=1}^N n(w_m,d_j)P(z_k|w_m,d_j)}</p>
-<script type="math/tex; mode=display">
-</script><p>   P(z<em>k|d_j) = \frac{\sum</em>{i=1}^M n(w_i,d_j)P(z_k|w_i,d_j)}{n(d_j)}</p>
-<p>   $$</p>
+P(w_i|z_k) = \frac{\sum_{j=1}^N n(w_i,d_j)P(z_k|w_i,d_j)}{\sum_{m=1}^M\sum_{j=1}^N n(w_m,d_j)P(z_k|w_m,d_j)}</script><script type="math/tex; mode=display">
+P(z_k|d_j) = \frac{\sum_{i=1}^M n(w_i,d_j)P(z_k|w_i,d_j)}{n(d_j)}</script></li>
+</ol>
 
       
     </div>
