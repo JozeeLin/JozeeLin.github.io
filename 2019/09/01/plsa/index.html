@@ -96,7 +96,7 @@
 <meta property="og:image" content="https://jozeelin.github.io/2019/09/01/plsa/image/18-3.png">
 <meta property="og:image" content="https://jozeelin.github.io/2019/09/01/plsa/image/18-4.png">
 <meta property="og:image" content="https://jozeelin.github.io/2019/09/01/plsa/image/18-5.png">
-<meta property="og:updated_time" content="2019-09-01T13:20:47.805Z">
+<meta property="og:updated_time" content="2019-09-01T13:28:56.827Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="概率潜在语义分析">
 <meta name="twitter:description" content="概率潜在语义分析(probabilistic latent semantic analysis,PLSA)，也称概率潜在语义索引(PLSI)，是一种利用概率生成模型对文本集合进行话题分析的无监督学习方法。 模型的最大特点是用隐变量表示话题。整个模型表示文本生成话题，话题生成单词，从而得到单词-文本共现矩阵的过程。这里自然而然的就可以想到使用EM算法求解这类问题了。 假设每个文本由一个话题分布决定，">
@@ -318,7 +318,7 @@
               
                 <span class="post-meta-item-text">更新于&#58;</span>
               
-              <time title="更新于" itemprop="dateModified" datetime="2019-09-01T21:20:47+08:00">
+              <time title="更新于" itemprop="dateModified" datetime="2019-09-01T21:28:56+08:00">
                 2019-09-01
               </time>
             
@@ -499,7 +499,7 @@ P(z_k|w_i,d_j) = \frac{P(w_i|z_k)P(z_k|d_j)}{\sum_{k=1}^K P(w_i|z_k)P(z_k|d_j)} 
 <script type="math/tex; mode=display">
 \varLambda = Q^{'} + \sum_{k=1}^K \tau_k\left(1-\sum_{i=1}^M P(w_i|z_k)\right)+\sum_{j=1}^N \rho_j \left(1- \sum_{k=1}^KP(z_k|d_j)\right)</script><p>将拉格朗日函数<script type="math/tex">\varLambda</script>分别对<script type="math/tex">P(w_i|z_k)</script>和<script type="math/tex">P(z_k|d_j)</script>求偏导数，并令其为0，从而得到：</p>
 <script type="math/tex; mode=display">
-\sum_{j=1}^N\frac{n(w_i,d_j)P(z_k|w_i,d_j)}{P(w_i|z_k)} - \tau_k = 0 \rArr \left[\sum_{j=1}^N n(w_i,d_j)P(z_k|w_i,d_j)\right]-\tau_k P(w_i|z_k) = 0 \\
+\sum_{j=1}^N\frac{n(w_i,d_j)P(z_k|w_i,d_j)}{P(w_i|z_k)} - \tau_k = 0 \Rightarrow \left[\sum_{j=1}^N n(w_i,d_j)P(z_k|w_i,d_j)\right]-\tau_k P(w_i|z_k) = 0 \\
 i=1,2,\dots,M \ ; k=1,2,\dots,K</script><p>同理的，</p>
 <script type="math/tex; mode=display">
 \left[\sum_{i=1}^M n(w_i,d_j)P(z_k|w_i,d_j)\right]-\rho_jP(z_k|d_j) = 0\\
