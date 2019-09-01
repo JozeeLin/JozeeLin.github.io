@@ -1,0 +1,1045 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+  <meta name="google-site-verification" content="iejSa-LmOb9d1GguAcEsQNUsQviccOieHkuG1c1E2YI">
+
+
+
+  <meta name="msvalidate.01" content="83768A52AE58ADF203609FEF9C55FF47">
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="无监督学习,潜在语义分析,主题模型,LSA,">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="潜在语义分析(latent semantic analysis,LSA)是一种无监督学习方法，主要用于文本的话题分析，其特点是通过矩阵分解发现文本与单词之间的基于话题的语义关系。 潜在语义分析使用的是非概率的话题分析模型。具体地，将文本集合表示为单词-文本矩阵，对单词-文本矩阵进行奇异值分解，从而得到话题向量空间，以及文本在话题向量空间的表示。 非负矩阵分解(non-negative matrix">
+<meta name="keywords" content="无监督学习,潜在语义分析,主题模型,LSA">
+<meta property="og:type" content="article">
+<meta property="og:title" content="潜在语义分析">
+<meta property="og:url" content="https://jozeelin.github.io/2019/09/01/lsa/index.html">
+<meta property="og:site_name" content="Jozee&#39;s技术博客">
+<meta property="og:description" content="潜在语义分析(latent semantic analysis,LSA)是一种无监督学习方法，主要用于文本的话题分析，其特点是通过矩阵分解发现文本与单词之间的基于话题的语义关系。 潜在语义分析使用的是非概率的话题分析模型。具体地，将文本集合表示为单词-文本矩阵，对单词-文本矩阵进行奇异值分解，从而得到话题向量空间，以及文本在话题向量空间的表示。 非负矩阵分解(non-negative matrix">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://jozeelin.github.io/2019/09/01/lsa/image/17-1.png">
+<meta property="og:image" content="https://jozeelin.github.io/2019/09/01/lsa/image/17-2.png">
+<meta property="og:updated_time" content="2019-09-01T13:08:33.067Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="潜在语义分析">
+<meta name="twitter:description" content="潜在语义分析(latent semantic analysis,LSA)是一种无监督学习方法，主要用于文本的话题分析，其特点是通过矩阵分解发现文本与单词之间的基于话题的语义关系。 潜在语义分析使用的是非概率的话题分析模型。具体地，将文本集合表示为单词-文本矩阵，对单词-文本矩阵进行奇异值分解，从而得到话题向量空间，以及文本在话题向量空间的表示。 非负矩阵分解(non-negative matrix">
+<meta name="twitter:image" content="https://jozeelin.github.io/2019/09/01/lsa/image/17-1.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://jozeelin.github.io/2019/09/01/lsa/">
+
+
+
+
+
+  <title>潜在语义分析 | Jozee's技术博客</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Jozee's技术博客</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://jozeelin.github.io/2019/09/01/lsa/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="jozee">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Jozee's技术博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">潜在语义分析</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-09-01T21:06:12+08:00">
+                2019-09-01
+              </time>
+            
+
+            
+              <span class="post-meta-divider">|</span>
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-check-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">更新于&#58;</span>
+              
+              <time title="更新于" itemprop="dateModified" datetime="2019-09-01T21:08:33+08:00">
+                2019-09-01
+              </time>
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/机器学习/" itemprop="url" rel="index">
+                    <span itemprop="name">机器学习</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2019/09/01/lsa/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2019/09/01/lsa/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+          <span id="busuanzi_container_page_pv">
+            <span class="post-meta-divider">|</span>
+            <span class="post-meta-item-icon">
+            <i class="fa fa-eye"></i>
+            </span>
+            阅读量: <span id="busuanzi_value_page_pv"></span>次
+          </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>潜在语义分析(latent semantic analysis,LSA)是一种无监督学习方法，主要<strong>用于文本的话题分析</strong>，其特点是通过矩阵分解发现文本与单词之间的基于话题的语义关系。</p>
+<p>潜在语义分析使用的是非概率的话题分析模型。具体地，将文本集合表示为单词-文本矩阵，对单词-文本矩阵进行奇异值分解，从而得到话题向量空间，以及文本在话题向量空间的表示。</p>
+<p>非负矩阵分解(non-negative matrix factorization,NMF)是另一种矩阵的因子分解方法，其特点是分解的矩阵非负。非负矩阵分解也可用于话题分析。</p>
+<h2 id="单词向量空间与话题向量空间"><a href="#单词向量空间与话题向量空间" class="headerlink" title="单词向量空间与话题向量空间"></a>单词向量空间与话题向量空间</h2><h3 id="单词向量空间"><a href="#单词向量空间" class="headerlink" title="单词向量空间"></a>单词向量空间</h3><p>向量空间模型的基本想法是，给定一个文本，用一个向量表示该文本的”语义”，向量的每一维对应一个单词，其数值为该单词在该文本中出现的频数或权值；</p>
+<p>给定一个含有n个文本的集合<script type="math/tex">D = \{d_1,d_2,\dots,d_n\}</script>，以及在所有文本中出现的m个单词的集合<script type="math/tex">W = \{w_1,w_2,\dots,w_m\}</script>。将单词在文本中出现的数据用一个<strong>单词-文本矩阵(word-document matrix)</strong>表示，记作X:</p>
+<script type="math/tex; mode=display">
+X = \begin{bmatrix}
+   x_{11} & x_{12}&\dots&x_{1n} \\
+   x_{21}&x_{22}&\dots&x_{2n}\\
+   \vdots&\vdots&&\vdots\\
+   x_{m1}&x_{m2}&\dots&x_{mn}
+\end{bmatrix} \tag{17-1}</script><p>这是一个mxn矩阵，元素<script type="math/tex">x_{ij}</script>表示单词<script type="math/tex">w_i</script>在文本<script type="math/tex">d_j</script>中出现的频数或权值。此矩阵是一个稀疏矩阵。</p>
+<p>权值通常用单词频率-逆文本频率(tf-idf)表示，其定义为：</p>
+<script type="math/tex; mode=display">\mathrm{TFIDF}_{ij} = \frac{tf_{ij}}{tf_{\bullet j}}\log \frac{df}{df_i} \ , i=1,2,\dots,m; \ j=1,2,\dots,n \tag{17-2}</script><p>式中<script type="math/tex">tf_{ij}</script>是单词<script type="math/tex">w_i</script>出现在文本<script type="math/tex">d_j</script>中的频数，<script type="math/tex">tf_{\bullet j}</script>是文本<script type="math/tex">d_j</script>中出现的所有单词的频数之和，<script type="math/tex">df_i</script>是含有单词<script type="math/tex">w_i</script>的文本数，df是文本集合D的全部文本数。</p>
+<p>单词向量空间模型直接使用单词-文本矩阵的信息。单词-文本矩阵的第j列向量<script type="math/tex">x_j</script>表示文本<script type="math/tex">d_j</script></p>
+<script type="math/tex; mode=display">
+x_j =\begin{bmatrix}x_{1j}\\x_{2j}\\ \vdots\\x_{mj}\end{bmatrix} \ , j=1,2,\dots,n \tag{17-3}</script><p>其中<script type="math/tex">x_{ij}</script>是单词<script type="math/tex">w_i</script>在文本<script type="math/tex">d_j</script> 中的权值，i=1,2,…,m，权值越大，该单词在该文本中的重要度就越高。这是矩阵X也可以写作<script type="math/tex">X =\begin{bmatrix}x_1&x_2&\dots&x_n\end{bmatrix}</script>。</p>
+<p>两个单词向量的内积货标准化内积(cosine)表示对应的文本之间的语义相似度。</p>
+<p>因此，文本<script type="math/tex">d_i</script>与<script type="math/tex">d_j</script>之间的相似度为:</p>
+<script type="math/tex; mode=display">
+x_i \bullet x_j , \frac{x_i \bullet x_j}{\|x_i\|\|x_j\|} \tag{17-4}</script><p>式中，<script type="math/tex">\bullet</script>表示向量的内积,<script type="math/tex">\|\bullet\|</script>表示向量的范数。</p>
+<blockquote>
+<p>单词向量空间模型的局限性：体现在内积相似度未必能够准确表达两个文本的语义相似度上。因为单词具有一词多义(polysemy)以及多词一义(synonymy)，所以基于单词向量的相似度计算存在不精确的问题。</p>
+</blockquote>
+<h3 id="话题向量空间"><a href="#话题向量空间" class="headerlink" title="话题向量空间"></a>话题向量空间</h3><p><strong>两个文本的语义相似度可以体现在两者的话题相似度上</strong>。一个文本一般含有若干个话题。如果两个文本的话题相似，那么两者的语义应该也相似。</p>
+<p>话题可以由若干个语义相关的单词表示，同义词(如”airplane”与”aircraft”)可以表示同一个话题，而多义词(如”apple”)可以表示不同的话题。那么，基于话题的模型就可以解决上述基于单词的模型存在的问题。</p>
+<p>给定一个文本，用话题空间的一个向量表示该文本，该向量的每一分量对应一个话题，其数值为该话题在该文本中出现的权值。用两个向量的内积或标准化内积表示对应的两个文本的语义相似度。注意话题的个数通常远远小于单词的个数，话题向量空间模型更加抽象。事实上潜在语义分析正是构建话题向量空间的方法(即话题分析的方法)，单词向量空间模型与话题向量空间模型可以互为补充，现实中，两者可以同时使用。</p>
+<h4 id="话题向量空间-1"><a href="#话题向量空间-1" class="headerlink" title="话题向量空间"></a>话题向量空间</h4><p>给定一个文本集合<script type="math/tex">D = \{d_1,d_2,\dots,d_n\}</script>和一个相应的单词集合<script type="math/tex">W = \{w_1,w_2,\dots,w_m\}</script>。可以获得其单词-文本矩阵X，X构成原始的单词向量空间，每一列是一个文本在单词向量空间中的表示：</p>
+<script type="math/tex; mode=display">
+X = \begin{bmatrix}
+   x_{11} & x_{12}&\dots&x_{1n} \\
+   x_{21}&x_{22}&\dots&x_{2n}\\
+   \vdots&\vdots&&\vdots\\
+   x_{m1}&x_{m2}&\dots&x_{mn}
+\end{bmatrix} \tag{17-5}</script><p>矩阵X也可以写作<script type="math/tex">X = \begin{bmatrix}x_1&x_2&\dots&x_n\end{bmatrix}</script>。</p>
+<p>假设所有文本共含有k个话题，假设每个话题由一个定义在单词集合W上的m为向量表示，成为话题向量，即：</p>
+<script type="math/tex; mode=display">
+t_l = \begin{bmatrix}t_{1l}\\t_{2l}\\ \vdots\\t_{ml}\end{bmatrix} \ , l=1,2,\dots,k \tag{17-6}</script><p>其中<script type="math/tex">t_{il}</script>是单词<script type="math/tex">w_i</script>在话题<script type="math/tex">t_l</script>的权值，<script type="math/tex">i=1,2,\dots,m</script>，权值越大，该单词在该话题中的重要度就越高。这k个话题向量<script type="math/tex">t_1,t_2,\dots,t_k</script>张成一个话题向量空间，维数为k。注意<strong>话题向量空间T是单词向量空间X的一个字空间</strong>。</p>
+<p>话题向量空间T也可以表示为一个矩阵，称为<strong>单词-话题矩阵(word-topic matrix)</strong>，记作：</p>
+<script type="math/tex; mode=display">
+T = \begin{bmatrix}
+   t_{11} & t_{12}&\dots&t_{1k} \\
+   t_{21}&t_{22}&\dots&t_{2k}\\
+   \vdots&\vdots&&\vdots\\
+   t_{m1}&t_{m2}&\dots&t_{mk}
+\end{bmatrix} \tag{17-7}</script><p>矩阵T也可以记作<script type="math/tex">T = \begin{bmatrix}t_1&t_2&\dots&t_k\end{bmatrix}</script></p>
+<h4 id="文本在话题向量空间的表示"><a href="#文本在话题向量空间的表示" class="headerlink" title="文本在话题向量空间的表示"></a>文本在话题向量空间的表示</h4><p>文本集合D的文本<script type="math/tex">d_j</script>，在单词向量空间中由一个向量<script type="math/tex">x_j</script>表示，将<script type="math/tex">x_j</script>投影到话题向量空间T中，得到话题向量空间的一个向量<script type="math/tex">y_j</script>，<script type="math/tex">y_j</script>是一个k维向量，其表达式为：</p>
+<script type="math/tex; mode=display">
+y_j = \begin{bmatrix}y_{1j}\\y_{2j}\\ \vdots\\y_{kj}\end{bmatrix} \ , j=1,2,\dots,n \tag{17-8}</script><p>其中<script type="math/tex">y_{lj}</script>是文本<script type="math/tex">d_j</script>在话题<script type="math/tex">t_l</script>的权值，<script type="math/tex">l=1,2,\dots,k</script>，权值越大，该话题在该文本中的重要度就越高。</p>
+<p>矩阵Y表示话题在文本中出现的情况，称为<strong>话题-文本矩阵(topic-document matrix)</strong>，记作：</p>
+<script type="math/tex; mode=display">
+Y = \begin{bmatrix}
+   y_{11} & y_{12}&\dots&y_{1n} \\
+   y_{21}&y_{22}&\dots&y_{2n}\\
+   \vdots&\vdots&&\vdots\\
+   y_{k1}&t_{k2}&\dots&y_{kn}
+\end{bmatrix} \tag{17-9}</script><p>矩阵Y也可以写作<script type="math/tex">Y = \begin{bmatrix}y_1&y_2&\dots&y_n\end{bmatrix}</script>。</p>
+<h4 id="从单词向量空间到话题向量空间的线性变换"><a href="#从单词向量空间到话题向量空间的线性变换" class="headerlink" title="从单词向量空间到话题向量空间的线性变换"></a>从单词向量空间到话题向量空间的线性变换</h4><p>在单词向量空间的文本向量<script type="math/tex">x_j</script>可以通过它在话题向量空间中的向量<script type="math/tex">y_j</script>近似表示，具体地有k个话题向量以<script type="math/tex">y_j</script>为系数的线性组合近似表示：</p>
+<script type="math/tex; mode=display">
+x_j \approx y_{1j}t_1+y_{2j}t_2+\dots+y_{kj}t_k \ , j=1,2,\dots,n \tag{17-10}</script><p>所以，<strong>单词-文本矩阵X可以近似的表示为单词-话题矩阵T与话题-文本矩阵Y的乘积形式</strong>。</p>
+<p><strong>这就是潜在语义分析</strong>：</p>
+<script type="math/tex; mode=display">
+X \approx TY \tag{17-11}</script><blockquote>
+<p>直观上，潜在语义分析是将文本在单词向量空间的表示通过线性变换转换为在话题向量空间中的表示。这个线性变换由矩阵因子分解式(17-11)的形式体现。</p>
+</blockquote>
+<p><img src="image/17-1.png" alt="17-1"></p>
+<p>下图示意性的表示实现潜在语义分析的矩阵因子分解：</p>
+<p><img src="image/17-2.png" alt="17-1"></p>
+<p>要进行潜在语义分析，需要同时决定两部分的内容：</p>
+<ol>
+<li>话题向量空间T</li>
+<li>文本在话题空间的表示Y</li>
+</ol>
+<p>使得两者的乘积是原始矩阵数据的近似。</p>
+<h2 id="潜在语义分析算法"><a href="#潜在语义分析算法" class="headerlink" title="潜在语义分析算法"></a>潜在语义分析算法</h2><p>潜在语义分析利用矩阵奇异值分解，具体地，对单词-文本矩阵进行奇异值分解，将其左矩阵作为话题向量空间，将其对角矩阵与右矩阵的乘积作为文本在话题向量空间的表示。</p>
+<h3 id="矩阵奇异值分解算法"><a href="#矩阵奇异值分解算法" class="headerlink" title="矩阵奇异值分解算法"></a>矩阵奇异值分解算法</h3><h4 id="单词-文本矩阵"><a href="#单词-文本矩阵" class="headerlink" title="单词-文本矩阵"></a>单词-文本矩阵</h4><p>给定一个文本集合<script type="math/tex">D = \{d_1,d_2,\dots,d_n\}</script>和一个相应的单词集合<script type="math/tex">W = \{w_1,w_2,\dots,w_m\}</script>。潜在语义分析首先将这些数据表示称一个单词-文本矩阵:</p>
+<script type="math/tex; mode=display">
+X = \begin{bmatrix}
+   x_{11} & x_{12}&\dots&x_{1n} \\
+   x_{21}&x_{22}&\dots&x_{2n}\\
+   \vdots&\vdots&&\vdots\\
+   x_{m1}&x_{m2}&\dots&x_{mn}
+\end{bmatrix} \tag{17-12}</script><p>这是一个mxn矩阵，元素<script type="math/tex">x_{ij}</script>表示单词<script type="math/tex">w_i</script>在文本<script type="math/tex">d_j</script>中出现的频数或权值。</p>
+<h4 id="截断奇异值分解"><a href="#截断奇异值分解" class="headerlink" title="截断奇异值分解"></a>截断奇异值分解</h4><p>潜在语义分析根据确定的话题个数k，对单词-文本矩阵X进行截断奇异值分解：</p>
+<script type="math/tex; mode=display">
+X \approx U_k\Sigma_kV_k^{\top} = \begin{bmatrix}u_1&u_2&\dots&u_k\end{bmatrix} \begin{bmatrix}\sigma_1&0&\dots&0\\0&\sigma_2&\dots&0\\0&0&\ddots&0\\0&0&\dots&\sigma_k\end{bmatrix}\begin{bmatrix}u_1^{\top}\\u_2^{\top}\\\vdots\\u_k^{\top}\end{bmatrix} \tag{17-13}</script><p>式中<script type="math/tex">k\le n\le m</script>，<script type="math/tex">U_k\in m\times k</script>，它的列由X的前k个互相正交的左奇异向量组成，<script type="math/tex">\Sigma_k</script>是k阶对角矩阵，对角元素为前k个最大奇异值，<script type="math/tex">V_k</script>是nxk矩阵，它的列由X的前k个互相正交的右奇异向量组成。</p>
+<h4 id="话题向量空间-2"><a href="#话题向量空间-2" class="headerlink" title="话题向量空间"></a>话题向量空间</h4><p>在单词-文本矩阵X的截断奇异值分解式(17-13)中，矩阵<script type="math/tex">U_k</script>的每一列向量<script type="math/tex">u_1,u_2,\dots,u_k</script>表示一个话题，称为话题向量。由这k个话题向量张成一个子空间:</p>
+<script type="math/tex; mode=display">
+U_k = \begin{bmatrix}u_1&u_2&\dots&u_k\end{bmatrix}</script><p>称为话题的向量空间。</p>
+<h4 id="文本的话题空间表示"><a href="#文本的话题空间表示" class="headerlink" title="文本的话题空间表示"></a>文本的话题空间表示</h4><p>将式(17-13)写作：</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+X &= \begin{bmatrix}x_1&x_2&\dots&x_n\end{bmatrix} \approx U_k\Sigma_kV_k^{\top} \\
+&= \begin{bmatrix}u_1&u_2&\dots&u_k\end{bmatrix} \begin{bmatrix}\sigma_1&0&\dots&0\\0&\sigma_2&\dots&0\\0&0&\ddots&0\\0&0&\dots&\sigma_k\end{bmatrix}\begin{bmatrix}
+   u_{11} & u_{21}&\dots&u_{n1} \\
+   u_{12}&u_{22}&\dots&u_{n2}\\
+   \vdots&\vdots&&\vdots\\
+   u_{1k}&u_{2k}&\dots&u_{nk}
+\end{bmatrix}\\
+&= \begin{bmatrix}u_1&u_2&\dots&u_k\end{bmatrix} \begin{bmatrix}
+   \sigma_1u_{11} & \sigma_1u_{21}&\dots&\sigma_1u_{n1} \\
+   \sigma_2u_{12}&\sigma_2u_{22}&\dots&\sigma_2u_{n2}\\
+   \vdots&\vdots&&\vdots\\
+   \sigma_ku_{1k}&\sigma_ku_{2k}&\dots&\sigma_ku_{nk}
+\end{bmatrix}
+\end{aligned} \tag{17-14}</script><p>其中</p>
+<script type="math/tex; mode=display">
+u_l = \begin{bmatrix}u_{1l}\\u_{2l}\\\vdots\\u_{ml}\end{bmatrix} \ , l=1,2,\dots,k</script><p>由式(17-14)知，矩阵X的第j列向量<script type="math/tex">x_j</script>满足：</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+x_j &\approx U_k(\Sigma_kV_k^{\top})_j\\
+&= \begin{bmatrix}u_1&u_2&\dots&u_k\end{bmatrix} \begin{bmatrix}\sigma_1v_{j1}\\\sigma_2v_{j2}\\\vdots\\\sigma_kv_{jk}\end{bmatrix}\\
+&= \sum_{l=1}^k \sigma_lv_{jl}u_l
+\end{aligned} \ , j=1,2,\dots,n \tag{17-15}</script><p>式中<script type="math/tex">(\Sigma_kV_k^{\top})_j</script>是u矩阵<script type="math/tex">(\Sigma_kV_k)^{\top}</script>的第j列向量。式(17-15)是文本<script type="math/tex">d_j</script>的近似表达式，由k个话题向量<script type="math/tex">u_l</script>的线性组合构成。矩阵<script type="math/tex">(\Sigma_kV_k^{\top})</script>的每一列向量：</p>
+<script type="math/tex; mode=display">
+\begin{bmatrix}\sigma_1v_{11}\\\sigma_2v_{12}\\\vdots\\\sigma_kv_{1k}\end{bmatrix} \ , \begin{bmatrix}\sigma_1v_{21}\\\sigma_2v_{22}\\\vdots\\\sigma_kv_{2k}\end{bmatrix} \ , \dots \ , \begin{bmatrix}\sigma_1v_{n1}\\\sigma_2v_{n2}\\\vdots\\\sigma_kv_{nk}\end{bmatrix}</script><p>是一个文本在话题向量空间的表示。</p>
+<p>综上，可以通过对单词-文本矩阵的奇异值分解进行潜在语义分析</p>
+<script type="math/tex; mode=display">
+X \approx U_k\Sigma_kV_k^{\top} = U_k(\Sigma_kV_k^{\top}) \tag{17-16}</script><p>得到话题空间<script type="math/tex">U_k</script>，以及文本在话题空间的表示<script type="math/tex">(\Sigma_kV_k^{\top} )</script>。</p>
+<h2 id="非负矩阵分解算法"><a href="#非负矩阵分解算法" class="headerlink" title="非负矩阵分解算法"></a>非负矩阵分解算法</h2><p>对单词-文本矩阵进行非负矩阵分解，将其左矩阵作为话题向量空间，将其右矩阵作为文本在话题向量空间的表示。</p>
+<blockquote>
+<p><strong>注意：</strong>通常单词-文本矩阵是非负的。</p>
+</blockquote>
+<h3 id="非负矩阵分解"><a href="#非负矩阵分解" class="headerlink" title="非负矩阵分解"></a>非负矩阵分解</h3><p>若一个矩阵的所有元素非负，则称该矩阵为非负矩阵，若X是非负矩阵，则记作<script type="math/tex">X\ge0</script>。</p>
+<p>给定一个非负矩阵<script type="math/tex">X\ge0</script>，找到两个非负矩阵<script type="math/tex">W\ge0</script>和<script type="math/tex">H\ge0</script>，使得</p>
+<script type="math/tex; mode=display">
+X \approx WH \tag{17-17}</script><p>即，将非负矩阵X分解为两个非负矩阵W和H的乘积的形式，称为非负矩阵分解。(<strong>注意：</strong>此处也是一个对X的近似)。</p>
+<p>假设非负矩阵X是mxn矩阵，非负矩阵W和H分别为mxk矩阵和kxn矩阵。假设<script type="math/tex">k<\min(m,n)</script>，即W和H小于原矩阵X，所以非负矩阵分解是对原数据的压缩。</p>
+<p>由式(17-17)知，矩阵X的第j列向量<script type="math/tex">x_j</script>满足：</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+x_j &\approx Wh_j\\
+&= \begin{bmatrix}w_1&w_2&\dots&w_k\end{bmatrix}\begin{bmatrix}h_{1j}\\h_{2j}\\\vdots\\h_{kj}\end{bmatrix}\\
+&= \sum_{l=1}^k h_{lj}w_l \ , j=1,2,\dots,n
+\end{aligned}\tag{17-18}</script><p>其中<script type="math/tex">h_j</script>是矩阵H的第j列，<script type="math/tex">w_l</script>是矩阵W的第l列，<script type="math/tex">h_{lj}</script>是<script type="math/tex">h_j</script>的第l个元素，<script type="math/tex">l=1,2,\dots,k</script>。</p>
+<p>式(17-18)表示，矩阵X的第j列<script type="math/tex">x_j</script>可以由矩阵W的k个列<script type="math/tex">w_l</script>的线性组合逼近，线性组合的系数是矩阵H的第j列<script type="math/tex">h_j</script>的元素。<strong>矩阵W的列向量为一组基，矩阵H的列向量为线性组合系数。称W为基矩阵，H为系数矩阵</strong>。</p>
+<p>非负矩阵分解旨在用较少的基向量来表示较大的数据矩阵。</p>
+<h3 id="潜在语义分析模型"><a href="#潜在语义分析模型" class="headerlink" title="潜在语义分析模型"></a>潜在语义分析模型</h3><p>给定一个mxn非负单词-文本矩阵<script type="math/tex">X \ge 0</script>。假设文本集合共包含k个话题，对X进行非负矩阵分解。即求非负的mxk矩阵<script type="math/tex">W\ge 0</script>和kxn矩阵<script type="math/tex">H\ge 0</script>，使得</p>
+<script type="math/tex; mode=display">
+X \approx WH \tag{17-19}</script><p>令<script type="math/tex">W=\begin{bmatrix}w_1&w_2&\dots&w_k\end{bmatrix}</script>为话题向量空间，<script type="math/tex">w_1,w_2,\dots,w_k</script>表示文本集合的k个话题，令<script type="math/tex">H=\begin{bmatrix}h_1&h_2&\dots&h_n\end{bmatrix}</script>为文本在话题向量空间的表示，<script type="math/tex">h_1,h_2,\dots,h_n</script>表示文本集合的n个文本。</p>
+<blockquote>
+<p>非负矩阵分解具有很直观的解释，话题向量和文本向量都非负，对应着”伪概率分布”，向量的线性组合表示局部叠加构成整体。</p>
+</blockquote>
+<p>非负矩阵分解可以形式化为最优化问题求解。</p>
+<p>首先，定义损失函数或代价函数。</p>
+<p><strong>第一种损失函数是平方损失</strong>：</p>
+<p>设两个非负矩阵<script type="math/tex">A=[a_{ij}]_{m\times n}</script>和<script type="math/tex">B=[b_{ij}]_{m\times n}</script>，平方损失函数定义为:</p>
+<script type="math/tex; mode=display">
+\|A-B\|^2 = \sum_{ij}(a_{ij}-b_{ij})^2 \tag{17-20}</script><p>其下界为0，当且仅当A=B时达到下界。</p>
+<p><strong>另一种损失函数是散度(divergence)</strong>：</p>
+<p>设两个非负矩阵<script type="math/tex">A=[a_{ij}]_{m\times n}</script>和<script type="math/tex">B=[b_{ij}]_{m\times n}</script>，散度损失函数定义为:</p>
+<script type="math/tex; mode=display">
+D(A\|B) = \sum_{i,j}(a_{ij}\log \frac{a_{ij}}{b_{ij}}-a_{ij}+b_{ij})\tag{17-21}</script><p>其下界也是0，当且仅当A=B时达到下界。A和B不对称。</p>
+<p>当<script type="math/tex">\sum_{i,j}a_{ij} = \sum_{i,j}b_{ij}=1</script>时，散度损失函数退化为KL(Kullback-Leiber)散度或相对熵，这时A和B是概率分布。</p>
+<p>接着，定义最优化问题：</p>
+<p>目标函数<script type="math/tex">\|X-WH\|^2</script>关于W和H的最小化，满足约束条件<script type="math/tex">W,H\ge0</script>，即</p>
+<script type="math/tex; mode=display">
+\min_{W,H} = \|X-WH\|^2 \tag{17-22}</script><p>s.t.</p>
+<script type="math/tex; mode=display">
+W,H\ge0</script><p>或者，目标函数<script type="math/tex">D(X\|WH)</script>关于W和H的最小化，满足约束条件<script type="math/tex">W,H\ge0</script>，即</p>
+<script type="math/tex; mode=display">
+\min_{W,H} D(X\|WH) \tag{17-23}</script><p>s.t.</p>
+<script type="math/tex; mode=display">
+W,H\ge0</script><h3 id="算法"><a href="#算法" class="headerlink" title="算法"></a>算法</h3><p><strong>求解最优化问题(17-22)和问题(17-23)</strong>。</p>
+<p>由于目标函数<script type="math/tex">\|X-WH\|^2</script>和<script type="math/tex">D(X\|WH)</script>只是对变量W和H之一的凸函数，而不是同时对两个变量的凸函数，因此找到全局最优(最小值)比较困难，<strong>可以通过数值最优化方法求局部最优(极小值)</strong>。</p>
+<blockquote>
+<p>梯度下降简单但是收敛速度慢；共轭梯度法收敛快但复杂。</p>
+</blockquote>
+<p>这里使用基于”乘法更新规则”的优化算法，交替地对W和H进行更新，其理论依据是下面的定理。</p>
+<p><strong>定理17.1</strong> 平方损失<script type="math/tex">\|X-WH\|^2</script>对下列乘法更新规则：</p>
+<script type="math/tex; mode=display">
+H_{lj} \leftarrow H_{lj}\frac{(W^{\top}X)_{lj}}{(W^{\top}WH)_{lj}}\tag{17-24}</script><script type="math/tex; mode=display">
+W_{il} \leftarrow W_{il}\frac{(XH^{\top})_{il}}{(WHH^{\top})_{il}}\tag{17-25}</script><p>是非增的。当且仅当W和H是平方损失函数的稳定点时，函数的更新不变。</p>
+<blockquote>
+<p>什么是稳定点？</p>
+</blockquote>
+<p><strong>定理17.2</strong> 散度损失<script type="math/tex">D(X\|WH)</script>对下列乘法更新规则：</p>
+<script type="math/tex; mode=display">
+H_{lj}\leftarrow H_{lj} \frac{\sum_i[W_{il}X_{ij}/(WH)_{ij}]}{\sum_i W_{il}}\tag{17-26}</script><script type="math/tex; mode=display">
+W_{il}\leftarrow W_{il}\frac{\sum_{j}[H_{lj}X_{ij}/(WH)_{ij}]}{\sum_j H_{lj}}\tag{17-27}</script><p>是非增的。当且仅当W和H是散度损失函数的稳定点时，函数的更新不变。</p>
+<blockquote>
+<p>定理17.1和定理17.2给出了乘法更新规则。定理的证明可以参阅文献:<a href="https://papers.nips.cc/paper/1861-algorithms-for-non-negative-matrix-factorization.pdf" target="_blank" rel="noopener">Algorithms for Non-negative Matrix Factorization</a></p>
+</blockquote>
+<p>最优化目标函数是<script type="math/tex">\|X-WH\|^2</script>，为了方便将目标函数乘以<script type="math/tex">\frac{1}{2}</script>，其最优解与原问题相同，记作：</p>
+<script type="math/tex; mode=display">
+J(W,H) = \frac{1}{2}\|X-WH\|^2 = \frac{1}{2}\sum [X_{ij}-(WH)_{ij}]^2</script><p>应用梯度下降法求解。</p>
+<p>首先求目标函数的梯度：</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+\frac{\partial J(W,H)}{\partial W_{il}} &= -\sum_j[X_{ij}-(WH)_{ij}]H_{lj}\\
+&= - [(XH^{\top})_{il}-(WHH^{\top})_{il}]
+\end{aligned}\tag{17-28}</script><p>同样可得</p>
+<script type="math/tex; mode=display">
+\frac{\partial J(W,H)}{\partial H_{lj}} = - [(W^{\top}X)_{lj}-(W^{\top}WH)_{lj}] \tag{17-29}</script><p>然后，求得梯度下降法的更新规则，由式(17-28)和式(17-29)有：</p>
+<script type="math/tex; mode=display">
+W_{il} = W_{il}+\lambda_{il}[(XH^{\top})_{il}-(WHH^{\top})_{il}] \tag{17-30}</script><script type="math/tex; mode=display">
+H_{lj}=H_{lj}+\mu_{lj} [(W^{\top}X)_{lj}-(W^{\top}WH)_{lj}] \tag{17-31}</script><p>式中<script type="math/tex">\lambda_{il}</script>，<script type="math/tex">\mu_{lj}</script>是步长。选取：</p>
+<script type="math/tex; mode=display">
+\lambda_{il} = \frac{W_{il}}{(WHH^{\top})_{il}}\ , \mu_{lj} = \frac{H_{lj}}{(W^{\top}WH)_{lj}} \tag{17-32}</script><p>即得乘法更新规则</p>
+<script type="math/tex; mode=display">
+W_{il}=W_{il}\frac{(XH^{\top})_{il}}{(WHH^{\top})_{il}} \ , i=1,2,\dots,m;l=1,2,\dots,k \tag{17-33}</script><script type="math/tex; mode=display">
+H_{lj} = H_{lj}\frac{(W^{\top}X)_{lj}}{(W^{\top}WH)_{lj}} \ , l=1,2,\dots,k;j=1,2,\dots,n \tag{17-34}</script><p><strong>选取初始矩阵W和H为非负矩阵，可以保证迭代过程及结果的矩阵W和H均为非负</strong>。</p>
+<p><strong>算法17.1(非负矩阵分解的迭代算法)</strong></p>
+<p>输入：单词-文本矩阵<script type="math/tex">X\ge0</script>，文本集合的话题个数k，最大迭代次数t；</p>
+<p>输出：话题矩阵W，文本表示矩阵H.</p>
+<ol>
+<li><p>初始化</p>
+<script type="math/tex; mode=display">W\ge0$$，并对W的每一列数据归一化
+
+$$H\ge0</script></li>
+<li><p>迭代</p>
+<p>对迭代次数由1到t执行下列步骤：</p>
+<p>a)更新W的元素，对l从1到k，i从1到m按式(17-33)更新<script type="math/tex">W_{il}</script>；</p>
+<p>b)更新H的元素，对l从1到k，j从1到n按式(17-34)更新<script type="math/tex">H_{lj}</script></p>
+</li>
+</ol>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/无监督学习/" rel="tag"># 无监督学习</a>
+          
+            <a href="/tags/潜在语义分析/" rel="tag"># 潜在语义分析</a>
+          
+            <a href="/tags/主题模型/" rel="tag"># 主题模型</a>
+          
+            <a href="/tags/LSA/" rel="tag"># LSA</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/08/28/pca/" rel="next" title="PCA主成分分析">
+                <i class="fa fa-chevron-left"></i> PCA主成分分析
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+      <div id="disqus_thread">
+        <noscript>
+          Please enable JavaScript to view the
+          <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a>
+        </noscript>
+      </div>
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">jozee</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">36</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">5</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">75</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#单词向量空间与话题向量空间"><span class="nav-number">1.</span> <span class="nav-text">单词向量空间与话题向量空间</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#单词向量空间"><span class="nav-number">1.1.</span> <span class="nav-text">单词向量空间</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#话题向量空间"><span class="nav-number">1.2.</span> <span class="nav-text">话题向量空间</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#话题向量空间-1"><span class="nav-number">1.2.1.</span> <span class="nav-text">话题向量空间</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#文本在话题向量空间的表示"><span class="nav-number">1.2.2.</span> <span class="nav-text">文本在话题向量空间的表示</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#从单词向量空间到话题向量空间的线性变换"><span class="nav-number">1.2.3.</span> <span class="nav-text">从单词向量空间到话题向量空间的线性变换</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#潜在语义分析算法"><span class="nav-number">2.</span> <span class="nav-text">潜在语义分析算法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#矩阵奇异值分解算法"><span class="nav-number">2.1.</span> <span class="nav-text">矩阵奇异值分解算法</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#单词-文本矩阵"><span class="nav-number">2.1.1.</span> <span class="nav-text">单词-文本矩阵</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#截断奇异值分解"><span class="nav-number">2.1.2.</span> <span class="nav-text">截断奇异值分解</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#话题向量空间-2"><span class="nav-number">2.1.3.</span> <span class="nav-text">话题向量空间</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#文本的话题空间表示"><span class="nav-number">2.1.4.</span> <span class="nav-text">文本的话题空间表示</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#非负矩阵分解算法"><span class="nav-number">3.</span> <span class="nav-text">非负矩阵分解算法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#非负矩阵分解"><span class="nav-number">3.1.</span> <span class="nav-text">非负矩阵分解</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#潜在语义分析模型"><span class="nav-number">3.2.</span> <span class="nav-text">潜在语义分析模型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#算法"><span class="nav-number">3.3.</span> <span class="nav-text">算法</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">jozee</span>
+
+  
+</div>
+<div class="busuanzi_count">
+    <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js">
+    </script>
+    <span> 本站访客数:<span id="busuanzi_value_site_uv"></span>人</span>
+    <span class="post-meta-divider">|</span>
+    <span>本站总访问量:<span id="busuanzi_value_site_pv"></span>次</span>
+</div>
+
+
+
+
+
+
+
+
+
+        
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+    
+      <script id="dsq-count-scr" src="https://jozeelin.disqus.com/count.js" async></script>
+    
+
+    
+      <script type="text/javascript">
+        var disqus_config = function () {
+          this.page.url = 'https://jozeelin.github.io/2019/09/01/lsa/';
+          this.page.identifier = '2019/09/01/lsa/';
+          this.page.title = '潜在语义分析';
+        };
+        var d = document, s = d.createElement('script');
+        s.src = 'https://jozeelin.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', '' + +new Date());
+        (d.head || d.body).appendChild(s);
+      </script>
+    
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+  
+
+  
+
+</body>
+</html>
