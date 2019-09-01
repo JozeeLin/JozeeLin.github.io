@@ -1,0 +1,966 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+  <meta name="google-site-verification" content="iejSa-LmOb9d1GguAcEsQNUsQviccOieHkuG1c1E2YI">
+
+
+
+  <meta name="msvalidate.01" content="83768A52AE58ADF203609FEF9C55FF47">
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="无监督学习,概率潜在语义分析,主题模型,PLSA,">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="概率潜在语义分析(probabilistic latent semantic analysis,PLSA)，也称概率潜在语义索引(PLSI)，是一种利用概率生成模型对文本集合进行话题分析的无监督学习方法。 模型的最大特点是用隐变量表示话题。整个模型表示文本生成话题，话题生成单词，从而得到单词-文本共现矩阵的过程。这里自然而然的就可以想到使用EM算法求解这类问题了。 假设每个文本由一个话题分布决定，">
+<meta name="keywords" content="无监督学习,概率潜在语义分析,主题模型,PLSA">
+<meta property="og:type" content="article">
+<meta property="og:title" content="概率潜在语义分析">
+<meta property="og:url" content="https://jozeelin.github.io/2019/09/01/plsa/index.html">
+<meta property="og:site_name" content="Jozee&#39;s技术博客">
+<meta property="og:description" content="概率潜在语义分析(probabilistic latent semantic analysis,PLSA)，也称概率潜在语义索引(PLSI)，是一种利用概率生成模型对文本集合进行话题分析的无监督学习方法。 模型的最大特点是用隐变量表示话题。整个模型表示文本生成话题，话题生成单词，从而得到单词-文本共现矩阵的过程。这里自然而然的就可以想到使用EM算法求解这类问题了。 假设每个文本由一个话题分布决定，">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://jozeelin.github.io/2019/09/01/plsa/image/18-1.png">
+<meta property="og:image" content="https://jozeelin.github.io/2019/09/01/plsa/image/18-2.png">
+<meta property="og:image" content="https://jozeelin.github.io/2019/09/01/plsa/image/18-3.png">
+<meta property="og:image" content="https://jozeelin.github.io/2019/09/01/plsa/image/18-4.png">
+<meta property="og:image" content="https://jozeelin.github.io/2019/09/01/plsa/image/18-5.png">
+<meta property="og:updated_time" content="2019-09-01T13:15:57.548Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="概率潜在语义分析">
+<meta name="twitter:description" content="概率潜在语义分析(probabilistic latent semantic analysis,PLSA)，也称概率潜在语义索引(PLSI)，是一种利用概率生成模型对文本集合进行话题分析的无监督学习方法。 模型的最大特点是用隐变量表示话题。整个模型表示文本生成话题，话题生成单词，从而得到单词-文本共现矩阵的过程。这里自然而然的就可以想到使用EM算法求解这类问题了。 假设每个文本由一个话题分布决定，">
+<meta name="twitter:image" content="https://jozeelin.github.io/2019/09/01/plsa/image/18-1.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://jozeelin.github.io/2019/09/01/plsa/">
+
+
+
+
+
+  <title>概率潜在语义分析 | Jozee's技术博客</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Jozee's技术博客</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://jozeelin.github.io/2019/09/01/plsa/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="jozee">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Jozee's技术博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">概率潜在语义分析</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-09-01T21:14:03+08:00">
+                2019-09-01
+              </time>
+            
+
+            
+              <span class="post-meta-divider">|</span>
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-check-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">更新于&#58;</span>
+              
+              <time title="更新于" itemprop="dateModified" datetime="2019-09-01T21:15:57+08:00">
+                2019-09-01
+              </time>
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/机器学习/" itemprop="url" rel="index">
+                    <span itemprop="name">机器学习</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2019/09/01/plsa/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2019/09/01/plsa/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+          <span id="busuanzi_container_page_pv">
+            <span class="post-meta-divider">|</span>
+            <span class="post-meta-item-icon">
+            <i class="fa fa-eye"></i>
+            </span>
+            阅读量: <span id="busuanzi_value_page_pv"></span>次
+          </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>概率潜在语义分析(probabilistic latent semantic analysis,PLSA)，也称概率潜在语义索引(PLSI)，是一种利用概率生成模型对文本集合进行话题分析的无监督学习方法。</p>
+<p>模型的最大特点是<strong>用隐变量表示话题</strong>。整个模型表示文本生成话题，话题生成单词，从而得到单词-文本共现矩阵的过程。<strong>这里自然而然的就可以想到使用EM算法求解这类问题了</strong>。</p>
+<p><strong>假设每个文本由一个话题分布决定，每个话题由一个单词分布决定</strong>。</p>
+<h2 id="概率潜在语义分析模型"><a href="#概率潜在语义分析模型" class="headerlink" title="概率潜在语义分析模型"></a>概率潜在语义分析模型</h2><p>概率潜在语义分析模型有生成模型，以及等价的共现模型。</p>
+<h3 id="基本想法"><a href="#基本想法" class="headerlink" title="基本想法"></a>基本想法</h3><p>给定一个文本集合，每个文本讨论若干个话题，每个话题由若干个单词表示。</p>
+<p>对文本集合进行概率潜在语义分析，就能够发现每个文本的话题，以及每个话题的单词。话题是不能从数据中直接观察到的，是潜在的。</p>
+<p>文本数据基于如下的概率模型产生(共现模型)：首先，有话题的概率分布；然后，有话题给定条件下文本的条件概率分布，以及话题给定条件下单词的条件概率分布。<strong>概率潜在语义分析就是发现由隐变量表示的话题，即潜在语义</strong>。</p>
+<p>如下图所示，假设有3个潜在的话题，图中红、绿、蓝框各自表示一个话题：</p>
+<p><img src="image/18-1.png" alt="18-1"></p>
+<p>直观上，语义相近的单词、语义相近的文本会被聚到相同的”软类别”中，即话题所表示的就是这样的软类别。</p>
+<h3 id="生成模型"><a href="#生成模型" class="headerlink" title="生成模型"></a>生成模型</h3><p>假设有单词集合<script type="math/tex">W=\{w_1,w_2,\dots,w_M\}</script>，其中M是单词个数；文本(指标)集合<script type="math/tex">D=\{d_1,d_2,\dots,d_N\}</script>，其中N是文本个数；话题集合<script type="math/tex">Z=\{z_1,z_2,\dots,z_K\}</script>，其中K是预先设定的话题个数。随机变量w取值于单词集合；随机变量d取值于文本集合，随机变量z取值于话题集合。</p>
+<p>概率分布P(d)、条件概率分布P(z|d)、条件概率分布P(w|z)皆属于<strong>多项式分布</strong>，其中P(d)表示生成文本d的概率，P(z|d)表示文本d生成话题z的概率，P(w|z)表示话题z生成单词w的概率。</p>
+<p>每个文本d拥有自己的话题概率分布P(z|d)，每个话题z拥有自己的单词概率分布P(w|z)；也就是说一个文本的内容由其相关话题决定，一个话题的内容由其相关单词决定。</p>
+<p>生成模型通过以下步骤生成文本-单词共现数据：</p>
+<ol>
+<li>依据概率分布P(d)，从文本集合中随机选取一个文本d，共生成N个文本；针对每个文本执行以下操作：<ol>
+<li>在文本d给定条件下，依据条件概率分布P(z|d)，从话题集合随机选取一个话题z，共生成L个话题，这里L是文本长度。</li>
+<li>在话题z的给定条件下，依据条件概率分布P(w|z)，从单词集合中随机选取一个单词w</li>
+</ol>
+</li>
+</ol>
+<blockquote>
+<p>为了叙述方便，这里假设文本是等长度的。</p>
+</blockquote>
+<p>生成模型中，单词变量w与文本变量d是观测变量，话题变量z是隐变量。</p>
+<p>从数据的生成过程可以推出，文本-单词共现数据T的生成概率为所有单词-文本对(w,d)的生成概率的乘积，(似然函数)</p>
+<script type="math/tex; mode=display">
+P(T) = \prod_{(w,d)}P(w,d)^{n(w,d)} \tag{18-1}</script><p>这里n(w,d)表示(w,d)出现次数，单词-文本对出现的总次数是NxL。每个单词-文本对(w,d)的生成概率由以下公式决定：</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+P(w,d)&=P(d)P(w|d)\\
+&= P(d)\sum_z P(w,z|d)\\
+&= P(d) \sum_z P(z|d)P(w|z)
+\end{aligned}\tag{18-2}</script><p>式(18-2)即生成模型的定义。</p>
+<p><strong>假设生成模型在话题z给定条件下，单词w与文本d条件独立</strong>，即</p>
+<script type="math/tex; mode=display">
+P(w,z|d) = P(z|d)P(w|z) \tag{18-3}</script><p>生成模型属于概率有向图模型，可以用有向图表示，如下图所示：</p>
+<p><img src="image/18-2.png" alt="18-2"></p>
+<p>图中实心圆d，w表示观测变量，空心圆z表示隐变量，箭头表示概率依存关系，方框表示多次重复，方块内的数字N,L分别表示重复次数。</p>
+<h3 id="共现模型"><a href="#共现模型" class="headerlink" title="共现模型"></a>共现模型</h3><p>可以定义与以上的生成模型等价的共现模型。</p>
+<p>文本-单词共现数据T的生成概率为所有单词-文本对(w,d)的生成概率的乘积：</p>
+<script type="math/tex; mode=display">
+P(T) = \prod_{(w,d)}P(w,d)^{n(w,d)} \tag{18-4}</script><p>每个单词-文本对(w,d)的概率由以下公式决定：</p>
+<script type="math/tex; mode=display">
+P(w,d) = \sum_{z\in Z} P(z)P(w|z)P(d|z) \tag{18-5}</script><p>式(18-5)即共现模型的定义。因此，生成模型(18-2)和共现模型(18-5)是等价的。</p>
+<p>共现模型假设在话题z给定条件下，单词w与文本d是条件独立的，即：</p>
+<script type="math/tex; mode=display">
+P(w,d|z) = P(w|z)P(d|z) \tag{18-6}</script><p>如下图所示为共现模型：</p>
+<p><img src="image/18-3.png" alt="18-3"></p>
+<p>图中文本变量d是一个观测变量，单词变量w是一个观测变量，话题变量z是一个隐变量。</p>
+<p><strong>生成模型刻画文本-单词共现数据生成的过程</strong>。式(18-2)中单词变量w与文本变量d是非对称的。</p>
+<p><strong>共现模型描述文本-单词共现数据拥有的模式</strong>。式(18-5)中单词变量w与文本变量d是对称的。</p>
+<p>所以生成模型称为非对称模型，共现模型称为对称模型。由于模型形式不同，其学习算法形式也不同。</p>
+<h3 id="模型性质"><a href="#模型性质" class="headerlink" title="模型性质"></a>模型性质</h3><h4 id="模型参数"><a href="#模型参数" class="headerlink" title="模型参数"></a>模型参数</h4><p>如果直接定义单词与文本的共现概率P(w,d)，模型参数的个数是<script type="math/tex">O(M\bullet N)</script>，其中M是单词数，N是文本数。概率潜在语义分析的生成模型和共现模型的参数个数是<script type="math/tex">O(M\bullet K+N\bullet K)</script>，其中K是话题数，且<script type="math/tex">K\ll M</script>，所以概率潜在语义分析通过话题对数据进行了更简洁的表示，减少了学习过程中过拟合的可能性。</p>
+<p>下图显示了文本、话题、单词之间的关系：</p>
+<p><img src="image/18-4.png" alt="18-4"></p>
+<h4 id="模型的几何解释"><a href="#模型的几何解释" class="headerlink" title="模型的几何解释"></a>模型的几何解释</h4><p>概率分布P(w|d) 表示文本d生成单词w的概率：</p>
+<script type="math/tex; mode=display">
+\sum_{i=1}^M P(w_i|d) = 1 \ , 0\le P(w_i|d) \le 1 \ , i=1,\dots,M</script><p>由M维空间的(M-1)单纯形(simplex)中的点表示。</p>
+<p>从式(18-2)可知，概率潜在分析模型(生成模型)中的文本概率分布P(w|d)有如下关系成立：</p>
+<script type="math/tex; mode=display">
+P(w|d) = \sum_z P(z|d)P(w|z) \tag{18-7}</script><p>这里概率分布P(w|z)表示话题z生成单词w的概率。</p>
+<p>概率分布P(w|z)也存在于M维空间中的(M-1)单纯形之中。</p>
+<p>如果有K个话题，那么就有K个概率分布<script type="math/tex">P(w|z_k) \ , k=1,2,\dots,K</script>，由(M-1)单纯形上的K个点表示。以这K个点为顶点，构成一个(K-1)单纯形，称为<strong>话题单纯形</strong>。</p>
+<p>话题单纯形是单词单纯形的子单纯形。</p>
+<p>从式(18-7)可知，**生成模型中文本的分布P(w|d)可以由K个话题的分布<script type="math/tex">P(w|z_k) \ , k=1,\dots,K</script>的线性组合表示，文本对应的点就在K个话题的点构成的(K-1)话题单纯形中。</p>
+<h4 id="与潜在语义分析的关系"><a href="#与潜在语义分析的关系" class="headerlink" title="与潜在语义分析的关系"></a>与潜在语义分析的关系</h4><p>概率潜在语义分析模型(共现模型)可以在潜在语义分析的框架下描述。</p>
+<p>下图显示潜在语义分析，对单词-文本矩阵进行奇异值分解得到<script type="math/tex">X = U\Sigma V^{\top}</script>：</p>
+<p><img src="image/18-5.png" alt="18-5"></p>
+<p>共现模型(18-5)也可以表示文三个矩阵乘积的形式：</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+X^{'} &= U^{'}\Sigma^{'}V^{'^{\top}}\\
+X^{'} &= [P(w,d)]_{M\times N}\\
+U^{'} &= [P(w|z)]_{M\times K}\\
+\Sigma^{'} &= [P(z)]_{K\times K}\\
+V^{'} &= [P(d|z)]_{N\times K}
+\end{aligned}\tag{18-8}</script><p>概率潜在语义分析模型(18-8)中的矩阵<script type="math/tex">U^{'}</script>和<script type="math/tex">V^{'}</script>是非负的、规范化的，表示条件概率分布，而潜在语义分析模型中的矩阵U和V是正交的，未必非负，并不表示概率分布。</p>
+<h2 id="概率潜在语义分析的算法"><a href="#概率潜在语义分析的算法" class="headerlink" title="概率潜在语义分析的算法"></a>概率潜在语义分析的算法</h2><p>本节介绍生成模型学习的EM算法。</p>
+<p>EM算法是一种迭代算法，每次迭代包括交替的两步：E步，求期望；就是计算Q函数，即完全数据的对数似然函数对不完全数据的条件分布的期望。M步，求极大；对Q函数极大化，更新参数模型。</p>
+<p>可参考第9章内容。</p>
+<p>单词集合<script type="math/tex">W=\{w_1,w_2,\dots,w_M\}</script>，其中M是单词个数；文本(指标)集合<script type="math/tex">D=\{d_1,d_2,\dots,d_N\}</script>，其中N是文本个数；话题集合<script type="math/tex">Z=\{z_1,z_2,\dots,z_K\}</script>，其中K是预先设定的话题个数。给定单词-文本共现数据<script type="math/tex">T=\{n(w_i,d_i)\} \ , i=1,2,\dots,M \ , j=1,2,\dots,N</script>，目标是估计概率潜在语义分析模型(生成模型)的参数。如果使用极大似然估计，对数似然函数是：</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+L &= \sum_{i=1}^M \sum_{j=1}^N n(w_i,d_j)\log P(w_i,d_j)\\
+&= \sum_{i=1}^M \sum_{j=1}^N n(w_i,d_j)\log\left[P(d_j)\sum_{k=1}^K P(w_i|z_k)P(z_k|d_j)\right]\\
+&=\sum_{i=1}^M\sum_{j=1}^N n(w_i,d_j)\left\{\log P(d_j)+\log \left[\sum_{k=1}^K P(w_i|z_k)P(z_k|d_j)\right]\right\}\\
+&= \sum_{i=1}^M\sum_{j=1}^N \left\{n(w_i,d_j)\log P(d_j)+n(w_i,d_j)\log \left[\sum_{k=1}^K P(w_i|z_k)P(z_k|d_j)\right]\right\}\\
+&= \sum_{j=1}^N n(d_j)\log P(d_j)+\sum_{i=1}^M\sum_{j=1}^N n(w_i,d_j)\log \left[\sum_{k=1}^K P(w_i|z_k)P(z_k|d_j)\right]\\
+&= \sum_{j=1}^N n(d_j) \left\{\log P(d_j)+\sum_{i=1}^M \frac{n(w_i,d_j)}{n(d_j)}\log \left[\sum_{k=1}^K P(w_i|z_k)P(z_k|d_j)\right] \right\}
+\end{aligned} \tag{18-9}</script><p><strong>E步：计算Q函数</strong></p>
+<p>Q函数为完全数据的对数似然函数对不完全数据的条件分布的期望。针对概率潜在语义分析的生成模型，Q函数是：</p>
+<script type="math/tex; mode=display">
+Q =\sum_{k=1}^K \left\{\sum_{j=1}^N n(d_j) \left[\log P(d_j)+\sum_{i=1}^M \frac{n(w_i,d_j)}{n(d_j)}\log  P(w_i|z_k)P(z_k|d_j) \right]\right\} P(z_k|w_i,d_j)\tag{18-10}</script><p>式中<script type="math/tex">n(d_j) = \sum_{i=1}^M n(w_i,d_j)</script>表示文本<script type="math/tex">d_j</script>中的单词个数，<script type="math/tex">n(w_i,d_j)</script>表示单词<script type="math/tex">w_i</script>在文本<script type="math/tex">d_j</script>中出现的频数。条件概率分布<script type="math/tex">P(z_k|w_i,d_j)</script>代表不完全数据，是已知变量(<strong>需要给出一个初始值</strong>)。条件概率分布<script type="math/tex">P(w_i|z_k)</script>和<script type="math/tex">P(z_k|d_j)</script>的乘积代表完全数据，是未知变量。</p>
+<p>由于<script type="math/tex">P(d_j)</script>可以直接从数据中统计得到，因此这里只考了<script type="math/tex">P(w_i|z_k)</script>，<script type="math/tex">P(z_k|d_j)</script>的估计，可将Q函数简化为函数<script type="math/tex">Q^{'}</script>。</p>
+<script type="math/tex; mode=display">
+Q^{'} = \sum_{i=1}^M \sum_{j=1}^N n(w_i,d_j) \sum_{k=1}^K P(z_k|w_i,d_j)\log \left[P(w_i|z_k)P(z_k|d_j)\right] \tag{18-11}</script><script type="math/tex; mode=display">Q^{'}$$函数中的$$P(z_k|w_i,d_j)$$可以根据贝叶斯公式计算：</script><p>P(z<em>k|w_i,d_j) = \frac{P(w_i|z_k)P(z_k|d_j)}{\sum</em>{k=1}^K P(w_i|z_k)P(z_k|d_j)} \tag{18-12}</p>
+<script type="math/tex; mode=display">
+其中$$P(z_k|d_j)$$和$$P(w_i|z_k)$$由上一步迭代得到。
+
+**M步：极大化Q函数**
+
+通过约束最优化求解Q函数的极大值，这时$$P(z_k|d_j)$$和$$P(w_i|z_k)$$是变量。因为变量$$P(w_i|z_k)$$，$$P(z_k|d_j)$$形成概率分布，满足约束条件：</script><p>\sum_{i=1}^M P(w_i|z_k) = 1 \ , k=1,2,\dots,K</p>
+<script type="math/tex; mode=display">
+</script><p>\sum_{k=1}^K P(z_k|d_j) = 1 \ , j = 1,2,\dots,N</p>
+<script type="math/tex; mode=display">
+
+应用拉格朗日法，引入拉格朗日乘子$$\tau_k$$和$$\rho_j$$，定义拉格朗日函数$$\varLambda$$：</script><p>\varLambda = Q^{‘} + \sum<em>{k=1}^K \tau_k\left(1-\sum</em>{i=1}^M P(w<em>i|z_k)\right)+\sum</em>{j=1}^N \rho<em>j \left(1- \sum</em>{k=1}^KP(z_k|d_j)\right)</p>
+<script type="math/tex; mode=display">
+将拉格朗日函数$$\varLambda$$分别对$$P(w_i|z_k)$$和$$P(z_k|d_j)$$求偏导数，并令其为0，从而得到：</script><p>\sum<em>{j=1}^N\frac{n(w_i,d_j)P(z_k|w_i,d_j)}{P(w_i|z_k)} - \tau_k = 0 \rArr \left[\sum</em>{j=1}^N n(w_i,d_j)P(z_k|w_i,d_j)\right]-\tau_k P(w_i|z_k) = 0 \<br>i=1,2,\dots,M \ ; k=1,2,\dots,K</p>
+<script type="math/tex; mode=display">
+同理的，</script><p>\left[\sum_{i=1}^M n(w_i,d_j)P(z_k|w_i,d_j)\right]-\rho_jP(z_k|d_j) = 0\<br>j=1,2,\dots,N \ ; k=1,2,\dots,K</p>
+<script type="math/tex; mode=display">
+解方程组得到M步的参数估计公式：</script><p>P(w<em>i|z_k) = \frac{\sum</em>{j=1}^N n(w<em>i,d_j)P(z_k|w_i,d_j)}{\sum</em>{m=1}^M\sum_{j=1}^N n(w_m,d_j)P(z_k|w_m,d_j)} \tag{18-13}</p>
+<script type="math/tex; mode=display">
+</script><p>P(z<em>k|d_j) = \frac{\sum</em>{i=1}^M n(w_i,d_j)P(z_k|w_i,d_j)}{n(d_j)} \tag{18-14}</p>
+<script type="math/tex; mode=display">
+
+**算法18.1(概率潜在语义模型参数估计的EM算法)**
+
+输入：设单词集合$$W=\{w_1,w_2,\dots,w_M\}$$，其中M是单词个数；文本(指标)集合$$D=\{d_1,d_2,\dots,d_N\}$$，其中N是文本个数；话题集合$$Z=\{z_1,z_2,\dots,z_K\}$$，其中K是预先设定的话题个数。给定单词-文本共现数据$$T=\{n(w_i,d_i)\} \ , i=1,2,\dots,M \ , j=1,2,\dots,N$$。
+
+输出：$$P(w_i|z_k)$$和$$P(z_k|d_j)$$。
+
+1. 设置参数$$P(w_i|z_k)$$和$$P(z_k|d_j)$$的初始值。
+
+2. 迭代执行以下E步，M步，直到收敛为止：
+
+   E步：</script><p>   P(z<em>k|w_i,d_j) = \frac{P(w_i|z_k)P(z_k|d_j)}{\sum</em>{k=1}^K P(w_i|z_k)P(z_k|d_j)}</p>
+<script type="math/tex; mode=display">
+   M步：</script><p>   P(w<em>i|z_k) = \frac{\sum</em>{j=1}^N n(w<em>i,d_j)P(z_k|w_i,d_j)}{\sum</em>{m=1}^M\sum_{j=1}^N n(w_m,d_j)P(z_k|w_m,d_j)}</p>
+<script type="math/tex; mode=display">
+</script><p>   P(z<em>k|d_j) = \frac{\sum</em>{i=1}^M n(w_i,d_j)P(z_k|w_i,d_j)}{n(d_j)}</p>
+<p>   $$</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/无监督学习/" rel="tag"># 无监督学习</a>
+          
+            <a href="/tags/概率潜在语义分析/" rel="tag"># 概率潜在语义分析</a>
+          
+            <a href="/tags/主题模型/" rel="tag"># 主题模型</a>
+          
+            <a href="/tags/PLSA/" rel="tag"># PLSA</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/09/01/lsa/" rel="next" title="潜在语义分析">
+                <i class="fa fa-chevron-left"></i> 潜在语义分析
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+      <div id="disqus_thread">
+        <noscript>
+          Please enable JavaScript to view the
+          <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a>
+        </noscript>
+      </div>
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">jozee</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">37</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">5</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">77</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#概率潜在语义分析模型"><span class="nav-number">1.</span> <span class="nav-text">概率潜在语义分析模型</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#基本想法"><span class="nav-number">1.1.</span> <span class="nav-text">基本想法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#生成模型"><span class="nav-number">1.2.</span> <span class="nav-text">生成模型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#共现模型"><span class="nav-number">1.3.</span> <span class="nav-text">共现模型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#模型性质"><span class="nav-number">1.4.</span> <span class="nav-text">模型性质</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#模型参数"><span class="nav-number">1.4.1.</span> <span class="nav-text">模型参数</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#模型的几何解释"><span class="nav-number">1.4.2.</span> <span class="nav-text">模型的几何解释</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#与潜在语义分析的关系"><span class="nav-number">1.4.3.</span> <span class="nav-text">与潜在语义分析的关系</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#概率潜在语义分析的算法"><span class="nav-number">2.</span> <span class="nav-text">概率潜在语义分析的算法</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">jozee</span>
+
+  
+</div>
+<div class="busuanzi_count">
+    <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js">
+    </script>
+    <span> 本站访客数:<span id="busuanzi_value_site_uv"></span>人</span>
+    <span class="post-meta-divider">|</span>
+    <span>本站总访问量:<span id="busuanzi_value_site_pv"></span>次</span>
+</div>
+
+
+
+
+
+
+
+
+
+        
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+    
+      <script id="dsq-count-scr" src="https://jozeelin.disqus.com/count.js" async></script>
+    
+
+    
+      <script type="text/javascript">
+        var disqus_config = function () {
+          this.page.url = 'https://jozeelin.github.io/2019/09/01/plsa/';
+          this.page.identifier = '2019/09/01/plsa/';
+          this.page.title = '概率潜在语义分析';
+        };
+        var d = document, s = d.createElement('script');
+        s.src = 'https://jozeelin.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', '' + +new Date());
+        (d.head || d.body).appendChild(s);
+      </script>
+    
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+  
+
+  
+
+</body>
+</html>
