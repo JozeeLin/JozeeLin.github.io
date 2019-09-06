@@ -94,7 +94,7 @@
 <meta property="og:image" content="https://jozeelin.github.io/2019/09/06/mcmc/image/19-1.png">
 <meta property="og:image" content="https://jozeelin.github.io/2019/09/06/mcmc/image/19-2.png">
 <meta property="og:image" content="https://jozeelin.github.io/2019/09/06/mcmc/image/19-3.png">
-<meta property="og:updated_time" content="2019-09-06T15:21:51.230Z">
+<meta property="og:updated_time" content="2019-09-06T15:27:28.469Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="马尔可夫链蒙特卡罗法">
 <meta name="twitter:description" content="蒙特卡罗法(Monte Carlo method)，也称为统计模拟方法，是通过从概率模型的随机抽样进行近似数值计算的方法。 马尔可夫链蒙特卡罗法(MCMC)，则是以马尔可夫链为概率模型的蒙特卡罗法。 马尔可夫链蒙特卡罗法构建一个马尔可夫链，首先基于该马尔可夫链进行随机游走，产生样本的序列，然后使用该平稳分布的样本进行近似数值计算。 Metropolis-Hastings算法是最基本的马尔可夫链蒙特">
@@ -316,7 +316,7 @@
               
                 <span class="post-meta-item-text">更新于&#58;</span>
               
-              <time title="更新于" itemprop="dateModified" datetime="2019-09-06T23:21:51+08:00">
+              <time title="更新于" itemprop="dateModified" datetime="2019-09-06T23:27:28+08:00">
                 2019-09-06
               </time>
             
@@ -491,7 +491,7 @@ P(X_t = i) = \pi_i = \sum_j p_{ij}\pi_j = \sum_j p_{ij}P(X_{t-1}=j) \ , i=1,2,\d
 <p>引理19.1给出一个求马尔可夫链平稳分布的方法</p>
 </blockquote>
 <h3 id="连续状态马尔可夫链"><a href="#连续状态马尔可夫链" class="headerlink" title="连续状态马尔可夫链"></a>连续状态马尔可夫链</h3><p>连续状态马尔可夫链<script type="math/tex">X=\{X_0,X_1,\dots,X_t,\dots\}</script>，随机变量<script type="math/tex">X_t(t=0,1,2,\dots)</script>定义在连续状态空间S，转移概率分布由概率转移核伙转移核(transition kernel)表示。</p>
-<p>设S是连续状态空间，对任意的<script type="math/tex">x\in S,A \sub S</script>，转移核<script type="math/tex">P(x,A)</script>定义为：</p>
+<p>设S是连续状态空间，对任意的<script type="math/tex">x\in S,A \subset S</script>，转移核<script type="math/tex">P(x,A)</script>定义为：</p>
 <script type="math/tex; mode=display">
 P(x,A)  = \int_A p(x,y)dy \tag{19-19}</script><p>其中<script type="math/tex">p(x,\bullet)</script>是概率密度函数，满足<script type="math/tex">p(x,\bullet)\ge 0,P(x,S)=\int_S p(x,y)dy=1</script>。转移核P(x,A)表示从<script type="math/tex">x \sim A</script>的转移概率：</p>
 <script type="math/tex; mode=display">
@@ -500,7 +500,7 @@ P(X_t=A|X_{t-1}=x) = P(x,A) \tag{19-20}</script><p>有时，也将概率密度�
 <script type="math/tex; mode=display">
 \pi(y) = \int p(x,y)\pi(x)dx, \forall y \in S \tag{19-21}</script><p>则称分布<script type="math/tex">\pi(x)</script>为该马尔可夫链的平稳分布。等价的：</p>
 <script type="math/tex; mode=display">
-\pi(A) = \int P(x,A)\pi(x)dx, \forall A \sub S \tag{19-22}</script><p>或简写为：</p>
+\pi(A) = \int P(x,A)\pi(x)dx, \forall A \subset S \tag{19-22}</script><p>或简写为：</p>
 <script type="math/tex; mode=display">
 \pi = P\pi \tag{19-23}</script><h3 id="马尔可夫链的性质"><a href="#马尔可夫链的性质" class="headerlink" title="马尔可夫链的性质"></a>马尔可夫链的性质</h3><p>以下为离散状态马尔可夫链的性质。</p>
 <h4 id="不可约"><a href="#不可约" class="headerlink" title="不可约"></a>不可约</h4><p><strong>定义19.3(不可约)</strong> 设有马尔可夫链<script type="math/tex">X=\{X_0,X_1,\dots,X_t,\dots\}</script>，状态空间为S，对于任意状态<script type="math/tex">i,j\in S</script>，如果存在一个时刻 t(t&gt;0)满足：</p>
@@ -637,10 +637,10 @@ q(x,x^{'}) \propto \exp(-\frac{(x^{'}-x)^2}{2})</script><p>Metropolis选择的�
 <p>独立抽样实现简单，但通常收敛速度慢，通常选择接近目标分布p(x)的分布作为建议分布q(x)。</p>
 </li>
 </ol>
-<h4 id="满条件分布"><a href="#满条件分布" class="headerlink" title="满条件分布"></a>满条件分布</h4><p>马尔可夫链蒙特卡罗法的目标分布通常是多元联合概率分布<script type="math/tex">p(x) = p(x_1,x_2,\dots,x_k)</script>，其中<script type="math/tex">x=(x_1,x_2,\dots,x_k)^{\top}</script>为k维随机变量。如果条件概率分布<script type="math/tex">p(x_I|x_{-I})</script>中所有k个变量全部出现，其中<script type="math/tex">x_I=\{x_i,i\in I\},x_{-I} = \{x_i,i\notin I\},I\sub K = \{1,2,\dots,k\}</script>，那么称这种条件概率分布为满条件分布(full conditional distribution)。</p>
-<p>满条件分布有以下性质：对任意的<script type="math/tex">x,x^{'}\in \mathcal{X}</script>和任意的<script type="math/tex">I \sub K</script>，有：</p>
+<h4 id="满条件分布"><a href="#满条件分布" class="headerlink" title="满条件分布"></a>满条件分布</h4><p>马尔可夫链蒙特卡罗法的目标分布通常是多元联合概率分布<script type="math/tex">p(x) = p(x_1,x_2,\dots,x_k)</script>，其中<script type="math/tex">x=(x_1,x_2,\dots,x_k)^{\top}</script>为k维随机变量。如果条件概率分布<script type="math/tex">p(x_I|x_{-I})</script>中所有k个变量全部出现，其中<script type="math/tex">x_I=\{x_i,i\in I\},x_{-I} = \{x_i,i\notin I\},I\subset K = \{1,2,\dots,k\}</script>，那么称这种条件概率分布为满条件分布(full conditional distribution)。</p>
+<p>满条件分布有以下性质：对任意的<script type="math/tex">x,x^{'}\in \mathcal{X}</script>和任意的<script type="math/tex">I \subset K</script>，有：</p>
 <script type="math/tex; mode=display">
-p(x_I | x_{-I}) = \frac{p(x)}{\int p(x)dx_I} \propto p(x) \tag{19-45}</script><p>而且，对任意的<script type="math/tex">x,x^{'}\in \mathcal{X}</script>和任意的<script type="math/tex">I \sub K</script>，有：</p>
+p(x_I | x_{-I}) = \frac{p(x)}{\int p(x)dx_I} \propto p(x) \tag{19-45}</script><p>而且，对任意的<script type="math/tex">x,x^{'}\in \mathcal{X}</script>和任意的<script type="math/tex">I \subset K</script>，有：</p>
 <script type="math/tex; mode=display">
 \frac{p(x^{'}_I|x^{'}_{-I})}{p(x_I|x_{-I})} = \frac{p(x^{'})}{p(x)} \tag{19-46}</script><p>Metropolis-Hastings算法中，可以利用性质(19-46)，简化计算，提高计算效率。</p>
 <p>具体地，通过满条件分布概率的比<script type="math/tex">\frac{p(x^{'}_I|x^{'}_{-I})}{p(x_I|x_{-I})}</script>计算联合概率的比<script type="math/tex">\frac{p(x^{'})}{p(x)}</script>，而前者更容易计算。</p>
