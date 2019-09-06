@@ -91,16 +91,15 @@
 <meta property="og:site_name" content="Jozee&#39;s技术博客">
 <meta property="og:description" content="潜在狄利克雷分布(latent Dirichlet allocation,LDA)，作为基于贝叶斯学习的话题模型，是潜在语义分析、概率潜在语义分析的扩展。 LDA模型是文本集合的生成概率模型。假设每个文本由话题的一个多项分布表示，每个话题由单词的一个多项分布表示，特别假设文本的话题分布的先验分布是狄利克雷分布，话题的单词分布的先验分布也是狄利克雷分布。 先验分布的导入使LDA能够更好的应对话题模型">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:image" content="https://jozeelin.github.io/2019/09/06/LDA/image/20-3.png">
-<meta property="og:image" content="https://jozeelin.github.io/2019/09/06/LDA/image/20-4.png">
-<meta property="og:image" content="https://jozeelin.github.io/2019/09/06/LDA/image/20-5.png">
-<meta property="og:image" content="https://jozeelin.github.io/2019/09/06/LDA/image/20-6.png">
-<meta property="og:image" content="https://jozeelin.github.io/2019/09/06/LDA/image/20-7.png">
-<meta property="og:updated_time" content="2019-09-06T15:47:26.604Z">
+<meta property="og:image" content="https://jozeelin.github.io/Users/jozee/Desktop/image/20-1.png">
+<meta property="og:image" content="https://jozeelin.github.io/Users/jozee/Desktop/image/20-2.jpg">
+<meta property="og:image" content="https://jozeelin.github.io/Users/jozee/Desktop/image/20-3.png">
+<meta property="og:image" content="https://jozeelin.github.io/Users/jozee/Desktop/image/20-4.png">
+<meta property="og:updated_time" content="2019-09-06T15:50:53.344Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="潜在狄利克雷分布LDA">
 <meta name="twitter:description" content="潜在狄利克雷分布(latent Dirichlet allocation,LDA)，作为基于贝叶斯学习的话题模型，是潜在语义分析、概率潜在语义分析的扩展。 LDA模型是文本集合的生成概率模型。假设每个文本由话题的一个多项分布表示，每个话题由单词的一个多项分布表示，特别假设文本的话题分布的先验分布是狄利克雷分布，话题的单词分布的先验分布也是狄利克雷分布。 先验分布的导入使LDA能够更好的应对话题模型">
-<meta name="twitter:image" content="https://jozeelin.github.io/2019/09/06/LDA/image/20-3.png">
+<meta name="twitter:image" content="https://jozeelin.github.io/Users/jozee/Desktop/image/20-1.png">
 
 
 
@@ -318,7 +317,7 @@
               
                 <span class="post-meta-item-text">更新于&#58;</span>
               
-              <time title="更新于" itemprop="dateModified" datetime="2019-09-06T23:47:26+08:00">
+              <time title="更新于" itemprop="dateModified" datetime="2019-09-06T23:50:53+08:00">
                 2019-09-06
               </time>
             
@@ -424,144 +423,100 @@ p(\theta|\alpha) = \frac{\varGamma\left(\sum_{i=1}^k \alpha_i\right)}{\prod_{i=1
 <script type="math/tex; mode=display">
 B(\alpha) = \frac{\prod_{i=1}^k \varGamma(\alpha_i)}{\varGamma\left(\sum_{i=1}^k \alpha_i\right)} \tag{20-3}</script><p>则狄利克雷分布的密度函数可以写成：</p>
 <script type="math/tex; mode=display">
-p(\theta|\alpha) = \frac{1}{B(\alpha)} \prod_{i=1}^k \theta_i^{\alpha_i-1} \tag{20-4}</script><script type="math/tex; mode=display">B(\alpha)$$是规范化因子，称为多元贝塔函数(或扩展的贝塔函数)。由密度函数的性质：</script><p>\int \frac{\varGamma\left(\sum<em>{i=1}^k \alpha_i\right)}{\prod</em>{i=1}^k \varGamma(\alpha<em>i)}\prod</em>{i=1}^k \theta<em>i^{\alpha_i-1} d\theta = \frac{\varGamma\left(\sum</em>{i=1}^k \alpha<em>i\right)}{\prod</em>{i=1}^k \varGamma(\alpha<em>i)} \int \prod</em>{i=1}^k \theta_i^{\alpha_i-1} d\theta = 1</p>
+p(\theta|\alpha) = \frac{1}{B(\alpha)} \prod_{i=1}^k \theta_i^{\alpha_i-1} \tag{20-4}</script><p>其中，<script type="math/tex">B(\alpha)</script>是规范化因子，称为多元贝塔函数(或扩展的贝塔函数)。由密度函数的性质：</p>
 <script type="math/tex; mode=display">
-得</script><p>B(\alpha) = \int \prod_{i=1}^k \theta_i^{\alpha_i-1} d\theta \tag{20-5}</p>
+\int \frac{\varGamma\left(\sum_{i=1}^k \alpha_i\right)}{\prod_{i=1}^k \varGamma(\alpha_i)}\prod_{i=1}^k \theta_i^{\alpha_i-1} d\theta = \frac{\varGamma\left(\sum_{i=1}^k \alpha_i\right)}{\prod_{i=1}^k \varGamma(\alpha_i)} \int \prod_{i=1}^k \theta_i^{\alpha_i-1} d\theta = 1</script><p>得</p>
 <script type="math/tex; mode=display">
-所以式(20-5)是多元贝塔函数的积分表示。
-
-#### 二项分布和贝塔分布
-
-二项分布是多项分布的特殊情况，贝塔分布是狄利克雷分布的特殊情况。
-
-**二项分布**是指如下概率分布。X为离散随机变量，取值为m，其概率质量函数为:</script><p>P(X=m) = \begin{pmatrix}n\m\end{pmatrix}p^m(1-p)^{n-m} \ , m=0,1,2,\dots,n \tag{20-6}</p>
+B(\alpha) = \int \prod_{i=1}^k \theta_i^{\alpha_i-1} d\theta \tag{20-5}</script><p>所以式(20-5)是多元贝塔函数的积分表示。</p>
+<h4 id="二项分布和贝塔分布"><a href="#二项分布和贝塔分布" class="headerlink" title="二项分布和贝塔分布"></a>二项分布和贝塔分布</h4><p>二项分布是多项分布的特殊情况，贝塔分布是狄利克雷分布的特殊情况。</p>
+<p><strong>二项分布</strong>是指如下概率分布。X为离散随机变量，取值为m，其概率质量函数为:</p>
 <script type="math/tex; mode=display">
-其中n和p$$(0\le p \le 1)$$是参数。
-
-**贝塔分布**是指如下概率分布，X为连续随机变量，取值范围为[0,1]，其概率密度函数为:</script><p>p(x) = \left{\begin{aligned}&amp;\frac{1}{B(s,t)}x^{s-1}(1-x)^{t-1},0\le x\le 1 \ &amp;0, 其它\end{aligned}\right . \tag{20-7}</p>
+P(X=m) = \begin{pmatrix}n\\m\end{pmatrix}p^m(1-p)^{n-m} \ , m=0,1,2,\dots,n \tag{20-6}</script><p>其中n和p<script type="math/tex">(0\le p \le 1)</script>是参数。</p>
+<p><strong>贝塔分布</strong>是指如下概率分布，X为连续随机变量，取值范围为[0,1]，其概率密度函数为:</p>
 <script type="math/tex; mode=display">
-其中，s>0和t>0是参数，$$B(s,t) = \frac{\varGamma(s)\varGamma(t)}{\varGamma(s+t)}$$是贝塔函数，定义为:</script><p>B(s,t) = \int_0^1 x^{s-1}(1-x)^{t-1}dx \tag{20-8}</p>
+p(x) = \left\{\begin{aligned}&\frac{1}{B(s,t)}x^{s-1}(1-x)^{t-1},0\le x\le 1 \\ &0, 其它\end{aligned}\right . \tag{20-7}</script><p>其中，s&gt;0和t&gt;0是参数，<script type="math/tex">B(s,t) = \frac{\varGamma(s)\varGamma(t)}{\varGamma(s+t)}</script>是贝塔函数，定义为:</p>
 <script type="math/tex; mode=display">
-当s,t是自然数时，</script><p>B(s,t) = \frac{(s-1)!(t-1)!}{(s+t-1)!} \tag{20-9}</p>
+B(s,t) = \int_0^1 x^{s-1}(1-x)^{t-1}dx \tag{20-8}</script><p>当s,t是自然数时，</p>
 <script type="math/tex; mode=display">
-当n=1时，二项分布变成伯努利分布或0-1分布。伯努利分布表示试验可能出现的2种结果的概率。
-
-下图给出了几种概率分布的关系：
-
-![20-1](image/20-1.png)
-
-
-
-### 共轭先验
-
-狄利克雷分布的一些重要性质：
-
-1. 狄利克雷分布属于指数分布族；
-2. 狄利克雷分布是多项分布的共轭先验
-
-
-
-贝叶斯学习中常使用共轭分布。如果后验分布与先验分布属于同类，则先验分布与后验分布称为共轭分布(conjugate distribution)，先验分布称为共轭先验(conjugate prior)。
-
-作为先验分布的狄利克雷分布的参数又称为超参数。**使用共轭分布的好处是便于从先验分布计算后验分布**。
-
-设$$\mathcal{W} = \{w_1,w_2,\dots,w_k\}$$是由k个元素组成的集合。随机变量X服从$$\mathcal{W}$$上的多项分布，$$X \sim \mathrm{Mult}(n,\theta)$$，其中$$n=(n_1,n_2,\dots,n_k)$$和$$\theta=(\theta_1,\theta_2,\dots,\theta_k)$$是参数。参数n为从$$\mathcal{W}$$中重复独立抽取样本的次数，$$n_i$$为样本中$$w_i$$出现的次数$$(i=1,2,\dots,k)$$；参数$$\theta_i$$为$$w_i$$出现的概率$$(i=1,2,\dots,k)$$。
-
-将样本数据表示为D，目标是计算在样本数据D给定条件下参数$$\theta$$的后验概率$$p(\theta|D)$$。对于给定的样本数据D，似然函数是:</script><p>p(D|\theta) = \theta<em>1^{n_1}\theta_2^{n_2}\dots\theta_k^{n_k} = \prod</em>{i=1}^k \theta_i^{n_i} \tag{20-10}</p>
+B(s,t) = \frac{(s-1)!(t-1)!}{(s+t-1)!} \tag{20-9}</script><p>当n=1时，二项分布变成伯努利分布或0-1分布。伯努利分布表示试验可能出现的2种结果的概率。</p>
+<p>下图给出了几种概率分布的关系：</p>
+<p><img src="/Users/jozee/Desktop/image/20-1.png" alt="20-1"></p>
+<h3 id="共轭先验"><a href="#共轭先验" class="headerlink" title="共轭先验"></a>共轭先验</h3><p>狄利克雷分布的一些重要性质：</p>
+<ol>
+<li>狄利克雷分布属于指数分布族；</li>
+<li>狄利克雷分布是多项分布的共轭先验</li>
+</ol>
+<p>贝叶斯学习中常使用共轭分布。如果后验分布与先验分布属于同类，则先验分布与后验分布称为共轭分布(conjugate distribution)，先验分布称为共轭先验(conjugate prior)。</p>
+<p>作为先验分布的狄利克雷分布的参数又称为超参数。<strong>使用共轭分布的好处是便于从先验分布计算后验分布</strong>。</p>
+<p>设<script type="math/tex">\mathcal{W} = \{w_1,w_2,\dots,w_k\}</script>是由k个元素组成的集合。随机变量X服从<script type="math/tex">\mathcal{W}</script>上的多项分布，<script type="math/tex">X \sim \mathrm{Mult}(n,\theta)</script>，其中<script type="math/tex">n=(n_1,n_2,\dots,n_k)</script>和<script type="math/tex">\theta=(\theta_1,\theta_2,\dots,\theta_k)</script>是参数。参数n为从<script type="math/tex">\mathcal{W}</script>中重复独立抽取样本的次数，<script type="math/tex">n_i</script>为样本中<script type="math/tex">w_i</script>出现的次数<script type="math/tex">(i=1,2,\dots,k)</script>；参数<script type="math/tex">\theta_i</script>为<script type="math/tex">w_i</script>出现的概率<script type="math/tex">(i=1,2,\dots,k)</script>。</p>
+<p>将样本数据表示为D，目标是计算在样本数据D给定条件下参数<script type="math/tex">\theta</script>的后验概率<script type="math/tex">p(\theta|D)</script>。对于给定的样本数据D，似然函数是:</p>
 <script type="math/tex; mode=display">
-假设随机变量$$\theta$$服从狄利克雷分布$$p(\theta|\alpha)$$，其中$$\alpha=(\alpha_1,\alpha_2,\dots,\alpha_k)$$为参数。则$$\theta$$的先验分布为：</script><p>p(\theta|\alpha) = \frac{\varGamma\left(\sum<em>{i=1}^k \alpha_i\right)}{\prod</em>{i=1}^k \varGamma(\alpha<em>i)}\prod</em>{i=1}^k \theta<em>i^{\alpha_i-1}  = \frac{1}{B(\alpha)} \prod</em>{i=1}^k \theta_i^{\alpha_i-1} =\mathrm{Dir}(\theta|\alpha) \ , \alpha_i &gt; 0 \tag{20-11}</p>
+p(D|\theta) = \theta_1^{n_1}\theta_2^{n_2}\dots\theta_k^{n_k} = \prod_{i=1}^k \theta_i^{n_i} \tag{20-10}</script><p>假设随机变量<script type="math/tex">\theta</script>服从狄利克雷分布<script type="math/tex">p(\theta|\alpha)</script>，其中<script type="math/tex">\alpha=(\alpha_1,\alpha_2,\dots,\alpha_k)</script>为参数。则<script type="math/tex">\theta</script>的先验分布为：</p>
 <script type="math/tex; mode=display">
-根据贝叶斯规则，在给定样本数据D和参数$$\alpha$$条件下，$$\theta$$ 的后验概率分布是：</script><p>\begin{aligned}<br>p(\theta|D,\alpha) &amp;= \frac{p(D|\theta)p(\theta|\alpha)}{p(D|\alpha)}\<br>&amp;=\frac{\prod<em>{i=1}^k \theta_i^{n_i} \frac{1}{B(\alpha)} \prod</em>{i=1}^k \theta<em>i^{\alpha_i-1}}{\int \prod</em>{i=1}^k \theta<em>i^{n_i} \frac{1}{B(\alpha)} \prod</em>{i=1}^k \theta<em>i^{\alpha_i-1} d\theta}\<br>&amp;= \frac{1}{B(\alpha+n)} \prod</em>{i=1}^k \theta_i^{\alpha_i+n_i-1}\<br>&amp;= \mathrm{Dir}(\theta|\alpha+n)<br>\end{aligned}\tag{20-12}</p>
+p(\theta|\alpha) = \frac{\varGamma\left(\sum_{i=1}^k \alpha_i\right)}{\prod_{i=1}^k \varGamma(\alpha_i)}\prod_{i=1}^k \theta_i^{\alpha_i-1}  = \frac{1}{B(\alpha)} \prod_{i=1}^k \theta_i^{\alpha_i-1} =\mathrm{Dir}(\theta|\alpha) \ , \alpha_i > 0 \tag{20-11}</script><p>根据贝叶斯规则，在给定样本数据D和参数<script type="math/tex">\alpha</script>条件下，<script type="math/tex">\theta</script> 的后验概率分布是：</p>
 <script type="math/tex; mode=display">
-狄利克雷后验分布的参数等于狄利克雷先验分布参数$$\alpha=(\alpha_1,\alpha_2,\dots,\alpha_k)$$加上多项分布的观测计数$$n=(n_1,n_2,\dots,n_k)$$。好像试验之前就已经观察到计数$$\alpha=(\alpha_1,\alpha_2,\dots,\alpha_k)$$，因此也把$$\alpha$$叫做**先验伪计数(prior pseudo-counts)**。
-
-## 潜在狄利克雷分配模型
-
-### 基本想法
-
-潜在狄利克雷分配是文本集合的生成概率模型。
-
-LDA模型表示文本集合的自动生成过程：
-
-1. 首先，基于单词分布的先验分布(狄利克雷分布)生成多个单词分布，即决定多个主题内容；
-2. 之后，基于话题分布的先验分布(狄利克雷分布)生成多个话题分布，即决定多个文本内容；
-3. 然后，基于每一话题分布生成话题序列，针对每个话题，基于话题的单词分布生成单词，整体构成一个单词序列，即生成文本。重复这个过程生成所有文本。
-
-下图显示LDA的文本生成过程：
-
-![20-2](image/20-2.jpg)
-
-LDA模型是概率图模型，其特点是以狄利克雷分布为多项分布的先验分布，学习就是给定文本集合，通过后验概率分布的估计，推断模型的所有参数。利用LDA进行话题分析，就是对给定文本集合，学习到每个文本的话题分布，以及每个话题的单词分布。
-
-LDA与PLSA的区别：
-
-**不同点：**
-
-1. LDA使用狄利克雷分布作为先验分布，而PLSA不使用先验分布(或者说假设先验分布是均匀分布)，两者对文本生成过程有不同假设。
-2. 学习过程LDA基于贝叶斯学习，而PLSA基于极大似然估计
-
-**相同点：**两者都假设话题是单词的多项分布，文本是话题的多项分布。
-
-**LDA的优点是，使用先验概率分布，可以防止学习过程中产生的过拟合**。
-
-### 模型定义
-
-#### 模型要素
-
-潜在狄利克雷分配使用三种集合:
-
-1. 单词集合$$\mathcal{W} = \{w_1,\dots,w_v,\dots,w_V\}$$，其中$$w_v$$是第v个单词，$$v=1,2,\dots,V$$，V是单词的个数。
-2. 文本集合$$D = \{\boldsymbol{w}_1,\dots,\boldsymbol{w}_m,\dots,\boldsymbol{w}_M\}$$，其中$$\boldsymbol{w}_m$$是第m个文本,m=1,2,...,M，M是文本的个数。文本$$\boldsymbol{w}_m$$是一个单词序列$$\boldsymbol{w}_m = (w_{m1},\dots,w_{mn},\dots,w_{mN_m})$$，其中$$w_{mn}$$是文本$$\boldsymbol{w}_m$$的第n个单词，$$n=1,2,\dots,N_m$$，$$N_m$$是文本$$\boldsymbol{w}_m$$中单词的个数。
-3. 话题集合$$Z = \{z_1,\dots,z_k,\dots,z_K\}$$，其中$$z_k$$是第k个话题，k=1,2,...,K，K是话题的个数。
-
-**每个话题$$z_k$$由一个单词的条件概率分布$$p(w|z_k)$$决定，$$w\in W$$。**分布$$p(w|z_k)$$服从多项分布(严格意义上类别分布)，其参数为$$\varphi_k$$。
-
-参数$$\varphi_k$$服从狄利克雷分布(先验分布)，其超参数为$$\beta$$。参数$$\varphi_k$$是一个V维向量$$\varphi_k=(\varphi_{k1},\varphi_{k2},\dots,\varphi_{kV})$$，其中$$\varphi_{kv}$$表示话题$$z_k$$生成单词$$w_v$$的概率。
-
-所有话题的参数向量构成一个KxV矩阵$$\boldsymbol{\varphi} = \{\varphi_k\}_{k=1}^K$$。超参数$$\beta$$也是一个V维向量$$\beta = (\beta_1,\beta_2,\dots,\beta_V)$$。
-
-**每个文本$$\boldsymbol{w}_m$$由一个话题的条件概率分布$$p(z|\boldsymbol{w}_m)$$决定的，$$z \in Z$$。**分布$$p(z|\boldsymbol{w}_m)$$服从多项分布(严格意义上类别分布)，其参数为$$\theta_m$$。
-
-参数$$\theta_m$$服从狄利克雷分布(先验分布)，其超参数为$$\alpha$$。参数$$\theta_m$$是一个K维向量$$\theta_m = (\theta_{m1},\theta_{m2},\dots,\theta_{mK})$$，其中$$\theta_{mk}$$表示文本$$\boldsymbol{w}_m$$生成话题$$z_k$$的概率。
-
-所有文本的参数向量构成一个MxK矩阵$$\boldsymbol{\theta} = \{\theta_m\}_{m=1}^M$$。超参数$$\alpha$$也是一个K维向量$$\alpha=(\alpha_1,\alpha_2,\dots,\alpha_K)$$。
-
-**每个文本$$\boldsymbol{w}_m$$中的每个单词$$w_{mn}$$由该文本的话题分布$$p(z|\boldsymbol{w}_m)$$以及所有话题的单词分布$$p(w|z_k)$$决定**。
-
-#### 生成过程
-
-LDA文本集合的生成过程如下：
-
-给定单词集合W，文本集合D，话题集合Z，狄利克雷分布的超参数$$\alpha$$和$$\beta$$。
-
-1. 生成话题的单词分布
-
-   **随机生成K个话题的单词分布**。具体过程如下：
-
-   按照狄利克雷分布$$\mathrm{Dir}(\beta)$$随机生成一个参数向量$$\varphi_k$$，$$\varphi \sim \mathrm{Dir}(\beta)$$，作为话题$$z_k$$的单词分布$$p(w|z_k),w \in W$$ ，k=1,2,...,K
-
-2. 生成文本的话题分布
-
-   **随机生成M个文本的话题分布**。具体过程如下：
-
-   按照狄利克雷分布Dir($$\alpha$$)随机生成一个参数向量$$\theta_m$$，$$\theta_m \sim \mathrm{Dir}(\alpha)$$，作为文本$$\boldsymbol{w}_m$$的话题分布$$p(z|\boldsymbol{w}_m)$$，m=1,2,...,M。
-
-3. 生成文本的单词序列
-
-   **随机生成M个文本的$$N_m$$个单词**。文本$$\boldsymbol{w}_m$$(m=1,2,...,M)的单词$$w_{mn}(n=1,2,\dots,N_m)$$的生成过程如下：
-
-   1. 首先，按照多项分布Mult($$\theta_m$$)随机生成一个话题$$z_{mn}\ , z_{mn} \sim \mathrm{Mult}(\theta_m)$$。
-   2. 然后，按照多项分布Mult($$\varphi_{z_{mn}}$$)随机生成一个单词$$w_{mn}\ , w_{mn}\sim \mathrm{Mult}(\varphi_{z_{mn}})$$。
-
-   文本$$\boldsymbol{w}_m$$本身是单词序列$$\boldsymbol{w}_m = (w_{m1},\dots,w_{mn},\dots,w_{mN_m})$$，对应着隐式的话题序列:$$\boldsymbol{z}_m = (z_{m1},z_{m2},\dots,z_{mN_m})$$。
-
-
-
-**算法20.1(LDA的文本生成算法)** 
-
-1. 对于话题$$z_k(k=1,2,\dots,K)$$：
-
-   生成多项分布参数$$\varphi_k \sim \mathrm{Dir}(\beta)$$，作为话题的单词分布$$p(w|z_k)</script><ol>
+\begin{aligned}
+p(\theta|D,\alpha) &= \frac{p(D|\theta)p(\theta|\alpha)}{p(D|\alpha)}\\
+&=\frac{\prod_{i=1}^k \theta_i^{n_i} \frac{1}{B(\alpha)} \prod_{i=1}^k \theta_i^{\alpha_i-1}}{\int \prod_{i=1}^k \theta_i^{n_i} \frac{1}{B(\alpha)} \prod_{i=1}^k \theta_i^{\alpha_i-1} d\theta}\\
+&= \frac{1}{B(\alpha+n)} \prod_{i=1}^k \theta_i^{\alpha_i+n_i-1}\\
+&= \mathrm{Dir}(\theta|\alpha+n) 
+\end{aligned}\tag{20-12}</script><p>狄利克雷后验分布的参数等于狄利克雷先验分布参数<script type="math/tex">\alpha=(\alpha_1,\alpha_2,\dots,\alpha_k)</script>加上多项分布的观测计数<script type="math/tex">n=(n_1,n_2,\dots,n_k)</script>。好像试验之前就已经观察到计数<script type="math/tex">\alpha=(\alpha_1,\alpha_2,\dots,\alpha_k)</script>，因此也把<script type="math/tex">\alpha</script>叫做<strong>先验伪计数(prior pseudo-counts)</strong>。</p>
+<h2 id="潜在狄利克雷分配模型"><a href="#潜在狄利克雷分配模型" class="headerlink" title="潜在狄利克雷分配模型"></a>潜在狄利克雷分配模型</h2><h3 id="基本想法"><a href="#基本想法" class="headerlink" title="基本想法"></a>基本想法</h3><p>潜在狄利克雷分配是文本集合的生成概率模型。</p>
+<p>LDA模型表示文本集合的自动生成过程：</p>
+<ol>
+<li>首先，基于单词分布的先验分布(狄利克雷分布)生成多个单词分布，即决定多个主题内容；</li>
+<li>之后，基于话题分布的先验分布(狄利克雷分布)生成多个话题分布，即决定多个文本内容；</li>
+<li>然后，基于每一话题分布生成话题序列，针对每个话题，基于话题的单词分布生成单词，整体构成一个单词序列，即生成文本。重复这个过程生成所有文本。</li>
+</ol>
+<p>下图显示LDA的文本生成过程：</p>
+<p><img src="/Users/jozee/Desktop/image/20-2.jpg" alt="20-2"></p>
+<p>LDA模型是概率图模型，其特点是以狄利克雷分布为多项分布的先验分布，学习就是给定文本集合，通过后验概率分布的估计，推断模型的所有参数。利用LDA进行话题分析，就是对给定文本集合，学习到每个文本的话题分布，以及每个话题的单词分布。</p>
+<p>LDA与PLSA的区别：</p>
+<p><strong>不同点：</strong></p>
+<ol>
+<li>LDA使用狄利克雷分布作为先验分布，而PLSA不使用先验分布(或者说假设先验分布是均匀分布)，两者对文本生成过程有不同假设。</li>
+<li>学习过程LDA基于贝叶斯学习，而PLSA基于极大似然估计</li>
+</ol>
+<p><strong>相同点：</strong>两者都假设话题是单词的多项分布，文本是话题的多项分布。</p>
+<p><strong>LDA的优点是，使用先验概率分布，可以防止学习过程中产生的过拟合</strong>。</p>
+<h3 id="模型定义"><a href="#模型定义" class="headerlink" title="模型定义"></a>模型定义</h3><h4 id="模型要素"><a href="#模型要素" class="headerlink" title="模型要素"></a>模型要素</h4><p>潜在狄利克雷分配使用三种集合:</p>
+<ol>
+<li>单词集合<script type="math/tex">\mathcal{W} = \{w_1,\dots,w_v,\dots,w_V\}</script>，其中<script type="math/tex">w_v</script>是第v个单词，<script type="math/tex">v=1,2,\dots,V</script>，V是单词的个数。</li>
+<li>文本集合<script type="math/tex">D = \{\boldsymbol{w}_1,\dots,\boldsymbol{w}_m,\dots,\boldsymbol{w}_M\}</script>，其中<script type="math/tex">\boldsymbol{w}_m</script>是第m个文本,m=1,2,…,M，M是文本的个数。文本<script type="math/tex">\boldsymbol{w}_m</script>是一个单词序列<script type="math/tex">\boldsymbol{w}_m = (w_{m1},\dots,w_{mn},\dots,w_{mN_m})</script>，其中<script type="math/tex">w_{mn}</script>是文本<script type="math/tex">\boldsymbol{w}_m</script>的第n个单词，<script type="math/tex">n=1,2,\dots,N_m</script>，<script type="math/tex">N_m</script>是文本<script type="math/tex">\boldsymbol{w}_m</script>中单词的个数。</li>
+<li>话题集合<script type="math/tex">Z = \{z_1,\dots,z_k,\dots,z_K\}</script>，其中<script type="math/tex">z_k</script>是第k个话题，k=1,2,…,K，K是话题的个数。</li>
+</ol>
+<p><strong>每个话题<script type="math/tex">z_k</script>由一个单词的条件概率分布<script type="math/tex">p(w|z_k)</script>决定，<script type="math/tex">w\in W</script>。</strong>分布<script type="math/tex">p(w|z_k)</script>服从多项分布(严格意义上类别分布)，其参数为<script type="math/tex">\varphi_k</script>。</p>
+<p>参数<script type="math/tex">\varphi_k</script>服从狄利克雷分布(先验分布)，其超参数为<script type="math/tex">\beta</script>。参数<script type="math/tex">\varphi_k</script>是一个V维向量<script type="math/tex">\varphi_k=(\varphi_{k1},\varphi_{k2},\dots,\varphi_{kV})</script>，其中<script type="math/tex">\varphi_{kv}</script>表示话题<script type="math/tex">z_k</script>生成单词<script type="math/tex">w_v</script>的概率。</p>
+<p>所有话题的参数向量构成一个KxV矩阵<script type="math/tex">\boldsymbol{\varphi} = \{\varphi_k\}_{k=1}^K</script>。超参数<script type="math/tex">\beta</script>也是一个V维向量<script type="math/tex">\beta = (\beta_1,\beta_2,\dots,\beta_V)</script>。</p>
+<p><strong>每个文本<script type="math/tex">\boldsymbol{w}_m</script>由一个话题的条件概率分布<script type="math/tex">p(z|\boldsymbol{w}_m)</script>决定的，<script type="math/tex">z \in Z</script>。</strong>分布<script type="math/tex">p(z|\boldsymbol{w}_m)</script>服从多项分布(严格意义上类别分布)，其参数为<script type="math/tex">\theta_m</script>。</p>
+<p>参数<script type="math/tex">\theta_m</script>服从狄利克雷分布(先验分布)，其超参数为<script type="math/tex">\alpha</script>。参数<script type="math/tex">\theta_m</script>是一个K维向量<script type="math/tex">\theta_m = (\theta_{m1},\theta_{m2},\dots,\theta_{mK})</script>，其中<script type="math/tex">\theta_{mk}</script>表示文本<script type="math/tex">\boldsymbol{w}_m</script>生成话题<script type="math/tex">z_k</script>的概率。</p>
+<p>所有文本的参数向量构成一个MxK矩阵<script type="math/tex">\boldsymbol{\theta} = \{\theta_m\}_{m=1}^M</script>。超参数<script type="math/tex">\alpha</script>也是一个K维向量<script type="math/tex">\alpha=(\alpha_1,\alpha_2,\dots,\alpha_K)</script>。</p>
+<p><strong>每个文本<script type="math/tex">\boldsymbol{w}_m</script>中的每个单词<script type="math/tex">w_{mn}</script>由该文本的话题分布<script type="math/tex">p(z|\boldsymbol{w}_m)</script>以及所有话题的单词分布<script type="math/tex">p(w|z_k)</script>决定</strong>。</p>
+<h4 id="生成过程"><a href="#生成过程" class="headerlink" title="生成过程"></a>生成过程</h4><p>LDA文本集合的生成过程如下：</p>
+<p>给定单词集合W，文本集合D，话题集合Z，狄利克雷分布的超参数<script type="math/tex">\alpha</script>和<script type="math/tex">\beta</script>。</p>
+<ol>
+<li><p>生成话题的单词分布</p>
+<p><strong>随机生成K个话题的单词分布</strong>。具体过程如下：</p>
+<p>按照狄利克雷分布<script type="math/tex">\mathrm{Dir}(\beta)</script>随机生成一个参数向量<script type="math/tex">\varphi_k</script>，<script type="math/tex">\varphi \sim \mathrm{Dir}(\beta)</script>，作为话题<script type="math/tex">z_k</script>的单词分布<script type="math/tex">p(w|z_k),w \in W</script> ，k=1,2,…,K</p>
+</li>
+<li><p>生成文本的话题分布</p>
+<p><strong>随机生成M个文本的话题分布</strong>。具体过程如下：</p>
+<p>按照狄利克雷分布Dir(<script type="math/tex">\alpha</script>)随机生成一个参数向量<script type="math/tex">\theta_m</script>，<script type="math/tex">\theta_m \sim \mathrm{Dir}(\alpha)</script>，作为文本<script type="math/tex">\boldsymbol{w}_m</script>的话题分布<script type="math/tex">p(z|\boldsymbol{w}_m)</script>，m=1,2,…,M。</p>
+</li>
+<li><p>生成文本的单词序列</p>
+<p><strong>随机生成M个文本的<script type="math/tex">N_m</script>个单词</strong>。文本<script type="math/tex">\boldsymbol{w}_m</script>(m=1,2,…,M)的单词<script type="math/tex">w_{mn}(n=1,2,\dots,N_m)</script>的生成过程如下：</p>
+<ol>
+<li>首先，按照多项分布Mult(<script type="math/tex">\theta_m</script>)随机生成一个话题<script type="math/tex">z_{mn}\ , z_{mn} \sim \mathrm{Mult}(\theta_m)</script>。</li>
+<li>然后，按照多项分布Mult(<script type="math/tex">\varphi_{z_{mn}}</script>)随机生成一个单词<script type="math/tex">w_{mn}\ , w_{mn}\sim \mathrm{Mult}(\varphi_{z_{mn}})</script>。</li>
+</ol>
+<p>文本<script type="math/tex">\boldsymbol{w}_m</script>本身是单词序列<script type="math/tex">\boldsymbol{w}_m = (w_{m1},\dots,w_{mn},\dots,w_{mN_m})</script>，对应着隐式的话题序列:<script type="math/tex">\boldsymbol{z}_m = (z_{m1},z_{m2},\dots,z_{mN_m})</script>。</p>
+</li>
+</ol>
+<p><strong>算法20.1(LDA的文本生成算法)</strong> </p>
+<ol>
+<li><p>对于话题<script type="math/tex">z_k(k=1,2,\dots,K)</script>：</p>
+<p>生成多项分布参数<script type="math/tex">\varphi_k \sim \mathrm{Dir}(\beta)</script>，作为话题的单词分布<script type="math/tex">p(w|z_k)</script></p>
+</li>
 <li><p>对于文本<script type="math/tex">\boldsymbol{w}_m(m=1,2,\dots,M)</script>：</p>
 <p>生成多项分布参数<script type="math/tex">\theta_m \sim \mathrm{Dir}(\alpha)</script>，作为文本的话题分布<script type="math/tex">p(z|\boldsymbol{w}_m)</script>。</p>
 </li>
@@ -574,14 +529,14 @@ LDA文本集合的生成过程如下：
 </ol>
 <p>LDA的文本生成过程中，<strong>假定话题个数K给定(通常通过试验给定)，狄利克雷分布的超参数<script type="math/tex">\alpha</script>和<script type="math/tex">\beta</script>通常也是事先给定的(在没有其它先验知识情况下,可以假设向量<script type="math/tex">\alpha</script>和<script type="math/tex">\beta</script>的所有分量均为1)</strong>。这时的文本的话题分布<script type="math/tex">\theta_m</script>是对称的，话题的单词分布<script type="math/tex">\varphi_k</script>也是对称的。</p>
 <h3 id="概率图模型"><a href="#概率图模型" class="headerlink" title="概率图模型"></a>概率图模型</h3><p>如下图所示，结点表示随机变量，双边圆是观测变量，单边圆是隐变量；有向边表示概率依存关系；矩形表示重复，矩形内的数字表示重复次数。</p>
-<p><img src="image/20-3.png" alt="20-3"></p>
+<p><img src="/Users/jozee/Desktop/image/20-3.png" alt="20-3"></p>
 <p>上图的LDA板块表示，结点<script type="math/tex">\alpha</script>和<script type="math/tex">\beta</script>是模型的超参数，结点<script type="math/tex">\varphi_k</script>表示话题<script type="math/tex">z_k</script>的单词分布的参数，结点<script type="math/tex">\theta_m</script>表示文本<script type="math/tex">\boldsymbol{w}_m</script>的话题分布的参数，结点<script type="math/tex">z_{mn}</script>表示话题，结点<script type="math/tex">w_{mn}</script>表示单词。</p>
 <p>结点<script type="math/tex">\beta</script>指向结点<script type="math/tex">\varphi_k</script>，重复K次，表示根据超参数<script type="math/tex">\beta</script>生成K个话题的单词分布的参数<script type="math/tex">\varphi_k</script>;</p>
 <p>结点<script type="math/tex">\alpha</script>指向结点<script type="math/tex">\theta_m</script>，重复M次，表示根据超参数<script type="math/tex">\alpha</script>生成M个文本的话题分布的参数<script type="math/tex">\theta_m</script>；</p>
 <p>结点<script type="math/tex">\theta_m</script>指向结点<script type="math/tex">z_{mn}</script>，重复<script type="math/tex">N_m</script>次，表示根据文本的话题分布<script type="math/tex">\theta_m</script>生成<script type="math/tex">N_m</script>个话题<script type="math/tex">z_{mn}</script>；</p>
 <p>结点<script type="math/tex">z_{mn}</script>指向结点<script type="math/tex">w_{mn}</script>，同时K个结点<script type="math/tex">\varphi_k</script>也指向结点<script type="math/tex">w_{mn}</script>，表示根据话题<script type="math/tex">z_{mn}</script>以及K个话题的单词分布<script type="math/tex">\varphi_k</script>生成单词<script type="math/tex">w_{mn}</script>。</p>
 <p>把板块图展开得到以下的有向图表示形式：</p>
-<p><img src="image/20-4.png" alt="20-4"></p>
+<p><img src="/Users/jozee/Desktop/image/20-4.png" alt="20-4"></p>
 <h3 id="随机变量序列的可交换性"><a href="#随机变量序列的可交换性" class="headerlink" title="随机变量序列的可交换性"></a>随机变量序列的可交换性</h3><p>一个有限的随机变量序列是可交换的，是指随机变量的联合概率分布对随机变量的排列不变：</p>
 <script type="math/tex; mode=display">
 P(x_1,x_2,\dots,x_N) = P(x_{\pi(1)},x_{\pi(2)},\dots,x_{\pi(N)}) \tag{20-13}</script><p>这里<script type="math/tex">\pi(1),\pi(2),\dots,\pi(N)</script>表示自然数1,2,…,N的任意一个排列。一个无限的随机变量序列是无限可交换的，是指它的任意一个有限子序列都是可交换的。</p>
@@ -593,10 +548,10 @@ P(X_1,X_2,\dots,X_i,\dots|Y) = P(X_1|Y)P(X_2|Y)\dots P(X_i|Y)\dots \tag{20-14}</
 <script type="math/tex; mode=display">
 p(\boldsymbol{w},\boldsymbol{z},\theta,\varphi|\alpha,\beta) = \prod_{k=1}^K p(\varphi_k|\beta)\prod_{m=1}^Mp(\theta_m|\alpha)\prod_{n=1}^{N_m}p(z_{mn}|\theta_m)p(w_{mn}|z_{mn},\varphi) \tag{20-15}</script><p>其中观测变量<script type="math/tex">\boldsymbol{w}</script>表示所有文本中的单词序列，隐变量<script type="math/tex">\boldsymbol{z}</script>表示所有文本中的话题序列，隐变量<script type="math/tex">\theta</script>表示所有文本的话题分布的参数，隐变量<script type="math/tex">\varphi</script>表示所有话题的单词分布的参数，<script type="math/tex">\alpha</script>和<script type="math/tex">\beta</script>是超参数。</p>
 <ul>
-<li>在<script type="math/tex">p(\varphi_k|\beta)</script>表示超参数<script type="math/tex">\beta</script>给定的情况下，第k个话题的单词分布的参数<script type="math/tex">\varphi_k</script>的生成概率；</li>
-<li>在<script type="math/tex">p(\theta_m|\alpha)</script>表示超参数<script type="math/tex">\alpha</script>给定的情况下，第m个文本的话题分布的参数<script type="math/tex">\theta_m</script>的生成概率；</li>
-<li>在<script type="math/tex">p(z_{mn}|\theta_m)</script>表示第m个文本的话题分布<script type="math/tex">\theta_m</script>给定的情况下，文本的第n个位置的话题<script type="math/tex">z_{mn}</script>的生成概率；</li>
-<li>在<script type="math/tex">p(w_{mn}|z_{mn},\varphi)</script>，表示在第m个文本的第n个位置的话题<script type="math/tex">z_{mn}</script>及所有话题的单词分布的参数<script type="math/tex">\varphi</script>给定的情况下，第m个文本的第n个位置的单词<script type="math/tex">w_{mn}</script>的生成概率。</li>
+<li><script type="math/tex">p(\varphi_k|\beta)</script>表示超参数<script type="math/tex">\beta</script>给定的情况下，第k个话题的单词分布的参数<script type="math/tex">\varphi_k</script>的生成概率；</li>
+<li><script type="math/tex">p(\theta_m|\alpha)</script>表示超参数<script type="math/tex">\alpha</script>给定的情况下，第m个文本的话题分布的参数<script type="math/tex">\theta_m</script>的生成概率；</li>
+<li><script type="math/tex">p(z_{mn}|\theta_m)</script>表示第m个文本的话题分布<script type="math/tex">\theta_m</script>给定的情况下，文本的第n个位置的话题<script type="math/tex">z_{mn}</script>的生成概率；</li>
+<li><script type="math/tex">p(w_{mn}|z_{mn},\varphi)</script>，表示在第m个文本的第n个位置的话题<script type="math/tex">z_{mn}</script>及所有话题的单词分布的参数<script type="math/tex">\varphi</script>给定的情况下，第m个文本的第n个位置的单词<script type="math/tex">w_{mn}</script>的生成概率。</li>
 </ul>
 <p>第m个文本的联合概率分布可以表示为：</p>
 <script type="math/tex; mode=display">
@@ -611,7 +566,7 @@ p(\boldsymbol{w}_m|\alpha,\beta) = \prod_{k=1}^K \int p(\varphi_k|\beta)\left\{\
 p(\boldsymbol{w}|\alpha,\beta) = \prod_{k=1}^K \int p(\varphi_k|\beta)\left\{\prod_{m=1}^M\int p(\theta_m|\alpha)\prod_{n=1}^{N_m}\left[\sum_{l=1}^Kp(z_{mn}=l|\theta_m)p(w_{mn}|\varphi_l)\right]d\theta_m \right\}d\varphi_k \tag{20-19}</script><h2 id="LDA的吉布斯抽样算法"><a href="#LDA的吉布斯抽样算法" class="headerlink" title="LDA的吉布斯抽样算法"></a>LDA的吉布斯抽样算法</h2><p>潜在狄利克雷分布的学习(参数估计)是一个复杂的最优化问题，很难精确求解，只能近似求解。</p>
 <p>常用的近似求解方法有吉布斯抽样和变分推理。</p>
 <p>吉布斯抽样优点是实现简单，缺点是收敛速度慢。</p>
-<h3 id="基本想法"><a href="#基本想法" class="headerlink" title="基本想法"></a>基本想法</h3><p>给定文本(单词序列)的集合<script type="math/tex">D = \{\boldsymbol{w}_1,\dots,\boldsymbol{w}_m,\dots,\boldsymbol{w}_M\}</script>，其中<script type="math/tex">\boldsymbol{w}_m</script>是第m个文本,m=1,2,…,M，M是文本的个数。文本<script type="math/tex">\boldsymbol{w}_m</script>是一个单词序列<script type="math/tex">\boldsymbol{w}_m = (w_{m1},\dots,w_{mn},\dots,w_{mN_m})</script>，其中<script type="math/tex">w_{mn}</script>是文本<script type="math/tex">\boldsymbol{w}_m</script>的第n个单词，<script type="math/tex">n=1,2,\dots,N_m</script>，<script type="math/tex">N_m</script>是文本<script type="math/tex">\boldsymbol{w}_m</script>中单词的个数。</p>
+<h3 id="基本想法-1"><a href="#基本想法-1" class="headerlink" title="基本想法"></a>基本想法</h3><p>给定文本(单词序列)的集合<script type="math/tex">D = \{\boldsymbol{w}_1,\dots,\boldsymbol{w}_m,\dots,\boldsymbol{w}_M\}</script>，其中<script type="math/tex">\boldsymbol{w}_m</script>是第m个文本,m=1,2,…,M，M是文本的个数。文本<script type="math/tex">\boldsymbol{w}_m</script>是一个单词序列<script type="math/tex">\boldsymbol{w}_m = (w_{m1},\dots,w_{mn},\dots,w_{mN_m})</script>，其中<script type="math/tex">w_{mn}</script>是文本<script type="math/tex">\boldsymbol{w}_m</script>的第n个单词，<script type="math/tex">n=1,2,\dots,N_m</script>，<script type="math/tex">N_m</script>是文本<script type="math/tex">\boldsymbol{w}_m</script>中单词的个数。</p>
 <p>超参数<script type="math/tex">\alpha,\beta</script>已知。目标是要推断：</p>
 <ol>
 <li>话题序列的集合<script type="math/tex">\boldsymbol{z}=\{\boldsymbol{z}_1,\dots,\boldsymbol{z}_m,\dots,\boldsymbol{z}_M\}</script>的后验概率分布，其中<script type="math/tex">\boldsymbol{z}_m</script>是第m个文本的话题序列，<script type="math/tex">\boldsymbol{z}_m = (z_{m1},z_{m2},\dots,z_{mN_m})</script>；</li>
@@ -629,325 +584,6 @@ p(\boldsymbol{w}|\alpha,\beta) = \prod_{k=1}^K \int p(\varphi_k|\beta)\left\{\pr
 <li>对后验概率分布<script type="math/tex">p(\boldsymbol{z}|\boldsymbol{w},\alpha,\beta)</script>进行吉布斯抽样，得到分布<script type="math/tex">p(\boldsymbol{z}|\boldsymbol{w},\alpha,\beta)</script>的样本集合；</li>
 <li>利用这个样本集合对参数<script type="math/tex">\theta</script>和<script type="math/tex">\varphi</script>进行估计，最终得到LDA模型<script type="math/tex">p(\boldsymbol{w},\boldsymbol{z},\theta,\varphi|\alpha,\beta)</script>的所有参数估计。</li>
 </ol>
-<h3 id="算法-的主要部分"><a href="#算法-的主要部分" class="headerlink" title="算法 的主要部分"></a>算法 的主要部分</h3><p>根据前面的分析，问题转化为<strong>对后验概率分布<script type="math/tex">p(\boldsymbol{z}|\boldsymbol{w},\alpha,\beta)</script>的吉布斯抽样</strong>，该分布表示在所有文本的单词序列给定的情况下，所有可能话题序列的条件概率。</p>
-<h4 id="抽样分布的表达式"><a href="#抽样分布的表达式" class="headerlink" title="抽样分布的表达式"></a>抽样分布的表达式</h4><p>首先，</p>
-<script type="math/tex; mode=display">
-p(\boldsymbol{z}|\boldsymbol{w},\alpha,\beta) = \frac{p(\boldsymbol{w},\boldsymbol{z}|\alpha,\beta)}{p(\boldsymbol{w}|\alpha,\beta)} \propto p(\boldsymbol{w},\boldsymbol{z}|\alpha,\beta) \tag{20-20}</script><p>这里变量<script type="math/tex">\boldsymbol{w},\alpha,\beta</script>已知。联合分布<script type="math/tex">p(\boldsymbol{w},\boldsymbol{z}|\alpha,\beta)</script>的表达式可进一步分解为：</p>
-<script type="math/tex; mode=display">
-p(\boldsymbol{w},\boldsymbol{z}|\alpha,\beta) =p(\boldsymbol{w}|\boldsymbol{z},\alpha,\beta)p(\boldsymbol{z}|\alpha,\beta) = p(\boldsymbol{w}|\boldsymbol{z},\beta)p(\boldsymbol{z}|\alpha) \tag{20-21}</script><p>两个因子可以分开处理。</p>
-<p>推导第一个因子<script type="math/tex">p(\boldsymbol{w}|\boldsymbol{z},\beta)</script>的表达式。首先：</p>
-<script type="math/tex; mode=display">
-p(\boldsymbol{w}|\boldsymbol{z},\varphi) = \prod_{k=1}^K \prod_{v=1}^V \varphi_{kv}^{n_{kv}} \tag{20-22}</script><p>其中，<script type="math/tex">\varphi_{kv}</script>是第k个话题生成单词集合第v个单词的概率，<script type="math/tex">n_{kv}</script>是数据中第k个话题生成第v个单词的次数。于是</p>
-<script type="math/tex; mode=display">
-\begin{aligned}
-p(\boldsymbol{w}|\boldsymbol{z},\beta) &= \int p(\boldsymbol{w}|\boldsymbol{z},\varphi) p(\varphi|\beta)d\varphi \\
-&= \int \prod_{k=1}^K \frac{1}{B(\beta)}\prod_{v=1}^V \varphi_{kv}^{n_{kv}+\beta_v-1}d \varphi\\
-&= \prod_{k=1}^K \frac{B(n_k+\beta)}{B(\beta)}
-\end{aligned} \tag{20-23}</script><p>其中，<script type="math/tex">n_k = \{n_{k1},n_{k2},\dots,n_{kV}\}</script></p>
-<p>第二个因子<script type="math/tex">p(\boldsymbol{z}|\alpha)</script>的表达式可以类似推导。首先：</p>
-<script type="math/tex; mode=display">
-p(\boldsymbol{z}|\theta) = \prod_{m=1}^M \prod_{k=1}^K \theta_{mk}^{n_{mk}} \tag{20-24}</script><p>其中，<script type="math/tex">\theta_{mk}</script>是第m个文本生成第k个话题的概率，<script type="math/tex">n_{mk}</script>是数据中第m个文本生成第k个话题的次数。于是：</p>
-<script type="math/tex; mode=display">
-\begin{aligned}
-p(\boldsymbol{z}|\alpha) &= \int p(\boldsymbol{z}|\theta) p(\theta|\alpha) d\theta\\
-&= \int \prod_{m=1}^M \frac{1}{B(\alpha)}\prod_{k=1}^K \theta_{mk}^{n_{mk}+\alpha_k-1} d\theta\\
-&= \prod_{m=1}^M \frac{1}{B(\alpha)}\int \prod_{k=1}^K \theta_{mk}^{n_{mk}+\alpha_k-1} d\theta\\
-&= \prod_{m=1}^M \frac{B(n_m+\alpha)}{B(\alpha)}
-\end{aligned}\tag{20-25}</script><p>其中<script type="math/tex">n_m = \{n_{m1},n_{m2},\dots,n_{mK}\}</script>。由式(20-23)和式(20-25)得</p>
-<script type="math/tex; mode=display">
-p(\boldsymbol{w},\boldsymbol{z}|\alpha,\beta) = \prod_{k=1}^K \frac{B(n_k+\beta)}{B(\beta)} \bullet \prod_{m=1}^M \frac{B(n_m+\alpha)}{B(\alpha)} \tag{20-26}</script><p>故由式(20-20)和式(20-26)，得收缩的吉布斯抽样分布的公式：</p>
-<script type="math/tex; mode=display">
-p(\boldsymbol{z}|\boldsymbol{w},\alpha,\beta) \propto \prod_{k=1}^K \frac{B(n_k+\beta)}{B(\beta)} \bullet \prod_{m=1}^M \frac{B(n_m+\alpha)}{B(\alpha)} \tag{20-27}</script><h4 id="满条件分布-的表达式"><a href="#满条件分布-的表达式" class="headerlink" title="满条件分布 的表达式"></a>满条件分布 的表达式</h4><p>分布<script type="math/tex">p(\boldsymbol{z}|\boldsymbol{w},\alpha,\beta)</script>的满条件分布可以写成：</p>
-<script type="math/tex; mode=display">
-p(z_i|\boldsymbol{z}_{-i},\boldsymbol{w},\alpha,\beta) = \frac{1}{Z_{z_i}} p(\boldsymbol{z}|\boldsymbol{w},\alpha,\beta) \tag{20-28}</script><p>这里<script type="math/tex">w_i</script>表示所有文本的单词序列的第i个位置的单词，<script type="math/tex">z_i</script>表示单词<script type="math/tex">w_i</script>对应的话题，i=(m,n)，<script type="math/tex">i=1,2,\dots,I,\boldsymbol{z}_{-i}=\{z_j:j\ne i\}</script>，<script type="math/tex">Z_{z_i}</script>表示分布<script type="math/tex">p(\boldsymbol{z}|\boldsymbol{w},\alpha,\beta)</script>对变量<script type="math/tex">z_i</script>的边缘化因子。</p>
-<p>式(20-28)是在所有文本单词序列、其它位置话题序列给定条件下，第i个位置的话题的条件概率分布。由式(20-27)和式(20-28)可以推出：</p>
-<script type="math/tex; mode=display">
-p(z_i|\boldsymbol{z}_{-i},\boldsymbol{w},\alpha,\beta) \propto \frac{n_{kv}+\beta_v}{\sum_{v=1}^V(n_{kv}+\beta_v)}\bullet \frac{n_{mk}+\alpha_k}{\sum_{k=1}^K(n_{mk}+\alpha_k)} \tag{20-29}</script><p>其中第m个文本的第n个位置的单词<script type="math/tex">w_i</script>是单词集合的第v个单词，其话题<script type="math/tex">z_i</script>是话题 集合的第k个话题，<script type="math/tex">n_{kv}</script>表示第k个话题中第v个单词的计数，但减去当前单词的计数，<script type="math/tex">n_{mk}</script>表示第m个文本中第k个话题的计数，但减去当前单词的话题的计数。</p>
-<h3 id="算法的后处理"><a href="#算法的后处理" class="headerlink" title="算法的后处理"></a>算法的后处理</h3><p>通过吉布斯抽样得到的分布<script type="math/tex">p(\boldsymbol{z}|\boldsymbol{w},\alpha,\beta)</script>的a样本，可以得到变量<script type="math/tex">\boldsymbol{z}</script>的分配值，也可以估计变量<script type="math/tex">\theta</script>和<script type="math/tex">\varphi</script>。</p>
-<h4 id="参数估计"><a href="#参数估计" class="headerlink" title="参数估计"></a>参数估计</h4><ul>
-<li><p>参数<script type="math/tex">\theta=\{\theta_m\}</script></p>
-<p>根据LDA模型的定义，后验概率满足：</p>
-<script type="math/tex; mode=display">
-p(\theta_m|\boldsymbol{z}_m,\alpha) = \frac{1}{Z_{\theta_m}} \prod_{n=1}^{N_m} p(z_{mn}|\theta_m)p(\theta_m|\alpha) = \mathrm{Dir}(\theta_m|n_m+\alpha) \tag{20-30}</script><p>这里<script type="math/tex">n_m = \{n_{m1},n_{m2},\dots,n_{mK}\}</script>是第m个文本的话题计数，<script type="math/tex">Z_{\theta_m}</script>表示 分布<script type="math/tex">p(\theta_m，\boldsymbol{z}_m|\alpha)</script>对变量<script type="math/tex">\theta_m</script>的边缘化因子。于是得到参数<script type="math/tex">\theta=\{\theta_m\}</script>的估计式：</p>
-<script type="math/tex; mode=display">
-\theta_{mk} = \frac{n_{mk}+\alpha_k}{\sum_{k=1}^K (n_{mk}+\alpha_k)} \ , m=1,2,\dots,M;k=1,2,\dots,K \tag{20-31}</script></li>
-</ul>
-<ul>
-<li><p>参数<script type="math/tex">\varphi=\{\varphi_k\}</script></p>
-<p>后验概率满足</p>
-<script type="math/tex; mode=display">
-p(\varphi_k|\boldsymbol{w},\boldsymbol{z},\beta) = \frac{1}{Z_{\varphi_k}} \prod_{i=1}^I p(w_i|\varphi_k)p(\varphi_k|\beta) = \mathrm{Dir}(\varphi_k|n_k+\beta) \tag{20-32}</script><p>这里<script type="math/tex">n_k = \{n_{k1},n_{k2},\dots,n_{kV}\}</script>是第k个话题的单词计数,<script type="math/tex">Z_{\varphi_k}</script>表示分布<script type="math/tex">p(\varphi_k,\boldsymbol{w}|\boldsymbol{z},\beta)</script>对变量<script type="math/tex">\varphi_k</script>的边缘化因子，I是文本集合单词序列<script type="math/tex">\boldsymbol{w}</script>的单词总数。于是，得到参数的估计式：</p>
-<script type="math/tex; mode=display">
-\varphi_{kv} = \frac{n_{kv}+\beta_v}{\sum_{v=1}^V (n_{kv}+\beta_v)} \ , k=1,2,\dots,K;v=1,2,\dots,V \tag{20-33}</script></li>
-</ul>
-<h3 id="算法"><a href="#算法" class="headerlink" title="算法"></a>算法</h3><p><strong>算法20.2(LDA吉布斯抽样算法)</strong></p>
-<p>输入：文本的单词序列<script type="math/tex">\boldsymbol{w}  = \{\boldsymbol{w}_1,\dots,\boldsymbol{w}_m,\dots,\boldsymbol{w}_M\}</script>，<script type="math/tex">\boldsymbol{w}_m = (w_{m1},\dots,w_{mn},\dots,w_{mN_m})</script>；</p>
-<p>输出：文本的话题序列<script type="math/tex">\boldsymbol{z}=\{\boldsymbol{z}_1,\dots,\boldsymbol{z}_m,\dots,\boldsymbol{z}_M\}</script>，<script type="math/tex">\boldsymbol{z}_m = (z_{m1},z_{m2},\dots,z_{mN_m})</script>的后验概率分布<script type="math/tex">p(\boldsymbol{z}|\boldsymbol{w},\alpha,\beta)</script>的样本计数，模型的参数<script type="math/tex">\varphi</script>和<script type="math/tex">\theta</script>的估计值</p>
-<p>参数：超参数<script type="math/tex">\alpha,\beta</script> 和话题个数K</p>
-<ol>
-<li><p>设所有计数矩阵的元素<script type="math/tex">n_{mk},n_{kv}</script>，计数向量的元素<script type="math/tex">n_m,n_k</script>初值为0；</p>
-</li>
-<li><p>对所有文本<script type="math/tex">\boldsymbol{w}_m</script>，<script type="math/tex">m=1,2,\dots,M</script></p>
-<p>对第m个文本中的所有单词<script type="math/tex">w_{mn}</script>，n=1,2,…,<script type="math/tex">N_m</script></p>
-<ol>
-<li><p>抽样话题<script type="math/tex">z_{mn} = z_k \sim \mathrm{Mult}\left(\frac{1}{K}\right)</script></p>
-<p>增加文本-话题计数<script type="math/tex">n_{mk}=n_{mk}+1</script>,</p>
-<p>增加文本-话题和计数<script type="math/tex">n_m=n_m+1</script>，</p>
-<p>增加话题-单词计数<script type="math/tex">n_{kv}=n_{kv}+1</script>,</p>
-<p>增加话题-单词和计数<script type="math/tex">n_{k}=n_{k}+1</script></p>
-</li>
-</ol>
-</li>
-<li><p>循环执行以下操作，直到进入燃烧期</p>
-<p>对所有文本<script type="math/tex">\boldsymbol{w}_m,m=1,2,\dots,M</script></p>
-<p>对第m个文本中的所有单词<script type="math/tex">w_{mn}</script>，<script type="math/tex">n=1,2,\dots,N_m</script></p>
-<ol>
-<li><p>当前的单词<script type="math/tex">w_{mn}</script>是第v个单词，话题指派<script type="math/tex">z_{mn}</script>是第k个话题</p>
-<p>减少计数<script type="math/tex">n_{mk}=n_{mk}-1,n_m=n_m-1,n_{kv}=n_{kv}-1,n_k=n_k-1</script></p>
-</li>
-<li><p>按照满条件分布进行抽样</p>
-<script type="math/tex; mode=display">
-p(z_i|\boldsymbol{z}_{-i},\boldsymbol{w},\alpha,\beta) \propto \frac{n_{kv}+\beta_v}{\sum_{v=1}^V(n_{kv}+\beta_v)}\bullet \frac{n_{mk}+\alpha_k}{\sum_{k=1}^K(n_{mk}+\alpha_k)}</script><p>得到新的第<script type="math/tex">k^{'}</script>个话题，分配给<script type="math/tex">z_{mn}</script></p>
-</li>
-<li><p>增加计数<script type="math/tex">n_{mk^{'}}= n_{mk^{'}}+1,n_m=n_m+1,n_{k^{'}v}=n_{k^{'}v}+1,n_k=n_k+1</script></p>
-</li>
-<li><p>得到更新的两个计数矩阵<script type="math/tex">N_{K\times V} = [n_{kv}]</script>和<script type="math/tex">N_{M\times K}=[n_{mk}]</script>，表示后验概率分布<script type="math/tex">p(\boldsymbol{z}|\boldsymbol{w},\alpha,\beta)</script>的样本计数</p>
-</li>
-</ol>
-</li>
-<li><p>利用得到的样本计数，计算模型参数：</p>
-<script type="math/tex; mode=display">
-\theta_{mk} = \frac{n_{mk}+\alpha_k}{\sum_{k=1}^K(n_{mk}+\alpha_k)}</script><script type="math/tex; mode=display">
-\varphi_{kv} = \frac{n_{kv}+\beta_v}{\sum_{v=1}^V (n_{kv}+\beta_v)}</script></li>
-</ol>
-<h2 id="LDA的变分EM算法"><a href="#LDA的变分EM算法" class="headerlink" title="LDA的变分EM算法"></a>LDA的变分EM算法</h2><h3 id="变分推理"><a href="#变分推理" class="headerlink" title="变分推理"></a>变分推理</h3><p>变分推理(variational inference)是贝叶斯学习中常用的、含有隐变量模型的学习和推理方法。</p>
-<p><strong>MCMC通过随机抽样的方法近似的计算模型的后验概率；</strong></p>
-<p><strong>变分推理则通过解析的方法计算模型的后验概率的近似值。</strong></p>
-<p><strong>变分推理的基本想法：</strong>假设模型是联合概率分布p(x,z)，其中x是观测变量，z是隐变量，包括参数。目标是学习模型的后验概率分布p(z|x)，用模型进行概率推理。由于目标分布很复杂，因此通过使用概率分布q(z)近似条件概率分布p(z|x)，用KL散度<script type="math/tex">D(q(z)\|p(z|x))</script>计算两者的相似度，q(z)称为变分分布(variational distribution)。</p>
-<p>如果能找到与p(z|x)在KL散度意义下最近的分布<script type="math/tex">q^{*}(z)</script>，则可以用这个分布近似<script type="math/tex">p(z|x)</script>。</p>
-<script type="math/tex; mode=display">
-p(z|x) \approx q^{*}(z) \tag{20-34}</script><p>下图给出了<script type="math/tex">q^{*}(z)</script>与<script type="math/tex">p(z|x)</script>的关系：</p>
-<p><img src="image/20-5.png" alt="20-5"></p>
-<p>KL散度可以写成以下形式：</p>
-<script type="math/tex; mode=display">
-\begin{aligned}
-D(q(z)\|p(z|x)) &= E_q[\log q(z)]-E_q[\log p(z|x)]\\
-&= E_q[\log q(z)]-E_q[\log p(x,z)]+\log p(x)\\
-&= \log p(x) - \left\{E_q[\log p(x,z)]-E_q[\log q(z)]\right\}
-\end{aligned}\tag{20-35}</script><p>KL散度大或等于0，当且仅当两个分布一致时为0，由式(20-35)可推出：</p>
-<script type="math/tex; mode=display">
-\log p(x) \ge E_q[\log p(x,z)]-E_q[\log q(z)] \tag{20-36}</script><p>不等式右端是左端的下界，左端称作证据(evidence)，右端称为证据下界(evidence lower bound,ELBO)，证据下界记作：</p>
-<script type="math/tex; mode=display">
-L(q) = E_q[\log p(x,z)]-E_q[\log q(z)] \tag{20-37}</script><p><strong>KL散度(20-35)的最小化可以通过证据下界(20-37)最大化实现，因为目标是求q(z)使KL散度最小化，这时<script type="math/tex">\log p(x)</script>是常量</strong>。</p>
-<p>因此，变分推理变成求解证据下界最大化的问题。</p>
-<p>假设q(z)对z的所有分量都是相互独立的(实际是条件独立于参数)，即满足：</p>
-<script type="math/tex; mode=display">
-q(z) = q(z_1)q(z_2)\dots q(z_n) \tag{20-38}</script><p>这时，变分分布称为平均场(mean field)。</p>
-<p>KL散度的最小化或证据下界最大化实际是在平均场的集合，即满足独立假设的分布集合<script type="math/tex">Q = \{q(z)|q(z)=\prod_{i=1}^nq(z_i)\}</script>之中进行的。</p>
-<p>变分推理有以下几个步骤：</p>
-<ol>
-<li>定义变分分布q(z)</li>
-<li>推导其证据下界表达式</li>
-<li>用最优化方法对证据下界进行优化，如坐标上升，得到最有分布<script type="math/tex">q^*(z)</script>，作为后验概率分布p(z|x)的近似</li>
-</ol>
-<h3 id="变分EM算法"><a href="#变分EM算法" class="headerlink" title="变分EM算法"></a>变分EM算法</h3><p>变分推理中，可以通过迭代的方法最大化证据下界，此算法是EM算法的推广，称为变分EM算法。</p>
-<p>假设模型是联合概率分布<script type="math/tex">p(x,z|\theta)</script>，其中x是观测变量，z是隐变量，<script type="math/tex">\theta</script>是参数。目标是通过观测数据的概率(证据)<script type="math/tex">\log p(x|\theta)</script> 的最大化，估计模型的参数<script type="math/tex">\theta</script>。</p>
-<p>使用变分推理，导入平均场<script type="math/tex">q(z) = \prod_{i=1}^n q(z_i)</script>，定义证据下界：</p>
-<script type="math/tex; mode=display">
-L(q,\theta) = E_q[\log p(x,z|\theta)]-E_q[\log q(z)] \tag{20-39}</script><p>通过迭代，分别以q和<script type="math/tex">\theta</script>为变量，对证据下界进行最大化。</p>
-<p><strong>算法20.3(变分EM算法)</strong></p>
-<p>循环执行以下E步和M步，直到收敛。</p>
-<ol>
-<li>E步：固定<script type="math/tex">\theta</script>，求<script type="math/tex">L(q,\theta)</script>对q的最大化</li>
-<li>M步：固定q，求<script type="math/tex">L(q,\theta)</script>对<script type="math/tex">\theta</script>的最大化</li>
-</ol>
-<p>给出模型参数<script type="math/tex">\theta</script>的估计值。</p>
-<p>根据变分推理原理，观测数据的概率和证据下界满足：</p>
-<script type="math/tex; mode=display">
-\log p(x|\theta) - L(q,\theta) = D(q(z)\|p(z|x,\theta)) \ge 0 \tag{20-40}</script><p>变分EM算法的迭代过程中，以下关系成立：</p>
-<script type="math/tex; mode=display">
-\log p(x|\theta^{(t-1)}) = L(q^{(t)},\theta^{(t-1)}) \le L(q^{(t)},\theta^{(t)}) \le \log p(x|\theta^{(t)}) \tag{20-41}</script><p>其中上角标t-1和t表示迭代次数。</p>
-<p>左边的等式基于E步计算和变分推理原理，中间的不等式基于M步计算，右边的不等式基于变分推理原理。说明了变分EM算法的收敛性。</p>
-<blockquote>
-<p>对照《统计学习方法》9.4节，EM算法的推广，EM算法的推广是求F函数的极大-极大算法，其中的F函数就是证据下界。</p>
-<p>EM算法假设q(z) = p(z|x)且p(z|x)容易计算；而变分EM算法则考虑一般情况，使用容易计算的平均场<script type="math/tex">q(z)=\prod_{i=1}^n q(z_i)</script>。</p>
-<p>当模型复杂时，EM算法未必可用，但变分EM算法仍然可以使用。</p>
-</blockquote>
-<h3 id="算法推导"><a href="#算法推导" class="headerlink" title="算法推导"></a>算法推导</h3><p>将变分EM算法应用到下图的LDA模型的学习上。</p>
-<p><img src="image/20-6.png" alt="20-6"></p>
-<p>首先定义具体的变分分布，推导证据下界的表达式，接着，推导变分分布的参数和LDA模型的参数的估计式，最后给出LDA模型的变分EM算法。</p>
-<h4 id="证据下界的定义"><a href="#证据下界的定义" class="headerlink" title="证据下界的定义"></a>证据下界的定义</h4><blockquote>
-<p>一次只考虑一个文本。记作<script type="math/tex">\boldsymbol{w}</script></p>
-</blockquote>
-<p>文本的单词序列<script type="math/tex">\boldsymbol{w} = (w_1,\dots,w_n,\dots,w_N)</script>，对应的话题序列<script type="math/tex">\boldsymbol{z}=(z_1,\dots,z_n,\dots,z_N)</script>，以及话题分布<script type="math/tex">\theta</script>，随机变量<script type="math/tex">\boldsymbol{w},\boldsymbol{z}</script>和<script type="math/tex">\theta</script>的联合分布是：</p>
-<script type="math/tex; mode=display">
-p(\theta,\boldsymbol{z},\boldsymbol{w}|\alpha,\varphi) = p(\theta|\alpha)\prod_{n=1}^Np(z_n|\theta)p(w_n|z_n,\varphi) \tag{20-42}</script><p>其中，<script type="math/tex">\boldsymbol{w}</script>是观测变量，<script type="math/tex">\theta</script>和<script type="math/tex">\boldsymbol{z}</script>是隐变量，<script type="math/tex">\alpha,\varphi</script>是参数。</p>
-<p>定义基于平均场的变分分布：</p>
-<script type="math/tex; mode=display">
-q(\theta,\boldsymbol{z}|\gamma,\eta) = q(\theta|\gamma)\prod_{n=1}^N q(z_n|\eta_n) \tag{20-43}</script><p>其中<script type="math/tex">\gamma</script>是狄利克雷分布参数，<script type="math/tex">\eta=(\eta_1,\eta_2,\dots,\eta_n)</script>是多项分布的参数，变量<script type="math/tex">\theta</script>和<script type="math/tex">\boldsymbol{z}</script>的各个分量都是条件独立的。目标是求KL散度意义下最相近的变分分布<script type="math/tex">q(\theta,\boldsymbol{z}|\gamma,\eta)</script>，以近似LDA模型的后验分布<script type="math/tex">p(\theta,\boldsymbol{z}|\boldsymbol{w},\alpha,\varphi)</script>。</p>
-<p>下图为变分分布的板块表示：</p>
-<p><img src="image/20-7.png" alt="20-7"></p>
-<p>LDA模型中的隐变量<script type="math/tex">\theta,\boldsymbol{z}</script>之间存在依存关系，变分分布中这些依存关系被去掉，变量<script type="math/tex">\theta,\boldsymbol{z}</script>条件独立。由此得到一个文本的证据下界：</p>
-<script type="math/tex; mode=display">
-L(\gamma,\eta,\alpha,\varphi) = E_q[\log p(\theta,\boldsymbol{z},\boldsymbol{w}|\alpha,\varphi)]-E_q[\log q(\theta,\boldsymbol{z}|\gamma,\eta)] \tag{20-44}</script><p>其中，数学期望是对分布<script type="math/tex">q(\theta,\boldsymbol{z}|\gamma,\eta)</script>定义的，为了方便写作<script type="math/tex">E_q[\bullet]</script>，<script type="math/tex">\gamma,\eta</script>是变分分布的参数，<script type="math/tex">\alpha,\varphi</script>是LDA模型参数。</p>
-<p>所有文本的证据下界为：</p>
-<script type="math/tex; mode=display">
-L_{\boldsymbol{w}}(\gamma,\eta,\alpha,\varphi) = \sum_{m=1}^M \{E_{q_m}[\log p(\theta_m,\boldsymbol{z}_m,\boldsymbol{w}_m|\alpha,\varphi)]-E_{q_m}[\log q(\theta_m,\boldsymbol{z}_m|\gamma_m,\eta_m)]\} \tag{20-45}</script><p>为求解证据下界<script type="math/tex">L(\gamma,\eta,\alpha,\varphi)</script>的最大化，首先写出证据下界的表达式。为此展开证据下界(20-44)：</p>
-<script type="math/tex; mode=display">
-\begin{aligned}
-L(\gamma,\eta,\alpha,\varphi) &= E_q[\log p(\theta|\alpha)]+E_q[\log p(\boldsymbol{z}|\theta)]+E_q[\log p(\boldsymbol{w}|\boldsymbol{z},\varphi)]-E_q[\log q(\theta|\gamma)]-E_q[\log q[\boldsymbol{z}|\eta]]
-\end{aligned}\tag{20-46}</script><p>根据变分参数<script type="math/tex">\gamma</script>和<script type="math/tex">\eta</script>，模型参数<script type="math/tex">\alpha</script>和$$\varphi$$继续展开，并将展开式的每一项写成一行：</p>
-<script type="math/tex; mode=display">
-\begin{aligned}
-L(\gamma,\eta,\alpha,\varphi) = 
-&\log \Gamma\left(\sum_{l=1}^K \alpha_l\right) - \sum_{k=1}^K \log \Gamma(\alpha_k)+\sum_{k=1}^K(\alpha_k-1)\left[\varPsi(\gamma_k)-\varPsi\left(\sum_{l=1}^K \gamma_l\right)\right]+\\
-
-&\sum_{n=1}^N\sum_{k=1}^K \eta_{nk}\left[\varPsi(\gamma_k)-\varPsi\left(\sum_{l=1}^K \gamma_l\right)\right] + \\
-
-&\sum_{n=1}^N\sum_{k=1}^K\sum_{v=1}^V \eta_{nk}w_{n}^v\log \varphi_{kv}-\\
-
-& \log\Gamma\left(\sum_{l=1}^K \gamma_l\right)+\sum_{k=1}^K \log \Gamma(\gamma_k)-\sum_{k=1}^K(\gamma_k-1)\left[\varPsi(\gamma_k)-\varPsi\left(\sum_{l=1}^K \gamma_l\right)\right]-\\
-
-&\sum_{n=1}^N\sum_{k=1}^K\eta_{nk}\log \eta_{nk}
-\end{aligned} \tag{20-47}</script><p>式中<script type="math/tex">\varPsi(\alpha_k)</script>是对数伽马函数的导数，即：</p>
-<script type="math/tex; mode=display">
-\varPsi(\alpha_k) = \frac{d}{d\alpha_k}\log \Gamma(\alpha_k) \tag{20-48}</script><p><strong>第一项推导</strong>，求<script type="math/tex">E_q[\log p(\theta|\alpha)]</script>，是关于分布<script type="math/tex">q(\theta,\boldsymbol{z}|\gamma,\eta)</script>的数学期望。</p>
-<script type="math/tex; mode=display">
-E_q[\log p(\theta|\alpha)] =\sum_{k=1}^K(\alpha_k-1)E_q[\log\theta_k] + \log \Gamma\left(\sum_{l=1}^K \alpha_l\right) - \sum_{k=1}^K \log \Gamma(\alpha_k) \tag{20-49}</script><p>其中<script type="math/tex">\theta \sim \mathrm{Dir}(\theta|\gamma)</script>，根据<a href="https://jozeelin.github.io/2019/08/24/KL-and-Dirichlet/">这里的狄利克雷分布的相关性质</a>，可得：</p>
-<script type="math/tex; mode=display">
-E_{q(\theta|\gamma)}[\log \theta_k] = \varPsi(\gamma_k)-\varPsi\left(\sum_{l=1}^K \gamma_l\right) \tag{20-50}</script><p>故得：</p>
-<script type="math/tex; mode=display">
-E_q[\log p(\theta|\alpha)] = \log \Gamma \left(\sum_{l=1}^K \alpha_l\right)-\sum_{k=1}^K \log \Gamma(\alpha_k)+\sum_{k=1}^K (\alpha_k-1)\left[\Psi(\gamma_k)-\Psi\left(\sum_{l=1}^K \gamma_l\right)\right] \tag{20-51}</script><p>式中<script type="math/tex">\alpha_k,\gamma_k</script>表示第k个话题的狄利克雷分布参数。</p>
-<p><strong>第二项推导</strong>，求<script type="math/tex">E_q[\log p(\boldsymbol{z}|\theta)]</script>，是关于分布<script type="math/tex">q(\theta,\boldsymbol{z}|\gamma,\eta)</script>的数学期望。</p>
-<script type="math/tex; mode=display">
-\begin{aligned}
-E_q[\log p(\boldsymbol{z}|\theta)] &= \sum_{n=1}^N E_q[\log p(z_n|\theta)]\\
-&= \sum_{n=1}^N E_{q(\theta,z_n|\gamma,\eta)}[\log(z_n|\theta)]\\
-&= \sum_{n=1}^N \sum_{k=1}^K q(z_{nk}|\eta)E_{q(\theta|\gamma)}[\log \theta_k]\\
-&= \sum_{n=1}^N \sum_{k=1}^K \eta_{nk} \left[\varPsi(\gamma_k)-\varPsi\left(\sum_{l=1}^K \gamma_l \right)\right]
-\end{aligned}\tag{20-53}</script><p>式中<script type="math/tex">\eta_{nk}</script>表示文档第n个位置的单词由第k个话题产生的概率，<script type="math/tex">\gamma_k</script>表示第k个话题的狄利克雷分布参数。最后一步请参考<a href="https://jozeelin.github.io/2019/08/24/KL-and-Dirichlet/">这里的狄利克雷分布的相关性质</a>。</p>
-<p><strong>第三项推导</strong>，求<script type="math/tex">E_q[\log p(\boldsymbol{w}|\boldsymbol{z},\varphi)]</script>，是关于分布<script type="math/tex">q(\theta,\boldsymbol{z}|\gamma,\eta)</script>的数学期望。</p>
-<script type="math/tex; mode=display">
-\begin{aligned}
-E_q[\log p(\boldsymbol{w}|\boldsymbol{z},\varphi)] &= \sum_{n=1}^N E_q[\log p(w_n|z_n,\varphi)]\\
-&= \sum_{n=1}^N E_{q(z_n|\eta)}[\log p(w_n|z_n,\varphi)]\\
-&= \sum_{n=1}^N \sum_{k=1}^K q(z_{nk}|\eta)\log p(w_n|z_n,\varphi)\\
-&= \sum_{n=1}^N \sum_{k=1}^K \sum_{v=1}^V \eta_{nk}w_n^v \log \varphi_{kv}
-\end{aligned}\tag{20-53}</script><p>式中<script type="math/tex">\eta_{nk}</script>表示文档第n个位置的单词由第k个话题产生的概率，<script type="math/tex">w_n^v</script>在第n个位置的单词是单词集合的第v个单词时为1，否则取值为0，<script type="math/tex">\varphi_{kv}</script>表示第k个话题生成单词集合中第v个单词的概率。</p>
-<p><strong>第四项推导</strong>，求<script type="math/tex">E_q[\log q(\theta|\gamma)]</script>，是关于分布<script type="math/tex">q(\theta,\boldsymbol{z}|\gamma,\eta)</script>的数学期望。</p>
-<p>由于<script type="math/tex">\theta \sim \mathrm{Dir}(\gamma)</script>，类似于(20-50)，可以得到：</p>
-<script type="math/tex; mode=display">
-E_q[\log q(\theta|\gamma)] = \log \Gamma \left(\sum_{l=1}^K \gamma_l\right)-\sum_{k=1}^K \log \Gamma(\gamma_k)+\sum_{k=1}^K (\gamma_k-1)\left[\Psi(\gamma_k)-\Psi\left(\sum_{l=1}^K \gamma_l\right)\right] \tag{20-54}</script><p>式中<script type="math/tex">\gamma_k</script>表示第k个话题的狄利克雷分布参数。</p>
-<p><strong>第五项推导</strong>，求<script type="math/tex">E_q[\log q[\boldsymbol{z}|\eta]]</script>，是关于分布<script type="math/tex">q(\theta,\boldsymbol{z}|\gamma,\eta)</script>的数学期望。</p>
-<script type="math/tex; mode=display">
-\begin{aligned}
-E_q[\log q[\boldsymbol{z}|\eta]] &= \sum_{n=1}^N E_q[\log q[z_n|\eta]]\\
-&=\sum_{n=1}^N E_{q(z_n|\eta)}[\log q[z_n|\eta]]\\
-&=\sum_{n=1}^N\sum_{k=1}^K E_{q(z_{nk}|\eta)}[\log q[z_{nk}|\eta]]\\
-&=\sum_{n=1}^N\sum_{k=1}^K \eta_{nk}\log \eta_{nk}
-\end{aligned}\tag{20-55}</script><p>式中<script type="math/tex">\eta_{nk}</script>表示文档第n个位置的单词由第k个话题产生的概率，<script type="math/tex">\gamma_k</script>表示第k个话题的狄利克雷分布参数。</p>
-<h4 id="变分参数估计"><a href="#变分参数估计" class="headerlink" title="变分参数估计"></a>变分参数估计</h4><ul>
-<li><p>参数<script type="math/tex">\eta</script></p>
-<p><strong>首先，通过证据下界最优化估计参数<script type="math/tex">\eta</script>。</strong><script type="math/tex">\eta_{nk}</script>表示第n个位置的单词是由第k个话题生成的概率。</p>
-<p>考虑式(20-47)关于<script type="math/tex">\eta_{nk}</script>的最大化，<script type="math/tex">\eta_{nk}</script>满足约束条件<script type="math/tex">\sum_{l=1}^K \eta_{nl}=1</script>。使用拉格朗日乘子法，得：</p>
-<script type="math/tex; mode=display">
-L_{[\eta_{nk}]} = \eta_{nk }\left[\varPsi(\gamma_k)-\varPsi\left(\sum_{k=1}^K \gamma_l\right)\right]+\eta_{nk}\log \varphi_{kv}-\eta_{nk}\log \eta_{nk}+\lambda_n\left(\sum_{l=1}^K\eta_{nl}-1\right) \tag{20-56}</script></li>
-</ul>
-<p>  这里<script type="math/tex">\varphi_{kv}</script>是(在第n个位置)由第k个话题生成第v个单词的概率。</p>
-<p>  对<script type="math/tex">\eta_{nk}</script>求偏导数得:</p>
-<script type="math/tex; mode=display">
-  \frac{\partial L}{\partial{\eta_{nk}}} = \varPsi(\gamma_k)-\varPsi\left(\sum_{l=1}^K \gamma_l\right) +\log \varphi_{kv}-\log \eta_{nk}-1+\lambda_n \tag{20-57}</script><p>  令偏导数为0，得到参数<script type="math/tex">\eta_{nk}</script>的估计值：</p>
-<script type="math/tex; mode=display">
-  \eta_{nk} \propto \varphi_{kv}\exp\left[\varphi(\gamma_k)-\varphi\left(\sum_{l=1}^K \gamma_l \right)\right]\tag{20-58}</script><ul>
-<li><p>参数<script type="math/tex">\gamma</script></p>
-<p><strong>接着，通过证据下界最优化估计参数<script type="math/tex">\gamma</script>。</strong><script type="math/tex">\gamma_k</script>是第k个话题的狄利克雷分布参数。</p>
-<p>考虑式(20-47)关于<script type="math/tex">\gamma_k</script>得最大化：</p>
-<script type="math/tex; mode=display">
-\begin{aligned}
-L_{[\gamma_k]} = &\sum_{k=1}^K(\alpha_k-1)\left[\varPsi(\gamma_k)-\varPsi\left(\sum_{l=1}^K \gamma_l\right)\right]+\sum_{n=1}^N\sum_{k=1}^K \eta_{nk}\left[\varPsi(\gamma_k)-\varPsi\left(\sum_{l=1}^K \gamma_l\right)\right] - \\
-
-&\log\Gamma\left(\sum_{l=1}^K \gamma_l \right)+\log \Gamma(\gamma_k)-\sum_{k=1}^K(\gamma_k-1)\left[\varPsi(\gamma_k)-\varPsi\left(\sum_{l=1}^K\gamma_l\right)\right]
-\end{aligned} \tag{20-59}</script></li>
-</ul>
-<p>  简化为：</p>
-<script type="math/tex; mode=display">
-  L_{[\gamma_k]} = \sum_{k=1}^K\left[\varPsi(\gamma_k)-\varPsi\left(\sum_{l=1}^K \gamma_l\right)\right]\left(\alpha_k+\sum_{n=1}^N\eta_{nk}-\gamma_{k}\right)-\log\Gamma\left(\sum_{l=1}^K\gamma_l \right)+\log\Gamma(\gamma_k)\tag{20-60}</script><p>  对<script type="math/tex">\gamma_k</script>求偏导数得：</p>
-<script type="math/tex; mode=display">
-  \frac{\partial L}{\partial \gamma_k} = \left[\varPsi^{'}(\gamma_k)-\varPsi^{'}\left(\sum_{l=1}^K \gamma_l\right)\right]\left(\alpha_k+\sum_{n=1}^N \eta_{nk}-\gamma_k\right) \tag{20-61}</script><p>  令偏导数为0，求解得到参数<script type="math/tex">\gamma_k</script>的估计值：</p>
-<script type="math/tex; mode=display">
-  \gamma_k = \alpha_k+\sum_{n=1}^N \eta_{nk} \tag{20-62}</script><p>据此 ，得到由<strong>坐标上升法估计变分参数的方法</strong>，具体算法如下：</p>
-<p><strong>算法20.4(LDA的变分参数估计算法)</strong></p>
-<ol>
-<li><p>初始化：对所有k和n，<script type="math/tex">\eta_{nk}^{(0)} = 1/K</script></p>
-</li>
-<li><p>初始化：对所有k,<script type="math/tex">\gamma_k=\alpha_k+N/K</script></p>
-</li>
-<li><p>重复</p>
-<ol>
-<li><p>对n=1到N</p>
-<ol>
-<li><p>对k=1到K</p>
-<script type="math/tex; mode=display">
-\eta_{nk}^{(t+1)} = \varphi_{kv}\exp\left[\varphi(\gamma_k^{(t)})-\varphi\left(\sum_{l=1}^K \gamma_l^{(t)} \right)\right]</script></li>
-<li><p>规范化<script type="math/tex">\eta_{nk}^{(t+1)}</script>使其和为1</p>
-</li>
-</ol>
-</li>
-<li><p>得<script type="math/tex">\gamma^{(t+1)} = \alpha+\sum_{n=1}^N\eta_n^{(t+1)}</script></p>
-</li>
-</ol>
-</li>
-<li><p>直到收敛</p>
-</li>
-</ol>
-<h4 id="模型参数的估计"><a href="#模型参数的估计" class="headerlink" title="模型参数的估计"></a>模型参数的估计</h4><ul>
-<li><p>参数<script type="math/tex">\varphi</script></p>
-<p>给定一个文本集合<script type="math/tex">D = \{\boldsymbol{w}_1,\dots,\boldsymbol{w}_m,\dots,\boldsymbol{w}_M\}</script>，模型参数估计对所有文本同时进行。</p>
-<p><strong>首先，通过证据下界的最大化估计<script type="math/tex">\varphi</script>。</strong><script type="math/tex">\varphi_{kv}</script>表示第gek话题生成单词集合第v个单词的概率。</p>
-<p>将式(20-47)扩展到所有文本，并考虑关于<script type="math/tex">\varphi</script>的最大化。满足K个约束条件:</p>
-<script type="math/tex; mode=display">
-\sum_{v=1}^V \varphi_{kv} =1, k=1,2,\dots,K</script></li>
-</ul>
-<p>  从而得到对应的拉格朗日函数：</p>
-<script type="math/tex; mode=display">
-  L_{[\beta]} = \sum_{m=1}^M\sum_{n=1}^{N_m}\sum_{k=1}^K\sum_{v=1}^V \eta_{mnk}w_{mn}^v\log\varphi_{kv}+\sum_{k=1}^K\lambda_k\left(\sum_{v=1}^V \varphi_{kv}-1\right) \tag{20-63}</script><p>  求<script type="math/tex">\varphi_{kv}</script>求偏导数并令其为0，归一化求解，得到参数<script type="math/tex">\varphi_{kv}</script>的估计值为：</p>
-<script type="math/tex; mode=display">
-  \varphi_{kv} = \sum_{m=1}^m\sum_{n=1}^{N_m} \eta_{mnk}w_{mn}^v \tag{20-64}</script><p>  其中，<script type="math/tex">\eta_{mnk}</script>为第m个文本的第n个单词属于第k个话题的概率，<script type="math/tex">w_{mn}^v</script> 在第m个文本的第n个单词是单词集合的第v个单词时取值为1，否则为0.</p>
-<ul>
-<li><p>参数<script type="math/tex">\alpha</script></p>
-<p><strong>接着，通过证据下界的最大化估计参数<script type="math/tex">\alpha</script></strong>。<script type="math/tex">\alpha_k</script>表示第k个话题的狄利克雷分布参数。</p>
-<p>将式(20-47)扩展到所有文本，并考虑关于<script type="math/tex">\alpha</script>的最大化：</p>
-<script type="math/tex; mode=display">
-L_{[\alpha]} = \sum_{m=1}^M \left\{\log\Gamma\left(\sum_{l=1}^K\alpha_l\right)-\sum_{k=1}^K\log\Gamma(\alpha_k)+\sum_{k=1}^K(\alpha_k-1)\left[\varPsi(\gamma_{mk})-\varPsi\left(\sum_{l=1}^K\gamma_{ml}\right)\right]\right\} \tag{20-65}</script></li>
-</ul>
-<p>  对<script type="math/tex">\alpha_k</script>求偏导数得：</p>
-<script type="math/tex; mode=display">
-  \frac{\partial L}{\partial \alpha_k} = M\left[\varPsi\left(\sum_{l=1}^K\alpha_l\right)-\varPsi(\alpha_k)\right]+\sum_{m=1}^M\left[\varPsi(\gamma_{mk})-\varPsi\left(\sum_{l=1}^K\gamma_{ml}\right)\right] \tag{20-66}</script><p>  再对<script type="math/tex">\alpha_l</script>求偏导数，得：</p>
-<script type="math/tex; mode=display">
-  \frac{\partial^2L}{\partial \alpha_k\partial \alpha_l} = M\left[\varPsi^{'}\left(\sum_{l=1}^K\alpha_l\right)-\delta(k,l)\varPsi^{'}(\alpha_k)\right] \tag{20-67}</script><p>  这里<script type="math/tex">\delta(k,l)</script>是delta函数。</p>
-<p>  式2(0-66)和式(20-67)分别是函数(20-65)对变量<script type="math/tex">\alpha</script>的梯度<script type="math/tex">g(\alpha)</script>和Hessian矩阵<script type="math/tex">H(\alpha)</script>。</p>
-<p>  <strong>应用牛顿法求该函数的最大化</strong>。用以下公式迭代，得到参数<script type="math/tex">\alpha</script>的估计值。</p>
-<script type="math/tex; mode=display">
-  \alpha_{new} = \alpha_{old}-H(\alpha_{old})^{-1}g(\alpha_{old}) \tag{20-68}</script><p>  据此，得到估计参数<script type="math/tex">\alpha</script>的算法。</p>
-<h3 id="算法总结"><a href="#算法总结" class="headerlink" title="算法总结"></a>算法总结</h3><p>根据上面的推导，给出LDA的变分EM算法：</p>
-<p><strong>算法20.5(LDA的变分EM算法)</strong></p>
-<p>输入：给定文本集合<script type="math/tex">D = \{\boldsymbol{w}_1,\dots,\boldsymbol{w}_m,\dots,\boldsymbol{w}_M\}</script>；</p>
-<p>输出：变分参数<script type="math/tex">\gamma,\eta</script>，模型参数<script type="math/tex">\alpha,\varphi</script>。</p>
-<p>交替迭代E步和M步，直到收敛。</p>
-<ol>
-<li><p>E步</p>
-<p>固定模型参数<script type="math/tex">\alpha,\varphi</script>，通过关于变分参数<script type="math/tex">\gamma,\eta</script>的证据下界的最大化，估计变分参数<script type="math/tex">\gamma,\eta</script>。具体见算法20.4</p>
-</li>
-<li><p>M步</p>
-<p>固定变分参数<script type="math/tex">\gamma,\eta</script>，通过关于模型参数<script type="math/tex">\alpha,\varphi</script>的证据下界的最大化，估计模型参数<script type="math/tex">\alpha,\varphi</script>。具体见式(20-64)和式(20-68)。</p>
-<p>根据变分参数(<script type="math/tex">\gamma,\eta</script>)可以估计模型参数<script type="math/tex">\theta=(\theta_1,\dots,\theta_m,\dots,\theta_M)</script>，<script type="math/tex">\boldsymbol{z}=(\boldsymbol{z}_1,\dots,\boldsymbol{z}_m,\dots,\boldsymbol{z}_M)</script>。</p>
-</li>
-</ol>
-<h2 id="参考文献"><a href="#参考文献" class="headerlink" title="参考文献"></a>参考文献</h2><ul>
-<li><a href="http://www.arbylon.net/publications/text-est.pdf" target="_blank" rel="noopener">Parameter estimation for text analysis</a></li>
-<li><a href="https://cosx.org/2013/03/lda-math-lda-text-modeling/" target="_blank" rel="noopener">LDA-math-LDA 文本建模</a></li>
-<li></li>
-</ul>
 
       
     </div>
@@ -1132,7 +768,7 @@ L_{[\alpha]} = \sum_{m=1}^M \left\{\log\Gamma\left(\sum_{l=1}^K\alpha_l\right)-\
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#狄利克雷分布"><span class="nav-number">1.</span> <span class="nav-text">狄利克雷分布</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#分布定义"><span class="nav-number">1.1.</span> <span class="nav-text">分布定义</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#多项分布"><span class="nav-number">1.1.1.</span> <span class="nav-text">多项分布</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#狄利克雷分布-1"><span class="nav-number">1.1.2.</span> <span class="nav-text">狄利克雷分布</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#概率图模型"><span class="nav-number">1.2.</span> <span class="nav-text">概率图模型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#随机变量序列的可交换性"><span class="nav-number">1.3.</span> <span class="nav-text">随机变量序列的可交换性</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#概率公式"><span class="nav-number">1.4.</span> <span class="nav-text">概率公式</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#LDA的吉布斯抽样算法"><span class="nav-number">2.</span> <span class="nav-text">LDA的吉布斯抽样算法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#基本想法"><span class="nav-number">2.1.</span> <span class="nav-text">基本想法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#算法-的主要部分"><span class="nav-number">2.2.</span> <span class="nav-text">算法 的主要部分</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#抽样分布的表达式"><span class="nav-number">2.2.1.</span> <span class="nav-text">抽样分布的表达式</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#满条件分布-的表达式"><span class="nav-number">2.2.2.</span> <span class="nav-text">满条件分布 的表达式</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#算法的后处理"><span class="nav-number">2.3.</span> <span class="nav-text">算法的后处理</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#参数估计"><span class="nav-number">2.3.1.</span> <span class="nav-text">参数估计</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#算法"><span class="nav-number">2.4.</span> <span class="nav-text">算法</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#LDA的变分EM算法"><span class="nav-number">3.</span> <span class="nav-text">LDA的变分EM算法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#变分推理"><span class="nav-number">3.1.</span> <span class="nav-text">变分推理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#变分EM算法"><span class="nav-number">3.2.</span> <span class="nav-text">变分EM算法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#算法推导"><span class="nav-number">3.3.</span> <span class="nav-text">算法推导</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#证据下界的定义"><span class="nav-number">3.3.1.</span> <span class="nav-text">证据下界的定义</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#变分参数估计"><span class="nav-number">3.3.2.</span> <span class="nav-text">变分参数估计</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#模型参数的估计"><span class="nav-number">3.3.3.</span> <span class="nav-text">模型参数的估计</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#算法总结"><span class="nav-number">3.4.</span> <span class="nav-text">算法总结</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#参考文献"><span class="nav-number">4.</span> <span class="nav-text">参考文献</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#狄利克雷分布"><span class="nav-number">1.</span> <span class="nav-text">狄利克雷分布</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#分布定义"><span class="nav-number">1.1.</span> <span class="nav-text">分布定义</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#多项分布"><span class="nav-number">1.1.1.</span> <span class="nav-text">多项分布</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#狄利克雷分布-1"><span class="nav-number">1.1.2.</span> <span class="nav-text">狄利克雷分布</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#二项分布和贝塔分布"><span class="nav-number">1.1.3.</span> <span class="nav-text">二项分布和贝塔分布</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#共轭先验"><span class="nav-number">1.2.</span> <span class="nav-text">共轭先验</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#潜在狄利克雷分配模型"><span class="nav-number">2.</span> <span class="nav-text">潜在狄利克雷分配模型</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#基本想法"><span class="nav-number">2.1.</span> <span class="nav-text">基本想法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#模型定义"><span class="nav-number">2.2.</span> <span class="nav-text">模型定义</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#模型要素"><span class="nav-number">2.2.1.</span> <span class="nav-text">模型要素</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#生成过程"><span class="nav-number">2.2.2.</span> <span class="nav-text">生成过程</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#概率图模型"><span class="nav-number">2.3.</span> <span class="nav-text">概率图模型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#随机变量序列的可交换性"><span class="nav-number">2.4.</span> <span class="nav-text">随机变量序列的可交换性</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#概率公式"><span class="nav-number">2.5.</span> <span class="nav-text">概率公式</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#LDA的吉布斯抽样算法"><span class="nav-number">3.</span> <span class="nav-text">LDA的吉布斯抽样算法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#基本想法-1"><span class="nav-number">3.1.</span> <span class="nav-text">基本想法</span></a></li></ol></li></ol></div>
             
 
           </div>
