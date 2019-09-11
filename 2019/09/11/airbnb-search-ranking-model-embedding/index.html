@@ -1,0 +1,1000 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+  <meta name="google-site-verification" content="iejSa-LmOb9d1GguAcEsQNUsQviccOieHkuG1c1E2YI">
+
+
+
+  <meta name="msvalidate.01" content="83768A52AE58ADF203609FEF9C55FF47">
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="KDD,实时推荐,Search Ranking,skip-gram,">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="论文：Real-time Personalization using Embeddings for Search Ranking at Airbnb。 在这篇论文中提出了如何对listing(短租房源)和User(用户)的信息进行embedding的技术。该embedding模型可以捕获用户的短期和长期的兴趣，从而为用户推荐有效的房屋列表。同时，还要降低那些因为差评、宠物、住宿时间以及接待人数或者">
+<meta name="keywords" content="KDD,实时推荐,Search Ranking,skip-gram">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Airbnb实时搜索排序中的Embedding技巧">
+<meta property="og:url" content="https://jozeelin.github.io/2019/09/11/airbnb-search-ranking-model-embedding/index.html">
+<meta property="og:site_name" content="Jozee&#39;s技术博客">
+<meta property="og:description" content="论文：Real-time Personalization using Embeddings for Search Ranking at Airbnb。 在这篇论文中提出了如何对listing(短租房源)和User(用户)的信息进行embedding的技术。该embedding模型可以捕获用户的短期和长期的兴趣，从而为用户推荐有效的房屋列表。同时，还要降低那些因为差评、宠物、住宿时间以及接待人数或者">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://jozeelin.github.io/2019/09/11/airbnb-search-ranking-model-embedding/image/airbnb1-1.png">
+<meta property="og:image" content="https://jozeelin.github.io/2019/09/11/airbnb-search-ranking-model-embedding/image/airbnb1-3.png">
+<meta property="og:image" content="https://jozeelin.github.io/2019/09/11/airbnb-search-ranking-model-embedding/image/airbnb1-4.png">
+<meta property="og:image" content="https://jozeelin.github.io/2019/09/11/airbnb-search-ranking-model-embedding/image/airbnb2-2.png">
+<meta property="og:image" content="https://jozeelin.github.io/2019/09/11/airbnb-search-ranking-model-embedding/image/airbnb2-1.png">
+<meta property="og:image" content="https://jozeelin.github.io/2019/09/11/airbnb-search-ranking-model-embedding/image/airbnb2-10.png">
+<meta property="og:image" content="https://jozeelin.github.io/2019/09/11/airbnb-search-ranking-model-embedding/image/airbnb3-1.png">
+<meta property="og:updated_time" content="2019-09-11T04:59:01.503Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Airbnb实时搜索排序中的Embedding技巧">
+<meta name="twitter:description" content="论文：Real-time Personalization using Embeddings for Search Ranking at Airbnb。 在这篇论文中提出了如何对listing(短租房源)和User(用户)的信息进行embedding的技术。该embedding模型可以捕获用户的短期和长期的兴趣，从而为用户推荐有效的房屋列表。同时，还要降低那些因为差评、宠物、住宿时间以及接待人数或者">
+<meta name="twitter:image" content="https://jozeelin.github.io/2019/09/11/airbnb-search-ranking-model-embedding/image/airbnb1-1.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://jozeelin.github.io/2019/09/11/airbnb-search-ranking-model-embedding/">
+
+
+
+
+
+  <title>Airbnb实时搜索排序中的Embedding技巧 | Jozee's技术博客</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Jozee's技术博客</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://jozeelin.github.io/2019/09/11/airbnb-search-ranking-model-embedding/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="jozee">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Jozee's技术博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Airbnb实时搜索排序中的Embedding技巧</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-09-11T12:52:49+08:00">
+                2019-09-11
+              </time>
+            
+
+            
+              <span class="post-meta-divider">|</span>
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-check-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">更新于&#58;</span>
+              
+              <time title="更新于" itemprop="dateModified" datetime="2019-09-11T12:59:01+08:00">
+                2019-09-11
+              </time>
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/推荐系统/" itemprop="url" rel="index">
+                    <span itemprop="name">推荐系统</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2019/09/11/airbnb-search-ranking-model-embedding/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2019/09/11/airbnb-search-ranking-model-embedding/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+          <span id="busuanzi_container_page_pv">
+            <span class="post-meta-divider">|</span>
+            <span class="post-meta-item-icon">
+            <i class="fa fa-eye"></i>
+            </span>
+            阅读量: <span id="busuanzi_value_page_pv"></span>次
+          </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>论文：<a href="https://astro.temple.edu/~tua95067/kdd2018.pdf" target="_blank" rel="noopener">Real-time Personalization using Embeddings for Search Ranking at Airbnb</a>。</p>
+<p>在这篇论文中提出了如何对listing(短租房源)和User(用户)的信息进行embedding的技术。该embedding模型可以捕获用户的短期和长期的兴趣，从而为用户推荐有效的房屋列表。同时，还要降低那些因为差评、宠物、住宿时间以及接待人数或者其他因素而拒绝用户的listing的推荐优先级。</p>
+<p>该论文提出的推荐系统与之前的基于embedding的个性化推荐系统有以下几点不同：</p>
+<ul>
+<li><p>Real-time Personalization</p>
+<p>之前的很多基于embedding来进行个性化以及item推荐的系统都是离线训练好，然后存储下来，当部署到线上环境时，直接从存储空间中读取所推荐的内容。而本论文提出的推荐系统是基于用户当前点击的listing，然后计算该listing与其它listing的相似度，进行ranked后，实时地把用户比较感兴趣的listing推荐给他。</p>
+</li>
+<li><p>Adapting Training for Congregated Search</p>
+<p>不同于网络搜索，旅游平台的搜索经常是聚合类型的，即用户频繁的在一个确定的market进行搜索，比如巴黎等。很少交叉多个markets进行搜索。在本论文提出的推荐系统中，我们需要把embedding训练过程对聚合搜索(根据market place进行聚合)进行适应，比如，在负采样的时候考虑到这一点，从而更好的获取在同一个market中获取相似的listings。</p>
+</li>
+<li><p>Leveraging Conversions as Global Context</p>
+<p>当对listing进行embedding的时候，把booked listing作为全局上下文。</p>
+</li>
+<li><p>User Type Embeddings</p>
+<p>之前的很多工作都是训练用户embedding用于捕获他们的长期兴趣点。当目标信号是稀疏的时候，就没有足够的数据来训练embedding表示。更不用说为每个用户保存embedding用于计算相似度的会占用很多内存空间。因此，希望通过对用户类型进行聚类，然后对每一类的用户类型训练它们对应的embedding。</p>
+</li>
+<li><p>Rejections as Explicit Negatives</p>
+<p>为了降低所推荐的listing被拒绝的可能性，我们把host(屋主)的偏好信息通过把host的拒绝信息作为training时的负样本编码到listing type和user type。</p>
+</li>
+</ul>
+<p>对于短期兴趣个性化，我们使用超过8亿次的搜索点击sessions来训练listing embedding，从而得到高质量的listing表示。我们对真实的搜索流量进行了广泛的离线和在线评估，结果表明，在ranking模型中添加embedding特征，可以有效提高预定收益。另外，在搜索ranking算法中引入listing embedding，CTR提高20%。</p>
+<p>对于长期兴趣个性化，我们使用5000万用户的booking listing序列来训练user type和listing type的embedding表示。而user type和listing type是在相同的向量空间中学习的，这样我们就可以计算user type embedding和listing type embedding之间的相似度，从而根据相似程度进行ranked。这个相似度作为搜索ranking 模型的附加特征，也成功被测试和部署。</p>
+<p>简而言之，首先在airbnb短租平台上，用户和host之间的交互方式有以下几种：</p>
+<ul>
+<li>用户点击listing(click)</li>
+<li>用户预订listing(book)</li>
+<li>host拒绝用户的预订请求(reject)</li>
+</ul>
+<p><img src="image/airbnb1-1.png" alt="airbnb1-1"></p>
+<p>基于以上的交互信息，该论文中需要获取用户的short-term和long-term兴趣。在该论文中，通过对</p>
+<p>该论文中使用两种方式对listing，user type，listing type进行embedding，并根据这些embedding来捕获用户的long-term以及short-term兴趣的。</p>
+<ol>
+<li><p>通过click session数据生成listing的embedding。生成这个embedding是为了进行listing的相似推荐以及对用户进行相同market内的实时个性化推荐。这里挖掘的是用户的short term兴趣：</p>
+<p><img src="image/airbnb1-3.png" alt="airbnb1-3"></p>
+<p><img src="image/airbnb1-4.png" alt="airbnb1-4"></p>
+</li>
+<li><p>通过booked session数据生成user type和listing type的embedding。目的是捕获不同user type的long term兴趣。由于booking signal过于稀疏，论文就对同类型的user和listing进行聚合，得到user type和listing type，并对他们进行embedding表示。</p>
+</li>
+</ol>
+<p>接下来，我们看看论文中具体是如何训练这些embedding表示的。</p>
+<h2 id="listing-embedding"><a href="#listing-embedding" class="headerlink" title="listing embedding"></a>listing embedding</h2><p><img src="image/airbnb2-2.png" alt="airbnb2-2"></p>
+<p>假设给定一系列的click session 序列，由N个用户产生，每一个click session 序列<script type="math/tex">s=(l_1,\dots,l_M) \in \mathcal{S}</script> 定义为由用户点击且没有中断的包含M个listing的序列。这里的中断指的是用户点击该序列的最后一个listing与点击下一个listing的时间间隔超过30秒。如果超过30秒则把下一个listing放到另一个click session序列中。一个用户产生的的一系列click session序列如下所示：</p>
+<p><img src="image/airbnb2-1.png" alt="airbnb2-1"></p>
+<p>给定以上的训练数据，需要生成d维的稠密向量表示<script type="math/tex">v_{l_i} \in \mathbb{R}^d</script>，即生成<script type="math/tex">l_i</script>所对应的embedding表示(<script type="math/tex">l_i</script>相当于NLP中的字典中的某个word)。该模型使用skip-gram模型来生成listing embedding表示。目标函数如下：</p>
+<script type="math/tex; mode=display">
+\mathcal{L} = \sum_{s\in S}\sum_{l_i\in s} (\sum_{-m\ge j\le m,i\ne 0}\log \mathbb{P}(l_{i+j}|l_i)) \tag{2-1}</script><script type="math/tex; mode=display">
+\mathbb{P}(l_{i+1}|l_i) = \frac{\exp(v_{l_i}^{\top}v_{l_{i+j}^{'}})}{\sum_{l=1}^{|V|}\exp(v_{l_i}^{\top}v_l^{'})} \tag{2-2}</script><script type="math/tex; mode=display">v_l$$和$$v_l^{'}$$分别表示listing l的输入向量和输出向量。超参数m为skip gram模型中的滑窗大小。V为数据集中listing id集合列表(相当于字典)。由于|V|太大，导致以上的skip gram模型的计算复杂度太高，因此我们在这里使用负采样的方式来优化目标函数，降低计算复杂度：</script><p>\mathcal{L} = \arg\max<em>{\theta} \sum</em>{(l,c)\in \mathcal{D}<em>p} \log \frac{1}{1+e^{-v_c^{‘}v_l}}+\sum</em>{(l,c)\in\mathcal{D}_n}\log \frac{1}{1+e^{v_c^{‘}v_l}} \tag{2-3}</p>
+<script type="math/tex; mode=display">
+对于$$\mathcal{D}_p$$表示正样本listing pairs，采样自clicked listing l和它在同一个click session 序列中的上下文listing c。而$$\mathcal{D}_n$$表示负样本listing pairs，采样自clicked listing l以及从V(listing id集合)中随机采样到的listing c。
+
+### Booked Listing as Global Context
+
+根据用户最终是否booking 一个listing来把click session 序列分成两类：
+
+1. booked sessions。最后一个listing为booking listing
+2. exploratory sessions。最后一个listing是click listing而不是booking listing。
+
+把booked listing作为global context引入到skip model中，如下图所示：
+
+![airbnb2-4](image/airbnb2-4.png)
+
+所以，对于booked sessions，它所对应的目标函数需要改写成：</script><p>\mathcal{L} =\arg\max<em>{\theta}\sum</em>{(l,c)\in \mathcal{D}<em>p}\log \frac{1}{1+e^{-v_c^{‘}v_l}}+\sum</em>{(l,c)\in \mathcal{D}<em>n}\log \frac{1}{1+e^{v_c^{‘}v_l}}+\log\frac{1}{1+e^{-v</em>{l_b}^{‘}v_l}} \tag{2-4}</p>
+<script type="math/tex; mode=display">
+式(2-4)中$$v_{l_b}$$表示booked listing $$l_b$$的embedding向量。对于exploratory sessions，依然使用式(2-3)作为目标函数。
+
+![airbnb2-3](image/airbnb2-3.png)
+
+### Adapting Training for Congregated Search
+
+在线旅游预订网站的用户通常只在单一market中进行搜索。因此，正样本集合$$\mathcal{D}_p$$大部分都来自于相同的market。换句话说，由于负样本集合$$\mathcal{D}_n$$来自于随机采样，因此大部分的listing很大概率来自于不同的market。因此，给定一个中心listing l，正样本的上下文listing几乎来自同一个market，然而负样本大部分的上下文listing对应的market与listing l的market不一致。这会导致局部最优解。为了解决这个问题，我们通过在与listing l有相同的market的listing集合中进行负采样得到与market相关的负样本集合$$\mathcal{D}_{m_n}$$，式(2-4)就变成了：</script><p>\mathcal{L} = \arg\max<em>{\theta} \sum</em>{(l,c)\in \mathcal{D}<em>p} \log \frac{1}{1+e^{-v_c^{‘}v_l}}+\sum</em>{(l,c)\in D<em>n} \log\frac{1}{1+e^{v_c^{‘}v_l}}+\log \frac{1}{1+e^{-v</em>{l<em>b}^{‘}v_l}}+\sum</em>{(l,m<em>n)\in \mathcal{D}</em>{m<em>n}}\log \frac{1}{1+e^{v</em>{m_n}^{‘}v_l}} \tag{2-5}</p>
+<script type="math/tex; mode=display">
+
+### Cold start listing embeddings
+
+每天都有host创建新的listing，并在airbnb上招租。这些新的listing并没有对应的embedding，因为它们从没有出现在训练数据集中。因此，我们需要利用已存在的listing embedding来对新的listing生成embedding。
+
+首先，根据host所提供的新listing的location，price，listing type等信息找到与新listing在地理位置(直径范围在10英里以内)上最相近的3个listings，这些listings都有对应的embedding，同时与新listing有一样的listing type，一样的价格区间。
+
+接下来，使用这三个listing的embedding的求和平均得到的向量作为新listing的embedding。
+
+使用这种方式可以覆盖98%的新listing的embedding冷启动问题。
+
+### Examining Listing Embeddings
+
+首先，使用k-means对embedding进行聚类，看地理位置的相关性信息是否被编码到embedding中。如下图所示，在california一共形成100个聚类，同时地理位置相近的listing都聚集在一起：
+
+![airbnb2-5](image/airbnb2-5.png)
+
+同时，他们发现这些聚类对于重新定义market很有帮助。
+
+接着，计算来自LA的不同listing types的listings之间的平均相似度(table 1)和不同价格区间的listings之间的平均相似度。这里使用的相似度为cosine相似度。
+
+![airbnb2-6](image/airbnb2-6.png)
+
+从上图结果来看，listing type以及价格区间的相关性也都很好的被编码到embedding中。
+
+## user-type&listing type embedding
+
+Listing embedding可以为用户推荐相同market中感兴趣的相似listings。但，这种embedding只能根据用户短时间内的click session来进行个性化推荐。
+
+然而，除了基于short-term兴趣的个性化推荐外，我们还可以使用利用用户long-term兴趣这个信息，来对用户进行个性化推荐。比如，给定一个用户，他现在正在查找LA market的listings，同时我们已经有他之前在NY和London这些market的booked listing信息，那么我们可以利用之前的booked listing信息来为他推荐LA market的listings。
+
+尽管之前的listing embedding也会捕获一些cross-market的相关性信息，但是一种更加有效的方法应该是从同一个用户他的booked listing信息中获取。特别地，假设给定N个用户的一系列booking session $$\mathcal{S}_b$$，$$\mathcal{S}_b = (l_{b_1},\dots,l_{b_M})$$表示为用户j的booked listing序列。但是使用这些booked listing信息进行训练存在以下挑战:
+
+1. booking sessions 数据$$\mathcal{S}_b$$数据量远远少于click session。
+2. 很多用户过去只预订过一次listing
+3. 为了学习有意义的embedding，在训练数据中，listing至少需要出现5-10次(类似于word minimal count)，但是平台上的很多listing被booked的次数都小于5-10次
+4. 最后，较长时间的间隔中，用户的行为有可能会发生改变，比如：因为职业的原因。
+
+为了解决以上几个问题，我们使用listing type来代替listing id。利用rule-based mapping来对listing id进行归类从而得到listing type信息，如下图所示：
+
+![airbnb2-7](image/airbnb2-7.png)
+
+比如说，一个Entire Home listing 来自US，可以入住2人，1张床，1个卫生间以及一个浴室，平均价格为1晚\$60.8，平均每晚每人\$29.3，5个评论，5星，100%的新用户通过率(host 没有拒绝任何用户)，那么它所对应的listing type定义为$$listing\_type = US\_lt_1\_pn_3\_pg_3\_r_3\_5s_4\_c_2\_b_1\_bd_2\_bt_2\_nu_3$$。
+
+同时，为了解决用户会改变喜好这个问题，我们提出了user-type这个概念，它的embedding与listing-type的embedding是同一向量空间的。举例说明user-type是如何表示的：某个用户，来自San Francisco(market)，macbook(device type)，english(Language)，full profile(Full profile), profile user photo(profile photo),83.4% guest 5star rating(guest 5 start)，3booking in the past(Num Bookings)，\$52.52 per night(\$price per night)，\$31.85 price per night per guest(\$ price per Guest)，2.33 capacity(Capacity)，8.24Reviews(Num Reviews)，76.1% listing 5 start rating (Listing 5 start)，那么该用户对应的user-type定义为:$$user\_type=SF\_lg_1\_dt_1\_fp_1\_pp_1\_nb_3\_ppn_2\_ppg_3\_c_2\_nr_3\_l5s_3\_g5s_3$$(注：论文中对num bookings这个特征的转换有问题应该为nb3而不是nb1)。
+
+在生成listing embedding的训练数据booking session的时候，同时也计算最新booking信息所对应的user-type embedding。对于一个第一次booking的用户，它的user-type信息只考虑table 4中前5行信息，因为在这之前没有历史数据可以参考，这种方式也可以解决注销用户或过去没有booking记录的用户个性化推荐的冷启动问题。
+
+### Training Procedure
+
+为了学习user-type和listing-type的embedding，我们把user-type合并到booking session中。
+
+集合$$\mathcal{S}_b$$由N个用户的booking session $$N_b$$组成。每一个session记为$$s_b=(u_{type_1}l_{type_1},\dots,u_{type_M}l_{type_M})\in \mathcal{S}_b$$，表示一个booking事件序列，比如(user\_type,listing\_type)元组按时间排列。注意，这里的每一个session序列都是由同一个用户id产生的，这就是说同一个用户，他的user-type可以随着时间发生改变，这也就解决了前面提到的第4点问题。同样的，对于listing-type来说，同一个listing它所对应的listing type也可以随着时间发生改变。
+
+对user-type和listing-type的skip gram模型的目标函数与公式(2-3)类似，这里的中心item为user-type($$u_t$$)或者是listing-type($$l_t$$)，具体是哪一个取决于滑窗中的中心item是什么。比如，如果滑窗中的中心item为user-type，那么对应的目标函数可以写成：</script><p>\arg\max<em>{\theta} \sum</em>{(u<em>t,c)\in\mathcal{D}</em>{book}} \log \frac{1}{1+e^{-v<em>c^{‘}v</em>{u<em>t}}}+\sum</em>{(u<em>t,c)\in \mathcal{D}</em>{neg}}\log\frac{1}{1+e^{v<em>c^{‘}v</em>{u_t}}} \tag{2-6}</p>
+<script type="math/tex; mode=display">
+此处，$$\mathcal{D}_{book}$$包含user-type和listing-type，都来自于用户最近的历史记录。$$\mathcal{D}_{neg}$$包含随机采样的user-type和listing-type。同样的，如果中心item为listing-type，那么对应的目标函数可以写成:</script><p>\arg\max<em>{\theta} \sum</em>{(l<em>t,c)\in \mathcal{D}</em>{book}} \log \frac{1}{1+e^{-v<em>c^{‘}v</em>{l<em>t}}}+\sum</em>{(l<em>t,c)\in \mathcal{D}</em>{neg}}\log \frac{1}{1+e^{v<em>c^{‘}v</em>{l_t}}} \tag{2-7}</p>
+<script type="math/tex; mode=display">
+![airbnb2-8](image/airbnb2-8.png)
+
+如上图所示，左图显示了公式(2-6)。由于booking sessions中的listing 的market大多数都是不一样的，因此没有必要从同一个market中进行负采样(如式(2-5)的做法)。
+
+### Explicit Negatives for Rejections
+
+与click listing不同，不能只考虑用户侧的偏好，booking需要同时考虑用户侧与host侧的偏好，即需要考虑host的反馈信息，即接受用户的预订还是拒绝用户的预订。host拒绝用户预订的原因有:用户的star评级很差，用户信息不全或者为空，没有设置用户头像等，这些原因都在table 4中定义了。
+
+在训练过程中，除了用户偏好的signal之外，还可以把host拒绝信息编码到embedding空间中。把拒绝signal信息考虑进来的目的是一些listing-type没办法有效区别成功预订的user-type以及被拒绝预订的user-type。而我们希望被拒绝的listing-type embedding与那些用户信息不完整，用户star评分低于平均用户star评分所对应的user-type embedding在向量空间中比较相近。
+
+基于拒绝signal的embedding进行个性化推荐，可以避免用户被拒绝的概率，从而提高booking的成功率。
+
+![airbnb2-9](image/airbnb2-9.png)
+
+这时目标函数(2-6)需要变成如下形式:</script><p>\arg\max<em>{\theta} \sum</em>{(u<em>t,c)\in\mathcal{D}</em>{book}} \log \frac{1}{1+e^{-v<em>c^{‘}v</em>{u<em>t}}}+\sum</em>{(u<em>t,c)\in \mathcal{D}</em>{neg}}\log\frac{1}{1+e^{v<em>c^{‘}v</em>{u<em>t}}} +\sum</em>{(u<em>t,l_t)\in \mathcal{D}</em>{reject}}\log\frac{1}{1+\exp^{v<em>{l_t}^{‘}v</em>{u_t}}}\tag{2-8}</p>
+<script type="math/tex; mode=display">
+同样的，目标函数(2-7)需要变成如下形式:</script><p>\arg\max<em>{\theta} \sum</em>{(l<em>t,c)\in \mathcal{D}</em>{book}} \log \frac{1}{1+e^{-v<em>c^{‘}v</em>{l<em>t}}}+\sum</em>{(l<em>t,c)\in \mathcal{D}</em>{neg}}\log \frac{1}{1+e^{v<em>c^{‘}v</em>{l<em>t}}} +\sum</em>{(l<em>t,u_t)\in\mathcal{D}</em>{reject}}\log\frac{1}{1+\exp^{v<em>{u_t}^{‘}v</em>{l_t}}}\tag{2-9}</p>
+<p>$$<br>利用学习到的所有user-type和listing-type的embedding表示，我们基于cosine相似度，计算当前user-type embedding和一系列候选listing-type embedding的相似度。如下图所示：</p>
+<p><img src="image/airbnb2-10.png" alt="airbnb2-10"></p>
+<p>从上图可以看出，与给定的user-type最匹配的listing-type，多对应的listing特征(对照table 3)为：entire home，lots of good reviews, large and above average price。而那些没有满足用户喜好的listing-type对应的相似度非常低，他们的listing type对应的特点为：less space，lower price small number of reviews。</p>
+<h2 id="实验"><a href="#实验" class="headerlink" title="实验"></a>实验</h2><h3 id="训练listing-embedding"><a href="#训练listing-embedding" class="headerlink" title="训练listing embedding"></a>训练listing embedding</h3><p>使用来自用户的8亿条click sessions信息，根据user id把这些click session进行分类，同时对click session中的listing按照时间进行排序。然后对这些listing序列进行预处理：</p>
+<ol>
+<li>对排好序的listing 序列根据俩俩listing之间的时间间隔是否超过30秒，把两个listing切分成两个部分。</li>
+<li>将意外或者过短的click listing剔除，例如用户在listing页面上停留时间低于30秒。但保留有两次以上点击的listing</li>
+<li>把这个处理过的listing 序列与user id相关的信息去除</li>
+</ol>
+<p>在离线评估中，当对booking session进行5倍的过采样时获得最佳效果。</p>
+<h3 id="setting-up-daily-training"><a href="#setting-up-daily-training" class="headerlink" title="setting up daily training"></a>setting up daily training</h3><p>在训练的使用使用sliding window来获取最近几个月的数据集作为新的训练集，这样可以保证数据集的时效性。</p>
+<p>同时发现，每天都对模型从头开始训练，可以获得的离线性能比在线增量训练的模型性能更好。虽然，重新训练会导致同一个listing，新旧模型得到的embedding向量不一样，但是由于在模型中主要使用embedding向量的cosine相似度，而不是embedding向量本身，所以重新训练并不会产生差异。</p>
+<h3 id="离线评估"><a href="#离线评估" class="headerlink" title="离线评估"></a>离线评估</h3><p>为了快速验证不同的想法，他们需要可以快速评估模型性能，因此采用了离线评估的方式。如下图所示，已有模型Search Ranking model需要点击很多次才能有一次booked listing，而最好的模型是d32 book+neg，它需要最少的点击数就可以产生一次booked listing。</p>
+<p><img src="image/airbnb3-1.png" alt="airbnb3-1"></p>
+<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><ul>
+<li><a href="https://astro.temple.edu/~tua95067/Mihajlo_RecSys2017.pptx" target="_blank" rel="noopener">search ranking and personalization at airbnb</a></li>
+<li><a href="https://www.jiqizhixin.com/articles/2019-01-24-20" target="_blank" rel="noopener">从KDD 2018最佳论文看Airbnb实时搜索排序中的Embedding技巧</a></li>
+<li><a href="https://www.youtube.com/watch?v=aWjsUEX7B1I" target="_blank" rel="noopener">https://www.youtube.com/watch?v=aWjsUEX7B1I</a></li>
+<li><a href="https://medium.com/life-of-small-data-engineer/embedding-recommendation-at-airbnb-2d68da7946d3" target="_blank" rel="noopener">論文選讀—Real-Time Personalization using Embeddings for Search Ranking at Airbnb</a></li>
+</ul>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/KDD/" rel="tag"># KDD</a>
+          
+            <a href="/tags/实时推荐/" rel="tag"># 实时推荐</a>
+          
+            <a href="/tags/Search-Ranking/" rel="tag"># Search Ranking</a>
+          
+            <a href="/tags/skip-gram/" rel="tag"># skip-gram</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/09/06/LDA/" rel="next" title="潜在狄利克雷分布LDA">
+                <i class="fa fa-chevron-left"></i> 潜在狄利克雷分布LDA
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+      <div id="disqus_thread">
+        <noscript>
+          Please enable JavaScript to view the
+          <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a>
+        </noscript>
+      </div>
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">jozee</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">40</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">6</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">86</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#listing-embedding"><span class="nav-number">1.</span> <span class="nav-text">listing embedding</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#实验"><span class="nav-number">2.</span> <span class="nav-text">实验</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#训练listing-embedding"><span class="nav-number">2.1.</span> <span class="nav-text">训练listing embedding</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#setting-up-daily-training"><span class="nav-number">2.2.</span> <span class="nav-text">setting up daily training</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#离线评估"><span class="nav-number">2.3.</span> <span class="nav-text">离线评估</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#参考资料"><span class="nav-number">3.</span> <span class="nav-text">参考资料</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">jozee</span>
+
+  
+</div>
+<div class="busuanzi_count">
+    <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js">
+    </script>
+    <span> 本站访客数:<span id="busuanzi_value_site_uv"></span>人</span>
+    <span class="post-meta-divider">|</span>
+    <span>本站总访问量:<span id="busuanzi_value_site_pv"></span>次</span>
+</div>
+
+
+
+
+
+
+
+
+
+        
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+    
+      <script id="dsq-count-scr" src="https://jozeelin.disqus.com/count.js" async></script>
+    
+
+    
+      <script type="text/javascript">
+        var disqus_config = function () {
+          this.page.url = 'https://jozeelin.github.io/2019/09/11/airbnb-search-ranking-model-embedding/';
+          this.page.identifier = '2019/09/11/airbnb-search-ranking-model-embedding/';
+          this.page.title = 'Airbnb实时搜索排序中的Embedding技巧';
+        };
+        var d = document, s = d.createElement('script');
+        s.src = 'https://jozeelin.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', '' + +new Date());
+        (d.head || d.body).appendChild(s);
+      </script>
+    
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+  
+
+  
+
+</body>
+</html>
