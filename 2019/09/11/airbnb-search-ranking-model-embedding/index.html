@@ -96,9 +96,16 @@
 <meta property="og:image" content="https://jozeelin.github.io/2019/09/11/airbnb-search-ranking-model-embedding/image/airbnb1-4.png">
 <meta property="og:image" content="https://jozeelin.github.io/2019/09/11/airbnb-search-ranking-model-embedding/image/airbnb2-2.png">
 <meta property="og:image" content="https://jozeelin.github.io/2019/09/11/airbnb-search-ranking-model-embedding/image/airbnb2-1.png">
+<meta property="og:image" content="https://jozeelin.github.io/2019/09/11/airbnb-search-ranking-model-embedding/image/airbnb2-4.png">
+<meta property="og:image" content="https://jozeelin.github.io/2019/09/11/airbnb-search-ranking-model-embedding/image/airbnb2-3.png">
+<meta property="og:image" content="https://jozeelin.github.io/2019/09/11/airbnb-search-ranking-model-embedding/image/airbnb2-5.png">
+<meta property="og:image" content="https://jozeelin.github.io/2019/09/11/airbnb-search-ranking-model-embedding/image/airbnb2-6.png">
+<meta property="og:image" content="https://jozeelin.github.io/2019/09/11/airbnb-search-ranking-model-embedding/image/airbnb2-7.png">
+<meta property="og:image" content="https://jozeelin.github.io/2019/09/11/airbnb-search-ranking-model-embedding/image/airbnb2-8.png">
+<meta property="og:image" content="https://jozeelin.github.io/2019/09/11/airbnb-search-ranking-model-embedding/image/airbnb2-9.png">
 <meta property="og:image" content="https://jozeelin.github.io/2019/09/11/airbnb-search-ranking-model-embedding/image/airbnb2-10.png">
 <meta property="og:image" content="https://jozeelin.github.io/2019/09/11/airbnb-search-ranking-model-embedding/image/airbnb3-1.png">
-<meta property="og:updated_time" content="2019-09-11T04:59:01.503Z">
+<meta property="og:updated_time" content="2019-09-11T05:03:41.184Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Airbnb实时搜索排序中的Embedding技巧">
 <meta name="twitter:description" content="论文：Real-time Personalization using Embeddings for Search Ranking at Airbnb。 在这篇论文中提出了如何对listing(短租房源)和User(用户)的信息进行embedding的技术。该embedding模型可以捕获用户的短期和长期的兴趣，从而为用户推荐有效的房屋列表。同时，还要降低那些因为差评、宠物、住宿时间以及接待人数或者">
@@ -320,7 +327,7 @@
               
                 <span class="post-meta-item-text">更新于&#58;</span>
               
-              <time title="更新于" itemprop="dateModified" datetime="2019-09-11T12:59:01+08:00">
+              <time title="更新于" itemprop="dateModified" datetime="2019-09-11T13:03:41+08:00">
                 2019-09-11
               </time>
             
@@ -440,107 +447,63 @@
 <p>给定以上的训练数据，需要生成d维的稠密向量表示<script type="math/tex">v_{l_i} \in \mathbb{R}^d</script>，即生成<script type="math/tex">l_i</script>所对应的embedding表示(<script type="math/tex">l_i</script>相当于NLP中的字典中的某个word)。该模型使用skip-gram模型来生成listing embedding表示。目标函数如下：</p>
 <script type="math/tex; mode=display">
 \mathcal{L} = \sum_{s\in S}\sum_{l_i\in s} (\sum_{-m\ge j\le m,i\ne 0}\log \mathbb{P}(l_{i+j}|l_i)) \tag{2-1}</script><script type="math/tex; mode=display">
-\mathbb{P}(l_{i+1}|l_i) = \frac{\exp(v_{l_i}^{\top}v_{l_{i+j}^{'}})}{\sum_{l=1}^{|V|}\exp(v_{l_i}^{\top}v_l^{'})} \tag{2-2}</script><script type="math/tex; mode=display">v_l$$和$$v_l^{'}$$分别表示listing l的输入向量和输出向量。超参数m为skip gram模型中的滑窗大小。V为数据集中listing id集合列表(相当于字典)。由于|V|太大，导致以上的skip gram模型的计算复杂度太高，因此我们在这里使用负采样的方式来优化目标函数，降低计算复杂度：</script><p>\mathcal{L} = \arg\max<em>{\theta} \sum</em>{(l,c)\in \mathcal{D}<em>p} \log \frac{1}{1+e^{-v_c^{‘}v_l}}+\sum</em>{(l,c)\in\mathcal{D}_n}\log \frac{1}{1+e^{v_c^{‘}v_l}} \tag{2-3}</p>
+\mathbb{P}(l_{i+1}|l_i) = \frac{\exp(v_{l_i}^{\top}v_{l_{i+j}^{'}})}{\sum_{l=1}^{|V|}\exp(v_{l_i}^{\top}v_l^{'})} \tag{2-2}</script><p>其中，<script type="math/tex">v_l</script>和<script type="math/tex">v_l^{'}</script>分别表示listing l的输入向量和输出向量。超参数m为skip gram模型中的滑窗大小。V为数据集中listing id集合列表(相当于字典)。由于|V|太大，导致以上的skip gram模型的计算复杂度太高，因此我们在这里使用负采样的方式来优化目标函数，降低计算复杂度：</p>
 <script type="math/tex; mode=display">
-对于$$\mathcal{D}_p$$表示正样本listing pairs，采样自clicked listing l和它在同一个click session 序列中的上下文listing c。而$$\mathcal{D}_n$$表示负样本listing pairs，采样自clicked listing l以及从V(listing id集合)中随机采样到的listing c。
-
-### Booked Listing as Global Context
-
-根据用户最终是否booking 一个listing来把click session 序列分成两类：
-
-1. booked sessions。最后一个listing为booking listing
-2. exploratory sessions。最后一个listing是click listing而不是booking listing。
-
-把booked listing作为global context引入到skip model中，如下图所示：
-
-![airbnb2-4](image/airbnb2-4.png)
-
-所以，对于booked sessions，它所对应的目标函数需要改写成：</script><p>\mathcal{L} =\arg\max<em>{\theta}\sum</em>{(l,c)\in \mathcal{D}<em>p}\log \frac{1}{1+e^{-v_c^{‘}v_l}}+\sum</em>{(l,c)\in \mathcal{D}<em>n}\log \frac{1}{1+e^{v_c^{‘}v_l}}+\log\frac{1}{1+e^{-v</em>{l_b}^{‘}v_l}} \tag{2-4}</p>
+\mathcal{L} = \arg\max_{\theta} \sum_{(l,c)\in \mathcal{D}_p} \log \frac{1}{1+e^{-v_c^{'}v_l}}+\sum_{(l,c)\in\mathcal{D}_n}\log \frac{1}{1+e^{v_c^{'}v_l}} \tag{2-3}</script><p>对于<script type="math/tex">\mathcal{D}_p</script>表示正样本listing pairs，采样自clicked listing l和它在同一个click session 序列中的上下文listing c。而<script type="math/tex">\mathcal{D}_n</script>表示负样本listing pairs，采样自clicked listing l以及从V(listing id集合)中随机采样到的listing c。</p>
+<h3 id="Booked-Listing-as-Global-Context"><a href="#Booked-Listing-as-Global-Context" class="headerlink" title="Booked Listing as Global Context"></a>Booked Listing as Global Context</h3><p>根据用户最终是否booking 一个listing来把click session 序列分成两类：</p>
+<ol>
+<li>booked sessions。最后一个listing为booking listing</li>
+<li>exploratory sessions。最后一个listing是click listing而不是booking listing。</li>
+</ol>
+<p>把booked listing作为global context引入到skip model中，如下图所示：</p>
+<p><img src="image/airbnb2-4.png" alt="airbnb2-4"></p>
+<p>所以，对于booked sessions，它所对应的目标函数需要改写成：</p>
 <script type="math/tex; mode=display">
-式(2-4)中$$v_{l_b}$$表示booked listing $$l_b$$的embedding向量。对于exploratory sessions，依然使用式(2-3)作为目标函数。
-
-![airbnb2-3](image/airbnb2-3.png)
-
-### Adapting Training for Congregated Search
-
-在线旅游预订网站的用户通常只在单一market中进行搜索。因此，正样本集合$$\mathcal{D}_p$$大部分都来自于相同的market。换句话说，由于负样本集合$$\mathcal{D}_n$$来自于随机采样，因此大部分的listing很大概率来自于不同的market。因此，给定一个中心listing l，正样本的上下文listing几乎来自同一个market，然而负样本大部分的上下文listing对应的market与listing l的market不一致。这会导致局部最优解。为了解决这个问题，我们通过在与listing l有相同的market的listing集合中进行负采样得到与market相关的负样本集合$$\mathcal{D}_{m_n}$$，式(2-4)就变成了：</script><p>\mathcal{L} = \arg\max<em>{\theta} \sum</em>{(l,c)\in \mathcal{D}<em>p} \log \frac{1}{1+e^{-v_c^{‘}v_l}}+\sum</em>{(l,c)\in D<em>n} \log\frac{1}{1+e^{v_c^{‘}v_l}}+\log \frac{1}{1+e^{-v</em>{l<em>b}^{‘}v_l}}+\sum</em>{(l,m<em>n)\in \mathcal{D}</em>{m<em>n}}\log \frac{1}{1+e^{v</em>{m_n}^{‘}v_l}} \tag{2-5}</p>
+\mathcal{L} =\arg\max_{\theta}\sum_{(l,c)\in \mathcal{D}_p}\log \frac{1}{1+e^{-v_c^{'}v_l}}+\sum_{(l,c)\in \mathcal{D}_n}\log \frac{1}{1+e^{v_c^{'}v_l}}+\log\frac{1}{1+e^{-v_{l_b}^{'}v_l}} \tag{2-4}</script><p>式(2-4)中<script type="math/tex">v_{l_b}</script>表示booked listing <script type="math/tex">l_b</script>的embedding向量。对于exploratory sessions，依然使用式(2-3)作为目标函数。</p>
+<p><img src="image/airbnb2-3.png" alt="airbnb2-3"></p>
+<h3 id="Adapting-Training-for-Congregated-Search"><a href="#Adapting-Training-for-Congregated-Search" class="headerlink" title="Adapting Training for Congregated Search"></a>Adapting Training for Congregated Search</h3><p>在线旅游预订网站的用户通常只在单一market中进行搜索。因此，正样本集合<script type="math/tex">\mathcal{D}_p</script>大部分都来自于相同的market。换句话说，由于负样本集合<script type="math/tex">\mathcal{D}_n</script>来自于随机采样，因此大部分的listing很大概率来自于不同的market。因此，给定一个中心listing l，正样本的上下文listing几乎来自同一个market，然而负样本大部分的上下文listing对应的market与listing l的market不一致。这会导致局部最优解。为了解决这个问题，我们通过在与listing l有相同的market的listing集合中进行负采样得到与market相关的负样本集合<script type="math/tex">\mathcal{D}_{m_n}</script>，式(2-4)就变成了：</p>
 <script type="math/tex; mode=display">
-
-### Cold start listing embeddings
-
-每天都有host创建新的listing，并在airbnb上招租。这些新的listing并没有对应的embedding，因为它们从没有出现在训练数据集中。因此，我们需要利用已存在的listing embedding来对新的listing生成embedding。
-
-首先，根据host所提供的新listing的location，price，listing type等信息找到与新listing在地理位置(直径范围在10英里以内)上最相近的3个listings，这些listings都有对应的embedding，同时与新listing有一样的listing type，一样的价格区间。
-
-接下来，使用这三个listing的embedding的求和平均得到的向量作为新listing的embedding。
-
-使用这种方式可以覆盖98%的新listing的embedding冷启动问题。
-
-### Examining Listing Embeddings
-
-首先，使用k-means对embedding进行聚类，看地理位置的相关性信息是否被编码到embedding中。如下图所示，在california一共形成100个聚类，同时地理位置相近的listing都聚集在一起：
-
-![airbnb2-5](image/airbnb2-5.png)
-
-同时，他们发现这些聚类对于重新定义market很有帮助。
-
-接着，计算来自LA的不同listing types的listings之间的平均相似度(table 1)和不同价格区间的listings之间的平均相似度。这里使用的相似度为cosine相似度。
-
-![airbnb2-6](image/airbnb2-6.png)
-
-从上图结果来看，listing type以及价格区间的相关性也都很好的被编码到embedding中。
-
-## user-type&listing type embedding
-
-Listing embedding可以为用户推荐相同market中感兴趣的相似listings。但，这种embedding只能根据用户短时间内的click session来进行个性化推荐。
-
-然而，除了基于short-term兴趣的个性化推荐外，我们还可以使用利用用户long-term兴趣这个信息，来对用户进行个性化推荐。比如，给定一个用户，他现在正在查找LA market的listings，同时我们已经有他之前在NY和London这些market的booked listing信息，那么我们可以利用之前的booked listing信息来为他推荐LA market的listings。
-
-尽管之前的listing embedding也会捕获一些cross-market的相关性信息，但是一种更加有效的方法应该是从同一个用户他的booked listing信息中获取。特别地，假设给定N个用户的一系列booking session $$\mathcal{S}_b$$，$$\mathcal{S}_b = (l_{b_1},\dots,l_{b_M})$$表示为用户j的booked listing序列。但是使用这些booked listing信息进行训练存在以下挑战:
-
-1. booking sessions 数据$$\mathcal{S}_b$$数据量远远少于click session。
-2. 很多用户过去只预订过一次listing
-3. 为了学习有意义的embedding，在训练数据中，listing至少需要出现5-10次(类似于word minimal count)，但是平台上的很多listing被booked的次数都小于5-10次
-4. 最后，较长时间的间隔中，用户的行为有可能会发生改变，比如：因为职业的原因。
-
-为了解决以上几个问题，我们使用listing type来代替listing id。利用rule-based mapping来对listing id进行归类从而得到listing type信息，如下图所示：
-
-![airbnb2-7](image/airbnb2-7.png)
-
-比如说，一个Entire Home listing 来自US，可以入住2人，1张床，1个卫生间以及一个浴室，平均价格为1晚\$60.8，平均每晚每人\$29.3，5个评论，5星，100%的新用户通过率(host 没有拒绝任何用户)，那么它所对应的listing type定义为$$listing\_type = US\_lt_1\_pn_3\_pg_3\_r_3\_5s_4\_c_2\_b_1\_bd_2\_bt_2\_nu_3$$。
-
-同时，为了解决用户会改变喜好这个问题，我们提出了user-type这个概念，它的embedding与listing-type的embedding是同一向量空间的。举例说明user-type是如何表示的：某个用户，来自San Francisco(market)，macbook(device type)，english(Language)，full profile(Full profile), profile user photo(profile photo),83.4% guest 5star rating(guest 5 start)，3booking in the past(Num Bookings)，\$52.52 per night(\$price per night)，\$31.85 price per night per guest(\$ price per Guest)，2.33 capacity(Capacity)，8.24Reviews(Num Reviews)，76.1% listing 5 start rating (Listing 5 start)，那么该用户对应的user-type定义为:$$user\_type=SF\_lg_1\_dt_1\_fp_1\_pp_1\_nb_3\_ppn_2\_ppg_3\_c_2\_nr_3\_l5s_3\_g5s_3$$(注：论文中对num bookings这个特征的转换有问题应该为nb3而不是nb1)。
-
-在生成listing embedding的训练数据booking session的时候，同时也计算最新booking信息所对应的user-type embedding。对于一个第一次booking的用户，它的user-type信息只考虑table 4中前5行信息，因为在这之前没有历史数据可以参考，这种方式也可以解决注销用户或过去没有booking记录的用户个性化推荐的冷启动问题。
-
-### Training Procedure
-
-为了学习user-type和listing-type的embedding，我们把user-type合并到booking session中。
-
-集合$$\mathcal{S}_b$$由N个用户的booking session $$N_b$$组成。每一个session记为$$s_b=(u_{type_1}l_{type_1},\dots,u_{type_M}l_{type_M})\in \mathcal{S}_b$$，表示一个booking事件序列，比如(user\_type,listing\_type)元组按时间排列。注意，这里的每一个session序列都是由同一个用户id产生的，这就是说同一个用户，他的user-type可以随着时间发生改变，这也就解决了前面提到的第4点问题。同样的，对于listing-type来说，同一个listing它所对应的listing type也可以随着时间发生改变。
-
-对user-type和listing-type的skip gram模型的目标函数与公式(2-3)类似，这里的中心item为user-type($$u_t$$)或者是listing-type($$l_t$$)，具体是哪一个取决于滑窗中的中心item是什么。比如，如果滑窗中的中心item为user-type，那么对应的目标函数可以写成：</script><p>\arg\max<em>{\theta} \sum</em>{(u<em>t,c)\in\mathcal{D}</em>{book}} \log \frac{1}{1+e^{-v<em>c^{‘}v</em>{u<em>t}}}+\sum</em>{(u<em>t,c)\in \mathcal{D}</em>{neg}}\log\frac{1}{1+e^{v<em>c^{‘}v</em>{u_t}}} \tag{2-6}</p>
+\mathcal{L} = \arg\max_{\theta} \sum_{(l,c)\in \mathcal{D}_p} \log \frac{1}{1+e^{-v_c^{'}v_l}}+\sum_{(l,c)\in D_n} \log\frac{1}{1+e^{v_c^{'}v_l}}+\log \frac{1}{1+e^{-v_{l_b}^{'}v_l}}+\sum_{(l,m_n)\in \mathcal{D}_{m_n}}\log \frac{1}{1+e^{v_{m_n}^{'}v_l}} \tag{2-5}</script><h3 id="Cold-start-listing-embeddings"><a href="#Cold-start-listing-embeddings" class="headerlink" title="Cold start listing embeddings"></a>Cold start listing embeddings</h3><p>每天都有host创建新的listing，并在airbnb上招租。这些新的listing并没有对应的embedding，因为它们从没有出现在训练数据集中。因此，我们需要利用已存在的listing embedding来对新的listing生成embedding。</p>
+<p>首先，根据host所提供的新listing的location，price，listing type等信息找到与新listing在地理位置(直径范围在10英里以内)上最相近的3个listings，这些listings都有对应的embedding，同时与新listing有一样的listing type，一样的价格区间。</p>
+<p>接下来，使用这三个listing的embedding的求和平均得到的向量作为新listing的embedding。</p>
+<p>使用这种方式可以覆盖98%的新listing的embedding冷启动问题。</p>
+<h3 id="Examining-Listing-Embeddings"><a href="#Examining-Listing-Embeddings" class="headerlink" title="Examining Listing Embeddings"></a>Examining Listing Embeddings</h3><p>首先，使用k-means对embedding进行聚类，看地理位置的相关性信息是否被编码到embedding中。如下图所示，在california一共形成100个聚类，同时地理位置相近的listing都聚集在一起：</p>
+<p><img src="image/airbnb2-5.png" alt="airbnb2-5"></p>
+<p>同时，他们发现这些聚类对于重新定义market很有帮助。</p>
+<p>接着，计算来自LA的不同listing types的listings之间的平均相似度(table 1)和不同价格区间的listings之间的平均相似度。这里使用的相似度为cosine相似度。</p>
+<p><img src="image/airbnb2-6.png" alt="airbnb2-6"></p>
+<p>从上图结果来看，listing type以及价格区间的相关性也都很好的被编码到embedding中。</p>
+<h2 id="user-type-amp-listing-type-embedding"><a href="#user-type-amp-listing-type-embedding" class="headerlink" title="user-type&amp;listing type embedding"></a>user-type&amp;listing type embedding</h2><p>Listing embedding可以为用户推荐相同market中感兴趣的相似listings。但，这种embedding只能根据用户短时间内的click session来进行个性化推荐。</p>
+<p>然而，除了基于short-term兴趣的个性化推荐外，我们还可以使用利用用户long-term兴趣这个信息，来对用户进行个性化推荐。比如，给定一个用户，他现在正在查找LA market的listings，同时我们已经有他之前在NY和London这些market的booked listing信息，那么我们可以利用之前的booked listing信息来为他推荐LA market的listings。</p>
+<p>尽管之前的listing embedding也会捕获一些cross-market的相关性信息，但是一种更加有效的方法应该是从同一个用户他的booked listing信息中获取。特别地，假设给定N个用户的一系列booking session <script type="math/tex">\mathcal{S}_b</script>，<script type="math/tex">\mathcal{S}_b = (l_{b_1},\dots,l_{b_M})</script>表示为用户j的booked listing序列。但是使用这些booked listing信息进行训练存在以下挑战:</p>
+<ol>
+<li>booking sessions 数据<script type="math/tex">\mathcal{S}_b</script>数据量远远少于click session。</li>
+<li>很多用户过去只预订过一次listing</li>
+<li>为了学习有意义的embedding，在训练数据中，listing至少需要出现5-10次(类似于word minimal count)，但是平台上的很多listing被booked的次数都小于5-10次</li>
+<li>最后，较长时间的间隔中，用户的行为有可能会发生改变，比如：因为职业的原因。</li>
+</ol>
+<p>为了解决以上几个问题，我们使用listing type来代替listing id。利用rule-based mapping来对listing id进行归类从而得到listing type信息，如下图所示：</p>
+<p><img src="image/airbnb2-7.png" alt="airbnb2-7"></p>
+<p>比如说，一个Entire Home listing 来自US，可以入住2人，1张床，1个卫生间以及一个浴室，平均价格为1晚$60.8，平均每晚每人$29.3，5个评论，5星，100%的新用户通过率(host 没有拒绝任何用户)，那么它所对应的listing type定义为<script type="math/tex">listing\_type = US\_lt_1\_pn_3\_pg_3\_r_3\_5s_4\_c_2\_b_1\_bd_2\_bt_2\_nu_3</script>。</p>
+<p>同时，为了解决用户会改变喜好这个问题，我们提出了user-type这个概念，它的embedding与listing-type的embedding是同一向量空间的。举例说明user-type是如何表示的：某个用户，来自San Francisco(market)，macbook(device type)，english(Language)，full profile(Full profile), profile user photo(profile photo),83.4% guest 5star rating(guest 5 start)，3booking in the past(Num Bookings)，$52.52 per night($price per night)，$31.85 price per night per guest($ price per Guest)，2.33 capacity(Capacity)，8.24Reviews(Num Reviews)，76.1% listing 5 start rating (Listing 5 start)，那么该用户对应的user-type定义为:<script type="math/tex">user\_type=SF\_lg_1\_dt_1\_fp_1\_pp_1\_nb_3\_ppn_2\_ppg_3\_c_2\_nr_3\_l5s_3\_g5s_3</script>(注：论文中对num bookings这个特征的转换有问题应该为nb3而不是nb1)。</p>
+<p>在生成listing embedding的训练数据booking session的时候，同时也计算最新booking信息所对应的user-type embedding。对于一个第一次booking的用户，它的user-type信息只考虑table 4中前5行信息，因为在这之前没有历史数据可以参考，这种方式也可以解决注销用户或过去没有booking记录的用户个性化推荐的冷启动问题。</p>
+<h3 id="Training-Procedure"><a href="#Training-Procedure" class="headerlink" title="Training Procedure"></a>Training Procedure</h3><p>为了学习user-type和listing-type的embedding，我们把user-type合并到booking session中。</p>
+<p>集合<script type="math/tex">\mathcal{S}_b</script>由N个用户的booking session <script type="math/tex">N_b</script>组成。每一个session记为<script type="math/tex">s_b=(u_{type_1}l_{type_1},\dots,u_{type_M}l_{type_M})\in \mathcal{S}_b</script>，表示一个booking事件序列，比如(user_type,listing_type)元组按时间排列。注意，这里的每一个session序列都是由同一个用户id产生的，这就是说同一个用户，他的user-type可以随着时间发生改变，这也就解决了前面提到的第4点问题。同样的，对于listing-type来说，同一个listing它所对应的listing type也可以随着时间发生改变。</p>
+<p>对user-type和listing-type的skip gram模型的目标函数与公式(2-3)类似，这里的中心item为user-type(<script type="math/tex">u_t</script>)或者是listing-type(<script type="math/tex">l_t</script>)，具体是哪一个取决于滑窗中的中心item是什么。比如，如果滑窗中的中心item为user-type，那么对应的目标函数可以写成：</p>
 <script type="math/tex; mode=display">
-此处，$$\mathcal{D}_{book}$$包含user-type和listing-type，都来自于用户最近的历史记录。$$\mathcal{D}_{neg}$$包含随机采样的user-type和listing-type。同样的，如果中心item为listing-type，那么对应的目标函数可以写成:</script><p>\arg\max<em>{\theta} \sum</em>{(l<em>t,c)\in \mathcal{D}</em>{book}} \log \frac{1}{1+e^{-v<em>c^{‘}v</em>{l<em>t}}}+\sum</em>{(l<em>t,c)\in \mathcal{D}</em>{neg}}\log \frac{1}{1+e^{v<em>c^{‘}v</em>{l_t}}} \tag{2-7}</p>
+\arg\max_{\theta} \sum_{(u_t,c)\in\mathcal{D}_{book}} \log \frac{1}{1+e^{-v_c^{'}v_{u_t}}}+\sum_{(u_t,c)\in \mathcal{D}_{neg}}\log\frac{1}{1+e^{v_c^{'}v_{u_t}}} \tag{2-6}</script><p>此处，<script type="math/tex">\mathcal{D}_{book}</script>包含user-type和listing-type，都来自于用户最近的历史记录。<script type="math/tex">\mathcal{D}_{neg}</script>包含随机采样的user-type和listing-type。同样的，如果中心item为listing-type，那么对应的目标函数可以写成:</p>
 <script type="math/tex; mode=display">
-![airbnb2-8](image/airbnb2-8.png)
-
-如上图所示，左图显示了公式(2-6)。由于booking sessions中的listing 的market大多数都是不一样的，因此没有必要从同一个market中进行负采样(如式(2-5)的做法)。
-
-### Explicit Negatives for Rejections
-
-与click listing不同，不能只考虑用户侧的偏好，booking需要同时考虑用户侧与host侧的偏好，即需要考虑host的反馈信息，即接受用户的预订还是拒绝用户的预订。host拒绝用户预订的原因有:用户的star评级很差，用户信息不全或者为空，没有设置用户头像等，这些原因都在table 4中定义了。
-
-在训练过程中，除了用户偏好的signal之外，还可以把host拒绝信息编码到embedding空间中。把拒绝signal信息考虑进来的目的是一些listing-type没办法有效区别成功预订的user-type以及被拒绝预订的user-type。而我们希望被拒绝的listing-type embedding与那些用户信息不完整，用户star评分低于平均用户star评分所对应的user-type embedding在向量空间中比较相近。
-
-基于拒绝signal的embedding进行个性化推荐，可以避免用户被拒绝的概率，从而提高booking的成功率。
-
-![airbnb2-9](image/airbnb2-9.png)
-
-这时目标函数(2-6)需要变成如下形式:</script><p>\arg\max<em>{\theta} \sum</em>{(u<em>t,c)\in\mathcal{D}</em>{book}} \log \frac{1}{1+e^{-v<em>c^{‘}v</em>{u<em>t}}}+\sum</em>{(u<em>t,c)\in \mathcal{D}</em>{neg}}\log\frac{1}{1+e^{v<em>c^{‘}v</em>{u<em>t}}} +\sum</em>{(u<em>t,l_t)\in \mathcal{D}</em>{reject}}\log\frac{1}{1+\exp^{v<em>{l_t}^{‘}v</em>{u_t}}}\tag{2-8}</p>
+\arg\max_{\theta} \sum_{(l_t,c)\in \mathcal{D}_{book}} \log \frac{1}{1+e^{-v_c^{'}v_{l_t}}}+\sum_{(l_t,c)\in \mathcal{D}_{neg}}\log \frac{1}{1+e^{v_c^{'}v_{l_t}}} \tag{2-7}</script><p><img src="image/airbnb2-8.png" alt="airbnb2-8"></p>
+<p>如上图所示，左图显示了公式(2-6)。由于booking sessions中的listing 的market大多数都是不一样的，因此没有必要从同一个market中进行负采样(如式(2-5)的做法)。</p>
+<h3 id="Explicit-Negatives-for-Rejections"><a href="#Explicit-Negatives-for-Rejections" class="headerlink" title="Explicit Negatives for Rejections"></a>Explicit Negatives for Rejections</h3><p>与click listing不同，不能只考虑用户侧的偏好，booking需要同时考虑用户侧与host侧的偏好，即需要考虑host的反馈信息，即接受用户的预订还是拒绝用户的预订。host拒绝用户预订的原因有:用户的star评级很差，用户信息不全或者为空，没有设置用户头像等，这些原因都在table 4中定义了。</p>
+<p>在训练过程中，除了用户偏好的signal之外，还可以把host拒绝信息编码到embedding空间中。把拒绝signal信息考虑进来的目的是一些listing-type没办法有效区别成功预订的user-type以及被拒绝预订的user-type。而我们希望被拒绝的listing-type embedding与那些用户信息不完整，用户star评分低于平均用户star评分所对应的user-type embedding在向量空间中比较相近。</p>
+<p>基于拒绝signal的embedding进行个性化推荐，可以避免用户被拒绝的概率，从而提高booking的成功率。</p>
+<p><img src="image/airbnb2-9.png" alt="airbnb2-9"></p>
+<p>这时目标函数(2-6)需要变成如下形式:</p>
 <script type="math/tex; mode=display">
-同样的，目标函数(2-7)需要变成如下形式:</script><p>\arg\max<em>{\theta} \sum</em>{(l<em>t,c)\in \mathcal{D}</em>{book}} \log \frac{1}{1+e^{-v<em>c^{‘}v</em>{l<em>t}}}+\sum</em>{(l<em>t,c)\in \mathcal{D}</em>{neg}}\log \frac{1}{1+e^{v<em>c^{‘}v</em>{l<em>t}}} +\sum</em>{(l<em>t,u_t)\in\mathcal{D}</em>{reject}}\log\frac{1}{1+\exp^{v<em>{u_t}^{‘}v</em>{l_t}}}\tag{2-9}</p>
-<p>$$<br>利用学习到的所有user-type和listing-type的embedding表示，我们基于cosine相似度，计算当前user-type embedding和一系列候选listing-type embedding的相似度。如下图所示：</p>
+\arg\max_{\theta} \sum_{(u_t,c)\in\mathcal{D}_{book}} \log \frac{1}{1+e^{-v_c^{'}v_{u_t}}}+\sum_{(u_t,c)\in \mathcal{D}_{neg}}\log\frac{1}{1+e^{v_c^{'}v_{u_t}}} +\sum_{(u_t,l_t)\in \mathcal{D}_{reject}}\log\frac{1}{1+\exp^{v_{l_t}^{'}v_{u_t}}}\tag{2-8}</script><p>同样的，目标函数(2-7)需要变成如下形式:</p>
+<script type="math/tex; mode=display">
+\arg\max_{\theta} \sum_{(l_t,c)\in \mathcal{D}_{book}} \log \frac{1}{1+e^{-v_c^{'}v_{l_t}}}+\sum_{(l_t,c)\in \mathcal{D}_{neg}}\log \frac{1}{1+e^{v_c^{'}v_{l_t}}} +\sum_{(l_t,u_t)\in\mathcal{D}_{reject}}\log\frac{1}{1+\exp^{v_{u_t}^{'}v_{l_t}}}\tag{2-9}</script><p>利用学习到的所有user-type和listing-type的embedding表示，我们基于cosine相似度，计算当前user-type embedding和一系列候选listing-type embedding的相似度。如下图所示：</p>
 <p><img src="image/airbnb2-10.png" alt="airbnb2-10"></p>
 <p>从上图可以看出，与给定的user-type最匹配的listing-type，多对应的listing特征(对照table 3)为：entire home，lots of good reviews, large and above average price。而那些没有满足用户喜好的listing-type对应的相似度非常低，他们的listing type对应的特点为：less space，lower price small number of reviews。</p>
 <h2 id="实验"><a href="#实验" class="headerlink" title="实验"></a>实验</h2><h3 id="训练listing-embedding"><a href="#训练listing-embedding" class="headerlink" title="训练listing embedding"></a>训练listing embedding</h3><p>使用来自用户的8亿条click sessions信息，根据user id把这些click session进行分类，同时对click session中的listing按照时间进行排序。然后对这些listing序列进行预处理：</p>
@@ -746,7 +709,7 @@ Listing embedding可以为用户推荐相同market中感兴趣的相似listings�
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#listing-embedding"><span class="nav-number">1.</span> <span class="nav-text">listing embedding</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#实验"><span class="nav-number">2.</span> <span class="nav-text">实验</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#训练listing-embedding"><span class="nav-number">2.1.</span> <span class="nav-text">训练listing embedding</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#setting-up-daily-training"><span class="nav-number">2.2.</span> <span class="nav-text">setting up daily training</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#离线评估"><span class="nav-number">2.3.</span> <span class="nav-text">离线评估</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#参考资料"><span class="nav-number">3.</span> <span class="nav-text">参考资料</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#listing-embedding"><span class="nav-number">1.</span> <span class="nav-text">listing embedding</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Booked-Listing-as-Global-Context"><span class="nav-number">1.1.</span> <span class="nav-text">Booked Listing as Global Context</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Adapting-Training-for-Congregated-Search"><span class="nav-number">1.2.</span> <span class="nav-text">Adapting Training for Congregated Search</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Cold-start-listing-embeddings"><span class="nav-number">1.3.</span> <span class="nav-text">Cold start listing embeddings</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Examining-Listing-Embeddings"><span class="nav-number">1.4.</span> <span class="nav-text">Examining Listing Embeddings</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#user-type-amp-listing-type-embedding"><span class="nav-number">2.</span> <span class="nav-text">user-type&amp;listing type embedding</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Training-Procedure"><span class="nav-number">2.1.</span> <span class="nav-text">Training Procedure</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Explicit-Negatives-for-Rejections"><span class="nav-number">2.2.</span> <span class="nav-text">Explicit Negatives for Rejections</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#实验"><span class="nav-number">3.</span> <span class="nav-text">实验</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#训练listing-embedding"><span class="nav-number">3.1.</span> <span class="nav-text">训练listing embedding</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#setting-up-daily-training"><span class="nav-number">3.2.</span> <span class="nav-text">setting up daily training</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#离线评估"><span class="nav-number">3.3.</span> <span class="nav-text">离线评估</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#参考资料"><span class="nav-number">4.</span> <span class="nav-text">参考资料</span></a></li></ol></div>
             
 
           </div>
