@@ -1,0 +1,1008 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+  <meta name="google-site-verification" content="iejSa-LmOb9d1GguAcEsQNUsQviccOieHkuG1c1E2YI">
+
+
+
+  <meta name="msvalidate.01" content="83768A52AE58ADF203609FEF9C55FF47">
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="高斯混合模型,EM算法,">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="第一部分1234%matplotlib inlineimport matplotlib.pyplot as pltimport seaborn as sns; sns.set()import numpy as np 12345678910from sklearn.datasets.samples_generator import make_blobsX, y_true = make_blobs(n">
+<meta name="keywords" content="高斯混合模型,EM算法">
+<meta property="og:type" content="article">
+<meta property="og:title" content="GMM in python and EM">
+<meta property="og:url" content="https://jozeelin.github.io/2019/12/16/GMM-in-python/index.html">
+<meta property="og:site_name" content="Jozee&#39;s技术博客">
+<meta property="og:description" content="第一部分1234%matplotlib inlineimport matplotlib.pyplot as pltimport seaborn as sns; sns.set()import numpy as np 12345678910from sklearn.datasets.samples_generator import make_blobsX, y_true = make_blobs(n">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://jozeelin.github.io/2019/12/16/GMM-in-python/image/GMM_2_0.png">
+<meta property="og:image" content="https://jozeelin.github.io/2019/12/16/GMM-in-python/image/GMM_4_0.png">
+<meta property="og:image" content="https://jozeelin.github.io/2019/12/16/GMM-in-python/image/GMM_5_0.png">
+<meta property="og:image" content="https://jozeelin.github.io/2019/12/16/GMM-in-python/image/GMM_7_0.png">
+<meta property="og:image" content="https://jozeelin.github.io/2019/12/16/GMM-in-python/image/GMM_9_0.png">
+<meta property="og:image" content="https://jozeelin.github.io/2019/12/16/GMM-in-python/image/GMM_13_0.png">
+<meta property="og:image" content="https://jozeelin.github.io/2019/12/16/GMM-in-python/image/GMM_15_0.png">
+<meta property="og:image" content="https://jozeelin.github.io/2019/12/16/GMM-in-python/image/GMM_19_0.png">
+<meta property="og:image" content="https://jozeelin.github.io/2019/12/16/GMM-in-python/image/GMM_24_0.png">
+<meta property="og:image" content="https://jozeelin.github.io/2019/12/16/GMM-in-python/image/GMM_27_0.png">
+<meta property="og:image" content="https://jozeelin.github.io/2019/12/16/GMM-in-python/image/GMM_29_0.png">
+<meta property="og:image" content="https://jozeelin.github.io/2019/12/16/GMM-in-python/image/GMM_32_0.png">
+<meta property="og:image" content="https://jozeelin.github.io/2019/12/16/GMM-in-python/image/GMM_32_1.png">
+<meta property="og:image" content="https://jozeelin.github.io/2019/12/16/GMM-in-python/image/GMM_32_2.png">
+<meta property="og:image" content="https://jozeelin.github.io/2019/12/16/GMM-in-python/image/GMM_32_3.png">
+<meta property="og:image" content="https://jozeelin.github.io/2019/12/16/GMM-in-python/image/GMM_32_4.png">
+<meta property="og:image" content="https://jozeelin.github.io/2019/12/16/GMM-in-python/image/GMM_32_5.png">
+<meta property="og:image" content="https://jozeelin.github.io/2019/12/16/GMM-in-python/image/GMM_32_6.png">
+<meta property="og:image" content="https://jozeelin.github.io/2019/12/16/GMM-in-python/image/GMM_32_7.png">
+<meta property="og:image" content="https://jozeelin.github.io/2019/12/16/GMM-in-python/image/GMM_32_8.png">
+<meta property="og:image" content="https://jozeelin.github.io/2019/12/16/GMM-in-python/image/GMM_32_9.png">
+<meta property="og:image" content="https://jozeelin.github.io/2019/12/16/GMM-in-python/image/GMM_37_0.png">
+<meta property="og:image" content="https://jozeelin.github.io/2019/12/16/GMM-in-python/image/GMM_37_1.png">
+<meta property="og:image" content="https://jozeelin.github.io/2019/12/16/GMM-in-python/image/GMM_37_2.png">
+<meta property="og:updated_time" content="2019-12-16T15:27:03.247Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="GMM in python and EM">
+<meta name="twitter:description" content="第一部分1234%matplotlib inlineimport matplotlib.pyplot as pltimport seaborn as sns; sns.set()import numpy as np 12345678910from sklearn.datasets.samples_generator import make_blobsX, y_true = make_blobs(n">
+<meta name="twitter:image" content="https://jozeelin.github.io/2019/12/16/GMM-in-python/image/GMM_2_0.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://jozeelin.github.io/2019/12/16/GMM-in-python/">
+
+
+
+
+
+  <title>GMM in python and EM | Jozee's技术博客</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Jozee's技术博客</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://jozeelin.github.io/2019/12/16/GMM-in-python/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="jozee">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Jozee's技术博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">GMM in python and EM</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-12-16T23:20:30+08:00">
+                2019-12-16
+              </time>
+            
+
+            
+              <span class="post-meta-divider">|</span>
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-check-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">更新于&#58;</span>
+              
+              <time title="更新于" itemprop="dateModified" datetime="2019-12-16T23:27:03+08:00">
+                2019-12-16
+              </time>
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/机器学习/" itemprop="url" rel="index">
+                    <span itemprop="name">机器学习</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2019/12/16/GMM-in-python/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2019/12/16/GMM-in-python/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+          <span id="busuanzi_container_page_pv">
+            <span class="post-meta-divider">|</span>
+            <span class="post-meta-item-icon">
+            <i class="fa fa-eye"></i>
+            </span>
+            阅读量: <span id="busuanzi_value_page_pv"></span>次
+          </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="第一部分"><a href="#第一部分" class="headerlink" title="第一部分"></a>第一部分</h1><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">%matplotlib inline</span><br><span class="line"><span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt</span><br><span class="line"><span class="keyword">import</span> seaborn <span class="keyword">as</span> sns; sns.set()</span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> sklearn.datasets.samples_generator <span class="keyword">import</span> make_blobs</span><br><span class="line">X, y_true = make_blobs(n_samples=<span class="number">400</span>, centers=<span class="number">4</span>,</span><br><span class="line">                       cluster_std=<span class="number">0.60</span>, random_state=<span class="number">0</span>)</span><br><span class="line">X = X[:, ::<span class="number">-1</span>] <span class="comment"># flip axes for better plotting</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Plot the data with K Means Labels</span></span><br><span class="line"><span class="keyword">from</span> sklearn.cluster <span class="keyword">import</span> KMeans</span><br><span class="line">kmeans = KMeans(<span class="number">4</span>, random_state=<span class="number">0</span>)</span><br><span class="line">labels = kmeans.fit(X).predict(X)</span><br><span class="line">plt.scatter(X[:, <span class="number">0</span>], X[:, <span class="number">1</span>], c=labels, s=<span class="number">40</span>, cmap=<span class="string">'viridis'</span>);</span><br></pre></td></tr></table></figure>
+<p><img src="image/GMM_2_0.png" alt="png"></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> sklearn.cluster <span class="keyword">import</span> KMeans</span><br><span class="line"><span class="keyword">from</span> scipy.spatial.distance <span class="keyword">import</span> cdist</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">plot_kmeans</span><span class="params">(kmeans, X, n_clusters=<span class="number">4</span>, rseed=<span class="number">0</span>, ax=None)</span>:</span></span><br><span class="line">    labels = kmeans.fit_predict(X)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># plot the input data</span></span><br><span class="line">    ax = ax <span class="keyword">or</span> plt.gca()</span><br><span class="line">    ax.axis(<span class="string">'equal'</span>)</span><br><span class="line">    ax.scatter(X[:, <span class="number">0</span>], X[:, <span class="number">1</span>], c=labels, s=<span class="number">40</span>, cmap=<span class="string">'viridis'</span>, zorder=<span class="number">2</span>)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># plot the representation of the KMeans model</span></span><br><span class="line">    centers = kmeans.cluster_centers_</span><br><span class="line">    radii = [cdist(X[labels == i], [center]).max()</span><br><span class="line">             <span class="keyword">for</span> i, center <span class="keyword">in</span> enumerate(centers)]</span><br><span class="line">    <span class="keyword">for</span> c, r <span class="keyword">in</span> zip(centers, radii):</span><br><span class="line">        ax.add_patch(plt.Circle(c, r, fc=<span class="string">'#CCCCCC'</span>, lw=<span class="number">3</span>, alpha=<span class="number">0.5</span>, zorder=<span class="number">1</span>))</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">kmeans = KMeans(n_clusters=<span class="number">4</span>, random_state=<span class="number">0</span>)</span><br><span class="line">plot_kmeans(kmeans, X)</span><br></pre></td></tr></table></figure>
+<p><img src="image/GMM_4_0.png" alt="png"></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">rng = np.random.RandomState(<span class="number">13</span>)</span><br><span class="line">X_stretched = np.dot(X, rng.randn(<span class="number">2</span>, <span class="number">2</span>))</span><br><span class="line"></span><br><span class="line">kmeans = KMeans(n_clusters=<span class="number">4</span>, random_state=<span class="number">0</span>)</span><br><span class="line">plot_kmeans(kmeans, X_stretched)</span><br></pre></td></tr></table></figure>
+<p><img src="image/GMM_5_0.png" alt="png"></p>
+<h2 id="使用GMM"><a href="#使用GMM" class="headerlink" title="使用GMM"></a>使用GMM</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> sklearn.mixture <span class="keyword">import</span> GaussianMixture</span><br><span class="line">gmm = GaussianMixture(n_components=<span class="number">4</span>).fit(X)</span><br><span class="line">labels = gmm.predict(X)</span><br><span class="line">plt.scatter(X[:, <span class="number">0</span>], X[:, <span class="number">1</span>], c=labels, s=<span class="number">40</span>, cmap=<span class="string">'viridis'</span>);</span><br></pre></td></tr></table></figure>
+<p><img src="image/GMM_7_0.png" alt="png"></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">probs = gmm.predict_proba(X)</span><br><span class="line">print(probs[:<span class="number">5</span>].round(<span class="number">3</span>))</span><br></pre></td></tr></table></figure>
+<pre><code>[[0.    0.463 0.    0.537]
+ [0.    0.    1.    0.   ]
+ [0.    0.    1.    0.   ]
+ [0.    0.    0.    1.   ]
+ [0.    0.    1.    0.   ]]
+</code></pre><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">size = <span class="number">50</span> * probs.max(<span class="number">1</span>) ** <span class="number">2</span>  <span class="comment"># square emphasizes differences</span></span><br><span class="line">plt.scatter(X[:, <span class="number">0</span>], X[:, <span class="number">1</span>], c=labels, cmap=<span class="string">'viridis'</span>, s=size);</span><br></pre></td></tr></table></figure>
+<p><img src="image/GMM_9_0.png" alt="png"></p>
+<h2 id="mnist数据及生成"><a href="#mnist数据及生成" class="headerlink" title="mnist数据及生成"></a>mnist数据及生成</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> sklearn.mixture <span class="keyword">import</span> GaussianMixture</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> sklearn.datasets <span class="keyword">import</span> load_digits</span><br><span class="line">digits = load_digits()</span><br><span class="line">digits.data.shape</span><br></pre></td></tr></table></figure>
+<pre><code>(1797, 64)
+</code></pre><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">plot_digits</span><span class="params">(data)</span>:</span></span><br><span class="line">    fig, ax = plt.subplots(<span class="number">10</span>, <span class="number">10</span>, figsize=(<span class="number">8</span>, <span class="number">8</span>),</span><br><span class="line">                           subplot_kw=dict(xticks=[], yticks=[]))</span><br><span class="line">    fig.subplots_adjust(hspace=<span class="number">0.05</span>, wspace=<span class="number">0.05</span>)</span><br><span class="line">    <span class="keyword">for</span> i, axi <span class="keyword">in</span> enumerate(ax.flat):</span><br><span class="line">        im = axi.imshow(data[i].reshape(<span class="number">8</span>, <span class="number">8</span>), cmap=<span class="string">'binary'</span>)</span><br><span class="line">        im.set_clim(<span class="number">0</span>, <span class="number">16</span>)</span><br><span class="line">plot_digits(digits.data)</span><br></pre></td></tr></table></figure>
+<p><img src="image/GMM_13_0.png" alt="png"></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> sklearn.decomposition <span class="keyword">import</span> PCA</span><br><span class="line">pca = PCA(<span class="number">0.99</span>, whiten=<span class="literal">True</span>)</span><br><span class="line">data = pca.fit_transform(digits.data)</span><br><span class="line">data.shape</span><br></pre></td></tr></table></figure>
+<pre><code>(1797, 41)
+</code></pre><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">n_components = np.arange(<span class="number">50</span>, <span class="number">210</span>, <span class="number">10</span>)</span><br><span class="line">models = [GaussianMixture(n, covariance_type=<span class="string">'full'</span>, random_state=<span class="number">0</span>)</span><br><span class="line">          <span class="keyword">for</span> n <span class="keyword">in</span> n_components]</span><br><span class="line">aics = [model.fit(data).aic(data) <span class="keyword">for</span> model <span class="keyword">in</span> models]</span><br><span class="line">plt.plot(n_components, aics);</span><br></pre></td></tr></table></figure>
+<p><img src="image/GMM_15_0.png" alt="png"></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">gmm = GaussianMixture(<span class="number">110</span>, covariance_type=<span class="string">'full'</span>, random_state=<span class="number">0</span>)</span><br><span class="line">gmm.fit(data)</span><br><span class="line">print(gmm.converged_)</span><br></pre></td></tr></table></figure>
+<pre><code>True
+</code></pre><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">data_new = gmm.sample(<span class="number">100</span>)</span><br><span class="line">print(len(data_new))</span><br></pre></td></tr></table></figure>
+<pre><code>2
+</code></pre><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">data_new = data_new[<span class="number">0</span>]</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">digits_new = pca.inverse_transform(data_new)</span><br><span class="line">plot_digits(digits_new)</span><br></pre></td></tr></table></figure>
+<p><img src="image/GMM_19_0.png" alt="png"></p>
+<h1 id="第二部分：使用python从头开始实现gmm"><a href="#第二部分：使用python从头开始实现gmm" class="headerlink" title="第二部分：使用python从头开始实现gmm"></a>第二部分：使用python从头开始实现gmm</h1><h2 id="初始化"><a href="#初始化" class="headerlink" title="初始化"></a>初始化</h2><ol>
+<li><p>Decide how many sources/clusters (c) you want to fit to your data</p>
+</li>
+<li><p>Initialize the parameters mean$\mu_c$, covariance$\sigma_c$, and fraction_per_class $\pi_c$ per cluster c</p>
+</li>
+</ol>
+<h2 id="E-step"><a href="#E-step" class="headerlink" title="E-step"></a>E-step</h2><ol>
+<li>Calculate for each datapoint $x<em>i$ the probability $r</em>{ic}$ that datapoint $x_i$ belongs to cluster c with:</li>
+</ol>
+<script type="math/tex; mode=display">r_{ic} = \frac{\pi_c N(x_i|\mu_c,\Sigma_c)}{\sum_{k=1}^K\pi_k N(x_i|\mu_k,\Sigma_k)}\tag{2-1}</script><p>where $N(x|\mu,\Sigma)$describes the mulitvariate Gaussian with:</p>
+<script type="math/tex; mode=display">N(x_i,\mu_c,\Sigma_c) = \frac{1}{(2\pi)^{\frac{n}{2}}|\Sigma_c|^{1/2}}\exp(-1/2(x_i-\mu_c)^{\top}\Sigma_c^{-1}(x_i-\mu_c))\tag{2-2}</script><p>$r_{ic}$ gives us for each datapoint $x_i$ the measure of:</p>
+<p>$\frac{\mathrm{probability\ that\ x<em>i\ belongs\ to\ class\ c}}{\mathrm{probability\ of\ x_i\ over\ all\ classes}}$ ,hence if $x_i$ is very close to one gaussian c, it will get a high $r</em>{ic}$ value for this gaussian and relatively low values otherwise.</p>
+<h2 id="M-step"><a href="#M-step" class="headerlink" title="M-step"></a>M-step</h2><p>for each cluster c: Calculate the total weight $m<em>c$(loosely speaking the fraction of points allocated to cluster c) and update $\pi_c$,$\mu_c$and $\Sigma_c$ using $r</em>{ic}$with:</p>
+<script type="math/tex; mode=display">m_c = \Sigma_i r_{ic}\tag{2-3}</script><script type="math/tex; mode=display">\pi_c = \frac{m_c}{m}\tag{2-4}</script><script type="math/tex; mode=display">\mu_c = \frac{1}{m_c}\Sigma_ir_{ic}x_i\tag{2-5}</script><script type="math/tex; mode=display">\Sigma_c = \frac{1}{m_c}\Sigma_i r_{ic}(x_i-\mu_c)^{\top}(x_i-\mu_c)\tag{2-6}</script><p>注意：最好一个式子所使用的$\mu_c$是前面更新后的$\mu_c$。</p>
+<p>Iteratively repeat the E and M step until the log-likelihood function of our model converges where the log likelihood is computed with: </p>
+<script type="math/tex; mode=display">\ln p(X|\pi,\mu,\Sigma) = \sum_{i=1}^N \ln(\Sigma_{k=1}^K \pi_k N(x_i|\mu_k,\Sigma_k))\tag{2-7}</script><h2 id="E-Step"><a href="#E-Step" class="headerlink" title="E-Step"></a>E-Step</h2><ol>
+<li>Decide how many sources/clusters(c) you want to fit  to your data —&gt; Mind that each cluster c is represented by gaussian g</li>
+<li>Initialize the parameters mean $\mu_c$,covariance $\Sigma_c$,and fraction_per_class $\pi_c$ per cluster c</li>
+<li>calculate for each datapoint $x<em>i$ the probability $r</em>{ic}$ that datapoint $x_i$ belongs to cluster c with:</li>
+</ol>
+<script type="math/tex; mode=display">r_{ic} = \frac{\pi_c N(x_i|\mu_c,\Sigma_c)}{\sum_{k=1}^K\pi_k N(x_i|\mu_k,\Sigma_k)}\tag{2-1}</script><p>where $N(x|\mu,\Sigma)$describes the mulitvariate Gaussian with:</p>
+<script type="math/tex; mode=display">N(x_i,\mu_c,\Sigma_c) = \frac{1}{(2\pi)^{\frac{n}{2}}|\Sigma_c|^{1/2}}\exp(-1/2(x_i-\mu_c)^{\top}\Sigma_c^{-1}(x_i-\mu_c))\tag{2-2}</script><p>$r_{ic}$ gives us for each datapoint $x_i$ the measure of:</p>
+<p>$\frac{\mathrm{probability\ that\ x<em>i\ belongs\ to\ class\ c}}{\mathrm{probability\ of\ x_i\ over\ all\ classes}}$ ,hence if $x_i$ is very close to one gaussian c, it will get a high $r</em>{ic}$ value for this gaussian and relatively low values otherwise.</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> matplotlib.axes._axes <span class="keyword">import</span> _log <span class="keyword">as</span> matplotlib_axes_logger</span><br><span class="line">matplotlib_axes_logger.setLevel(<span class="string">'ERROR'</span>)</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">from</span> scipy.stats <span class="keyword">import</span> norm</span><br><span class="line">np.random.seed(<span class="number">0</span>)</span><br><span class="line"></span><br><span class="line">X = np.linspace(<span class="number">-5</span>,<span class="number">5</span>,num=<span class="number">20</span>)</span><br><span class="line">X0 = X*np.random.rand(len(X))+<span class="number">10</span> <span class="comment">#create data cluster 1</span></span><br><span class="line">X1 = X*np.random.rand(len(X))<span class="number">-10</span> <span class="comment"># Create data cluster 2</span></span><br><span class="line">X2 = X*np.random.rand(len(X)) <span class="comment"># Create data cluster 3</span></span><br><span class="line">X_tot = np.stack((X0,X1,X2)).flatten()</span><br><span class="line"></span><br><span class="line"><span class="string">"""</span></span><br><span class="line"><span class="string">E-Step</span></span><br><span class="line"><span class="string">"""</span></span><br><span class="line"></span><br><span class="line"><span class="string">"""Create the array r with dimensionality nxK"""</span></span><br><span class="line">r = np.zeros((len(X_tot),<span class="number">3</span>))</span><br><span class="line">print(<span class="string">'Dimensionality'</span>,<span class="string">'='</span>,np.shape(r))</span><br><span class="line"></span><br><span class="line"><span class="string">"""Instantiate the random gaussians"""</span></span><br><span class="line">gauss_1 = norm(loc=<span class="number">-5</span>,scale=<span class="number">5</span>) </span><br><span class="line">gauss_2 = norm(loc=<span class="number">8</span>,scale=<span class="number">3</span>)</span><br><span class="line">gauss_3 = norm(loc=<span class="number">1.5</span>,scale=<span class="number">1</span>)</span><br><span class="line"></span><br><span class="line"><span class="string">"""Instantiate the random pi_c,m_c"""</span></span><br><span class="line">m_c = np.array([<span class="number">1</span>/<span class="number">3</span>,<span class="number">1</span>/<span class="number">3</span>,<span class="number">1</span>/<span class="number">3</span>]) <span class="comment">#wwe expect to have three clusters</span></span><br><span class="line">pi_c = m_c/np.sum(m_c)</span><br><span class="line"></span><br><span class="line"><span class="string">"""Probability for each datapoint x_i to belong to gaussian g """</span></span><br><span class="line"><span class="keyword">for</span> c,g,p <span class="keyword">in</span> zip(range(<span class="number">3</span>),[gauss_1,gauss_2,gauss_3],pi_c):</span><br><span class="line">    r[:,c] = p*g.pdf(X_tot) <span class="comment"># Write the probability that x belongs to gaussian c in column c. </span></span><br><span class="line">    </span><br><span class="line"><span class="string">"""Normalize the probabilities such that each row of r sums to 1"""</span></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range(len(r)):</span><br><span class="line">    r[i] = r[i]/np.sum(r,axis=<span class="number">1</span>)[i]</span><br><span class="line">    </span><br><span class="line">print(r)</span><br><span class="line">print(np.sum(r,axis=<span class="number">1</span>)) <span class="comment"># As we can see, as result each row sums up to one, just as we want it.</span></span><br></pre></td></tr></table></figure>
+<pre><code>Dimensionality = (60, 3)
+[[2.97644006e-02 9.70235407e-01 1.91912550e-07]
+ [3.85713024e-02 9.61426220e-01 2.47747304e-06]
+ [2.44002651e-02 9.75599713e-01 2.16252823e-08]
+ [1.86909096e-02 9.81309090e-01 8.07574590e-10]
+ [1.37640773e-02 9.86235923e-01 9.93606589e-12]
+ [1.58674083e-02 9.84132592e-01 8.42447356e-11]
+ [1.14191259e-02 9.88580874e-01 4.48947365e-13]
+ [1.34349421e-02 9.86565058e-01 6.78305927e-12]
+ [1.11995848e-02 9.88800415e-01 3.18533028e-13]
+ [8.57645259e-03 9.91423547e-01 1.74498648e-15]
+ [7.64696969e-03 9.92353030e-01 1.33051021e-16]
+ [7.10275112e-03 9.92897249e-01 2.22285146e-17]
+ [6.36154765e-03 9.93638452e-01 1.22221112e-18]
+ [4.82376290e-03 9.95176237e-01 1.55549544e-22]
+ [7.75866904e-03 9.92241331e-01 1.86665135e-16]
+ [7.52759691e-03 9.92472403e-01 9.17205413e-17]
+ [8.04550643e-03 9.91954494e-01 4.28205323e-16]
+ [3.51864573e-03 9.96481354e-01 9.60903037e-30]
+ [3.42631418e-03 9.96573686e-01 1.06921949e-30]
+ [3.14390460e-03 9.96856095e-01 3.91217273e-35]
+ [1.00000000e+00 2.67245688e-12 1.56443629e-57]
+ [1.00000000e+00 4.26082753e-11 9.73970426e-49]
+ [9.99999999e-01 1.40098281e-09 3.68939866e-38]
+ [1.00000000e+00 2.65579518e-10 4.05324196e-43]
+ [9.99999977e-01 2.25030673e-08 3.11711096e-30]
+ [9.99999997e-01 2.52018974e-09 1.91287930e-36]
+ [9.99999974e-01 2.59528826e-08 7.72534540e-30]
+ [9.99999996e-01 4.22823192e-09 5.97494463e-35]
+ [9.99999980e-01 1.98158593e-08 1.38414545e-30]
+ [9.99999966e-01 3.43722391e-08 4.57504394e-29]
+ [9.99999953e-01 4.74290492e-08 3.45975850e-28]
+ [9.99999876e-01 1.24093364e-07 1.31878573e-25]
+ [9.99999878e-01 1.21709730e-07 1.17161878e-25]
+ [9.99999735e-01 2.65048706e-07 1.28402556e-23]
+ [9.99999955e-01 4.53370639e-08 2.60841891e-28]
+ [9.99999067e-01 9.33220139e-07 2.02379180e-20]
+ [9.99998448e-01 1.55216175e-06 3.63693167e-19]
+ [9.99997285e-01 2.71542629e-06 8.18923788e-18]
+ [9.99955648e-01 4.43516655e-05 1.59283752e-11]
+ [9.99987200e-01 1.28004505e-05 3.20565446e-14]
+ [9.64689131e-01 9.53405294e-03 2.57768163e-02]
+ [9.77001731e-01 7.96383733e-03 1.50344317e-02]
+ [9.96373670e-01 2.97775078e-03 6.48579562e-04]
+ [3.43634425e-01 2.15201653e-02 6.34845409e-01]
+ [9.75390877e-01 8.19866977e-03 1.64104537e-02]
+ [9.37822997e-01 1.19363656e-02 5.02406373e-02]
+ [4.27396946e-01 2.18816340e-02 5.50721420e-01]
+ [3.28570544e-01 2.14190231e-02 6.50010433e-01]
+ [3.62198108e-01 2.16303800e-02 6.16171512e-01]
+ [2.99837196e-01 2.11991858e-02 6.78963618e-01]
+ [2.21768797e-01 2.04809383e-02 7.57750265e-01]
+ [1.76497129e-01 2.01127714e-02 8.03390100e-01]
+ [8.23252013e-02 2.50758227e-02 8.92598976e-01]
+ [2.11943183e-01 2.03894641e-02 7.67667353e-01]
+ [1.50351209e-01 2.00499057e-02 8.29598885e-01]
+ [1.54779991e-01 2.00449518e-02 8.25175057e-01]
+ [7.92109803e-02 5.93118654e-02 8.61477154e-01]
+ [9.71905134e-02 2.18698473e-02 8.80939639e-01]
+ [7.60625670e-02 4.95831879e-02 8.74354245e-01]
+ [8.53513721e-02 2.40396004e-02 8.90609028e-01]]
+[1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1.
+ 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1.
+ 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1.]
+</code></pre><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">"""Plot the data"""</span></span><br><span class="line">fig = plt.figure(figsize=(<span class="number">10</span>,<span class="number">10</span>))</span><br><span class="line">ax0 = fig.add_subplot(<span class="number">111</span>)</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range(len(r)):</span><br><span class="line">    ax0.scatter(X_tot[i],<span class="number">0</span>,c=np.array([r[i][<span class="number">0</span>],r[i][<span class="number">1</span>],r[i][<span class="number">2</span>]]),s=<span class="number">100</span>) <span class="comment"># We have defined the first column as red, the second as</span></span><br><span class="line">                                                                        <span class="comment"># green and the third as blue</span></span><br><span class="line"><span class="string">"""plot the gaussians"""</span></span><br><span class="line"><span class="keyword">for</span> g,c <span class="keyword">in</span> zip([gauss_1.pdf(np.linspace(<span class="number">-15</span>,<span class="number">15</span>)),gauss_2.pdf(np.linspace(<span class="number">-15</span>,<span class="number">15</span>)),gauss_3.pdf(np.linspace(<span class="number">-15</span>,<span class="number">15</span>))],[<span class="string">'r'</span>,<span class="string">'g'</span>,<span class="string">'b'</span>]):</span><br><span class="line">    ax0.plot(np.linspace(<span class="number">-15</span>,<span class="number">15</span>),g,c=c,zorder=<span class="number">0</span>)</span><br><span class="line">    </span><br><span class="line">    </span><br><span class="line">plt.show()</span><br></pre></td></tr></table></figure>
+<p><img src="image/GMM_24_0.png" alt="png"></p>
+<h2 id="M-step-1"><a href="#M-step-1" class="headerlink" title="M-step"></a>M-step</h2><p>如何利用E-step中得到的信息？</p>
+<p>So why did this help us? Well, we now know the probability for each point to belong to each gaussian.<br>What can we do with this information? Well, with this information we can calculate a new mean as well as a new variance (in 1D) or covariance matrix in &gt; 1D datasets. What will be the result of that? Well, this would change the location of each gaussian in the direction of the “real” mean and would re-shape each gaussian using a value for the variance which is closer to the “real” variance. This procedure is called the Maximization step of the EM algorithm. The Maximization step looks as follows:</p>
+<p>for each cluster c: Calculate the total weight $m<em>c$(loosely speaking the fraction of points allocated to cluster c) and update $\pi_c$,$\mu_c$and $\Sigma_c$ using $r</em>{ic}$with:</p>
+<script type="math/tex; mode=display">m_c = \Sigma_i r_{ic}\tag{2-3}</script><script type="math/tex; mode=display">\pi_c = \frac{m_c}{m}\tag{2-4}</script><script type="math/tex; mode=display">\mu_c = \frac{1}{m_c}\Sigma_ir_{ic}x_i\tag{2-5}</script><script type="math/tex; mode=display">\Sigma_c = \frac{1}{m_c}\Sigma_i r_{ic}(x_i-\mu_c)^{\top}(x_i-\mu_c)\tag{2-6}</script><p>注意：最好一个式子所使用的$\mu_c$是前面更新后的$\mu_c$。</p>
+<p>so let’s look at out plot if we do the above updates,that is run the first EM iteration.</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">"""</span></span><br><span class="line"><span class="string">M-step</span></span><br><span class="line"><span class="string">"""</span></span><br><span class="line"></span><br><span class="line"><span class="string">"""calculate m_c"""</span></span><br><span class="line">m_c = []</span><br><span class="line"><span class="keyword">for</span> c <span class="keyword">in</span> range(len(r[<span class="number">0</span>])):</span><br><span class="line">    m = np.sum(r[:,c])</span><br><span class="line">    m_c.append(m) <span class="comment">#for each cluster c, calculate the m_c and add it to the list m_c</span></span><br><span class="line">    </span><br><span class="line"><span class="string">"""calculate pi_c"""</span></span><br><span class="line">pi_c = []</span><br><span class="line"><span class="keyword">for</span> m <span class="keyword">in</span> m_c:</span><br><span class="line">    pi_c.append(m/np.sum(m_c)) <span class="comment">#For each cluster c, calculate the fraction of points pi_c which belongs to cluster c</span></span><br><span class="line">    </span><br><span class="line"><span class="string">"""calculate mu_c"""</span></span><br><span class="line">mu_c = np.sum(X_tot.reshape(len(X_tot),<span class="number">1</span>)*r, axis=<span class="number">0</span>)/m_c</span><br><span class="line"></span><br><span class="line"><span class="string">"""calculate var_c"""</span></span><br><span class="line">var_c = []</span><br><span class="line"><span class="keyword">for</span> c <span class="keyword">in</span> range(len(r[<span class="number">0</span>])):</span><br><span class="line">    var_c.append((<span class="number">1</span>/m_c[c])*np.dot(((np.array(r[:,c]).reshape(<span class="number">60</span>,<span class="number">1</span>))*(</span><br><span class="line">        X_tot.reshape(len(X_tot),<span class="number">1</span>)-mu_c[c])).T, (X_tot.reshape(len(X_tot),<span class="number">1</span>)-mu_c[c])))</span><br><span class="line">    </span><br><span class="line"><span class="string">"""update the gaussians"""</span></span><br><span class="line">gauss_1 = norm(loc=mu_c[<span class="number">0</span>],scale=var_c[<span class="number">0</span>])</span><br><span class="line">gauss_2 = norm(loc=mu_c[<span class="number">1</span>],scale=var_c[<span class="number">1</span>])</span><br><span class="line">gauss_3 = norm(loc=mu_c[<span class="number">2</span>],scale=var_c[<span class="number">2</span>])</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#可视化更新后的高斯分布</span></span><br><span class="line">fig = plt.figure(figsize=(<span class="number">10</span>,<span class="number">10</span>))</span><br><span class="line">ax0 = fig.add_subplot(<span class="number">111</span>)</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range(len(r)):</span><br><span class="line">    ax0.scatter(X_tot[i],<span class="number">0</span>,c=np.array([r[i][<span class="number">0</span>],r[i][<span class="number">1</span>],r[i][<span class="number">2</span>]]),s=<span class="number">100</span>)</span><br><span class="line">    </span><br><span class="line"><span class="string">"""plot the gaussians"""</span></span><br><span class="line"><span class="keyword">for</span> g,c <span class="keyword">in</span> zip([gauss_1.pdf(np.sort(X_tot).reshape(<span class="number">60</span>,<span class="number">1</span>)),gauss_2.pdf(np.sort(X_tot).reshape(<span class="number">60</span>,<span class="number">1</span>))\</span><br><span class="line">                ,gauss_3.pdf(np.sort(X_tot).reshape(<span class="number">60</span>,<span class="number">1</span>))],[<span class="string">'r'</span>,<span class="string">'g'</span>,<span class="string">'b'</span>]):</span><br><span class="line">    ax0.plot(np.sort(X_tot),g,c=c)</span><br><span class="line">    </span><br><span class="line">plt.show()</span><br></pre></td></tr></table></figure>
+<p><img src="image/GMM_27_0.png" alt="png"></p>
+<p>so as you can see the occurence of our gaussians changed dramatically after the first EM iteration.Let’s update r and illustrate the coloring of the points.</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">"""update r"""</span></span><br><span class="line"><span class="comment">#mind that we use the new pi_c here</span></span><br><span class="line"><span class="keyword">for</span> c,g,p <span class="keyword">in</span> zip(range(<span class="number">3</span>),[gauss_1,gauss_2,gauss_3],pi_c):</span><br><span class="line">    r[:,c] = p*g.pdf(X_tot)</span><br><span class="line">    </span><br><span class="line"><span class="string">"""</span></span><br><span class="line"><span class="string">Normalize the probabilities such that each row of r sums to 1 and </span></span><br><span class="line"><span class="string">weight it by mu_c==the fraction of points belonging to cluster c</span></span><br><span class="line"><span class="string">"""</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range(len(r)):</span><br><span class="line">    r[i] = r[i]/(np.sum(pi_c)*np.sum(r,axis=<span class="number">1</span>)[i])</span><br><span class="line">    </span><br><span class="line"><span class="string">"""plot the data"""</span></span><br><span class="line">fig = plt.figure(figsize=(<span class="number">10</span>,<span class="number">10</span>))</span><br><span class="line">ax0 = fig.add_subplot(<span class="number">111</span>)</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range(len(r)):</span><br><span class="line">    ax0.scatter(X_tot[i],<span class="number">0</span>,c=np.array([r[i][<span class="number">0</span>],r[i][<span class="number">1</span>],r[i][<span class="number">2</span>]]),s=<span class="number">100</span>) <span class="comment">#we have defined the first column as red,the second as</span></span><br><span class="line">                                                                        <span class="comment">#green and the third as blue</span></span><br><span class="line"><span class="string">"""plot the gaussians"""</span></span><br><span class="line"><span class="keyword">for</span> g,c <span class="keyword">in</span> zip([gauss_1.pdf(np.sort(X_tot).reshape(<span class="number">60</span>,<span class="number">1</span>)),gauss_2.pdf(</span><br><span class="line">    np.sort(X_tot).reshape(<span class="number">60</span>,<span class="number">1</span>)),gauss_3.pdf(np.sort(X_tot).reshape(<span class="number">60</span>,<span class="number">1</span>))],[<span class="string">'r'</span>,<span class="string">'g'</span>,<span class="string">'b'</span>]):</span><br><span class="line">    ax0.plot(np.sort(X_tot),g,c=c)</span><br><span class="line">    </span><br><span class="line">plt.show()</span><br></pre></td></tr></table></figure>
+<p><img src="image/GMM_29_0.png" alt="png"></p>
+<h2 id="迭代10次EM过程"><a href="#迭代10次EM过程" class="headerlink" title="迭代10次EM过程"></a>迭代10次EM过程</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt</span><br><span class="line"><span class="keyword">from</span> matplotlib <span class="keyword">import</span> style</span><br><span class="line">style.use(<span class="string">'fivethirtyeight'</span>)</span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">from</span> scipy.stats <span class="keyword">import</span> norm</span><br><span class="line">np.random.seed(<span class="number">0</span>)</span><br><span class="line">X = np.linspace(<span class="number">-5</span>,<span class="number">5</span>,num=<span class="number">20</span>)</span><br><span class="line">X0 = X*np.random.rand(len(X))+<span class="number">15</span> <span class="comment"># Create data cluster 1</span></span><br><span class="line">X1 = X*np.random.rand(len(X))<span class="number">-15</span> <span class="comment"># Create data cluster 2</span></span><br><span class="line">X2 = X*np.random.rand(len(X)) <span class="comment"># Create data cluster 3</span></span><br><span class="line">X_tot = np.stack((X0,X1,X2)).flatten() <span class="comment"># Combine the clusters to get the random datapoints from above</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">GM1D</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self,X,iterations)</span>:</span></span><br><span class="line">        self.iterations = iterations</span><br><span class="line">        self.X = X</span><br><span class="line">        self.mu_c = <span class="literal">None</span></span><br><span class="line">        self.pi_c = <span class="literal">None</span></span><br><span class="line">        self.var_c = <span class="literal">None</span></span><br><span class="line">  </span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">run</span><span class="params">(self)</span>:</span></span><br><span class="line">        </span><br><span class="line">        <span class="string">"""</span></span><br><span class="line"><span class="string">        Instantiate the random mu, pi and var</span></span><br><span class="line"><span class="string">        """</span></span><br><span class="line">        self.mu_c = [<span class="number">-8</span>,<span class="number">8</span>,<span class="number">5</span>]</span><br><span class="line">        self.pi_c = [<span class="number">1</span>/<span class="number">3</span>,<span class="number">1</span>/<span class="number">3</span>,<span class="number">1</span>/<span class="number">3</span>]</span><br><span class="line">        self.var_c = [<span class="number">5</span>,<span class="number">3</span>,<span class="number">1</span>]</span><br><span class="line">        </span><br><span class="line">        </span><br><span class="line">        </span><br><span class="line">        <span class="string">"""</span></span><br><span class="line"><span class="string">        E-Step</span></span><br><span class="line"><span class="string">        """</span></span><br><span class="line">        </span><br><span class="line">        <span class="keyword">for</span> iter <span class="keyword">in</span> range(self.iterations):</span><br><span class="line">            <span class="string">"""Create the array r with dimensionality nxK"""</span></span><br><span class="line">            r = np.zeros((len(X_tot),<span class="number">3</span>))  </span><br><span class="line">  </span><br><span class="line">            <span class="string">"""</span></span><br><span class="line"><span class="string">            Probability for each datapoint x_i to belong to gaussian g </span></span><br><span class="line"><span class="string">            """</span></span><br><span class="line">            <span class="keyword">for</span> c,g,p <span class="keyword">in</span> zip(range(<span class="number">3</span>),[norm(loc=self.mu_c[<span class="number">0</span>],scale=self.var_c[<span class="number">0</span>]),</span><br><span class="line">                                       norm(loc=self.mu_c[<span class="number">1</span>],scale=self.var_c[<span class="number">1</span>]),</span><br><span class="line">                                       norm(loc=self.mu_c[<span class="number">2</span>],scale=self.var_c[<span class="number">2</span>])],self.pi_c):</span><br><span class="line">                r[:,c] = p*g.pdf(X_tot) <span class="comment"># Write the probability that x belongs to gaussian c in column c. </span></span><br><span class="line">                                      <span class="comment"># Therewith we get a 60x3 array filled with the probability that each x_i belongs to one of the gaussians</span></span><br><span class="line">            <span class="string">"""</span></span><br><span class="line"><span class="string">            Normalize the probabilities such that each row of r sums to 1 and weight it by mu_c == the fraction of points belonging to </span></span><br><span class="line"><span class="string">            cluster c</span></span><br><span class="line"><span class="string">            """</span></span><br><span class="line">            <span class="keyword">for</span> i <span class="keyword">in</span> range(len(r)):</span><br><span class="line">                r[i] = r[i]/(np.sum(pi_c)*np.sum(r,axis=<span class="number">1</span>)[i])</span><br><span class="line">            <span class="string">"""Plot the data"""</span></span><br><span class="line">            fig = plt.figure(figsize=(<span class="number">5</span>,<span class="number">5</span>))</span><br><span class="line">            ax0 = fig.add_subplot(<span class="number">111</span>)</span><br><span class="line">            <span class="keyword">for</span> i <span class="keyword">in</span> range(len(r)):</span><br><span class="line">                ax0.scatter(self.X[i],<span class="number">0</span>,c=np.array([r[i][<span class="number">0</span>],r[i][<span class="number">1</span>],r[i][<span class="number">2</span>]]),s=<span class="number">100</span>) </span><br><span class="line">            <span class="string">"""Plot the gaussians"""</span></span><br><span class="line">            <span class="keyword">for</span> g,c <span class="keyword">in</span> zip([norm(loc=self.mu_c[<span class="number">0</span>],scale=self.var_c[<span class="number">0</span>]).pdf(np.linspace(<span class="number">-20</span>,<span class="number">20</span>,num=<span class="number">60</span>)),</span><br><span class="line">                            norm(loc=self.mu_c[<span class="number">1</span>],scale=self.var_c[<span class="number">1</span>]).pdf(np.linspace(<span class="number">-20</span>,<span class="number">20</span>,num=<span class="number">60</span>)),</span><br><span class="line">                            norm(loc=self.mu_c[<span class="number">2</span>],scale=self.var_c[<span class="number">2</span>]).pdf(np.linspace(<span class="number">-20</span>,<span class="number">20</span>,num=<span class="number">60</span>))],[<span class="string">'r'</span>,<span class="string">'g'</span>,<span class="string">'b'</span>]):</span><br><span class="line">                ax0.plot(np.linspace(<span class="number">-20</span>,<span class="number">20</span>,num=<span class="number">60</span>),g,c=c)</span><br><span class="line">            </span><br><span class="line">            </span><br><span class="line">            </span><br><span class="line">            <span class="string">"""M-Step"""</span></span><br><span class="line">    </span><br><span class="line">            <span class="string">"""calculate m_c"""</span></span><br><span class="line">            m_c = []</span><br><span class="line">            <span class="keyword">for</span> c <span class="keyword">in</span> range(len(r[<span class="number">0</span>])):</span><br><span class="line">                m = np.sum(r[:,c])</span><br><span class="line">                m_c.append(m) <span class="comment"># For each cluster c, calculate the m_c and add it to the list m_c</span></span><br><span class="line">            <span class="string">"""calculate pi_c"""</span></span><br><span class="line">            <span class="keyword">for</span> k <span class="keyword">in</span> range(len(m_c)):</span><br><span class="line">                self.pi_c[k] = (m_c[k]/np.sum(m_c)) <span class="comment"># For each cluster c, calculate the fraction of points pi_c which belongs to cluster c</span></span><br><span class="line">            <span class="string">"""calculate mu_c"""</span></span><br><span class="line">            self.mu_c = np.sum(self.X.reshape(len(self.X),<span class="number">1</span>)*r,axis=<span class="number">0</span>)/m_c</span><br><span class="line">            <span class="string">"""calculate var_c"""</span></span><br><span class="line">            var_c = []</span><br><span class="line">            <span class="keyword">for</span> c <span class="keyword">in</span> range(len(r[<span class="number">0</span>])):</span><br><span class="line">                var_c.append((<span class="number">1</span>/m_c[c])*np.dot(((np.array(r[:,c]).reshape(<span class="number">60</span>,<span class="number">1</span>))*(self.X.reshape(len(self.X),<span class="number">1</span>)-self.mu_c[c])).T,(self.X.reshape(len(self.X),<span class="number">1</span>)-self.mu_c[c])))</span><br><span class="line">            plt.show()</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">GM1D = GM1D(X_tot,<span class="number">10</span>)</span><br><span class="line">GM1D.run()</span><br></pre></td></tr></table></figure>
+<p><img src="image/GMM_32_0.png" alt="png"></p>
+<p><img src="image/GMM_32_1.png" alt="png"></p>
+<p><img src="image/GMM_32_2.png" alt="png"></p>
+<p><img src="image/GMM_32_3.png" alt="png"></p>
+<p><img src="image/GMM_32_4.png" alt="png"></p>
+<p><img src="image/GMM_32_5.png" alt="png"></p>
+<p><img src="image/GMM_32_6.png" alt="png"></p>
+<p><img src="image/GMM_32_7.png" alt="png"></p>
+<p><img src="image/GMM_32_8.png" alt="png"></p>
+<p><img src="image/GMM_32_9.png" alt="png"></p>
+<h2 id="multi-dimensional-case"><a href="#multi-dimensional-case" class="headerlink" title="multi dimensional case"></a>multi dimensional case</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt</span><br><span class="line"><span class="keyword">from</span> matplotlib <span class="keyword">import</span> style</span><br><span class="line">style.use(<span class="string">'fivethirtyeight'</span>)</span><br><span class="line"><span class="keyword">from</span> sklearn.datasets.samples_generator <span class="keyword">import</span> make_blobs</span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">from</span> scipy.stats <span class="keyword">import</span> multivariate_normal</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#0. Create dataset</span></span><br><span class="line">X,Y = make_blobs(cluster_std=<span class="number">1.5</span>, random_state=<span class="number">20</span>,n_samples=<span class="number">500</span>,centers=<span class="number">3</span>)</span><br><span class="line"><span class="comment">#stratch dataset to get ellipsoid data</span></span><br><span class="line">X = np.dot(X, np.random.RandomState(<span class="number">0</span>).randn(<span class="number">2</span>,<span class="number">2</span>))</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">GMM</span><span class="params">(object)</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, X, number_of_sources, iterations)</span>:</span></span><br><span class="line">        self.iterations = iterations</span><br><span class="line">        self.number_of_sources = number_of_sources</span><br><span class="line">        self.X = X</span><br><span class="line">        self.mu = <span class="literal">None</span></span><br><span class="line">        self.pi = <span class="literal">None</span></span><br><span class="line">        self.cov = <span class="literal">None</span></span><br><span class="line">        self.XY = <span class="literal">None</span></span><br><span class="line">        </span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">run</span><span class="params">(self)</span>:</span></span><br><span class="line">        <span class="string">'''define a function which runs for iterations, iterations'''</span></span><br><span class="line">        self.reg_cov = <span class="number">1e-6</span>*np.identity(len(self.X[<span class="number">0</span>]))</span><br><span class="line">        x,y = np.meshgrid(np.sort(self.X[:,<span class="number">0</span>]),np.sort(self.X[:,<span class="number">1</span>]))</span><br><span class="line">        self.XY = np.array([x.flatten(),y.flatten()]).T</span><br><span class="line">        </span><br><span class="line">        <span class="string">"""</span></span><br><span class="line"><span class="string">        1. set the initial mu, covariance and pi values</span></span><br><span class="line"><span class="string">        this is a nxm matrix,since we assume n sources(nGaussians) where each has m dimensions</span></span><br><span class="line"><span class="string">        """</span></span><br><span class="line">        self.mu = np.random.randint(min(self.X[:,<span class="number">0</span>]), max(self.X[:,<span class="number">0</span>]), size=(self.number_of_sources, len(self.X[<span class="number">0</span>])))</span><br><span class="line">        <span class="string">"""</span></span><br><span class="line"><span class="string">        we need a nxmxm covariance matrix for each source since we have m features--&gt;we create symmetric </span></span><br><span class="line"><span class="string">        covariance matrices with ones on the digonal</span></span><br><span class="line"><span class="string">        """</span></span><br><span class="line">        self.cov = np.zeros((self.number_of_sources, len(X[<span class="number">0</span>]),len(X[<span class="number">0</span>])))</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">for</span> dim <span class="keyword">in</span> range(len(self.cov)):</span><br><span class="line">            np.fill_diagonal(self.cov[dim],<span class="number">5</span>)</span><br><span class="line">            </span><br><span class="line">        self.pi = np.ones(self.number_of_sources)/self.number_of_sources <span class="comment">#Are 'fractions'</span></span><br><span class="line">        log_likelihoods = [] <span class="comment">#In this list we store the log likehoods per iteration and plot them in the end to check if we have converged</span></span><br><span class="line">        </span><br><span class="line">        <span class="string">"""plot the initial state"""</span></span><br><span class="line">        fig = plt.figure(figsize=(<span class="number">10</span>,<span class="number">10</span>))</span><br><span class="line">        ax0 = fig.add_subplot(<span class="number">111</span>)</span><br><span class="line">        ax0.scatter(self.X[:,<span class="number">0</span>],self.X[:,<span class="number">1</span>])</span><br><span class="line">        ax0.set_title(<span class="string">'Initial state'</span>)</span><br><span class="line">        <span class="keyword">for</span> m,c <span class="keyword">in</span> zip(self.mu, self.cov):</span><br><span class="line">            c+=self.reg_cov</span><br><span class="line">            multi_normal = multivariate_normal(mean=m,cov=c)</span><br><span class="line">            ax0.contour(np.sort(self.X[:,<span class="number">0</span>]),np.sort(self.X[:,<span class="number">1</span>]),multi_normal.pdf(self.XY).reshape(len(self.X),len(self.X)),</span><br><span class="line">                       colors=<span class="string">'black'</span>,alpha=<span class="number">0.3</span>)</span><br><span class="line">            ax0.scatter(m[<span class="number">0</span>],m[<span class="number">1</span>],c=<span class="string">'grey'</span>,zorder=<span class="number">10</span>,s=<span class="number">100</span>)</span><br><span class="line">            </span><br><span class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> range(self.iterations):</span><br><span class="line">            <span class="string">'''E step'''</span></span><br><span class="line">            r_ic = np.zeros((len(self.X),len(self.cov)))</span><br><span class="line">            <span class="keyword">for</span> m,co,p,r <span class="keyword">in</span> zip(self.mu, self.cov, self.pi, range(len(r_ic[<span class="number">0</span>]))):</span><br><span class="line">                co+=self.reg_cov</span><br><span class="line">                mn = multivariate_normal(mean=m, cov=co)</span><br><span class="line">                r_ic[:,r] = p*mn.pdf(self.X)/np.sum([pi_c*multivariate_normal(mean=mu_c,cov=cov_c).pdf(X) </span><br><span class="line">                                                     <span class="keyword">for</span> pi_c,mu_c,cov_c <span class="keyword">in</span> zip(self.pi,self.mu,self.cov+self.reg_cov)],axis=<span class="number">0</span>)</span><br><span class="line">            <span class="string">"""</span></span><br><span class="line"><span class="string">            the above calculation of r_ic is not that obvious why I want to quickly derive what we have done above.</span></span><br><span class="line"><span class="string">             </span></span><br><span class="line"><span class="string">            First of all the nominator:</span></span><br><span class="line"><span class="string">            we calculate for each source c which is defined by m,co and p for every instance x_i, the multivatiate_normal.pdf()value.</span></span><br><span class="line"><span class="string">               </span></span><br><span class="line"><span class="string">            for each loop this gives us a 100x1 matrix(this value divided by the denominator is then assigned to </span></span><br><span class="line"><span class="string">            r_ic[:,r] which is in the end a 100x3 matrix).</span></span><br><span class="line"><span class="string">                </span></span><br><span class="line"><span class="string">            Second the denominator:</span></span><br><span class="line"><span class="string">                </span></span><br><span class="line"><span class="string">            What we do here is, we calculate the multivariate_normal.pdf() for every instance x_i for every source c</span></span><br><span class="line"><span class="string">            which is defined by pi_c,mu_c,and cov_c and write this into a list. This gives us a 3x100 matrix where we</span></span><br><span class="line"><span class="string">            have 100 entrances per source c.</span></span><br><span class="line"><span class="string">                </span></span><br><span class="line"><span class="string">            Now the formula wants us to add up the pdf() values given by the 3 sources for each x_i. Hence we sum up</span></span><br><span class="line"><span class="string">            this list over axis=0.</span></span><br><span class="line"><span class="string">                </span></span><br><span class="line"><span class="string">            this gives us then a list with 100 entries.</span></span><br><span class="line"><span class="string">                </span></span><br><span class="line"><span class="string">            What we have now is FOR EACH LOOP a list with 100 entries in the nominator and a list with 100 entries </span></span><br><span class="line"><span class="string">            in the denominator where each element is the pdf per class c for each instance x_i(nominator) respectively </span></span><br><span class="line"><span class="string">            the summed pdf's of classes c for each instance x_i.</span></span><br><span class="line"><span class="string">                </span></span><br><span class="line"><span class="string">            Consequently we can now divide the nominator by the denominator and have as result a list with 100 elements </span></span><br><span class="line"><span class="string">            which we can then assign to r_ic[:,r] --&gt; One row r per source c. In the end after we have done this for all </span></span><br><span class="line"><span class="string">            three sources (three loops) and run from r==0 to r==2 we get a matrix with dimensionallity 100x3 which is </span></span><br><span class="line"><span class="string">            exactly what we want.</span></span><br><span class="line"><span class="string">                </span></span><br><span class="line"><span class="string">            If we check the entries of r_ic we see that there mostly one element which is much larger than the other two. </span></span><br><span class="line"><span class="string">            This is because every instance x_i is much closer to one of the three gaussians (that is, much more likely to </span></span><br><span class="line"><span class="string">            come from this gaussian) than it is to the other two. That is practically speaing, r_ic gives us the fraction </span></span><br><span class="line"><span class="string">            of the probability that x_i belongs to class c over the probability that x_i belonges to any of the classes c </span></span><br><span class="line"><span class="string">            (Probability that x_i occurs given the 3 Gaussians).</span></span><br><span class="line"><span class="string">            """</span></span><br><span class="line">                </span><br><span class="line">            <span class="string">"""</span></span><br><span class="line"><span class="string">            M-Step</span></span><br><span class="line"><span class="string">               </span></span><br><span class="line"><span class="string">            Calculate the new mean vector and new covariance matrices, based on the probable membership of the single x_i to</span></span><br><span class="line"><span class="string">            classes c--&gt;r_ic</span></span><br><span class="line"><span class="string">            """</span></span><br><span class="line">            self.mu = []</span><br><span class="line">            self.cov = []</span><br><span class="line">            self.pi = []</span><br><span class="line">            log_likelihood = []</span><br><span class="line">            <span class="keyword">for</span> c <span class="keyword">in</span> range(len(r_ic[<span class="number">0</span>])):</span><br><span class="line">                m_c = np.sum(r_ic[:,c],axis=<span class="number">0</span>)</span><br><span class="line">                mu_c = (<span class="number">1</span>/m_c)*np.sum(self.X*r_ic[:,c].reshape(len(self.X),<span class="number">1</span>),axis=<span class="number">0</span>)</span><br><span class="line">                self.mu.append(mu_c)</span><br><span class="line">                <span class="comment">#Calculate the covariance matrix per source based on the new mean</span></span><br><span class="line">                self.cov.append(((<span class="number">1</span>/m_c)*np.dot((np.array(r_ic[:,c]).reshape(len(self.X),<span class="number">1</span>)*(self.X-mu_c)).T,(self.X-mu_c)))+self.reg_cov)</span><br><span class="line">                    </span><br><span class="line">                <span class="comment">#Calculate pi_new which is the 'fraction of points' reprectively the fraction of the probability assigned to each source</span></span><br><span class="line">                <span class="string">"""</span></span><br><span class="line"><span class="string">                Here np.sum(r_ic) gives as result the number of instances. This is logical since we know that the columns of each row of r_ic adds up to 1. </span></span><br><span class="line"><span class="string">                Since we add up all elements, we sum up all columns per row which gives 1 and then all rows which gives then the number of instances (rows)</span></span><br><span class="line"><span class="string">                in X --&gt; Since pi_new contains the fractions of datapoints, assigned to the sources c,The elements in pi_new must add up to 1</span></span><br><span class="line"><span class="string">                """</span></span><br><span class="line">                self.pi.append(m_c/np.sum(r_ic))</span><br><span class="line">                    </span><br><span class="line">            <span class="string">"""Log likelihood"""</span></span><br><span class="line">            log_likelihoods.append(np.log(np.sum([k*multivariate_normal(self.mu[i],self.cov[j]).pdf(X) <span class="keyword">for</span> k,i,j <span class="keyword">in</span> </span><br><span class="line">                                                         zip(self.pi,range(len(self.mu)),range(len(self.cov)))])))</span><br><span class="line">                    </span><br><span class="line">            <span class="string">"""</span></span><br><span class="line"><span class="string">            This process of E step followed by a M step is now iterated a number of n times. In the second step for instance,</span></span><br><span class="line"><span class="string">            we use the calculated pi_new, mu_new and cov_new to calculate the new r_ic which are then used in the second M step</span></span><br><span class="line"><span class="string">            to calculat the mu_new2 and cov_new2 and so on....</span></span><br><span class="line"><span class="string">            """</span></span><br><span class="line">        fig2 = plt.figure(figsize=(<span class="number">10</span>,<span class="number">10</span>))</span><br><span class="line">        ax1 = fig2.add_subplot(<span class="number">111</span>)</span><br><span class="line">        ax1.set_title(<span class="string">'Log-Likelihood'</span>)</span><br><span class="line">        ax1.plot(range(<span class="number">0</span>,self.iterations,<span class="number">1</span>),log_likelihoods)</span><br><span class="line">        <span class="comment">#plt.show()</span></span><br><span class="line">        </span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">predict</span><span class="params">(self,Y)</span>:</span></span><br><span class="line">        <span class="string">'''predict the membership of an unseen,new datapoint'''</span></span><br><span class="line">        <span class="comment">#Plot the point onto the fittet gaussians</span></span><br><span class="line">        fig3 = plt.figure(figsize=(<span class="number">10</span>,<span class="number">10</span>))</span><br><span class="line">        ax2 = fig3.add_subplot(<span class="number">111</span>)</span><br><span class="line">        ax2.scatter(self.X[:,<span class="number">0</span>],self.X[:,<span class="number">1</span>])</span><br><span class="line">        <span class="keyword">for</span> m,c <span class="keyword">in</span> zip(self.mu, self.cov):</span><br><span class="line">            multi_normal = multivariate_normal(mean=m,cov=c)</span><br><span class="line">            ax2.contour(np.sort(self.X[:,<span class="number">0</span>]),np.sort(self.X[:,<span class="number">1</span>]),multi_normal.pdf(self.XY).reshape(len(self.X),len(self.X)),colors=<span class="string">'black'</span>,alpha=<span class="number">0.3</span>)</span><br><span class="line">            ax2.scatter(m[<span class="number">0</span>],m[<span class="number">1</span>],c=<span class="string">'grey'</span>,zorder=<span class="number">10</span>,s=<span class="number">100</span>)</span><br><span class="line">            ax2.set_title(<span class="string">'Final state'</span>)</span><br><span class="line">            <span class="keyword">for</span> y <span class="keyword">in</span> Y:</span><br><span class="line">                ax2.scatter(y[<span class="number">0</span>],y[<span class="number">1</span>],c=<span class="string">'orange'</span>,zorder=<span class="number">10</span>,s=<span class="number">100</span>)</span><br><span class="line">                </span><br><span class="line">        prediction = []</span><br><span class="line">        <span class="keyword">for</span> m,c <span class="keyword">in</span> zip(self.mu, self.cov):</span><br><span class="line">            prediction.append(multivariate_normal(mean=m,cov=c).pdf(Y)/np.sum([multivariate_normal(mean=mean,cov=cov).pdf(Y) <span class="keyword">for</span> mean,cov <span class="keyword">in</span> zip(self.mu,self.cov)]))</span><br><span class="line">            </span><br><span class="line">        plt.show()</span><br><span class="line">        <span class="keyword">return</span> prediction</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">GMM = GMM(X,<span class="number">3</span>,<span class="number">50</span>)</span><br><span class="line">GMM.run()</span><br><span class="line">GMM.predict([[<span class="number">0.5</span>,<span class="number">0.5</span>]])</span><br></pre></td></tr></table></figure>
+<p><img src="image/GMM_37_0.png" alt="png"></p>
+<p><img src="image/GMM_37_1.png" alt="png"></p>
+<p><img src="image/GMM_37_2.png" alt="png"></p>
+<pre><code>[0.8429320897452095, 0.15706464234352321, 3.2679112672282063e-06]
+</code></pre><h1 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h1><ul>
+<li><a href="https://sandipanweb.wordpress.com/2017/03/19/hard-soft-clustering-with-k-means-weighted-k-means-and-gmm-em/" target="_blank" rel="noopener">Hard &amp; Soft Clustering with K-means, Weighted K-means and GMM-EM in Python</a></li>
+<li><a href="https://www.python-course.eu/expectation_maximization_and_gaussian_mixture_models.php" target="_blank" rel="noopener">Unsupervised learning: Clustering: Gaussian Mixture Models (GMM)</a></li>
+<li></li>
+</ul>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/高斯混合模型/" rel="tag"># 高斯混合模型</a>
+          
+            <a href="/tags/EM算法/" rel="tag"># EM算法</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/12/16/ubuntu-dialogue-corpus/" rel="next" title="基于ubuntu dialogue corpus构建大型非结构化、多轮对话系统语料">
+                <i class="fa fa-chevron-left"></i> 基于ubuntu dialogue corpus构建大型非结构化、多轮对话系统语料
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+      <div id="disqus_thread">
+        <noscript>
+          Please enable JavaScript to view the
+          <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a>
+        </noscript>
+      </div>
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">jozee</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">44</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">6</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">95</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#第一部分"><span class="nav-number">1.</span> <span class="nav-text">第一部分</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#使用GMM"><span class="nav-number">1.1.</span> <span class="nav-text">使用GMM</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#mnist数据及生成"><span class="nav-number">1.2.</span> <span class="nav-text">mnist数据及生成</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#第二部分：使用python从头开始实现gmm"><span class="nav-number">2.</span> <span class="nav-text">第二部分：使用python从头开始实现gmm</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#初始化"><span class="nav-number">2.1.</span> <span class="nav-text">初始化</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#E-step"><span class="nav-number">2.2.</span> <span class="nav-text">E-step</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#M-step"><span class="nav-number">2.3.</span> <span class="nav-text">M-step</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#E-Step"><span class="nav-number">2.4.</span> <span class="nav-text">E-Step</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#M-step-1"><span class="nav-number">2.5.</span> <span class="nav-text">M-step</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#迭代10次EM过程"><span class="nav-number">2.6.</span> <span class="nav-text">迭代10次EM过程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#multi-dimensional-case"><span class="nav-number">2.7.</span> <span class="nav-text">multi dimensional case</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#参考资料"><span class="nav-number">3.</span> <span class="nav-text">参考资料</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">jozee</span>
+
+  
+</div>
+<div class="busuanzi_count">
+    <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js">
+    </script>
+    <span> 本站访客数:<span id="busuanzi_value_site_uv"></span>人</span>
+    <span class="post-meta-divider">|</span>
+    <span>本站总访问量:<span id="busuanzi_value_site_pv"></span>次</span>
+</div>
+
+
+
+
+
+
+
+
+
+        
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+    
+      <script id="dsq-count-scr" src="https://jozeelin.disqus.com/count.js" async></script>
+    
+
+    
+      <script type="text/javascript">
+        var disqus_config = function () {
+          this.page.url = 'https://jozeelin.github.io/2019/12/16/GMM-in-python/';
+          this.page.identifier = '2019/12/16/GMM-in-python/';
+          this.page.title = 'GMM in python and EM';
+        };
+        var d = document, s = d.createElement('script');
+        s.src = 'https://jozeelin.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', '' + +new Date());
+        (d.head || d.body).appendChild(s);
+      </script>
+    
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+  
+
+  
+
+</body>
+</html>
